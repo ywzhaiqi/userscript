@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        2.3.6
+// @version        2.3.7
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说清爽阅读脚本。
@@ -151,9 +151,11 @@
 
 (function(css){
 
-    if (window.frameElement && window.frameElement.name == "novelreader-iframe") {
-        return;
-    }
+    try{
+        if (window.frameElement && window.frameElement.name == "novelreader-iframe") {
+            return;
+        }
+    }catch(e) {}
 
     // 所有的设置
     var config = {
@@ -326,7 +328,7 @@
             url: /^http:\/\/www\.shuhe\.cc\/\d+\/\d+/,
             exampleUrl: "http://www.shuhe.cc/12012/4011985/",
             contentSelector: "#TXT",
-            contentReplace: /wxs.o|ww.x.om|[\[【\(].{1,20}[\]\)】]|ff37;.*|书河小说网高速首发.*|TXT下载|书河小说网|全文阅读|第一书河小说网|百书斋.*|首发来自书河小说网|Www.Shuhe.Cc|本书最新章节/ig,
+            contentReplace: /wxs.o|ww.x.om|[\[【\(].{1,30}[\]\)】]|ff37;.*|书河小说网高速首发.*|TXT下载|书河小说网|全文阅读|第一书河小说网|百书斋.*|首发来自书河小说网|Www.Shuhe.Cc|本书最新章节/ig,
         },
         {siteName: "爱收藏",
             url: /http:\/\/www\.aishoucang\.com\/\w+\/\d+\.html/,
@@ -440,7 +442,7 @@
             exampleUrl: "http://www.dudukan.net/html/90/90733/19323854.html",
             contentReplace: "看小说.*|binhuo|www\\.92to\\.com",
             useiframe: true,  
-            timeout: 500  // 为0则没法正确加载内容
+            timeout: 800  // 为0则没法正确加载内容
         },
         // 内容js，地址特殊生成。
         {siteName: "哈哈文学",
@@ -477,6 +479,8 @@
         if (db) return;
         var data = e.data;
         if (typeof data == 'string' && data.indexOf('MyNovelReader.db') == 0) {
+            debug("接收到 MyNovelReader.db 数据");
+
             data = data.slice(16);
             // alert(data);
             try{
@@ -496,7 +500,6 @@
 
             if(db.css){
                 css = db.css;
-                debug("Get css");
             }
 
             button_css = db.button_css;
@@ -1048,46 +1051,53 @@
             reader.site = site;
 
             var timeout = (site && site.timeout) || 0;
-            setTimeout(function(){
-               var parser = new Parser(site, document);
-               parser.getAll(reader.launch); 
-            }, timeout);
-        },
-        launch: function(parser){
-            var tpl_html = '<div id="wrapper">' + reader.tpl_content + '</div>';
 
-            if(parser.content){
-                debug("reader launched.");
-
-                reader.parsedPages[window.location.href.replace(/\/$/, '')] = true;
-
-                reader.prepDocument();
-
-                GM_addStyle(css);
-
-                document.title = parser.docTitle;
-                document.body.setAttribute("name", "MyNovelReader")
-                document.body.innerHTML = reader.nano(tpl_html, parser);
-                // 再次移除其它不相关的。主要起点中文有时候有问题
-                setTimeout(function(){
-                    $('body > *:not("#wrapper, .readerbtn, #reader-notice")').remove();
-                }, 3000);
-
-                reader.requestUrl = parser.nextUrl;
-                reader.isTheEnd = parser.isTheEnd;
-
-                reader.addListener();
-
-                reader.isEnabled = true;
-                reader.addButton();
-
-                setTimeout(function(){
-                    reader.fixImageFloats();
-                }, 500);
-
-                reader.scroll();
+            // 框架内 setTimeout 没法使用？
+            if(timeout == 0){
+                reader.launch();
             }else{
+                setTimeout(function(){
+                    reader.launch();
+                }, timeout);
             }
+        },
+        launch: function(){
+            var parser = new Parser(reader.site, document);
+            parser.getAll(function(){
+                var tpl_html = '<div id="wrapper">' + reader.tpl_content + '</div>';
+                if(parser.content){
+                    debug("reader launched.");
+
+                    reader.parsedPages[window.location.href.replace(/\/$/, '')] = true;
+
+                    reader.prepDocument();
+
+                    GM_addStyle(css);
+
+                    document.title = parser.docTitle;
+                    document.body.setAttribute("name", "MyNovelReader")
+                    document.body.innerHTML = reader.nano(tpl_html, parser);
+                    // 再次移除其它不相关的。主要起点中文有时候有问题
+                    // setTimeout(function(){
+                    //     $('body > *:not("#wrapper, .readerbtn, #reader-notice")').remove();
+                    // }, 3000);
+
+                    reader.requestUrl = parser.nextUrl;
+                    reader.isTheEnd = parser.isTheEnd;
+
+                    reader.addListener();
+
+                    reader.isEnabled = true;
+                    reader.addButton();
+
+                    setTimeout(function(){
+                        reader.fixImageFloats(document);
+                    }, 500);
+
+                    reader.scroll();
+                }else{
+                }
+            });
         },
         prepDocument: function() {
             /* Before we do anything, remove all scripts that are not readability. */
@@ -1252,7 +1262,7 @@
                 $('#wrapper').append(content);
 
                 window.setTimeout(function(){
-                    reader.fixImageFloats();
+                    reader.fixImageFloats(document);
                 }, 800);
             }else{
                 reader.removeListener();
@@ -1263,8 +1273,6 @@
         },
         fixImageFloats: function (articleContent) {
             if(!config.fixImageFloats) return;
-
-            articleContent = articleContent || $("#wrapper")[0];
 
             var imageWidthThreshold = Math.min(articleContent.offsetWidth, 800) * 0.55,
                 images              = articleContent.getElementsByTagName('img');

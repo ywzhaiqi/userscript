@@ -121,6 +121,7 @@ Firefox（Greasemonkey/Scriptish）， Chrome（Tampermonkey），Opera（暴力
 
 ### 更新
 
+ - 2013年6月13日，版本 2.3.7。完善框架内的运行，个别站点还有问题。
  - 2013年6月11日，版本 2.3.2。完善非 Firefox 下标题的获取。
  - 2013年6月11日，版本 2.3.1。
  	- 增加图片居中的修正，旧版自定义文件需要在 css 增加 `.content img.blockImage {clear: both;float: none;display: block;margin-left: auto;margin-right: auto;}\`。
