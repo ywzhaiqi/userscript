@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        2.3.7
+// @version        2.3.8
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说清爽阅读脚本。
@@ -64,6 +64,7 @@
 // @include        http://www.hao662.com/haoshu/*.html
 
 // 百度搜索网站
+// @include        http://www.16kbook.org/Html/Book/*/*/*.shtml
 // @include        http://www.dixiaoshuo.com/Html/*/*.html
 // @include        http://www.nieshu.com/Book/*/*/*.shtml
 // @include        http://www.tlxsw.com/files/article/html/*/*/*.html
@@ -293,7 +294,7 @@
             nextSelector: "a#htmlxiazhang",
             prevSelector: "a#htmlshangzhang",
             indexSelector: "a#htmlmulu",
-            contentReplace: /.*ddefr\.jpg.*|无(?:错|.*cuow\.jpg.*)小说网不[少跳]字|w[a-z\.]*om?|.*由[【无*错】].*会员手打[\s\S]*/ig,
+            contentReplace: /.*ddefr\.jpg.*|无(?:错|.*cuoa?w\.jpg.*)小说网不[少跳]字|w[a-z\.]*om?|.*由[【无*错】].*会员手打[\s\S]*/ig,
         },
         {siteName: "书迷楼",
             url: /^http:\/\/www\.shumilou\.com\/.*html$/,
@@ -508,103 +509,103 @@
 
     // 小说屏蔽字修复
     var new_replacements = {};
+    var replacements = {
+        // ===无措等图片的修复
+        'ilo-full-src="\\S+\\.jpg" ': "",
+        '(<center>)?<?img src..(http://www.wcxiaoshuo.com)?(/sss/\\S+\\.jpg).(>| alt."\\d+_\\d+_\\d*\\.jpg" />)(</center>)?': '$3',
+        "/sss/da.jpg": "打", "/sss/maws.jpg": "吗？", "/sss/baw.jpg": "吧？", "/sss/wuc.jpg": "无", "/sss/maosu.jpg": "：“", "/sss/cuow.jpg": "错", "/sss/ziji.jpg": "自己", "/sss/shenme.jpg": "什么", "/sss/huiqub.jpg": "回去", "/sss/sjian.jpg": "时间", "/sss/zome.jpg": "怎么", "/sss/zhido.jpg": "知道", "/sss/xiaxin.jpg": "相信", "/sss/faxian.jpg": "发现", "/sss/shhua.jpg": "说话", "/sss/dajiex.jpg": "大姐", "/sss/dongxi.jpg": "东西", "/sss/erzib.jpg": "儿子", "/sss/guolair.jpg": "过来", "/sss/xiabang.jpg": "下班", "/sss/zangfl.jpg": "丈夫", "/sss/dianhua.jpg": "电话", "/sss/huilaim.jpg": "回来", "/sss/xiawu.jpg": "下午", "/sss/guoquu.jpg": "过去", "/sss/shangba.jpg": "上班", "/sss/mingtn.jpg": "明天", "/sss/nvrenjj.jpg": "女人", "/sss/shangwo.jpg": "上午", "/sss/shji.jpg": "手机", "/sss/xiaoxinyy.jpg": "小心", "/sss/furene.jpg": "夫人", "/sss/gongzih.jpg": "公子", "/sss/xiansg.jpg": "先生", "/sss/penyouxi.jpg": "朋友", "/sss/xiaoje.jpg": "小姐", "/sss/xifup.jpg": "媳妇", "/sss/nvxudjj.jpg": "女婿", "/sss/xondi.jpg": "兄弟", "/sss/lagong.jpg": "老公", "/sss/lapo.jpg": "老婆", "/sss/meimeid.jpg": "妹妹", "/sss/jiejiev.jpg": "姐姐", "/sss/jiemeiv.jpg": "姐妹", "/sss/xianggx.jpg": "相公", "/sss/6shenumev.jpg": "什么", "/sss/cuoaw.jpg": "错", "/sss/fpefnyoturxi.jpg": "朋友", "/sss/vfsjgigarn.jpg": "时间", "/sss/zzhiedo3.jpg": "知道", "/sss/zibjib.jpg": "自己", "/sss/qdonglxi.jpg": "东西", "/sss/hxiapxint.jpg": "相信", "/sss/fezrormre.jpg": "怎么", "/sss/nvdrfenfjfj.jpg": "女人", "/sss/jhiheejeieev.jpg": "姐姐", "/sss/xdifagojge.jpg": "小姐", "/sss/gggugolgair.jpg": "过来", "/sss/maoashu.jpg": "：“", "/sss/gnxnifawhu.jpg": "下午", "/sss/rgtugoqgugu.jpg": "过去", "/sss/khjukilkaim.jpg": "回来", "/sss/gxhigfadnoxihnyy.jpg": "小心", "/sss/bkbskhhuka.jpg": "说话", "/sss/xeieavnfsg.jpg": "先生", "/sss/yuhhfuiuqub.jpg": "回去", "/sss/pdianphua.jpg": "电话", "/sss/fabxianr.jpg": "发现", "/sss/feilrpto.jpg": "老婆", "/sss/gxronfdri.jpg": "兄弟", "/sss/flfaggofng.jpg": "老公", "/sss/tymyigngtyn.jpg": "明天", "/sss/dfshfhhfjfi.jpg": "手机", "/sss/gstjhranjgwjo.jpg": "上午", "/sss/fmgeyimehid.jpg": "妹妹", "/sss/gxgihftutp.jpg": "媳妇", "/sss/cerztifb.jpg": "儿子", "/sss/gfxgigagbfadng.jpg": "下班", "/sss/hjeirerm6eihv.jpg": "姐妹", "/sss/edajihexr.jpg": "大姐", "/sss/wesfhranrrgba.jpg": "上班", "/sss/gfognggzigh.jpg": "公子", "/sss/frurtefne.jpg": "夫人", "/sss/fzagnggfbl.jpg": "丈夫", "/sss/nvdxfudfjfj.jpg": "女婿", "/sss/xdidafnggx.jpg": "相公", "/sss/zenme.jpg": "怎么", "/sss/gongzi.jpg": "公子", "/sss/ddefr.jpg": "", 
+        '(<center>)?<?img src..(http://www.16kbook.org)?(/tu/\\S+\\.jpg).(>| alt."\\d+_\\d+_\\d*\\.jpg" />)(</center>)?': "$3",
+        "/tu/shijie.jpg":"世界", "/tu/xiangdao.jpg":"想到", "/tu/danshi.jpg":"但是", "/tu/huilai.jpg":"回来", "/tu/yijing.jpg":"已经", "/tu/zhende.jpg":"真的", "/tu/liliang.jpg":"力量", "/tu/le.jpg":"了", "/tu/da.jpg":"大", "/tu/shengli.jpg":"胜利", "/tu/xiwang.jpg":"希望", "/tu/wandan.jpg":"完蛋", "/tu/de.jpg":"的",
 
+        // ===格式整理===
+        // "\\(|\\[|\\{|（|【|｛":"（",
+        // "\\)|\\]|\\}|）|】|｝":"）",
+        "\\*|＊":"*",
+        "[wWｗＷ]{3}":"www",
+        "w{3}(\u3001|\u3002)":"www.",
+        "[cCｃＣ][oOｏＯ][mMｍＭ]":"com",
+        "[nNｎＮ][eｅEＥ][tｔTＴ]":"net",
+        "[cCｃＣ][nNｎＮ]":"cn",
+        "(\\.|\u3001|\u3002)com":".com",
+        "(\\.|\u3001|\u3002)net":".net",
+        "(\\.|\u3001|\u3002)cn":".cn",
+        "[pPｐＰ][sSｓＳ][:：]":"ps:",
+        "。{5,7}":"……","~{2,50}":"——","…{3,40}": "……","－{3,20}":"——",
+        "。(,|，|。)": "。",
+        "？(,|，)": "？",
+        "”(,|，|。)": "”",
+
+        // ===星号屏蔽字还原===
+        "十有(\\*{2})":"十有八九", "\\*(2)不离十":"八九不离十",
+        "G(\\*{2})":"GSM", "感(\\*{2})彩":"感情色彩",
+        "强(\\*{2})u5B9D":"强大法宝",
+
+        "one_word_start": "",
+
+        // ===双字替换，需特殊处理？===
+        "暧me[iì]":"暧昧", 
+        "běijīng":"北京","半shen": "半身", 
+        "缠mian": "缠绵", "成shu": "成熟", "赤lu[oǒ]": "赤裸", "春guang": "春光",
+        "dang校": "党校", "da子": "鞑子", "diao丝": "屌丝", "dú\\s*lì": "独立",
+        "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "fènnù":"愤怒",
+        "gao潮": "高潮", "干chai": "干柴", "guochéng":"过程",
+        "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "hǎoxiàng":"好像",
+        "jinv": "妓女", "jirou": "鸡肉", "ji者": "记者", "ju花": "菊花","jī动": "激动", "肌ròu": "肌肉","ji射": "激射",
+        "kěnéng": "可能", "开bao": "开苞",  "kào近": "靠近", "kao近": "靠近",
+        "ling辱": "凌辱", "luan蛋": "卵蛋",
+        "méiyou":"没有", "mei国": "美国", "迷huan": "迷幻", "mín\\s*zhǔ": "民主", 
+        "nàme":"那么", "nénggou":"能够",
+        "piáo客":"嫖客", "pángbiān":"旁边",
+        "qin兽":"禽兽", 
+        "rúguo":"如果",
+        "shíjiān":"时间","shíhou": "时候", "shíme":"什么", "shi身": "失身", "shu女": "熟女", "上chuang": "上床", "呻yín": "呻吟", "呻yin": "呻吟", "sh[ēe]ngzh[íi]": "生殖", "深gu": "深谷",
+        "双xiu": "双修",
+        "tiaojiao": "调教", "推dao": "推倒", "脱guang": "脱光",
+        "wēixié":"威胁", "wèizhì":"位置",
+        "亵du": "亵渎", "xing福": "性福", "xiu长": "修长",
+        "yīyàng":"一样", "yǐjīng":"已经", "阳wěi": "阳痿", "阳wei": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "you惑": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人","旖ni": "旖旎",
+        "zìjǐ": "自己","zì\\s*you": "自由","zhīdào":"知道","zha药": "炸药", "zhan有": "占有", "政f[ǔu]": "政府", "zhèng\\s*f[uǔ]": "政府", "zhōngyāng": "中央", "zuoyou":"左右", "zhouwéi":"周围",
+
+        // ===单字替换，需特殊处理，防止替换图片===
+        "b(ā|à)ng":"棒","bào":"爆","b[àa]":"吧","bī":"逼","bō":"波",
+        "cāo": "操", "cǎo": "草", "cào": "操", "chāng": "娼", "chang": "娼", "cháo": "潮", "chā": "插", "chéng": "成", "chōu": "抽", "chuáng": "床", "chún": "唇", "ch[ūu]n": "春", "cuō": "搓", "cū": "粗", 
+        "dǎng": "党", "dàng": "荡", "dāo": "刀", "dòng": "洞", "diao": "屌", 
+        "fǎ": "法", "féi": "肥", "fù": "妇", "fu": "妇", "guān": "官", 
+        "hán": "含", "hóu": "喉", "hòu": "厚", "huā": "花", "huá": "华", "huò": "惑", "hùn": "混", "hún": "魂",
+        "jiǔ": "九", "j[īi]ng": "精", "jìn": "禁", "jǐng": "警", "jiāng": "江", "jiān": "奸", "jiāo": "交", "jūn": "军", "jū": "拘", "jú": "局", "jī": "激", 
+        "kù": "裤", "k[àa]n": "看", 
+        "[1l]àng": "浪", "liáo": "撩", "liú": "流", "lì": "莉", "luàn": "乱", "1uàn": "乱", "lún": "伦", "luǒ": "裸", "lòu": "露", "lù": "露", "1ù": "露",
+        "mǎi": "买", "mài": "卖", "máo": "毛", "mā": "妈", "méng": "蒙", "mén": "门", "miè": "灭", "mí": "迷", "mì": "蜜", "mō": "摸",
+        "nǎi": "奶", "nèn": "嫩", "niào": "尿", "niē": "捏", "nòng": "弄", "nǚ": "女", 
+        "pào": "炮", "piàn": "片", 
+        "qiāng": "枪", "qíng": "情", "qīn": "亲", "qiú": "求", "quán": "全", 
+        "r[ìi]": "日", "rǔ": "乳", 
+        "sāo": "骚", "sǎo": "骚", "sè": "色", "shā": "杀", "shēn": "呻", "shè": "射", "shǐ": "屎", "shì": "侍", "sǐ": "死", "sī": "私", "shǔn": "吮", "sǔn": "吮", "sū": "酥", 
+        "tān": "贪", "tiǎn": "舔", "tǐng": "挺", "tǐ": "体", "tǒng": "捅", "tōu": "偷", "tou": "偷", "tuǐ": "腿", "tūn": "吞", "tún": "臀", "wēn": "温", "wěn": "吻", 
+        "xiǎo": "小", "x[ìi]ng": "性", "xiōng": "胸", "xī": "吸", "xí": "习", "xué": "穴", "xuè": "穴", "xùe": "穴", 
+        "yāng": "央", "yàn": "艳", "y[īi]n": "阴", "yào": "药", "yé": "爷", "yòu": "诱", "zàng": "脏", "yù": "欲", "yín": "淫", 
+        "zhēn": "针", "zēn": "针", "zhà": "炸", "zhèng": "政", "zǒu": "走", "zuì": "罪", "zuò": "做", "zhong": "中",
+        
+        "one_word_end": "",
+
+        // ===误替换还原===
+        "碧欲": "碧玉","美欲": "美玉","欲石": "玉石","惜欲": "惜玉","宝欲": "宝玉",
+        "品性": "品行","德性": "德行",
+        "波ok":"book",
+
+        // ===其他修正===
+        "弥俩": "你俩",
+        "妳": "你",
+        "圞|垩|卝|龘":"",
+
+        // ===去广告===
+        "全文字无广告": "",
+        "uutxt\\.org": "",
+        "3vbook\\.cn": "",
+        "txt53712/": "",
+        "\xa0{4,12}":"\xa0\xa0\xa0\xa0\xa0\xa0\xa0"
+    };
     (function(){
-        var replacements = {
-            // ===格式整理===
-            // "\\(|\\[|\\{|（|【|｛":"（",
-            // "\\)|\\]|\\}|）|】|｝":"）",
-            "\\*|＊":"*",
-            "[wWｗＷ]{3}":"www",
-            "w{3}(\u3001|\u3002)":"www.",
-            "[cCｃＣ][oOｏＯ][mMｍＭ]":"com",
-            "[nNｎＮ][eｅEＥ][tｔTＴ]":"net",
-            "[cCｃＣ][nNｎＮ]":"cn",
-            "(\\.|\u3001|\u3002)com":".com",
-            "(\\.|\u3001|\u3002)net":".net",
-            "(\\.|\u3001|\u3002)cn":".cn",
-            "[pPｐＰ][sSｓＳ][:：]":"ps:",
-            "。{5,7}":"……","~{2,50}":"——","…{3,40}": "……","－{3,20}":"——",
-            "。(,|，|。)": "。",
-            "？(,|，)": "？",
-            "”(,|，|。)": "”",
-
-            // ===星号屏蔽字还原===
-            "十有(\\*{2})":"十有八九", "\\*(2)不离十":"八九不离十",
-            "G(\\*{2})":"GSM", "感(\\*{2})彩":"感情色彩",
-            "强(\\*{2})u5B9D":"强大法宝",
-
-            "one_word_start": "",
-
-            // ===双字替换，需特殊处理？===
-            "暧me[iì]":"暧昧", 
-            "běijīng":"北京","半shen": "半身", 
-            "缠mian": "缠绵", "成shu": "成熟", "赤lu[oǒ]": "赤裸", "春guang": "春光",
-            "dang校": "党校", "da子": "鞑子", "diao丝": "屌丝", "dú\\s*lì": "独立",
-            "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "fènnù":"愤怒",
-            "gao潮": "高潮", "干chai": "干柴", "guochéng":"过程",
-            "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "hǎoxiàng":"好像",
-            "jinv": "妓女", "jirou": "鸡肉", "ji者": "记者", "ju花": "菊花","jī动": "激动", "肌ròu": "肌肉","ji射": "激射",
-            "kěnéng": "可能", "开bao": "开苞",  "kào近": "靠近", "kao近": "靠近",
-            "ling辱": "凌辱", "luan蛋": "卵蛋",
-            "méiyou":"没有", "mei国": "美国", "迷huan": "迷幻", "mín\\s*zhǔ": "民主", 
-            "nàme":"那么", "nénggou":"能够",
-            "piáo客":"嫖客", "pángbiān":"旁边",
-            "qin兽":"禽兽", 
-            "rúguo":"如果",
-            "shíjiān":"时间","shíhou": "时候","shi身": "失身", "shu女": "熟女", "上chuang": "上床", "呻yín": "呻吟", "呻yin": "呻吟", "sh[ēe]ngzh[íi]": "生殖", "深gu": "深谷",
-            "双xiu": "双修",
-            "tiaojiao": "调教", "推dao": "推倒", "脱guang": "脱光",
-            "wēixié":"威胁", "wèizhì":"位置",
-            "亵du": "亵渎", "xing福": "性福", "xiu长": "修长",
-            "yǐjīng":"已经", "阳wěi": "阳痿", "阳wei": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "you惑": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人","旖ni": "旖旎",
-            "zìjǐ": "自己","zì\\s*you": "自由","zhīdào":"知道","zha药": "炸药", "zhan有": "占有", "政f[ǔu]": "政府", "zhèng\\s*f[uǔ]": "政府", "zhōngyāng": "中央", "zuoyou":"左右", "zhouwéi":"周围",
-
-            // ===单字替换，需特殊处理，防止替换图片===
-            "b(ā|à)ng":"棒","bào":"爆","b[àa]":"吧","bī":"逼","bō":"波",
-            "cāo": "操", "cǎo": "草", "cào": "操", "chāng": "娼", "chang": "娼", "cháo": "潮", "chā": "插", "chéng": "成", "chōu": "抽", "chuáng": "床", "chún": "唇", "ch[ūu]n": "春", "cuō": "搓", "cū": "粗", 
-            "dǎng": "党", "dàng": "荡", "dāo": "刀", "dòng": "洞", "diao": "屌", 
-            "fǎ": "法", "féi": "肥", "fù": "妇", "fu": "妇", "guān": "官", 
-            "hán": "含", "hóu": "喉", "hòu": "厚", "huā": "花", "huá": "华", "huò": "惑", "hùn": "混", "hún": "魂",
-            "jiǔ": "九", "j[īi]ng": "精", "jìn": "禁", "jǐng": "警", "jiāng": "江", "jiān": "奸", "jiāo": "交", "jūn": "军", "jū": "拘", "jú": "局", "jī": "激", 
-            "kù": "裤", "k[àa]n": "看", 
-            "[1l]àng": "浪", "liáo": "撩", "liú": "流", "lì": "莉", "luàn": "乱", "1uàn": "乱", "lún": "伦", "luǒ": "裸", "lòu": "露", "lù": "露", "1ù": "露",
-            "mǎi": "买", "mài": "卖", "máo": "毛", "mā": "妈", "méng": "蒙", "mén": "门", "miè": "灭", "mí": "迷", "mì": "蜜", "mō": "摸",
-            "nǎi": "奶", "nèn": "嫩", "niào": "尿", "niē": "捏", "nòng": "弄", "nǚ": "女", 
-            "pào": "炮", "piàn": "片", 
-            "qiāng": "枪", "qíng": "情", "qīn": "亲", "qiú": "求", "quán": "全", 
-            "r[ìi]": "日", "rǔ": "乳", 
-            "sāo": "骚", "sǎo": "骚", "sè": "色", "shā": "杀", "shēn": "呻", "shè": "射", "shǐ": "屎", "shì": "侍", "sǐ": "死", "sī": "私", "shǔn": "吮", "sǔn": "吮", "sū": "酥", 
-            "tān": "贪", "tiǎn": "舔", "tǐng": "挺", "tǐ": "体", "tǒng": "捅", "tōu": "偷", "tou": "偷", "tuǐ": "腿", "tūn": "吞", "tún": "臀", "wēn": "温", "wěn": "吻", 
-            "xiǎo": "小", "x[ìi]ng": "性", "xiōng": "胸", "xī": "吸", "xí": "习", "xué": "穴", "xuè": "穴", "xùe": "穴", 
-            "yāng": "央", "yàn": "艳", "y[īi]n": "阴", "yào": "药", "yé": "爷", "yòu": "诱", "zàng": "脏", "yù": "欲", "yín": "淫", 
-            "zhēn": "针", "zēn": "针", "zhà": "炸", "zhèng": "政", "zǒu": "走", "zuì": "罪", "zuò": "做", "zhong": "中",
-            
-            "one_word_end": "",
-
-            // ===误替换还原===
-            "碧欲": "碧玉","美欲": "美玉","欲石": "玉石","惜欲": "惜玉","宝欲": "宝玉",
-            "品性": "品行","德性": "德行",
-            "波ok":"book",
-
-            // ===其他修正===
-            "弥俩": "你俩",
-            "妳": "你",
-            "圞|垩|卝|龘":"",
-
-            // ===无措等图片的修复
-            // '(<center>)?<?img src..(http://www.wcxiaoshuo.com)?(/sss/\\S+\\.jpg).(>| alt."\\d+_\\d+_\\d*\\.jpg" />)(</center>)?': '$3',
-            // "/sss/da.jpg": "打", "/sss/maws.jpg": "吗？", "/sss/baw.jpg": "吧？", "/sss/wuc.jpg": "无", "/sss/maosu.jpg": "：“", "/sss/cuow.jpg": "错", "/sss/ziji.jpg": "自己", "/sss/shenme.jpg": "什么", "/sss/huiqub.jpg": "回去", "/sss/sjian.jpg": "时间", "/sss/zome.jpg": "怎么", "/sss/zhido.jpg": "知道", "/sss/xiaxin.jpg": "相信", "/sss/faxian.jpg": "发现", "/sss/shhua.jpg": "说话", "/sss/dajiex.jpg": "大姐", "/sss/dongxi.jpg": "东西", "/sss/erzib.jpg": "儿子", "/sss/guolair.jpg": "过来", "/sss/xiabang.jpg": "下班", "/sss/zangfl.jpg": "丈夫", "/sss/dianhua.jpg": "电话", "/sss/huilaim.jpg": "回来", "/sss/xiawu.jpg": "下午", "/sss/guoquu.jpg": "过去", "/sss/shangba.jpg": "上班", "/sss/mingtn.jpg": "明天", "/sss/nvrenjj.jpg": "女人", "/sss/shangwo.jpg": "上午", "/sss/shji.jpg": "手机", "/sss/xiaoxinyy.jpg": "小心", "/sss/furene.jpg": "夫人", "/sss/gongzih.jpg": "公子", "/sss/xiansg.jpg": "先生", "/sss/penyouxi.jpg": "朋友", "/sss/xiaoje.jpg": "小姐", "/sss/xifup.jpg": "媳妇", "/sss/nvxudjj.jpg": "女婿", "/sss/xondi.jpg": "兄弟", "/sss/lagong.jpg": "老公", "/sss/lapo.jpg": "老婆", "/sss/meimeid.jpg": "妹妹", "/sss/jiejiev.jpg": "姐姐", "/sss/jiemeiv.jpg": "姐妹", "/sss/xianggx.jpg": "相公", "/sss/6shenumev.jpg": "什么", "/sss/cuoaw.jpg": "错", "/sss/fpefnyoturxi.jpg": "朋友", "/sss/vfsjgigarn.jpg": "时间", "/sss/zzhiedo3.jpg": "知道", "/sss/zibjib.jpg": "自己", "/sss/qdonglxi.jpg": "东西", "/sss/hxiapxint.jpg": "相信", "/sss/fezrormre.jpg": "怎么", "/sss/nvdrfenfjfj.jpg": "女人", "/sss/jhiheejeieev.jpg": "姐姐", "/sss/xdifagojge.jpg": "小姐", "/sss/gggugolgair.jpg": "过来", "/sss/maoashu.jpg": "：“", "/sss/gnxnifawhu.jpg": "下午", "/sss/rgtugoqgugu.jpg": "过去", "/sss/khjukilkaim.jpg": "回来", "/sss/gxhigfadnoxihnyy.jpg": "小心", "/sss/bkbskhhuka.jpg": "说话", "/sss/xeieavnfsg.jpg": "先生", "/sss/yuhhfuiuqub.jpg": "回去", "/sss/pdianphua.jpg": "电话", "/sss/fabxianr.jpg": "发现", "/sss/feilrpto.jpg": "老婆", "/sss/gxronfdri.jpg": "兄弟", "/sss/flfaggofng.jpg": "老公", "/sss/tymyigngtyn.jpg": "明天", "/sss/dfshfhhfjfi.jpg": "手机", "/sss/gstjhranjgwjo.jpg": "上午", "/sss/fmgeyimehid.jpg": "妹妹", "/sss/gxgihftutp.jpg": "媳妇", "/sss/cerztifb.jpg": "儿子", "/sss/gfxgigagbfadng.jpg": "下班", "/sss/hjeirerm6eihv.jpg": "姐妹", "/sss/edajihexr.jpg": "大姐", "/sss/wesfhranrrgba.jpg": "上班", "/sss/gfognggzigh.jpg": "公子", "/sss/frurtefne.jpg": "夫人", "/sss/fzagnggfbl.jpg": "丈夫", "/sss/nvdxfudfjfj.jpg": "女婿", "/sss/xdidafnggx.jpg": "相公", "/sss/zenme.jpg": "怎么", "/sss/gongzi.jpg": "公子", "/sss/ddefr.jpg": "", 
-            // '(<center>)?<?img src..(http://www.16kbook.org)?(/tu/\\S+\\.jpg).(>| alt."\\d+_\\d+_\\d*\\.jpg" />)(</center>)?': "$3",
-
-            // ===去广告===
-            "全文字无广告": "",
-            "uutxt\\.org": "",
-            "3vbook\\.cn": "",
-            "txt53712/": "",
-            "\xa0{4,12}":"\xa0\xa0\xa0\xa0\xa0\xa0\xa0"
-        };
-
         var key,
             isReplace_one_word = false,
             replace_regex,
@@ -621,7 +622,8 @@
             }
 
             if(isReplace_one_word){
-                // 防止误替换图片，需要进一步修正
+                // TODO: 需要进一步完善
+                // 防止误替换图片
                 replace_key = key + "([^\\.a-z\\d])";
                 replace_result = replacements[key] + "$1";
             }else{
@@ -631,11 +633,14 @@
             new_replacements[replace_key] = replace_result;
         }
     })();
-
+    
     function contentReplacements(s){
         for (key in new_replacements) {
             s = s.replace(new RegExp(key, 'ig'), new_replacements[key]);
         }
+        // for (key in replacements) {
+        //     s = s.replace(new RegExp(key, 'ig'), replacements[key]);
+        // }
         return s;
     }
 
@@ -721,8 +726,10 @@
         },
         // 智能获取标题，需要 window
         autoGetTitleText: function (document) {
+            debug("AutoGetTitle: ");
+
             var
-                _main_selector = "#TextTitle, #title, .title",
+                _main_selector = "#TextTitle, #title, .ChapterName",
                 _second_selector = "h1, h2, h3",
                 _positive_regexp = /第?\S+[章节卷回]|\d{2,4}/,
                 _negative_regepx = /[上下]一章/,
@@ -733,6 +740,7 @@
 
             var _headings = document.querySelectorAll(_main_selector);
             if (_headings.length === 1) {
+                debug("  main selector");
                 return _headings[0].textContent.trim();
             }
 
@@ -903,7 +911,11 @@
                 }
 
                 // 去除内容中包含的标题
-                var titleRegText = this.chapterTitle.trim()
+                var titleRegText = "";
+                if(this.bookTitle){
+                    titleRegText += this.bookTitle + "\\d+|";
+                }
+                titleRegText += this.chapterTitle.trim()
                         .replace(/[()\[\]{}|+.,^$?\\]/g, "\\$&")
                         .replace(/\s+/g, "(?:\\s|&nbsp;)*");
                 debug("  Content replace title: " + titleRegText);
@@ -928,7 +940,7 @@
 
             var link = this.$doc.find(selector);
             if(link.length > 0){
-                url = config.fullHref ? link[0].href : link.attr('href');
+                url = config.fullHref ? getFullHref(link[0]) : link.attr('href');
                 debug("找到下一页链接: " + url);
 
             }else{
@@ -969,7 +981,7 @@
 
             var link = this.$doc.find(selector);
             if(link.length > 0){
-                url = config.fullHref ? link[0].href: link.attr('href');
+                url = config.fullHref ? getFullHref(link[0]): link.attr('href');
                 debug("找到上一页链接: " + url);
             }else{
                 debug("无法找到上一页链接.");
@@ -995,7 +1007,7 @@
             }
 
             if(link && link.length > 0){
-                url = config.fullHref ? link[0].href : link.attr('href');
+                url = config.fullHref ? getFullHref(link[0]) : link.attr('href');
                 debug("找到目录链接: " + url);
             }else{
                 debug("无法找到目录链接.");
@@ -1122,8 +1134,13 @@
                 GM_addStyle(button_css);
             }else{
                 // 逐浪网等按钮修复：右边的分享盖住了按钮
-                if(window.location.hostname.match(/zhulang|yanmoxuan/)){
-                    GM_addStyle(".readerbtn {top: 10% !important;}");
+                switch(true){
+                    case /zhulang|yanmoxuan/.test(window.location.hostname):
+                        GM_addStyle(".readerbtn {top: 5% !important;}");
+                        break;
+                    case window.location.hostname == "shouda8.com":
+                        GM_addStyle(".readerbtn {margin-right: 25px !important;}")
+                        break;
                 }
             }
 
@@ -1429,6 +1446,7 @@
     // jQuery text 完全匹配. e.g. a:econtains('最新章节')
     $.expr[":"].econtains = function(obj, index, meta, stack){return (obj.textContent || obj.innerText || $(obj).text() || "").toLowerCase() == meta[3].toLowerCase();};
      //------------------- 辅助函数 ----------------------------------------
+    function getFullHref(href){if(typeof href == 'undefined')return '';if(typeof href!='string') href=href.getAttribute('href');var a = getFullHref.a;if(!a){getFullHref.a=a=document.createElement('a');}a.href = href;return a.href;}
     // DOMParser HTML extension
     (function(DOMParser) {"use strict";var DOMParser_proto = DOMParser.prototype, real_parseFromString = DOMParser_proto.parseFromString;try {if ((new DOMParser).parseFromString("", "text/html")) {return;}} catch (ex) {}DOMParser_proto.parseFromString = function(markup, type) {if (/^\s*text\/html\s*(?:;|$)/i.test(type)) {var doc = document.implementation.createHTMLDocument("");doc.body.innerHTML = markup;return doc;} else {return real_parseFromString.apply(this, arguments);}};}(DOMParser));
     // 自定义 parseHTML, 需要上面的 DOMParser

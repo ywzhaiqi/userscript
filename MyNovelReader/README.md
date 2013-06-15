@@ -121,6 +121,7 @@ Firefox（Greasemonkey/Scriptish）， Chrome（Tampermonkey），Opera（暴力
 
 ### 更新
 
+ - 2013年6月15日，版本 2.3.8。增加无错和16kbook图片的替换，修复Chrome下加载下一页的bug。
  - 2013年6月13日，版本 2.3.7。完善框架内的运行，个别站点还有问题。
  - 2013年6月11日，版本 2.3.2。完善非 Firefox 下标题的获取。
  - 2013年6月11日，版本 2.3.1。
