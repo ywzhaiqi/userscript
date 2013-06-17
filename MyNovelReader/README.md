@@ -124,6 +124,7 @@ Firefox（Greasemonkey/Scriptish）， Chrome（Tampermonkey），Opera（暴力
 
 ### 更新
 
+ - 2013年6月17日，版本 2.4.1。修复 Chrome 下退出按钮的问题。
  - 2013年6月17日，版本 2.4.0。
  	- 修改无错和16K图片全局替换为个别替换。
  	- 新增配置参数 contentReplace 的另一种写法：`contentReplace: {'<img.*?ait="(.*?)".*?>': "$1",}`

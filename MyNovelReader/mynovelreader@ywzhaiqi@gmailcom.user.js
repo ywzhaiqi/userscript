@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        2.4.0
+// @version        2.4.1
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说清爽阅读脚本。
@@ -1134,7 +1134,11 @@
             if(reader.isEnabled){  // 退出
                 GM_setValue("auto_enable", false);
                 L_setValue("booklinkme_disable_onetime", true);
-                window.location = reader.curPageUrl || window.location.href;
+                if(reader.curPageUrl){
+                    unsafeWindow.location = reader.curPageUrl;
+                }else{
+                    window.location.reload();
+                }
             }else{
                 GM_setValue("auto_enable", true);
                 L_removeValue("booklinkme_disable_onetime");
