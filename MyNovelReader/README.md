@@ -121,6 +121,10 @@ Firefox（Greasemonkey/Scriptish）， Chrome（Tampermonkey），Opera（暴力
 
 ### 更新
 
+ - 2013年6月17日，版本 2.4.0。
+ 	- 修改无错和16K图片全局替换为个别替换。
+ 	- 新增配置参数 contentReplace 的另一种写法：`contentReplace: {'<img.*?ait="(.*?)".*?>': "$1",}`
+ 	- 增加第一中文的站点配置
  - 2013年6月15日，版本 2.3.8。增加无错和16kbook图片的替换，修复Chrome下加载下一页的bug。
  - 2013年6月13日，版本 2.3.7。完善框架内的运行，个别站点还有问题。
  - 2013年6月11日，版本 2.3.2。完善非 Firefox 下标题的获取。
