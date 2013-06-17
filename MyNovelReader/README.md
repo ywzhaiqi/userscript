@@ -17,9 +17,11 @@ Firefox（Greasemonkey/Scriptish）， Chrome（Tampermonkey），Opera（暴力
 
  - 自动获取标题、内容、上一页、下一页、目录页链接。
  - 自动加载下一页。
- - 自定义阅读样式。
  - 过滤页面广告。
  - 小说屏蔽字修复。
+ - 无错、16K、第一中文等网站图片替换成文字。
+ - 自定义阅读样式。
+ - 自定义站点规则。
  - 鼠标双击启用停用翻页。
  - 末页链接变灰色。
 
@@ -105,8 +107,9 @@ Firefox（Greasemonkey/Scriptish）， Chrome（Tampermonkey），Opera（暴力
 
 	        // （可选）内容jQuery选择器
 	        contentSelector: "#content",
-	        // （可选）内容移除，正则表达式
+	        // （可选）内容移除，正则表达式或下面的另一个写法
 	        contentReplace: "起点中文网|www\\.qidian\\.com|欢迎广大书友.*",
+	        // contentReplace: {'<img.*?ait="(.*?)".*?>': "$1",}
 
 	        // （可选）下面2个一起。如果加载的下一页没有成功，则设置这个为true或用下面的补丁。
 	        useiframe: false,
