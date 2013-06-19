@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        2.4.1
+// @version        2.4.3
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说清爽阅读脚本。
@@ -549,7 +549,7 @@
         "chongdong":"冲动", "缠mian": "缠绵", "成shu": "成熟", "赤lu[oǒ]": "赤裸", "春guang": "春光",
         "dang校": "党校", "da子": "鞑子", "diao丝": "屌丝", "dú\\s*lì": "独立", "dìfāng":"地方", 
         "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "fènnù":"愤怒",
-        "gao潮": "高潮", "干chai": "干柴", "gu[oò]chéng":"过程", "guānxì":"关系",
+        "gao潮": "高潮", "干chai": "干柴", "gu[oò]chéng":"过程", "guānxì":"关系", "gǎnjiào":"感觉",
         "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "hǎoxiàng":"好像", "huángsè":"黄色",
         "jìnháng":"进行", "jinv": "妓女", "jirou": "鸡肉", "ji者":"记者", "ju花":"菊花","jī动":"激动", "肌ròu":"肌肉","ji射":"激射", "jiēchù":"接触",
         "kěnéng": "可能", "开bao": "开苞",  "kào近": "靠近", "kao近": "靠近",
@@ -560,11 +560,11 @@
         "qíguài":"奇怪", "qin兽":"禽兽", "qīngchǔ":"清楚",
         "rúgu[oǒ]":"如果", "r[oó]ngyì":"容易",
         "shìjiè":"世界", "shíjiān":"时间", "shíh[oò]u": "时候", "shíme":"什么", "shi身": "失身", "shu女": "熟女", "上chuang": "上床", "呻yín": "呻吟", "呻yin": "呻吟", "sh[ēe]ngzh[íi]": "生殖", "深gu": "深谷", "双xiu": "双修",
-        "tūrán":"突然", "tiaojiao": "调教", "推dao": "推倒", "脱guang": "脱光", "tèbié":"特别", "tōngguò":"通过",
+        "t[uū]rán":"突然", "tiaojiao": "调教", "推dao": "推倒", "脱guang": "脱光", "tèbié":"特别", "tōngguò":"通过",
         "wēixié":"威胁", "wèizhì":"位置",
         "亵du": "亵渎", "xing福": "性福", "xiu长": "修长",
         "yīyàng":"一样", "yīdiǎn":"一点", "yǐjīng":"已经", "阳wěi": "阳痿", "阳wei": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "you惑": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人","旖ni": "旖旎",
-        "zìjǐ": "自己","zì\\s*you": "自由","zhīdào":"知道","zha药": "炸药", "zhan有": "占有", "政f[ǔu]": "政府", "zhèng\\s*f[uǔ]": "政府", "zhōngyāng": "中央", "zu[oǒ]y[oò]u":"左右", "zhouwéi":"周围",
+        "zìjǐ": "自己","zì\\s*you": "自由","zhīdào":"知道","zha药": "炸药", "zhan有": "占有", "政f[ǔu]": "政府", "zhèng\\s*f[uǔ]": "政府", "zhōngyāng": "中央", "zu[oǒ]y[oò]u":"左右", "zh[oō]uwéi":"周围",
 
         // ===单字替换，需特殊处理，防止替换图片===
         "b(ā|à)ng":"棒","bào":"爆","b[àa]":"吧","bī":"逼","bō":"波",
@@ -606,7 +606,7 @@
     };
    
     function contentReplacements(s){
-        for (key in replacements) {
+        for (var key in replacements) {
             s = s.replace(new RegExp(key, 'ig'), replacements[key]);
         }
         return s;
@@ -889,11 +889,11 @@
                 // 去除内容中包含的标题
                 var titleRegText = "";
                 if(this.bookTitle){
-                    titleRegText += this.bookTitle + "\\d+|";
+                    titleRegText += this.bookTitle + "\\d+";
                 }
-                titleRegText += this.chapterTitle.trim()
-                        .replace(/[()\[\]{}|+.,^$?\\]/g, "\\$&")
-                        .replace(/\s+/g, "(?:\\s|&nbsp;)*");
+                // titleRegText += this.chapterTitle.trim()
+                //         .replace(/[()\[\]{}|+.,^$?\\]/g, "\\$&")
+                //         .replace(/\s+/g, "(?:\\s|&nbsp;)*");
                 debug("  Content replace title: " + titleRegText);
                 text = text.replace(new RegExp(titleRegText, "g"), "");
             }
@@ -1127,7 +1127,7 @@
             var btn = document.createElement("div");
             btn.className = "readerbtn";
             btn.innerHTML = reader.isEnabled ? "退出" : "阅读模式";
-            btn.onclick = reader.toggle;
+            btn.addEventListener("click", reader.toggle, false);
             document.body.appendChild(btn);
         },
         toggle: function(){
@@ -1294,12 +1294,6 @@
         },
     };
 
-    // 为了防止 Error: Scriptish access violation: unsafeWindow cannot call: GM_getValue
-    //     详见 http://wiki.greasespot.net/Greasemonkey_access_violation
-    unsafeWindow.readx = function(){
-        setTimeout(launch, 0);
-    };
-
     var launch = function(){
         var getCurSiteInfo = function(){
             var sites = rule.specialSite;
@@ -1342,6 +1336,21 @@
 
     window.addEventListener("DOMContentLoaded", autoLaunch, false);
 
+    // 为了防止 Error: Scriptish access violation: unsafeWindow cannot call: GM_getValue
+    //     详见 http://wiki.greasespot.net/Greasemonkey_access_violation
+    unsafeWindow.readx = function(){
+        fakeTimeout(launch);
+    };
+
+    function fakeTimeout(callback) {
+      // Register event listener
+      window.document.body.addEventListener("timeoutEvent", callback, false);
+      // Generate and dispatch synthetic event
+      var ev = document.createEvent("HTMLEvents");
+      ev.initEvent("timeoutEvent", true, false);
+      window.document.body.dispatchEvent(ev);
+    }
+
 
     var noticeDiv;
     var noticeDivto;
@@ -1373,6 +1382,10 @@
                 -moz-transition:opacity 0.3s ease-in-out;\
             ';
             document.body.appendChild(div);
+
+            document.addEventListener("click", function(){
+                noticeDiv.style.display='none';
+            }, false);
         };
         clearTimeout(noticeDivto);
         clearTimeout(noticeDivto2);
