@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        2.4.3
+// @version        2.4.4
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说清爽阅读脚本。
@@ -548,10 +548,10 @@
         "běi(\\s|&nbsp;)*jīng":"北京","半shen": "半身", "bìjìng":"毕竟",
         "chongdong":"冲动", "缠mian": "缠绵", "成shu": "成熟", "赤lu[oǒ]": "赤裸", "春guang": "春光",
         "dang校": "党校", "da子": "鞑子", "diao丝": "屌丝", "dú\\s*lì": "独立", "dìfāng":"地方", 
-        "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "fènnù":"愤怒",
+        "fǎngfó":"仿佛", "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "fènnù":"愤怒",
         "gao潮": "高潮", "干chai": "干柴", "gu[oò]chéng":"过程", "guānxì":"关系", "gǎnjiào":"感觉",
         "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "hǎoxiàng":"好像", "huángsè":"黄色",
-        "jìnháng":"进行", "jinv": "妓女", "jirou": "鸡肉", "ji者":"记者", "ju花":"菊花","jī动":"激动", "肌ròu":"肌肉","ji射":"激射", "jiēchù":"接触",
+        "jìnháng":"进行", "jinv": "妓女", "jirou": "鸡肉", "ji者":"记者", "ju花":"菊花","jī动":"激动", "肌ròu":"肌肉","ji射":"激射", "jiēch[uù]":"接触",
         "kěnéng": "可能", "开bao": "开苞",  "kào近": "靠近", "kao近": "靠近",
         "ling辱": "凌辱", "luan蛋": "卵蛋",
         "mǎnyì":"满意", "mǎshàng":"马上", "méiy[oǒ]u":"没有", "mei国": "美国", "míngbái":"明白", "迷huan": "迷幻", "mín\\s*zhǔ": "民主", 
@@ -580,7 +580,7 @@
         "pào": "炮", "piàn": "片", 
         "qiāng": "枪", "qíng": "情", "qīn": "亲", "qiú": "求", "quán": "全", 
         "r[ìi]": "日", "rǔ": "乳", 
-        "sāo":"骚", "sǎo": "骚", "sè": "色", "shā": "杀", "shēn": "呻", "shè": "射", "shǐ": "屎", "shì": "侍", "sǐ": "死", "sī": "私", "shǔn": "吮", "sǔn": "吮", "sū": "酥", 
+        "sāo":"骚", "sǎo": "骚", "sè": "色", "shā": "杀", "shēn":"呻", "shén":"神", "shè": "射", "shǐ": "屎", "shì": "侍", "sǐ": "死", "sī": "私", "shǔn": "吮", "sǔn": "吮", "sū": "酥", 
         "tān":"贪", "tiǎn": "舔", "tǐng":"挺", "tǐ": "体", "tǒng": "捅", "tōu": "偷", "tou": "偷", "tuǐ": "腿", "tūn": "吞", "tún": "臀", "wēn": "温", "wěn": "吻", 
         "xiǎo":"小", "x[ìi]ng": "性", "xiōng": "胸", "xī": "吸", "xí": "习", "xué": "穴", "xuè": "穴", "xùe": "穴", 
         "yāng":"央", "yàn":"艳", "y[īi]n":"阴", "yào": "药", "yé": "爷", "yòu": "诱", "zàng": "脏", "yù": "欲", "yín": "淫", 
@@ -684,6 +684,10 @@
             }
 
             this.bookTitle = this.bookTitle || "";
+
+            // 标题间增加一个空格
+            this.chapterTitle = this.chapterTitle.replace(/^(第?\S+?[章节卷回])(.*)/, "$1 $2");
+
             this.docTitle = this.bookTitle ?
                     this.bookTitle + ' - ' + this.chapterTitle :
                     docTitle;
@@ -897,10 +901,24 @@
                 debug("  Content replace title: " + titleRegText);
                 text = text.replace(new RegExp(titleRegText, "g"), "");
             }
-            
+
+            // 小说屏蔽字修复。
             if(config.content_replacements){
                 var s = new Date().getTime();
+
+                // 先提取出 img
+                var imgs = {};
+                var i = 0;
+                text = text.replace(/<img[^>]*>/g, function(img){
+                    imgs[i] = img;
+                    return "{" + (i++) + "}";
+                });
+
                 text = contentReplacements(text);
+
+                // 还原图片
+                text = reader.nano(text, imgs);
+
                 debug("  小说屏蔽字修复耗时：" + (new Date().getTime() - s) + 'ms');
             }
             return text;
