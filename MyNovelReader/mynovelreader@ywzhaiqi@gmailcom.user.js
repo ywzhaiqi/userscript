@@ -15,53 +15,51 @@
 // @require        http://code.jquery.com/jquery-1.9.1.min.js
 
 // @include        http://read.qidian.com/*,*.aspx
-// @include        http://www.qdmm.com/BookReader/*.aspx
-// @include        http://www.jjwxc.net/onebook.php*
+// @include        http://www.qdmm.com/BookReader/*,*.aspx
+// @include        http://www.jjwxc.net/onebook.php?novelid=*&chapterid=*
 // @include        http://book.zongheng.com/chapter/*/*.html
-// @include        http://www.xxsy.net/books/*.html
-// @include        http://book.zhulang.com/*.html
-// @include        http://www.17k.com/chapter/*.html
-// @include        http://www.kanxia.net/k/*.html
-// @include        http://www.qingdi.com/files/article/html/*.html
-// @include        http://www.xkzw.org/*.html
-// @include        http://bbs.chinaunix.net/thread-*.html
-// @include        http://www.paoshu8.net/Html/*.shtm
-// @include        http://shouda8.com/*.html
-// @include        http://novel.hongxiu.com/*.shtml
+// @include        http://www.xxsy.net/books/*/*.html
+// @include        http://book.zhulang.com/*/*.html
+// @include        http://www.17k.com/chapter/*/*.html
+// @include        http://www.kanxia.net/k/*/*/*.html
+// @include        http://www.qingdi.com/files/article/html/*/*/*.html
+// @include        http://www.xkzw.org/*/*.html
+// @include        http://shouda8.com/*/*.html
+// @include        http://novel.hongxiu.com/*/*/*.shtml
 
 // booklink.me
-// @include        http://www.shumilou.com/*.html
+// @include        http://www.shumilou.com/*/*.html
 // @include        http://www.wcxiaoshuo.com/wcxs-*-*/
-// @include        http://www.ranwen.cc/*.html
-// @include        http://www.ranwen.net/files/article/*.html
-// @include        http://www.bxs.cc/*.html
-// @include        http://www.laishuwu.com/html/*.html
-// @include        http://www.taomeier.com/book/*.html
-// @include        http://www.binhuo.com/html/*.html
-// @include        http://www.haoqi99.com/*.shtml
+// @include        http://www.ranwen.cc/*/*/*/*.html
+// @include        http://www.ranwen.net/files/article/*/*/*.html
+// @include        http://www.bxs.cc/*/*.html
+// @include        http://www.laishuwu.com/html/*/*/*.html
+// @include        http://www.binhuo.com/html/*/*/*.html
+// @include        http://www.haoqi99.com/haoqi99/*/*/*.shtml
 // @include        http://www.shuhe.cc/*/*/
-// @include        http://www.dudukan.net/html/*.html
-// @include        http://www.hahawx.com/*.htm
+// @include        http://www.dudukan.net/html/*/*/*.html
+// @include        http://www.hahawx.com/*/*/*.htm
 // @include        http://www.zhuzhudao.com/txt/*/*/
-// @include        http://www.tadu.com/book/*
-// @include        http://www.fkzww.net/thread-*.html
-// @include        http://www.aishoucang.com/*.html
-// @include        http://www.wanshuba.com/Html/*.html
-// @include        http://www.zhuishu.net/files/article/html/*.html
+// @include        http://www.tadu.com/book/*/*/
+// @include        http://www.aishoucang.com/*/*.html
+// @include        http://www.wanshuba.com/Html/*/*/*.html
+// @include        http://www.zhuishu.net/files/article/html/*/*/*.html
 // @include        http://www.sqsxs.com/*/*/*.html
-// @include        http://www.6xiaoshuo.com/*.html
-// @include        http://www.hotsk.com/Html/Book/*.shtml
+// @include        http://www.caiwei.tw/html/*/*.html
+// @include        http://www.hotsk.com/Html/Book/*/*/*.shtml
+// 需特殊处理的论坛
+// @include        http://www.fkzww.net/thread-*.html
 
 // www.sodu.so
-// @include        http://www.qishuwu.com/*
-// @include        http://www.jiaodu8.com/*.html
-// @include        http://www.fktxt.com/book/*.html
-// @include        http://www.186s.cn/files/article/html/*.html
-// @include        http://www.6xs.cn/xs/*.html
-// @include        http://www.chaojiqiangbing.com/book/*.html
-// @include        http://book.moka123.com/book/*.html
-// @include        http://www.suimeng.com/files/article/html/*.html
-// @include        http://www.hao662.com/haoshu/*.html
+// @include        http://www.qishuwu.com/*/*/
+// @include        http://www.jiaodu8.com/*/*/*/*.html
+// @include        http://www.fktxt.com/book/*/*.html
+// @include        http://www.186s.cn/files/article/html/*/*/*.html
+// @include        http://www.6xs.cn/xs/*/*/*.html
+// @include        http://www.chaojiqiangbing.com/book/*/*/*.html
+// @include        http://book.moka123.com/book/*/*/*.html
+// @include        http://www.suimeng.com/files/article/html/*/*/*.html
+// @include        http://www.hao662.com/haoshu/*/*/*.html
 
 // 百度搜索网站
 // @include        http://www.16kbook.org/Html/Book/*/*/*.shtml
@@ -71,68 +69,67 @@
 // @include        http://www.1kanshu.com/files/article/html/*/*/*.html
 // @include        http://www.uutxt.org/book/*/*/*.html
 // @include        http://www.5800.cc/*/*/*/*.html
-// @include        http://www.biquge.com/*.html
-// @include        http://www.qududu.com/book/*.html
-// @include        http://www.free97.cn/book/*.html
-// @include        http://www.122s.com/book/*.html
-// @include        http://www.123du.net/*.html
-// @include        http://www.hwafa.com/*.html
-// @include        http://www.qmshu.com/html/*.html
-// @include        http://dlzw.cc/article*.html
-// @include        http://www.shushuw.cn/*.html
-// @include        http://www.shushu5.com/read/*.html
-// @include        http://www.qiuwu.net/html/*.html
-// @include        http://www.xiaoyanwenxue.com/files/article/html/*.html
-// @include        http://www.3gsc.com.cn/*
-// @include        http://www.bj-ibook.cn/book/*.htm
-// @include        http://www.baoliny.com/files/article/html/*.html
-// @include        http://www.dajiadu.net/files/article/html/*.html
-// @include        http://www.yankuai.com/files/article/html/*.html
-// @include        http://www.docin.net/*.html
-// @include        http://www.dushuge.net/html/*.html
-// @include        http://www.xunshu.org/*.html
-// @include        http://www.moneyren.com/book/*.shtml
-// @include        http://wemaxfilipino.com/*.html
-// @include        http://www.85618892.cn/xiaoshuo/*.shtml
-// @include        http://www.bookba.net/Html/Book/*.html
-// @include        http://www.moksos.com/*.html
-// @include        http://dudu8.net/novel/*.html
-// @include        http://www.dawenxue.net/html/*.html
-// @include        http://www.yanmoxuan.org/book/*.html
-// @include        http://www.duyidu.com/xiaoshuo/*.html
-// @include        http://www.69zw.com/xiaoshuo/*.html
-// @include        http://www.laishu.com/book/*.shtml
-// @include        http://www.bxwx.org/*.html
-// @include        http://www.360118.com/html/*.html*
-// @include        http://www.59to.com/files/article/xiaoshuo/*.html
+// @include        http://www.biquge.com/*/*.html
+// @include        http://www.qududu.com/book/*/*/*.html
+// @include        http://www.free97.cn/book/*/*/*.html
+// @include        http://www.122s.com/book/*/*.html
+// @include        http://www.123du.net/dudu-*/*/*.html
+// @include        http://www.hwafa.com/*/*.html
+// @include        http://www.qmshu.com/html/*/*/*.html
+// @include        http://dlzw.cc/article-*-*.html
+// @include        http://www.shushu5.com/read/*/*.html
+// @include        http://www.qiuwu.net/html/*/*/*.html
+// @include        http://www.xiaoyanwenxue.com/files/article/html/*/*/*.html
+// @include        http://www.3gsc.com.cn/bookcon/*_*_*
+// @include        http://www.bj-ibook.cn/book/*/*/*.htm
+// @include        http://www.baoliny.com/*/*.html
+// @include        http://www.dajiadu.net/files/article/html/*/*/*.html
+// @include        http://www.yankuai.com/files/article/html/*/*/*.html
+// @include        http://www.docin.net/*/*.html
+// @include        http://www.dushuge.net/html/*/*/*.html
+// @include        http://www.xunshu.org/xunshu/*/*/*.html
+// @include        http://www.moneyren.com/book/*/*/*.shtml
+// @include        http://wemaxfilipino.com/*/*/*.html
+// @include        http://www.85618892.cn/xiaoshuo/*/*/*.shtml
+// @include        http://www.bookba.net/Html/Book/*/*/*.html
+// @include        http://www.moksos.com/*/*/*.html
+// @include        http://dudu8.net/novel/*/*/*.html
+// @include        http://www.dawenxue.net/html/*/*/*.html
+// @include        http://www.yanmoxuan.org/book/*/*/*.html
+// @include        http://www.duyidu.com/xiaoshuo/*/*/*.html
+// @include        http://www.69zw.com/xiaoshuo/*/*/*.html
+// @include        http://www.laishu.com/book/*/*/*.shtml
+// @include        http://www.bxwx.org/b/*/*/*.html
+// @include        http://www.360118.com/html/*/*/*.html
+// @include        http://www.59to.com/files/article/xiaoshuo/*/*/*.html
 // @include        http://www.dyzww.com/cn/*/*/*.html
-// @include        http://www.kanshu.la/book/*.shtml
-// @include        http://www.9wh.net/*.html
-// @include        http://www.luoqiu.com/html/*.html
-// @include        http://www.epzw.com/files/article/html/*.html
-// @include        http://www.dashubao.com/book/*.html
-// @include        http://*faloo.com/*.html
-// @include        http://www.baikv.com/xiaoshuo/*.html
-// @include        http://www.66721.com/*.html
-// @include        http://www.3dllc.com/html/*.html
-// @include        http://www.xstxt.com/*
-// @include        http://www.zzzcn.com/*
-// @include        http://xs321.net/*
-// @include        http://www.nilongdao.com/book/*.html
-// @include        http://www.book108.com/*.html
-// @include        http://read.guanhuaju.com/files/article/html/*.html
-// @include        http://5ycn.com/*.html
-// @include        http://www.zhaoxiaoshuo.com/chapter-*
-// @include        http://www.zbzw.com/*.html
-// @include        http://manghuangji.cc/*.html
-// @include        http://www.aiqis.com/*.html
-// @include        http://www.fftxt.net/book/*.html
-// @include        http://www.5kwx.com/book/*.html
-// @include        http://www.uuxiaoshuo.net/html/*.html
+// @include        http://www.kanshu.la/book/*/*.shtml
+// @include        http://www.9wh.net/*/*/*.html
+// @include        http://www.luoqiu.com/html/*/*/*.html
+// @include        http://www.epzw.com/files/article/html/*/*/*.html
+// @include        http://www.dashubao.com/book/*/*/*.html
+// @include        http://b.faloo.com/p/*/*.html
+// @include        http://www.baikv.com/*/*.html
+// @include        http://www.66721.com/*/*/*.html
+// @include        http://www.3dllc.com/html/*/*/*.html
+// @include        http://www.xstxt.com/*/*/
+// @include        http://www.zzzcn.com/*-*/
+// @include        http://www.nilongdao.com/book/*/*/*.html
+// @include        http://xs321.net/*/*/
+// @include        http://read.guanhuaju.com/files/article/html/*/*/*.html
+// @include        http://www.book108.com/*/*/*.html
+// @include        http://5ycn.com/*/*/*.html
+// @include        http://www.zhaoxiaoshuo.com/chapter-*-*-*/
+// @include        http://www.zbzw.com/*/*.html
+// @include        http://manghuangji.cc/*/*.html
+// @include        http://www.aiqis.com/*/*.html
+// @include        http://www.fftxt.net/book/*/*.html
+// @include        http://www.5kwx.com/book/*/*/*.html
+// @include        http://www.uuxiaoshuo.net/html/*/*/*.html
 // @include        http://www.sanyyo.org/*.html
-// @include        http://www.chinaisbn.com/*.html
-// @include        http://www.caihongwenxue.com/Html/Book/*.html*
-// @include
+// @include        http://www.chinaisbn.com/*/*/*.html
+// @include        http://www.caihongwenxue.com/Html/Book/*/*/*.html
+// @include        http://www.shushuw.cn/shu/*/*.html
 
 // @exclude        */List.shtml
 // @exclude        */List.html
@@ -216,10 +213,9 @@
         },
 
         // 特殊站点，需再次获取且跨域。添加 class="reader-ajax"，同时需要 src
-        {siteName: "起点中文网",
-            url: "^http://read\\.qidian\\.com/\\S+/\\d+,\\d+.aspx$",
-            exampleUrl: "http://www.qidian.com/",
-            titleReg: /小说:(.*?)独家首发\/(.*?)\/.*/,
+        {siteName: "起点文学",
+            url: "^http://(www|read)\\.(qidian|qdmm|qdwenxue)\\.com/BookReader/\\d+,\\d+.aspx$",
+            titleReg: /小说:(.*?)(?:独家首发)\/(.*?)\/.*/,
             contentReplace: /起点中文网|www.qidian.com|欢迎广大书友.*/g,
             contentPatch: function(fakeStub){
                 fakeStub.find('div#content script:first').addClass('reader-ajax');
@@ -229,7 +225,7 @@
         {siteName: "手打吧",
             url: /^http:\/\/shouda8\.com\/\w+\/\d+\.html/,
             exampleUrl: "http://shouda8.com/chaojinengyuanqiangguo/3723291.html",
-            contentReplace: /[w\s\[\/\\\(]*.shouda8.com.*|(\/\/)?[全文字]?首发|手打吧|\(w\/w\/w.shouda8.c\/o\/m 手、打。吧更新超快\)|小说 阅读网 www.xiaoshuoyd .com/ig,
+            contentReplace: /[w\s\[\/\\\(]*.shouda8.com.*|(\/\/)?[全文字]?首发|手打吧|www.shou.*|\(w\/w\/w.shouda8.c\/o\/m 手、打。吧更新超快\)|小说 阅读网 www.xiaoshuoyd .com/ig,
             contentPatch: function(fakeStub){
                 var scriptSrc = fakeStub.find('body').html().match(/outputContent\('(.*txt)'\)/)[1];
                 scriptSrc = "http://shouda8.com/ajax.php?f=http://shouda8.com/read" + scriptSrc;
@@ -245,9 +241,11 @@
             url: /^http:\/\/www\.jjwxc\.net\/onebook\.php\S*/,
             exampleUrl: "http://www.jjwxc.net",
             titleReg: /《(.*?)》.*ˇ(.*?)ˇ.*/,
+            indexSelector: ".noveltitle > h1 > a",
             contentPatch: function(fakeStub){
                 fakeStub.find('h2').remove();
                 fakeStub.find('#six_list, #sendKingTickets').parent().remove();
+                fakeStub.find("div.noveltext").find("div:first, h1").remove();
             }
         },
 
@@ -299,6 +297,11 @@
                 '(<center>)?<?img src..(http://www.wcxiaoshuo.com)?(/sss/\\S+\\.jpg).(>| alt."\\d+_\\d+_\\d*\\.jpg" />)(</center>)?': '$3',
                 "/sss/da.jpg": "打", "/sss/maws.jpg": "吗？", "/sss/baw.jpg": "吧？", "/sss/wuc.jpg": "无", "/sss/maosu.jpg": "：“", "/sss/cuow.jpg": "错", "/sss/ziji.jpg": "自己", "/sss/shenme.jpg": "什么", "/sss/huiqub.jpg": "回去", "/sss/sjian.jpg": "时间", "/sss/zome.jpg": "怎么", "/sss/zhido.jpg": "知道", "/sss/xiaxin.jpg": "相信", "/sss/faxian.jpg": "发现", "/sss/shhua.jpg": "说话", "/sss/dajiex.jpg": "大姐", "/sss/dongxi.jpg": "东西", "/sss/erzib.jpg": "儿子", "/sss/guolair.jpg": "过来", "/sss/xiabang.jpg": "下班", "/sss/zangfl.jpg": "丈夫", "/sss/dianhua.jpg": "电话", "/sss/huilaim.jpg": "回来", "/sss/xiawu.jpg": "下午", "/sss/guoquu.jpg": "过去", "/sss/shangba.jpg": "上班", "/sss/mingtn.jpg": "明天", "/sss/nvrenjj.jpg": "女人", "/sss/shangwo.jpg": "上午", "/sss/shji.jpg": "手机", "/sss/xiaoxinyy.jpg": "小心", "/sss/furene.jpg": "夫人", "/sss/gongzih.jpg": "公子", "/sss/xiansg.jpg": "先生", "/sss/penyouxi.jpg": "朋友", "/sss/xiaoje.jpg": "小姐", "/sss/xifup.jpg": "媳妇", "/sss/nvxudjj.jpg": "女婿", "/sss/xondi.jpg": "兄弟", "/sss/lagong.jpg": "老公", "/sss/lapo.jpg": "老婆", "/sss/meimeid.jpg": "妹妹", "/sss/jiejiev.jpg": "姐姐", "/sss/jiemeiv.jpg": "姐妹", "/sss/xianggx.jpg": "相公", "/sss/6shenumev.jpg": "什么", "/sss/cuoaw.jpg": "错", "/sss/fpefnyoturxi.jpg": "朋友", "/sss/vfsjgigarn.jpg": "时间", "/sss/zzhiedo3.jpg": "知道", "/sss/zibjib.jpg": "自己", "/sss/qdonglxi.jpg": "东西", "/sss/hxiapxint.jpg": "相信", "/sss/fezrormre.jpg": "怎么", "/sss/nvdrfenfjfj.jpg": "女人", "/sss/jhiheejeieev.jpg": "姐姐", "/sss/xdifagojge.jpg": "小姐", "/sss/gggugolgair.jpg": "过来", "/sss/maoashu.jpg": "：“", "/sss/gnxnifawhu.jpg": "下午", "/sss/rgtugoqgugu.jpg": "过去", "/sss/khjukilkaim.jpg": "回来", "/sss/gxhigfadnoxihnyy.jpg": "小心", "/sss/bkbskhhuka.jpg": "说话", "/sss/xeieavnfsg.jpg": "先生", "/sss/yuhhfuiuqub.jpg": "回去", "/sss/pdianphua.jpg": "电话", "/sss/fabxianr.jpg": "发现", "/sss/feilrpto.jpg": "老婆", "/sss/gxronfdri.jpg": "兄弟", "/sss/flfaggofng.jpg": "老公", "/sss/tymyigngtyn.jpg": "明天", "/sss/dfshfhhfjfi.jpg": "手机", "/sss/gstjhranjgwjo.jpg": "上午", "/sss/fmgeyimehid.jpg": "妹妹", "/sss/gxgihftutp.jpg": "媳妇", "/sss/cerztifb.jpg": "儿子", "/sss/gfxgigagbfadng.jpg":"下班", "/sss/gstjhranjg.jpg":"下午", "/sss/hjeirerm6eihv.jpg": "姐妹", "/sss/edajihexr.jpg": "大姐", "/sss/wesfhranrrgba.jpg": "上班", "/sss/gfognggzigh.jpg": "公子", "/sss/frurtefne.jpg": "夫人", "/sss/fzagnggfbl.jpg": "丈夫", "/sss/nvdxfudfjfj.jpg": "女婿", "/sss/xdidafnggx.jpg": "相公", "/sss/zenme.jpg": "怎么", "/sss/gongzi.jpg": "公子", "/sss/ddefr.jpg": "", 
                 ".*ddefr\\.jpg.*|无(?:错|.*cuoa?w\\.jpg.*)小说网不[少跳]字|w[a-z\\.]*om?|.*由[【无*错】].*会员手打[\\s\\S]*": "",
+            },
+            contentPatch: function(fakeStub){
+                var content = fakeStub.find("#htmlContent");
+                // 去除内容开头的重复标题
+                content.html(content.html().replace(/^[\s\S]*?<br>/, ""));
             }
         },
         {siteName: "书迷楼",
@@ -324,6 +327,10 @@
             exampleUrl: "http://www.bxs.cc/22739/8894713.html",
             titleReg: /(.*?)\d*,(.*)/,
             contentReplace: /[\[【].*[\]】]|文字首发|bxs.|[\[\]\(《].*百晓生.*|百晓生.不跳字|百.晓.生.|w[a-z\.]*|关闭.*广告.*|飘天文学|本站域名就是.*|\(.{0,5}小说更快更好.{0,5}\)|(请在)?百度搜索.*/ig,
+            contentPatch: function(fakeStub){
+                var content = fakeStub.find("#content");
+                content.html(content.html().replace(/^[\s\S]*?<br><br>/, ""));
+            }
         },
         {siteName: "浩奇文学网",
             url: /^http:\/\/www\.haoqi99\.com\/.*\.shtml$/,
@@ -357,9 +364,12 @@
             url: /^http:\/\/www\.fkzww\.net\/thread-.*\.html$/,
             exampleUrl: "http://www.fkzww.net/thread-315537-1-1.html",
             titleReg: /(.*?) (.*?)-.*/,
-            contentSelector: ".t_msgfontfix",
+            contentSelector: "#content",
+            indexSelector: "#nav a:last",
             contentPatch: function(fakeStub){
-                fakeStub.find(".t_msgfontfix").find(".imgtitle, .pstatus").remove();
+                $("<div id='content'></div>").append(fakeStub.find(".t_msgfontfix").find("img[width]"))
+                    .appendTo(fakeStub.find("body"));
+                
                 fakeStub.find(".next").attr("href", "");
             }
         },
@@ -377,9 +387,8 @@
             }
         },
         {siteName: "看下文学",
-            url: /^http:\/\/www\.kanxia\.net\/k\/\d*\/\d+\/\d+\.html$/,
-            exampleUrl: "http://www.kanxia.net/",
-            titleReg: /(.*?)-.*?\\s(.*)TXT下载_看下文学/,
+            url: "^http://www\\.kanxia\\.net/k/\\d*/\\d+/\\d+\\.html$",
+            titleReg: /(.*?)-(.*)TXT下载_看下文学/,
             contentReplace: /(?:看下文学|www.kanxia.net)/g
         },
         {siteName: "青帝文学网",
@@ -456,6 +465,17 @@
             useiframe: true,  
             timeout: 800  // 为0则没法正确加载内容
         },
+        {
+            url: "http://www\\.shushuw\\.cn/shu/\\d+/\\d+\\.html",
+            useiframe: true,
+            timeout: 500,
+            contentReplace: "！~！[\\s\\S]*"
+        },
+        {
+            url: "http://www\\.zhaoxiaoshuo\\.com/chapter-\\d+-\\d+-\\w+/",
+            useiframe: true,
+            timeout: 500
+        },
         // 内容js，地址特殊生成。
         {siteName: "哈哈文学",
             url: /^http:\/\/www.hahawx.com\/.*htm/,
@@ -481,42 +501,6 @@
             }
         },
     ];
-
-    var db,
-        button_css = '';
-
-    window.postMessage("fromeMyNovelReader.post", "*");
-
-    window.addEventListener('message', function(e) {
-        if (db) return;
-        var data = e.data;
-        if (typeof data == 'string' && data.indexOf('MyNovelReader.db') == 0) {
-            debug("接收到 MyNovelReader.db 数据");
-
-            data = data.slice(16);
-            // alert(data);
-            try{
-                db = eval( "(" + data + ")" );
-            }catch(e) {}
-            
-            window.removeEventListener('message',arguments.callee,false);
-            window.postMessage("fromeMyNovelReader.remove", "*");
-
-            for(var key in db.config){
-                config[key] = db.config[key];
-            }
-
-            if(db.SITE_INFO){
-                rule.specialSite = db.SITE_INFO.concat(rule.specialSite);
-            }
-
-            if(db.css){
-                css = db.css;
-            }
-
-            button_css = db.button_css;
-        }
-    }, false);
 
     // 小说屏蔽字修复
     var replacements = {
@@ -545,29 +529,29 @@
 
         // ===双字替换，需特殊处理？===
         "暧me[iì]":"暧昧", 
-        "běi(\\s|&nbsp;)*jīng":"北京","半shen": "半身", "bìjìng":"毕竟",
+        "běi(\\s|&nbsp;)*j[īi]ng":"北京","半shen": "半身", "b[ìi]j[ìi]ng":"毕竟",
         "chongdong":"冲动", "缠mian": "缠绵", "成shu": "成熟", "赤lu[oǒ]": "赤裸", "春guang": "春光",
-        "dang校": "党校", "da子": "鞑子", "diao丝": "屌丝", "dú\\s*lì": "独立", "dìfāng":"地方", 
+        "dang校": "党校", "da子": "鞑子", "diao丝": "屌丝", "dú\\s*lì": "独立", "d[iì]fāng":"地方", 
         "fǎngfó":"仿佛", "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "fènnù":"愤怒",
-        "gao潮": "高潮", "干chai": "干柴", "gu[oò]chéng":"过程", "guānxì":"关系", "gǎnjiào":"感觉",
+        "gao潮": "高潮", "干chai": "干柴", "gu[oò]chéng":"过程", "guānx[iì]":"关系", "gǎnjiào":"感觉",
         "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "hǎoxiàng":"好像", "huángsè":"黄色",
-        "jìnháng":"进行", "jinv": "妓女", "jirou": "鸡肉", "ji者":"记者", "ju花":"菊花","jī动":"激动", "肌ròu":"肌肉","ji射":"激射", "jiēch[uù]":"接触",
+        "j[ìi]nháng":"进行", "jinv": "妓女", "jirou": "鸡肉", "ji者":"记者", "ju花":"菊花","j[īi]动":"激动", "肌r[òo]u":"肌肉","ji射":"激射", "jiēch[uù]":"接触", "juli[èe]": "剧烈",
         "kěnéng": "可能", "开bao": "开苞",  "kào近": "靠近", "kao近": "靠近",
         "ling辱": "凌辱", "luan蛋": "卵蛋",
-        "mǎnyì":"满意", "mǎshàng":"马上", "méiy[oǒ]u":"没有", "mei国": "美国", "míngbái":"明白", "迷huan": "迷幻", "mín\\s*zhǔ": "民主", 
+        "mǎny[ìi]":"满意", "mǎshàng":"马上", "méiy[oǒ]u":"没有", "mei国": "美国", "m[íi]ngbái":"明白", "迷huan": "迷幻", "m[íi]n\\s*zhǔ": "民主", 
         "nàme":"那么", "néngg[oò]u":"能够",
         "piáo客":"嫖客", "pángbiān":"旁边",
-        "qíguài":"奇怪", "qin兽":"禽兽", "qīngchǔ":"清楚",
-        "rúgu[oǒ]":"如果", "r[oó]ngyì":"容易",
-        "shìjiè":"世界", "shíjiān":"时间", "shíh[oò]u": "时候", "shíme":"什么", "shi身": "失身", "shu女": "熟女", "上chuang": "上床", "呻yín": "呻吟", "呻yin": "呻吟", "sh[ēe]ngzh[íi]": "生殖", "深gu": "深谷", "双xiu": "双修",
-        "t[uū]rán":"突然", "tiaojiao": "调教", "推dao": "推倒", "脱guang": "脱光", "tèbié":"特别", "tōngguò":"通过",
-        "wēixié":"威胁", "wèizhì":"位置",
+        "q[íi]guài":"奇怪", "qin兽":"禽兽", "q[iī]ngch[uǔ]":"清楚",
+        "r[úu]gu[oǒ]":"如果", "r[oó]ngy[ìi]":"容易",
+        "sh[iì]ji[eè]":"世界", "sh[ií]ji[aā]n":"时间", "sh[ií]h[oò]u": "时候", "sh[ií]me":"什么", "shi身": "失身", "shu女": "熟女", "上chuang": "上床", "呻y[íi]n": "呻吟", "sh[ēe]ngzh[íi]": "生殖", "深gu": "深谷", "双xiu": "双修",
+        "t[uū]rán":"突然", "tiaojiao": "调教", "推dao": "推倒", "脱guang": "脱光", "tèbié":"特别", "t[ōo]ngguò":"通过",
+        "wēixié":"威胁", "wèizh[ìi]":"位置",
         "亵du": "亵渎", "xing福": "性福", "xiu长": "修长",
-        "yīyàng":"一样", "yīdiǎn":"一点", "yǐjīng":"已经", "阳wěi": "阳痿", "阳wei": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "you惑": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人","旖ni": "旖旎",
-        "zìjǐ": "自己","zì\\s*you": "自由","zhīdào":"知道","zha药": "炸药", "zhan有": "占有", "政f[ǔu]": "政府", "zhèng\\s*f[uǔ]": "政府", "zhōngyāng": "中央", "zu[oǒ]y[oò]u":"左右", "zh[oō]uwéi":"周围",
+        "y[iī]yàng":"一样", "y[īi]diǎn":"一点", "y[ǐi]j[īi]ng":"已经", "阳wěi": "阳痿", "阳wei": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "you惑": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人","旖ni": "旖旎",
+        "z[iì]j[iǐ]": "自己","zì\\s*you": "自由","zh[iī]dào":"知道","zha药": "炸药", "zhan有": "占有", "政f[ǔu]": "政府", "zhèng\\s*f[uǔ]": "政府", "zhōngyāng": "中央", "zu[oǒ]y[oò]u":"左右", "zh[oō]uwéi":"周围",
 
         // ===单字替换，需特殊处理，防止替换图片===
-        "b(ā|à)ng":"棒","bào":"爆","b[àa]":"吧","bī":"逼","bō":"波",
+        "b[āà]ng":"棒","bào":"爆","b[àa]":"吧","bī":"逼","bō":"波",
         "cāo": "操", "cǎo": "草", "cào": "操", "chāng": "娼", "chang": "娼", "cháo": "潮", "chā": "插", "chéng": "成", "chōu": "抽", "chuáng": "床", "chún": "唇", "ch[ūu]n": "春", "cuō": "搓", "cū": "粗", 
         "dǎng": "党", "dàng": "荡", "dāo": "刀", "dòng": "洞", "diao": "屌", 
         "fǎ": "法", "féi": "肥", "fù": "妇", "fu": "妇", "guān": "官", 
@@ -676,6 +660,8 @@
                     this.chapterTitle = matches[chapterPos].trim();
                 }else if(matches){
                     debug("  Title Matches Length: " + matches.length);
+                }else{
+                    debug(" Title RegExp not match.");
                 }
             }
 
@@ -869,6 +855,9 @@
 
             if(!text) return null;
 
+            // 去除开头的 <br>
+            text = text.replace(/<br\/?>/, "");
+
             /* Turn all double br's into p's */
             text = text.replace(rule.replaceBrs, '</p>\n<p>');
 
@@ -895,11 +884,15 @@
                 if(this.bookTitle){
                     titleRegText += this.bookTitle + "\\d+";
                 }
-                // titleRegText += this.chapterTitle.trim()
-                //         .replace(/[()\[\]{}|+.,^$?\\]/g, "\\$&")
-                //         .replace(/\s+/g, "(?:\\s|&nbsp;)*");
-                debug("  Content replace title: " + titleRegText);
                 text = text.replace(new RegExp(titleRegText, "g"), "");
+                debug("  Content replace title: " + titleRegText);
+
+                // 特殊站点去除标题，只去除一次
+                // if(window.location.hostname == "www.wcxiaoshuo.com"){
+                //         // .replace(/[()\[\]{}|+.,^$?\\]/g, "\\$&")
+                //     titleRegText = this.chapterTitle.trim().replace(/\s+/g, "(?:\\s|&nbsp;)*");
+                //     text = text.replace(new RegExp(titleRegText), "");
+                // }   
             }
 
             // 小说屏蔽字修复。
@@ -951,8 +944,6 @@
         },
         checkNextUrl: function(url){
             var endNum_regexp = /\/\d+\.html$|\/wcxs-\d+-\d+\/$/;
-            // var num_text = (this.prevUrl || "").replace(/\d+/g, "\\d+");
-            // var num_regexp = new RegExp(num_text);
             switch(true){
                 case url == '':
                 case rule.nextUrlIgnore && rule.nextUrlIgnore.test(url):
@@ -1097,7 +1088,7 @@
                     reader.addButton();
 
                     setTimeout(function(){
-                        reader.fixImageFloats(document);
+                        reader.fixImageFloats();
                     }, 500);
 
                     reader.scroll();
@@ -1151,7 +1142,7 @@
         toggle: function(){
             if(reader.isEnabled){  // 退出
                 GM_setValue("auto_enable", false);
-                L_setValue("booklinkme_disable_onetime", true);
+                L_setValue("booklinkme_disable_onetime", "true");
                 if(reader.curPageUrl){
                     unsafeWindow.location = reader.curPageUrl;
                 }else{
@@ -1276,7 +1267,7 @@
                 $('#wrapper').append(content);
 
                 window.setTimeout(function(){
-                    reader.fixImageFloats(document);
+                    reader.fixImageFloats();
                 }, 800);
             }else{
                 reader.removeListener();
@@ -1285,8 +1276,12 @@
             reader.requestUrl = parser.nextUrl;
             reader.isTheEnd = parser.isTheEnd;
         },
-        fixImageFloats: function (articleContent) {
+        fixImageFloats: function () {
             if(!config.fixImageFloats) return;
+
+            debug("Fix Image Floats");
+
+            var articleContent = document.getElementById("wrapper");
 
             var imageWidthThreshold = Math.min(articleContent.offsetWidth, 800) * 0.55,
                 images              = articleContent.getElementsByTagName('img');
@@ -1328,14 +1323,20 @@
         reader.init(siteinfo);
     };
 
+    var isAutoLaunched = false;
     var autoLaunch = function(){
+        if(isAutoLaunched) return;
+
         var isEnabled = function(){
             var locationHref = window.location.href,
                 referrer = document.referrer;
             switch(true){
+                // 啃书只自动启用一个地方
+                case location.hostname == 'www.fkzww.net' && !document.title.match(/网文快讯/):
                 case L_getValue("booklinkme_disable_onetime") == 'true':
                     L_removeValue("booklinkme_disable_onetime");
                     return false;
+
                 case config.AUTO_ENABLE && GM_getValue("auto_enable"):
                 case config.booklinkme && /booklink\.me/.test(referrer):
                 case config.soduso && /www\.sodu\.so/.test(referrer):
@@ -1344,13 +1345,55 @@
                     return false;
             }
         };
-        reader.isEnabled = isEnabled();
+        if(!reader.isEnabled){
+            reader.isEnabled = isEnabled();
+        }
+        debug(reader.isEnabled)
         if(reader.isEnabled){
             launch();
         }else{
             reader.addButton();
         }
+
+        isAutoLaunched = true;
     };
+
+    var db,
+        button_css = '';
+
+    window.postMessage("fromeMyNovelReader.post", "*");
+
+    window.addEventListener('message', function(e) {
+        if (db) return;
+        var data = e.data;
+        if (typeof data == 'string' && data.indexOf('MyNovelReader.db') == 0) {
+
+            data = data.slice(16);
+            // alert(data);
+            try{
+                db = eval( "(" + data + ")" );
+            }catch(e) {}
+            
+            window.removeEventListener('message',arguments.callee,false);
+            window.postMessage("fromeMyNovelReader.remove", "*");
+
+            for(var key in db.config){
+                config[key] = db.config[key];
+            }
+            if(db.SITE_INFO){
+                rule.specialSite = db.SITE_INFO.concat(rule.specialSite);
+            }
+            if(db.css){
+                css = db.css;
+            }
+
+            button_css = db.button_css;
+
+            debug("接收到 MyNovelReader.db 数据");
+
+            window.addEventListener("DOMContentLoaded", autoLaunch, false);
+        }
+    }, false);
 
     window.addEventListener("DOMContentLoaded", autoLaunch, false);
 
@@ -1471,7 +1514,7 @@ body {background:#EEE;}\
     background-image: linear-gradient(#DDD, #CCC);\
     font-family:"Microsoft YaHei UI",微软雅黑,新宋体,宋体,arial;\
     text-align:center;\
-    font-size:16pt;\
+    font-size:20px;\
     color:black;\
     text-shadow: silver 0px 0px 1px;\
     margin-bottom:3px;\
@@ -1484,7 +1527,7 @@ body {background:#EEE;}\
     margin-top:15px;\
     margin-left:auto;\
     margin-right:auto;\
-    font-size:16pt;\
+    font-size:20px;\
 }\
 .content img.blockImage {clear: both;float: none;display: block;margin-left: auto;margin-right: auto;}\
 .chapter-head-nav{\
