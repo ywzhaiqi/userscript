@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        2.4.4
+// @version        2.4.5
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说清爽阅读脚本。
@@ -9,7 +9,6 @@
 // @grant          GM_addStyle
 // @grant          GM_getValue
 // @grant          GM_setValue
-// @grant          GM_registerMenuCommand
 // @updateURL      https://userscripts.org/scripts/source/165951.meta.js
 // @downloadURL    https://userscripts.org/scripts/source/165951.user.js
 // @require        http://code.jquery.com/jquery-1.9.1.min.js
@@ -113,7 +112,8 @@
 // @include        http://www.66721.com/*/*/*.html
 // @include        http://www.3dllc.com/html/*/*/*.html
 // @include        http://www.xstxt.com/*/*/
-// @include        http://www.zzzcn.com/*-*/
+// @include        http://www.zzzcn.com/3z*/*/  
+// @include        http://www.zzzcn.com/modules/article/reader.php*
 // @include        http://www.nilongdao.com/book/*/*/*.html
 // @include        http://xs321.net/*/*/
 // @include        http://read.guanhuaju.com/files/article/html/*/*/*.html
@@ -157,17 +157,17 @@
 
     // 所有的设置
     var config = {
-        AUTO_ENABLE: true,       // 自动启用总开关。有问题，一些主页也会自动启用
-        booklinkme: true,        // booklink.me 跳转的自动启动
-        soduso: false,            // www.sodu.so 跳转
-        BASE_REMAIN_HEIGHT: 800,
+        AUTO_ENABLE: true,              // 自动启用总开关。有问题，一些主页也会自动启用
+        booklinkme: true,               // booklink.me 跳转的自动启动
+        soduso: false,                  // www.sodu.so 跳转
+        BASE_REMAIN_HEIGHT: 1000,
         DEBUG: false,
         fullHref: true,
-        content_replacements: true,      // 小说屏蔽字修复
-        fixImageFloats: true
+        content_replacements: true,     // 小说屏蔽字修复
+        fixImageFloats: true,           // 图片居中修正
     };
 
-    var READER_AJAX = "reader-ajax";  // 内容中ajax的 className，不能更改
+    var READER_AJAX = "reader-ajax";   // 内容中ajax的 className，不能更改
 
     // 自动尝试的规则
     var rule = {
@@ -299,9 +299,10 @@
                 ".*ddefr\\.jpg.*|无(?:错|.*cuoa?w\\.jpg.*)小说网不[少跳]字|w[a-z\\.]*om?|.*由[【无*错】].*会员手打[\\s\\S]*": "",
             },
             contentPatch: function(fakeStub){
-                var content = fakeStub.find("#htmlContent");
                 // 去除内容开头的重复标题
-                content.html(content.html().replace(/^[\s\S]*?<br>/, ""));
+                var title = fakeStub.find("#htmltimu").text();
+                var content = fakeStub.find("#htmlContent");
+                content.html(content.html().replace(new RegExp(title), ""));
             }
         },
         {siteName: "书迷楼",
@@ -455,6 +456,10 @@
                 "16kbook\\s*(首发更新|小说网)": "",
             }
         },
+        {
+            url: "http://www.laishuwu.com/html/5/5802/2178429.html",
+            contentReplace: "txt\\d+/",
+        },
        
         // 内容需要js运行。
         {
@@ -482,7 +487,7 @@
             exampleUrl: "http://www.hahawx.com/jingji/baibianqiushen-161459/13474531.htm",
             titleReg: /(.*?)-(.*?)-.*/,
             contentSelector: "#chapter_content",
-            contentReplace: /(ｗｗｗ|ｂｏｏｋ).*(ｃｏｍ|ｎｅｔ)|www[a-z\.]*|全文字阅读|无弹窗广告小说网|哈哈文学\(www.hahawx.com\)|souDU.org/ig,
+            contentReplace: /(ｗｗｗ|ｂｏｏｋ).*(ｃｏｍ|ｎｅｔ)|www[a-z\.]*|全文字阅读|无弹窗广告小说网|哈哈文学\(www.hahawx.com\)|souDU.org|Ｓｏｕｄｕ．ｏｒｇ/ig,
             contentPatch: function(fakeStub){
                 var content = fakeStub.find("#chapter_content");
                 var m = content.find("script").text().match(/output\((\d+), "(\d+\.txt)"\);/);
@@ -500,6 +505,18 @@
                 }
             }
         },
+        {  
+            name: "3Z中文网",  
+            url: "^http://www\\.zzzcn\\.com\\/(3z\\d+/\\d+\\/|modules\\/article\\/reader\\.php\\?aid=\\d+&cid=\\d+){1}$",  
+            contentSelector: "#content3zcn",  
+            indexSelector: "a:contains('返回目录')",  
+            prevSelector: "a:contains('上 一 页')",  
+            nextSelector: "a:contains('下 一 页'), a:contains('返回书架')",  
+            contentPatch: function(fakeStub){  
+               fakeStub.find("a:contains('返回书架')").html("下 一 页").attr("href", fakeStub.find("a:contains('返回目录')").attr("href"));  
+                fakeStub.find("#content3zcn").find(".titlePos").remove();  
+            }  
+        }
     ];
 
     // 小说屏蔽字修复
@@ -682,7 +699,7 @@
             debug("  Chapter Title: " + this.chapterTitle);
             debug("  Document Title: " + this.docTitle);
         },
-        // 智能获取标题，需要 window
+        // 智能获取标题
         autoGetTitleText: function (document) {
             debug("AutoGetTitle: ");
 
@@ -1071,6 +1088,8 @@
 
                     GM_addStyle(css);
 
+                    reader.fixMobile();
+
                     document.title = parser.docTitle;
                     document.body.setAttribute("name", "MyNovelReader")
                     document.body.innerHTML = reader.nano(tpl_html, parser);
@@ -1097,22 +1116,40 @@
             });
         },
         prepDocument: function() {
-            /* Before we do anything, remove all scripts that are not readability. */
             window.onload = window.onunload = function() {};
-            window.document.onmouseup = function(){};
-            window.document.onmousemove = function(){};
-            window.document.onmousedown = function(){};
-            window.document.onclick = function(){};
-            window.document.body.onclick = function(){};
-            window.document.oncontextmenu = function(){};
-            window.document.body.oncontextmenu = function(){};
-            window.document.ondblclick = function(){};
 
-            // // remove body style
+            // 破解右键限制
+            var doc = document;
+            var bd = doc.body;
+            bd.onclick = bd.onselectstart = bd.oncopy = bd.onpaste = bd.onkeydown = bd.oncontextmenu = bd.onmousemove = bd.onselectstart = bd.ondragstart = doc.onselectstart = doc.oncopy = doc.onpaste = doc.onkeydown = doc.oncontextmenu = null;
+            doc.onclick = doc.ondblclick = doc.onselectstart = doc.oncontextmenu = doc.onmousedown = doc.onkeydown = function() {
+                return true;
+            };
+            with(document.wrappedJSObject || document) {
+                onmouseup = null;
+                onmousedown = null;
+                oncontextmenu = null;
+            }
+            var arAllElements = document.getElementsByTagName('*');
+            for (var i = arAllElements.length - 1; i >= 0; i--) {
+                var elmOne = arAllElements[i];
+                with(elmOne.wrappedJSObject || elmOne) {
+                    onmouseup = null;
+                    onmousedown = null;
+                }
+            }
+
+            // remove body style
             $('link[rel="stylesheet"], style, script').remove();
-            // $('link[rel="stylesheet"], style').remove();
             $('*').removeAttr('style');
             $('body').removeAttr('bgcolor');
+        },
+        fixMobile: function(){
+            // 自适应网页设计
+            var meta = document.createElement("meta");
+            meta.setAttribute("name", "viewport");
+            meta.setAttribute("content", "width=device-width, initial-scale=1");
+            document.head.appendChild(meta);
         },
         addButton: function(){
             if(button_css){
@@ -1197,6 +1234,8 @@
                 reader.parsedPages[nextUrl] = true;
                 reader.curPageUrl = reader.requestUrl;
                 reader.requestUrl = null;
+
+                notice("")
 
                 var useiframe = reader.site && reader.site.useiframe;
                 if(useiframe){
@@ -1345,10 +1384,12 @@
                     return false;
             }
         };
+
         if(!reader.isEnabled){
             reader.isEnabled = isEnabled();
         }
-        debug(reader.isEnabled)
+        debug(reader.isEnabled);
+
         if(reader.isEnabled){
             launch();
         }else{
@@ -1367,7 +1408,6 @@
         if (db) return;
         var data = e.data;
         if (typeof data == 'string' && data.indexOf('MyNovelReader.db') == 0) {
-
             data = data.slice(16);
             // alert(data);
             try{
@@ -1514,7 +1554,7 @@ body {background:#EEE;}\
     background-image: linear-gradient(#DDD, #CCC);\
     font-family:"Microsoft YaHei UI",微软雅黑,新宋体,宋体,arial;\
     text-align:center;\
-    font-size:20px;\
+    font-size:1.2em;\
     color:black;\
     text-shadow: silver 0px 0px 1px;\
     margin-bottom:3px;\
@@ -1527,7 +1567,7 @@ body {background:#EEE;}\
     margin-top:15px;\
     margin-left:auto;\
     margin-right:auto;\
-    font-size:20px;\
+    font-size:1.2em;\
 }\
 .content img.blockImage {clear: both;float: none;display: block;margin-left: auto;margin-right: auto;}\
 .chapter-head-nav{\
@@ -1535,7 +1575,7 @@ body {background:#EEE;}\
 }\
 .chapter-footer-nav{\
     text-align:center;\
-    font-size:12pt;\
+    font-size:0.9em;\
     margin:-10px 0px 30px 0px;\
 }\
 ');
