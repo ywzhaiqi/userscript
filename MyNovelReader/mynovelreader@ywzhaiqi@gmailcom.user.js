@@ -328,11 +328,7 @@
             url: /^http:\/\/www\.bxs\.cc\/\d+\/\d+\.html$/,
             exampleUrl: "http://www.bxs.cc/22739/8894713.html",
             titleReg: /(.*?)\d*,(.*)/,
-            contentReplace: /[\[【].*[\]】]|文字首发|bxs.|[\[\]\(《].*百晓生.*|百晓生.不跳字|百.晓.生.|w[a-z\.]*|关闭.*广告.*|飘天文学|本站域名就是.*|\(.{0,5}小说更快更好.{0,5}\)|(请在)?百度搜索.*/ig,
-            contentPatch: function(fakeStub){
-                var content = fakeStub.find("#content");
-                content.html(content.html().replace(/^[\s\S]*?<br><br>/, ""));
-            }
+            contentReplace: /站长推荐.*|[\[【].*[\]】]|文字首发|bxs.|[\[\]\(《].*百晓生.*|百晓生.不跳字|百.晓.生.|关闭.*广告.*|飘天文学|本站域名就是.*|\(.{0,5}小说更快更好.{0,5}\)|(请在)?百度搜索.*/ig,
         },
         {siteName: "浩奇文学网",
             url: /^http:\/\/www\.haoqi99\.com\/.*\.shtml$/,
@@ -562,7 +558,7 @@
         "q[íi]guài":"奇怪", "qin兽":"禽兽", "q[iī]ngch[uǔ]":"清楚",
         "r[úu]gu[oǒ]":"如果", "r[oó]ngy[ìi]":"容易",
         "sh[iì]ji[eè]":"世界", "sh[ií]ji[aā]n":"时间", "sh[ií]h[oò]u": "时候", "sh[ií]me":"什么", "shi身": "失身", "shu女": "熟女", "上chuang": "上床", "呻y[íi]n": "呻吟", "sh[ēe]ngzh[íi]": "生殖", "深gu": "深谷", "双xiu": "双修",
-        "t[uū]rán":"突然", "tiaojiao": "调教", "推dao": "推倒", "脱guang": "脱光", "tèbié":"特别", "t[ōo]ngguò":"通过",
+        "t[uū]rán":"突然", "tiaojiao": "调教", "推dao": "推倒", "脱guang": "脱光", "tèbié":"特别", "t[ōo]nggu[òo]":"通过",
         "wēixié":"威胁", "wèizh[ìi]":"位置",
         "亵du": "亵渎", "xing福": "性福", "xiu长": "修长",
         "y[iī]yàng":"一样", "y[īi]diǎn":"一点", "y[ǐi]j[īi]ng":"已经", "阳wěi": "阳痿", "阳wei": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "you惑": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人","旖ni": "旖旎",

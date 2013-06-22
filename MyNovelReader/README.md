@@ -125,6 +125,8 @@ Firefox（Greasemonkey/Scriptish）， Chrome（Tampermonkey），Opera（暴力
 
 ### 更新
 
+ - 2013年6月23日，版本 2.4.7。
+ 	- 百晓生站点配置的改进。
  - 2013年6月22日，版本 2.4.6。
  	- 增加正在加载下一页的提示。
  	- 增加已到达最后一页的提示。
