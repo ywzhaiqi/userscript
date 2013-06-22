@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        2.4.5
+// @version        2.4.6
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说清爽阅读脚本。
@@ -297,6 +297,7 @@
                 '(<center>)?<?img src..(http://www.wcxiaoshuo.com)?(/sss/\\S+\\.jpg).(>| alt."\\d+_\\d+_\\d*\\.jpg" />)(</center>)?': '$3',
                 "/sss/da.jpg": "打", "/sss/maws.jpg": "吗？", "/sss/baw.jpg": "吧？", "/sss/wuc.jpg": "无", "/sss/maosu.jpg": "：“", "/sss/cuow.jpg": "错", "/sss/ziji.jpg": "自己", "/sss/shenme.jpg": "什么", "/sss/huiqub.jpg": "回去", "/sss/sjian.jpg": "时间", "/sss/zome.jpg": "怎么", "/sss/zhido.jpg": "知道", "/sss/xiaxin.jpg": "相信", "/sss/faxian.jpg": "发现", "/sss/shhua.jpg": "说话", "/sss/dajiex.jpg": "大姐", "/sss/dongxi.jpg": "东西", "/sss/erzib.jpg": "儿子", "/sss/guolair.jpg": "过来", "/sss/xiabang.jpg": "下班", "/sss/zangfl.jpg": "丈夫", "/sss/dianhua.jpg": "电话", "/sss/huilaim.jpg": "回来", "/sss/xiawu.jpg": "下午", "/sss/guoquu.jpg": "过去", "/sss/shangba.jpg": "上班", "/sss/mingtn.jpg": "明天", "/sss/nvrenjj.jpg": "女人", "/sss/shangwo.jpg": "上午", "/sss/shji.jpg": "手机", "/sss/xiaoxinyy.jpg": "小心", "/sss/furene.jpg": "夫人", "/sss/gongzih.jpg": "公子", "/sss/xiansg.jpg": "先生", "/sss/penyouxi.jpg": "朋友", "/sss/xiaoje.jpg": "小姐", "/sss/xifup.jpg": "媳妇", "/sss/nvxudjj.jpg": "女婿", "/sss/xondi.jpg": "兄弟", "/sss/lagong.jpg": "老公", "/sss/lapo.jpg": "老婆", "/sss/meimeid.jpg": "妹妹", "/sss/jiejiev.jpg": "姐姐", "/sss/jiemeiv.jpg": "姐妹", "/sss/xianggx.jpg": "相公", "/sss/6shenumev.jpg": "什么", "/sss/cuoaw.jpg": "错", "/sss/fpefnyoturxi.jpg": "朋友", "/sss/vfsjgigarn.jpg": "时间", "/sss/zzhiedo3.jpg": "知道", "/sss/zibjib.jpg": "自己", "/sss/qdonglxi.jpg": "东西", "/sss/hxiapxint.jpg": "相信", "/sss/fezrormre.jpg": "怎么", "/sss/nvdrfenfjfj.jpg": "女人", "/sss/jhiheejeieev.jpg": "姐姐", "/sss/xdifagojge.jpg": "小姐", "/sss/gggugolgair.jpg": "过来", "/sss/maoashu.jpg": "：“", "/sss/gnxnifawhu.jpg": "下午", "/sss/rgtugoqgugu.jpg": "过去", "/sss/khjukilkaim.jpg": "回来", "/sss/gxhigfadnoxihnyy.jpg": "小心", "/sss/bkbskhhuka.jpg": "说话", "/sss/xeieavnfsg.jpg": "先生", "/sss/yuhhfuiuqub.jpg": "回去", "/sss/pdianphua.jpg": "电话", "/sss/fabxianr.jpg": "发现", "/sss/feilrpto.jpg": "老婆", "/sss/gxronfdri.jpg": "兄弟", "/sss/flfaggofng.jpg": "老公", "/sss/tymyigngtyn.jpg": "明天", "/sss/dfshfhhfjfi.jpg": "手机", "/sss/gstjhranjgwjo.jpg": "上午", "/sss/fmgeyimehid.jpg": "妹妹", "/sss/gxgihftutp.jpg": "媳妇", "/sss/cerztifb.jpg": "儿子", "/sss/gfxgigagbfadng.jpg":"下班", "/sss/gstjhranjg.jpg":"下午", "/sss/hjeirerm6eihv.jpg": "姐妹", "/sss/edajihexr.jpg": "大姐", "/sss/wesfhranrrgba.jpg": "上班", "/sss/gfognggzigh.jpg": "公子", "/sss/frurtefne.jpg": "夫人", "/sss/fzagnggfbl.jpg": "丈夫", "/sss/nvdxfudfjfj.jpg": "女婿", "/sss/xdidafnggx.jpg": "相公", "/sss/zenme.jpg": "怎么", "/sss/gongzi.jpg": "公子", "/sss/ddefr.jpg": "", 
                 ".*ddefr\\.jpg.*|无(?:错|.*cuoa?w\\.jpg.*)小说网不[少跳]字|w[a-z\\.]*om?|.*由[【无*错】].*会员手打[\\s\\S]*": "",
+                "一秒记住.*": "",
             },
             contentPatch: function(fakeStub){
                 // 去除内容开头的重复标题
@@ -445,7 +446,7 @@
             url: "^http://www\\.dyzww\\.com/cn/\\d+/\\d+/\\d+\\.html$" ,
             contentReplace: {
                 '<img.*?ait="(.*?)".*?>': "$1",
-                'www\\.dyzww\\.com.*|♂': ""
+                'www\\.dyzww\\.com.*|♂|шШщ.*': ""
             }
         },
         {siteName: "16K小说网",
@@ -605,12 +606,40 @@
         "txt53712/": "",
         "\xa0{4,12}":"\xa0\xa0\xa0\xa0\xa0\xa0\xa0"
     };
-   
-    function contentReplacements(s){
+    // 提取转为 regexp
+    var replacements_reg = {};
+    for(var key in replacements){
+        replacements_reg[key] = new RegExp(key, "ig");
+    }
+    // 转换函数
+    function contentReplacements(content){
+        if(!config.content_replacements) return content;
+
+        var s = new Date().getTime();
+        var text = typeof(content) == 'string' ? content : content.innerHTML;
+        
+        // 先提取出 img
+        var imgs = {};
+        var i = 0;
+        text = text.replace(/<img[^>]*>/g, function(img){
+            imgs[i] = img;
+            return "{" + (i++) + "}";
+        });
+
+        // 转换
         for (var key in replacements) {
-            s = s.replace(new RegExp(key, 'ig'), replacements[key]);
+            text = text.replace(replacements_reg[key], replacements[key]);
         }
-        return s;
+
+        // 还原图片
+        text = reader.nano(text, imgs);
+
+        if(typeof(content) != 'string'){
+            content.innerHTML = text;
+        }
+
+        debug("  小说屏蔽字修复耗时：" + (new Date().getTime() - s) + 'ms');
+        return text;
     }
 
     /**
@@ -912,25 +941,8 @@
                 // }   
             }
 
-            // 小说屏蔽字修复。
-            if(config.content_replacements){
-                var s = new Date().getTime();
-
-                // 先提取出 img
-                var imgs = {};
-                var i = 0;
-                text = text.replace(/<img[^>]*>/g, function(img){
-                    imgs[i] = img;
-                    return "{" + (i++) + "}";
-                });
-
-                text = contentReplacements(text);
-
-                // 还原图片
-                text = reader.nano(text, imgs);
-
-                debug("  小说屏蔽字修复耗时：" + (new Date().getTime() - s) + 'ms');
-            }
+            // 小说屏蔽字修复
+            text = contentReplacements(text);
             return text;
         },
         getNextUrl: function(){
@@ -1091,8 +1103,9 @@
                     reader.fixMobile();
 
                     document.title = parser.docTitle;
-                    document.body.setAttribute("name", "MyNovelReader")
+                    document.body.setAttribute("name", "MyNovelReader");
                     document.body.innerHTML = reader.nano(tpl_html, parser);
+
                     // 再次移除其它不相关的。主要起点中文有时候有问题
                     // setTimeout(function(){
                     //     $('body > *:not("#wrapper, .readerbtn, #reader-notice")').remove();
@@ -1226,6 +1239,18 @@
             if (!reader.paused && remain < config.BASE_REMAIN_HEIGHT) {
                 reader.doRequest();
             }
+
+            if(reader.isTheEnd){
+                if(reader.isEndNoticed){
+                    if(remain > 50){
+                        reader.endNotice.style.display = "none";
+                        reader.isEndNoticed = false;
+                    }
+                }else if(remain < 20){
+                    reader.endNotice = notice("已到达最后一页...", false);
+                    reader.isEndNoticed = true;
+                }
+            }
         },
         doRequest: function(){
             var nextUrl = reader.requestUrl;
@@ -1235,7 +1260,7 @@
                 reader.curPageUrl = reader.requestUrl;
                 reader.requestUrl = null;
 
-                notice("")
+                reader.requestNotice = notice("正在加载下一页中...", false);
 
                 var useiframe = reader.site && reader.site.useiframe;
                 if(useiframe){
@@ -1314,6 +1339,8 @@
 
             reader.requestUrl = parser.nextUrl;
             reader.isTheEnd = parser.isTheEnd;
+
+            reader.requestNotice.style.display = "none";
         },
         fixImageFloats: function () {
             if(!config.fixImageFloats) return;
@@ -1456,7 +1483,7 @@
     var noticeDiv;
     var noticeDivto;
     var noticeDivto2;
-    function notice(html_txt){
+    function notice(html_txt, autoClose){
         if(!noticeDiv){
             var div=document.createElement('div');
             div.id = "reader-notice";
@@ -1484,7 +1511,7 @@
             ';
             document.body.appendChild(div);
 
-            document.addEventListener("click", function(){
+            noticeDiv.addEventListener("click", function(){
                 noticeDiv.style.display='none';
             }, false);
         };
@@ -1493,12 +1520,17 @@
         noticeDiv.innerHTML=html_txt;
         noticeDiv.style.display='block';
         noticeDiv.style.opacity='0.96';
-        noticeDivto2=setTimeout(function(){
-            noticeDiv.style.opacity='0';
-        },1666);
-        noticeDivto=setTimeout(function(){
-            noticeDiv.style.display='none';
-        },2000);
+
+        if(typeof autoClose == 'undefined' || autoClose){
+            noticeDivto2=setTimeout(function(){
+                noticeDiv.style.opacity='0';
+            },1666);
+            noticeDivto=setTimeout(function(){
+                noticeDiv.style.display='none';
+            },2000);
+        }
+
+        return noticeDiv;
     }
 
     function debug(){ if(config.DEBUG) console.log.apply(console, arguments);}
@@ -1545,6 +1577,11 @@
     // 自定义 parseHTML, 需要上面的 DOMParser
     var parseHTML = function(data){var parser = parseHTML.parser;if(!parser){parser = new DOMParser();}return parser.parseFromString(data, "text/html");};
 
+    var tmp_textarea = document.createElement("textarea");
+    function convertHtml(instr){
+        tmp_textarea.innerHTML = instr;
+        return tmp_textarea.innerHTML;
+    }
 })('\
 /**\
  * 下面的皮肤根据 defpt 的修改而来\
