@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        2.4.6
+// @version        2.4.8
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说清爽阅读脚本。
@@ -297,13 +297,15 @@
                 '(<center>)?<?img src..(http://www.wcxiaoshuo.com)?(/sss/\\S+\\.jpg).(>| alt."\\d+_\\d+_\\d*\\.jpg" />)(</center>)?': '$3',
                 "/sss/da.jpg": "打", "/sss/maws.jpg": "吗？", "/sss/baw.jpg": "吧？", "/sss/wuc.jpg": "无", "/sss/maosu.jpg": "：“", "/sss/cuow.jpg": "错", "/sss/ziji.jpg": "自己", "/sss/shenme.jpg": "什么", "/sss/huiqub.jpg": "回去", "/sss/sjian.jpg": "时间", "/sss/zome.jpg": "怎么", "/sss/zhido.jpg": "知道", "/sss/xiaxin.jpg": "相信", "/sss/faxian.jpg": "发现", "/sss/shhua.jpg": "说话", "/sss/dajiex.jpg": "大姐", "/sss/dongxi.jpg": "东西", "/sss/erzib.jpg": "儿子", "/sss/guolair.jpg": "过来", "/sss/xiabang.jpg": "下班", "/sss/zangfl.jpg": "丈夫", "/sss/dianhua.jpg": "电话", "/sss/huilaim.jpg": "回来", "/sss/xiawu.jpg": "下午", "/sss/guoquu.jpg": "过去", "/sss/shangba.jpg": "上班", "/sss/mingtn.jpg": "明天", "/sss/nvrenjj.jpg": "女人", "/sss/shangwo.jpg": "上午", "/sss/shji.jpg": "手机", "/sss/xiaoxinyy.jpg": "小心", "/sss/furene.jpg": "夫人", "/sss/gongzih.jpg": "公子", "/sss/xiansg.jpg": "先生", "/sss/penyouxi.jpg": "朋友", "/sss/xiaoje.jpg": "小姐", "/sss/xifup.jpg": "媳妇", "/sss/nvxudjj.jpg": "女婿", "/sss/xondi.jpg": "兄弟", "/sss/lagong.jpg": "老公", "/sss/lapo.jpg": "老婆", "/sss/meimeid.jpg": "妹妹", "/sss/jiejiev.jpg": "姐姐", "/sss/jiemeiv.jpg": "姐妹", "/sss/xianggx.jpg": "相公", "/sss/6shenumev.jpg": "什么", "/sss/cuoaw.jpg": "错", "/sss/fpefnyoturxi.jpg": "朋友", "/sss/vfsjgigarn.jpg": "时间", "/sss/zzhiedo3.jpg": "知道", "/sss/zibjib.jpg": "自己", "/sss/qdonglxi.jpg": "东西", "/sss/hxiapxint.jpg": "相信", "/sss/fezrormre.jpg": "怎么", "/sss/nvdrfenfjfj.jpg": "女人", "/sss/jhiheejeieev.jpg": "姐姐", "/sss/xdifagojge.jpg": "小姐", "/sss/gggugolgair.jpg": "过来", "/sss/maoashu.jpg": "：“", "/sss/gnxnifawhu.jpg": "下午", "/sss/rgtugoqgugu.jpg": "过去", "/sss/khjukilkaim.jpg": "回来", "/sss/gxhigfadnoxihnyy.jpg": "小心", "/sss/bkbskhhuka.jpg": "说话", "/sss/xeieavnfsg.jpg": "先生", "/sss/yuhhfuiuqub.jpg": "回去", "/sss/pdianphua.jpg": "电话", "/sss/fabxianr.jpg": "发现", "/sss/feilrpto.jpg": "老婆", "/sss/gxronfdri.jpg": "兄弟", "/sss/flfaggofng.jpg": "老公", "/sss/tymyigngtyn.jpg": "明天", "/sss/dfshfhhfjfi.jpg": "手机", "/sss/gstjhranjgwjo.jpg": "上午", "/sss/fmgeyimehid.jpg": "妹妹", "/sss/gxgihftutp.jpg": "媳妇", "/sss/cerztifb.jpg": "儿子", "/sss/gfxgigagbfadng.jpg":"下班", "/sss/gstjhranjg.jpg":"下午", "/sss/hjeirerm6eihv.jpg": "姐妹", "/sss/edajihexr.jpg": "大姐", "/sss/wesfhranrrgba.jpg": "上班", "/sss/gfognggzigh.jpg": "公子", "/sss/frurtefne.jpg": "夫人", "/sss/fzagnggfbl.jpg": "丈夫", "/sss/nvdxfudfjfj.jpg": "女婿", "/sss/xdidafnggx.jpg": "相公", "/sss/zenme.jpg": "怎么", "/sss/gongzi.jpg": "公子", "/sss/ddefr.jpg": "", 
                 ".*ddefr\\.jpg.*|无(?:错|.*cuoa?w\\.jpg.*)小说网不[少跳]字|w[a-z\\.]*om?|.*由[【无*错】].*会员手打[\\s\\S]*": "",
-                "一秒记住.*": "",
+                "一秒记住.*|全文免费阅读.*|列表|8 9 阅阅 读 网": "", "【 .{1,10} 】":""
             },
             contentPatch: function(fakeStub){
-                // 去除内容开头的重复标题
+                // 去除内容开头、结尾的重复标题
                 var title = fakeStub.find("#htmltimu").text();
                 var content = fakeStub.find("#htmlContent");
-                content.html(content.html().replace(new RegExp(title), ""));
+                if(title.match(/第.*章/)){
+                    content.html(content.html().replace(new RegExp(title), "").replace(new RegExp(title), ""));
+                }
             }
         },
         {siteName: "书迷楼",
@@ -322,13 +324,17 @@
             url: /^http:\/\/www\.binhuo\.com\/html\/[\d\/]+\.html$/,
             exampleUrl: "http://www.binhuo.com/",
             titleReg: /(.*?)最新章节,(.*?)-.*/,
-            contentReplace: /冰火中文|(www\.)?binhuo\.com/ig
+            contentReplace: /冰火中文|(www\.)?binhuo\.com/ig,
+            contentPatch: function(fakeStub){
+                fakeStub.find("#BookText").append(fakeStub.find("img.imagecontent"));
+                debug(fakeStub.find("#BookText").html())
+            }
         },
         {siteName: "百晓生",
             url: /^http:\/\/www\.bxs\.cc\/\d+\/\d+\.html$/,
             exampleUrl: "http://www.bxs.cc/22739/8894713.html",
             titleReg: /(.*?)\d*,(.*)/,
-            contentReplace: /站长推荐.*|[\[【].*[\]】]|文字首发|bxs.|[\[\]\(《].*百晓生.*|百晓生.不跳字|百.晓.生.|关闭.*广告.*|飘天文学|本站域名就是.*|\(.{0,5}小说更快更好.{0,5}\)|(请在)?百度搜索.*/ig,
+            contentReplace: /百晓生网不少字|站长推荐.*|[\[【].*[\]】]|文字首发|bxs.|[\[\]\(《].*百晓生.*|百晓生.不跳字|百.晓.生.|关闭.*广告.*|飘天文学|本站域名就是.*|\(.{0,5}小说更快更好.{0,5}\)|(请在)?百度搜索.*/ig,
         },
         {siteName: "浩奇文学网",
             url: /^http:\/\/www\.haoqi99\.com\/.*\.shtml$/,
@@ -511,7 +517,7 @@
             nextSelector: "a:contains('下 一 页'), a:contains('返回书架')",  
             contentPatch: function(fakeStub){  
                fakeStub.find("a:contains('返回书架')").html("下 一 页").attr("href", fakeStub.find("a:contains('返回目录')").attr("href"));  
-                fakeStub.find("#content3zcn").find(".titlePos").remove();  
+                fakeStub.find("#content3zcn").find(".titlePos, font.tips").remove();  
             }  
         }
     ];
@@ -545,7 +551,7 @@
         "暧me[iì]":"暧昧", 
         "běi(\\s|&nbsp;)*j[īi]ng":"北京","半shen": "半身", "b[ìi]j[ìi]ng":"毕竟",
         "chongdong":"冲动", "缠mian": "缠绵", "成shu": "成熟", "赤lu[oǒ]": "赤裸", "春guang": "春光",
-        "dang校": "党校", "da子": "鞑子", "diao丝": "屌丝", "dú\\s*lì": "独立", "d[iì]fāng":"地方", 
+        "dang校": "党校", "da子": "鞑子", "diao丝": "屌丝", "dú\\s*lì": "独立", "d[iì]fāng":"地方", "dìdū":"帝都", 
         "fǎngfó":"仿佛", "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "fènnù":"愤怒",
         "gao潮": "高潮", "干chai": "干柴", "gu[oò]chéng":"过程", "guānx[iì]":"关系", "gǎnjiào":"感觉",
         "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "hǎoxiàng":"好像", "huángsè":"黄色",
@@ -612,23 +618,12 @@
         if(!config.content_replacements) return content;
 
         var s = new Date().getTime();
-        var text = typeof(content) == 'string' ? content : content.innerHTML;
-        
-        // 先提取出 img
-        var imgs = {};
-        var i = 0;
-        text = text.replace(/<img[^>]*>/g, function(img){
-            imgs[i] = img;
-            return "{" + (i++) + "}";
-        });
+        var text = typeof(content) == 'string' ? content : content.innerHTML; 
 
         // 转换
         for (var key in replacements) {
             text = text.replace(replacements_reg[key], replacements[key]);
         }
-
-        // 还原图片
-        text = reader.nano(text, imgs);
 
         if(typeof(content) != 'string'){
             content.innerHTML = text;
@@ -897,6 +892,14 @@
 
             if(!text) return null;
 
+            // 先提取出 img
+            var imgs = {};
+            var i = 0;
+            text = text.replace(/<img[^>]*>/g, function(img){
+                imgs[i] = img;
+                return "{" + (i++) + "}";
+            });
+
             // 去除开头的 <br>
             text = text.replace(/<br\/?>/, "");
 
@@ -939,6 +942,10 @@
 
             // 小说屏蔽字修复
             text = contentReplacements(text);
+
+            // 还原图片
+            text = reader.nano(text, imgs);
+
             return text;
         },
         getNextUrl: function(){
@@ -1346,7 +1353,7 @@
             var articleContent = document.getElementById("wrapper");
 
             var imageWidthThreshold = Math.min(articleContent.offsetWidth, 800) * 0.55,
-                images              = articleContent.getElementsByTagName('img');
+                images = articleContent.querySelectorAll('img:not(.blockImage)');
 
             for(var i=0, il = images.length; i < il; i+=1) {
                 var image = images[i];
@@ -1411,7 +1418,6 @@
         if(!reader.isEnabled){
             reader.isEnabled = isEnabled();
         }
-        debug(reader.isEnabled);
 
         if(reader.isEnabled){
             launch();
