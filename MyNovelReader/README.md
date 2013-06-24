@@ -3,9 +3,9 @@
 
 ### 文件说明
 
- - mynovelreader@ywzhaiqi@gmailcom.user.js，GM 脚本
- - novelreaderdb@gmailcom.user.js，自定义配置文件
- - MyNovelReader.js，自用于 Opera Mobile，去除jQuery版。
+ - [mynovelreader@ywzhaiqi@gmailcom.user.js](mynovelreader@ywzhaiqi@gmailcom.user.js)，GM 脚本
+ - [novelreaderdb@gmailcom.user.js](novelreaderdb@gmailcom.user.js)，自定义配置文件
+ - [MyNovelReader.js](MyNovelReader.js)，自用于 Opera Mobile，去除jQuery版。
 
 ### 需要
 
