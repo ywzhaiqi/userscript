@@ -1,6 +1,12 @@
 小说阅读脚本
 ============
 
+### 文件说明
+
+ - mynovelreader@ywzhaiqi@gmailcom.user.js，GM 脚本
+ - novelreaderdb@gmailcom.user.js，自定义配置文件
+ - MyNovelReader.js，自用于 Opera Mobile，去除jQuery版。
+
 ### 需要
 
 Firefox（Greasemonkey/Scriptish）， Chrome（Tampermonkey），Opera（暴力猴） 
