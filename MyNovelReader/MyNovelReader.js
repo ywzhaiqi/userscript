@@ -428,7 +428,7 @@
 			}
 
 			if(!this.chapterTitle){
-				this.chapterTitle = this.autoGetTitleText(document);
+				this.chapterTitle = this.autoGetTitleText(this.doc);
 			}
 
 			this.docTitle = this.bookTitle 
@@ -436,7 +436,7 @@
 				: this.doc.title;
 		},
 		// 智能获取标题
-		autoGetTitleText: function (document) {
+		autoGetTitleText: function (doc) {
 		    debug("AutoGetTitle start");
 
 		    var
@@ -445,11 +445,11 @@
 		        _positive_regexp = /第?\S+[章节卷回]|\d{2,4}/,
 		        _negative_regepx = /[上下]一章/,
 		        _title_remove_regexp = /最新章节/,
-		        _document_title = document.title ? document.title : document.getElementsByTagName("title")[0].textContent,
+		        _document_title = doc.title ? doc.title : doc.getElementsByTagName("title")[0].textContent,
 		        _search_document_title = ' ' + _document_title.replace(/\s+/gi, ' ') + ' '
 		    ;
 
-		    var _headings = document.querySelectorAll(_main_selector);
+		    var _headings = doc.querySelectorAll(_main_selector);
 		    if (_headings.length === 1) {
 		        debug("  Main selector:", _headings[0]);
 		        return _headings[0].textContent.trim();
@@ -457,7 +457,7 @@
 
 		    var possibleTitles = {};
 
-		    _headings = document.querySelectorAll(_second_selector);
+		    _headings = doc.querySelectorAll(_second_selector);
 
 		    for (var i = 0; i < _headings.length; i++) {
 		        var 
@@ -986,7 +986,7 @@
 	(function($) {var _regex = /\{([\w\.]*)\}/g;$.nano = function(template, data) {return template.replace(_regex, function(str, key) {var keys = key.split('.'),value = data[keys.shift()];keys.forEach(function(key){value = value[key];});return (value === null || value === undefined) ? '' : value;});};}($));
 	function getFullHref(href){if(typeof href == 'undefined')return '';if(typeof href!='string') href=href.getAttribute('href');var a = getFullHref.a;if(!a){getFullHref.a=a=document.createElement('a');}a.href = href;return a.href;}
 	function addStyle(css){if(typeof GM_addStyle != 'undefined')GM_addStyle(css);else{var heads = document.getElementsByTagName('head');if(heads.length > 0){var node = document.createElement('style');node.type = 'text/css';node.innerHTML = css;heads[0].appendChild(node);}}}
-    (function(DOMParser) {"use strict";var DOMParser_proto = DOMParser.prototype, real_parseFromString = DOMParser_proto.parseFromString;try {if ((new DOMParser).parseFromString("", "text/html")) {return;}} catch (ex) {}DOMParser_proto.parseFromString = function(markup, type) {if (/^\s*text\/html\s*(?:;|$)/i.test(type)) {var doc = document.implementation.createHTMLDocument("");doc.body.innerHTML = markup;return doc;} else {return real_parseFromString.apply(this, arguments);}};}(DOMParser));
+	(function(DOMParser) {"use strict";var DOMParser_proto = DOMParser.prototype,real_parseFromString = DOMParser_proto.parseFromString;	try {if ((new DOMParser).parseFromString("", "text/html")) {	return;}	} catch (ex) {}	DOMParser_proto.parseFromString = function(markup, type) {if (/^\s*text\/html\s*(?:;|$)/i.test(type)) {	var doc = document.implementation.createHTMLDocument("");	doc.documentElement.innerHTML = markup;	return doc;} else {	return real_parseFromString.apply(this, arguments);}	};}(DOMParser));
 	function parseHTML(data){var parser = parseHTML.parser;if(!parser){parser = new DOMParser();}return parser.parseFromString(data, "text/html");};
 })('\
 /**\
