@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        2.4.8
+// @version        2.5.0
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说清爽阅读脚本。
@@ -46,6 +46,7 @@
 // @include        http://www.sqsxs.com/*/*/*.html
 // @include        http://www.caiwei.tw/html/*/*.html
 // @include        http://www.hotsk.com/Html/Book/*/*/*.shtml
+// @include        http://www.92to.com/*/*/*.html
 // 需特殊处理的论坛
 // @include        http://www.fkzww.net/thread-*.html
 
@@ -279,7 +280,7 @@
             exampleUrl: "http://www.ranwen.cc/A/3/3428/4446495.html",
             titleReg: /(.*?)-(.*?)-.*/,
             contentSelector: "#oldtext",
-            contentReplace: /”娱乐秀”|[“”]*看|更多精彩小[说說].*/g,
+            contentReplace: /关闭&lt;广告&gt;|”娱乐秀”|[“”]*看|更多精彩小[说說].*/g,
             contentPatch: function(fakeStub) {
                 fakeStub.find("#oldtext").find("div[style], script").remove();
             }
@@ -324,7 +325,8 @@
             url: /^http:\/\/www\.binhuo\.com\/html\/[\d\/]+\.html$/,
             exampleUrl: "http://www.binhuo.com/",
             titleReg: /(.*?)最新章节,(.*?)-.*/,
-            contentReplace: /冰火中文|(www\.)?binhuo\.com/ig,
+            // |(www\.)?binhuo\.com  误替换图片？
+            contentReplace: /冰火中文/ig,
             contentPatch: function(fakeStub){
                 fakeStub.find("#BookText").append(fakeStub.find("img.imagecontent"));
                 debug(fakeStub.find("#BookText").html())
@@ -474,6 +476,12 @@
             timeout: 800  // 为0则没法正确加载内容
         },
         {
+            url: "^http://www\\.92to\\.com/\\w+/\\w+/\\d+\\.html$",
+            useiframe: true,
+            timeout: 500,
+            contentReplace: "看小说.就爱.*"
+        },
+        {
             url: "http://www\\.shushuw\\.cn/shu/\\d+/\\d+\\.html",
             useiframe: true,
             timeout: 500,
@@ -614,19 +622,14 @@
         replacements_reg[key] = new RegExp(key, "ig");
     }
     // 转换函数
-    function contentReplacements(content){
-        if(!config.content_replacements) return content;
+    function contentReplacements(text){
+        if(!config.content_replacements) return text;
 
         var s = new Date().getTime();
-        var text = typeof(content) == 'string' ? content : content.innerHTML; 
 
         // 转换
         for (var key in replacements) {
             text = text.replace(replacements_reg[key], replacements[key]);
-        }
-
-        if(typeof(content) != 'string'){
-            content.innerHTML = text;
         }
 
         debug("  小说屏蔽字修复耗时：" + (new Date().getTime() - s) + 'ms');
@@ -721,7 +724,7 @@
         },
         // 智能获取标题
         autoGetTitleText: function (document) {
-            debug("AutoGetTitle: ");
+            debug("AutoGetTitle start");
 
             var
                 _main_selector = "#TextTitle, #title, .ChapterName",
@@ -735,7 +738,7 @@
 
             var _headings = document.querySelectorAll(_main_selector);
             if (_headings.length === 1) {
-                debug("  main selector");
+                debug("  main selector", _headings[0]);
                 return _headings[0].textContent.trim();
             }
 
@@ -892,14 +895,6 @@
 
             if(!text) return null;
 
-            // 先提取出 img
-            var imgs = {};
-            var i = 0;
-            text = text.replace(/<img[^>]*>/g, function(img){
-                imgs[i] = img;
-                return "{" + (i++) + "}";
-            });
-
             // 去除开头的 <br>
             text = text.replace(/<br\/?>/, "");
 
@@ -920,7 +915,6 @@
                             text = text.replace(new RegExp(key, "ig"), replace[key]);
                         }
                     }
-                    
                     debug("  Content Replaced");
                 }
 
@@ -939,6 +933,14 @@
                 //     text = text.replace(new RegExp(titleRegText), "");
                 // }   
             }
+
+            // 先提取出 img
+            var imgs = {};
+            var i = 0;
+            text = text.replace(/<img[^>]*>/g, function(img){
+                imgs[i] = img;
+                return "{" + (i++) + "}";
+            });
 
             // 小说屏蔽字修复
             text = contentReplacements(text);

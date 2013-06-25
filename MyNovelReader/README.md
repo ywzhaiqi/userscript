@@ -131,6 +131,7 @@ Firefox（Greasemonkey/Scriptish）， Chrome（Tampermonkey），Opera（暴力
 
 ### 更新
 
+ - 2013年6月25日，版本 2.5.0。新增站点 92to。
  - 2013年6月24日，版本 2.4.8。
  	- 改善冰火图片加载的问题。
  - 2013年6月23日，版本 2.4.7。
