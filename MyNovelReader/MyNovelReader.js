@@ -39,6 +39,7 @@
 // @include        http://www.sqsxs.com/*/*/*.html
 // @include        http://www.caiwei.tw/html/*/*.html
 // @include        http://www.hotsk.com/Html/Book/*/*/*.shtml
+// @include        http://www.dyzww.com/cn/*/*/*.html
 // 需特殊处理的论坛
 // @include        http://www.fkzww.net/thread-*.html
 
@@ -64,15 +65,15 @@
         booklinkme: true,        // booklink.me 跳转的自动启动
         soduso: false,            // www.sodu.so 跳转
         BASE_REMAIN_HEIGHT: 1000,
-        DEBUG: true,
+        DEBUG: false,
         fullHref: true,
         content_replacements: true,      // 小说屏蔽字修复
         fixImageFloats: true
 	};
 
 	var rule = {
-    	nextLink: '//a[descendant-or-self::*[contains(text(),":下一页")]][@href] | //a[descendant-or-self::*[contains(text(),"下一章")]][@href]',
-		prevLink: '//a[contains(text(),"上一页")][@href] | //a[contains(text(),"上一章")][@href]',
+    	nextLink: '//a[descendant-or-self::*[contains(text(),"下一页")]][@href] | //a[descendant-or-self::*[contains(text(),"下一章")]][@href] | //a[descendant-or-self::*[contains(text(),"下页")]][@href]',
+		prevLink: '//a[contains(text(),"上一页")][@href] | //a[contains(text(),"上一章")][@href] | //a[contains(text(),"上页")][@href]',
 		nextUrlIgnore: /index|list|last|end|BuyChapterUnLogin/i,  // 忽略的下一页链接，匹配链接
 
 		// 按顺序匹配，匹配到则停止。
@@ -185,7 +186,7 @@
         	siteName: "冰火中文",
             url: /^http:\/\/www.binhuo.com\/html\/[\d\/]+.html$/,
             titleReg: /(.*?)最新章节,(.*?)-.*/,
-            contentReplace: /冰火中文|www.binhuo.com/ig
+            contentReplace: /冰火.?中文|(www\.)?binhuo.com/ig
         },
         {siteName: "百晓生",
             url: /^http:\/\/www\.bxs\.cc\/\d+\/\d+\.html$/,
@@ -195,6 +196,13 @@
             contentPatch: function(fakeStub){
                 var content = fakeStub.find("#content");
                 content.html(content.html().replace(/^[\s\S]*?<br><br>/, ""));
+            }
+        },
+        {siteName: "第一中文",
+            url: "^http://www\\.dyzww\\.com/cn/\\d+/\\d+/\\d+\\.html$" ,
+            contentReplace: {
+                '<img.*?ait="(.*?)".*?>': "$1",
+                'www\\.dyzww\\.com.*|♂|шШщ.*|bin.*': ""
             }
         },
         {
@@ -429,7 +437,7 @@
 		},
 		// 智能获取标题
 		autoGetTitleText: function (document) {
-		    debug("AutoGetTitle: ");
+		    debug("AutoGetTitle start");
 
 		    var
 		        _main_selector = "#TextTitle, #title, .ChapterName",
@@ -443,7 +451,7 @@
 
 		    var _headings = document.querySelectorAll(_main_selector);
 		    if (_headings.length === 1) {
-		        debug("  main selector");
+		        debug("  Main selector:", _headings[0]);
 		        return _headings[0].textContent.trim();
 		    }
 
@@ -525,6 +533,7 @@
 		    var curTitle = topScoreTitle;
 		    if (!curTitle) {
 		        // TODO: document.title 的处理？
+		        debug("  Handle document title");
 		        curTitle = _document_title;
 
 		        // 下面的正则从
@@ -894,9 +903,10 @@
 	        return false;
 	    };
 
-	    if(reader.site || other_enable()){
-	        reader.init();
-	    }
+	    // if(reader.site || other_enable()){
+	    //     reader.init();
+	    // }
+	    reader.init();
 	}
 
 	function init () {
@@ -976,7 +986,7 @@
 	(function($) {var _regex = /\{([\w\.]*)\}/g;$.nano = function(template, data) {return template.replace(_regex, function(str, key) {var keys = key.split('.'),value = data[keys.shift()];keys.forEach(function(key){value = value[key];});return (value === null || value === undefined) ? '' : value;});};}($));
 	function getFullHref(href){if(typeof href == 'undefined')return '';if(typeof href!='string') href=href.getAttribute('href');var a = getFullHref.a;if(!a){getFullHref.a=a=document.createElement('a');}a.href = href;return a.href;}
 	function addStyle(css){if(typeof GM_addStyle != 'undefined')GM_addStyle(css);else{var heads = document.getElementsByTagName('head');if(heads.length > 0){var node = document.createElement('style');node.type = 'text/css';node.innerHTML = css;heads[0].appendChild(node);}}}
-	(function(DOMParser) {"use strict";var DOMParser_proto = DOMParser.prototype,real_parseFromString = DOMParser_proto.parseFromString;	try {if ((new DOMParser).parseFromString("", "text/html")) {	return;}	} catch (ex) {}	DOMParser_proto.parseFromString = function(markup, type) {if (/^\s*text\/html\s*(?:;|$)/i.test(type)) {	var doc = document.implementation.createHTMLDocument("");	doc.documentElement.innerHTML = markup;	return doc;} else {	return real_parseFromString.apply(this, arguments);}	};}(DOMParser));
+    (function(DOMParser) {"use strict";var DOMParser_proto = DOMParser.prototype, real_parseFromString = DOMParser_proto.parseFromString;try {if ((new DOMParser).parseFromString("", "text/html")) {return;}} catch (ex) {}DOMParser_proto.parseFromString = function(markup, type) {if (/^\s*text\/html\s*(?:;|$)/i.test(type)) {var doc = document.implementation.createHTMLDocument("");doc.body.innerHTML = markup;return doc;} else {return real_parseFromString.apply(this, arguments);}};}(DOMParser));
 	function parseHTML(data){var parser = parseHTML.parser;if(!parser){parser = new DOMParser();}return parser.parseFromString(data, "text/html");};
 })('\
 /**\
