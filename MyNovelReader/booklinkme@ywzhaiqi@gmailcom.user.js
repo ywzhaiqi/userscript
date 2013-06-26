@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             booklinkme@ywzhaiqi@gmail.com
 // @name           booklink.me 增强
-// @version        1.4
+// @version        1.5
 // @author         ywzhaiqi@gmail.com
 // @description    首页一键打开所有未读链接
 // @updataURL      https://userscripts.org/scripts/source/165572.meta.js
@@ -56,7 +56,10 @@ var pc = {
 
 var mobile = {
 	init: function(){
+
 		this.setClickColor();
+
+		this.addUnreadButton();
 
 		if(location.pathname === "/charpter.php"){
 			/**
@@ -78,6 +81,26 @@ var mobile = {
 			}, false);
 		});
 	},
+	addUnreadButton: function(){
+		var mainElem = $x('//li[text()="主书架"]')[0];
+		if(!mainElem) return;
+
+		var unReadLinks = $x('id("m_main")//span[contains(text(), "未读")]');
+		if(unReadLinks.length == 0) return;
+
+		var openAllBtn = document.createElement("span");
+		openAllBtn.style.color = "red";
+		openAllBtn.innerHTML = "(" + unReadLinks.length + "未读)";
+		openAllBtn.addEventListener("click", function(){
+			unReadLinks.forEach(function(span){
+				var link = span.parentNode;
+				window.open(link.href);
+			});
+			openAllBtn.style.color = "#666666";
+		}, false);
+
+		mainElem.appendChild(openAllBtn);
+	}
 };
 
 
