@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        2.5.1
+// @version        2.5.2
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说清爽阅读脚本。
@@ -62,6 +62,7 @@
 // @include        http://www.hao662.com/haoshu/*/*/*.html
 
 // 百度搜索网站
+// @include        http://www.59shuku.com/xiaoshuo/*/*.htm
 // @include        http://www.16kbook.org/Html/Book/*/*/*.shtml
 // @include        http://www.dixiaoshuo.com/Html/*/*.html
 // @include        http://www.nieshu.com/Book/*/*/*.shtml
@@ -150,11 +151,12 @@
 
 (function(css){
 
-    try{
-        if (window.frameElement && window.frameElement.name == "novelreader-iframe") {
-            return;
-        }
-    }catch(e) {}
+    if(window.name == "mynovelreader-iframe"){
+        // window.scroll(window.scrollX, 99999);  //滚动到底部,针对,某些使用滚动事件加载图片的网站.
+        // window.parent.postMessage('mynovelreader-iframe:DOMLoaded', '*');
+        return;
+    }
+
 
     // 所有的设置
     var config = {
@@ -180,10 +182,10 @@
 
         // 按顺序匹配，匹配到则停止。econtains 完全相等
         indexSelectors: ["a:contains('返回书目')", "a:contains('章节目录')", "a:contains('章节列表')",
-            "a:econtains('最新章节')", "a:contains('回目录')", "a:contains('目 录')", "a:contains('目录')"],
+            "a:econtains('最新章节')", "a:contains('回目录')","a:contains('回书目')", "a:contains('目 录')", "a:contains('目录')"],
 
         contentSelectors: ["#bmsy_content", "#bookpartinfo", "#htmlContent", "#chapter_content", "#chapterContent", "#partbody",
-            "#article_content", "#BookTextRead", "#booktext", "#BookText", "#readtext", "#text_c", "#txt_td", "#TXT",
+            "#article_content", "#BookTextRead", "#booktext", "#BookText", "#readtext", "#text_c", "#txt_td", "#TXT", "#zjneirong",
             ".novel_content", ".readmain_inner", ".noveltext", ".booktext",
             "#contentTxt", "#oldtext", "#a_content", "#contents", "#content2", "#content", ".content"],
 
@@ -280,7 +282,7 @@
             exampleUrl: "http://www.ranwen.cc/A/3/3428/4446495.html",
             titleReg: /(.*?)-(.*?)-.*/,
             contentSelector: "#oldtext",
-            contentReplace: /最快阅读小说大主宰.*|跟我读Ｈ－u－n 请牢记|非常文学|\[.*|关闭&lt;广告&gt;|w w.*|”娱乐秀”|[“”]*看|更多精彩小[说說].*/g,
+            contentReplace: /最快阅读小说大主宰.*|跟我读Ｈ－u－n 请牢记|非常文学|关闭&lt;广告&gt;|w w.*|”娱乐秀”|[“”]*看|更多精彩小[说說].*/g,
             contentPatch: function(fakeStub) {
                 fakeStub.find("#oldtext").find("div[style], script").remove();
             }
@@ -326,17 +328,19 @@
             exampleUrl: "http://www.binhuo.com/",
             titleReg: /(.*?)最新章节,(.*?)-.*/,
             // |(www\.)?binhuo\.com  误替换图片？
-            contentReplace: /冰火中文/ig,
+            contentReplace: {
+                "冰火中文|冰.火.中文|绿色小说|lvsexs ": "",
+                "([^/])www\\.binhuo\\.com": "$1"
+            },
             contentPatch: function(fakeStub){
                 fakeStub.find("#BookText").append(fakeStub.find("img.imagecontent"));
-                debug(fakeStub.find("#BookText").html())
             }
         },
         {siteName: "百晓生",
             url: /^http:\/\/www\.bxs\.cc\/\d+\/\d+\.html$/,
             exampleUrl: "http://www.bxs.cc/22739/8894713.html",
             titleReg: /(.*?)\d*,(.*)/,
-            contentReplace: /百晓生网不少字|站长推荐.*|[\[【].*[\]】]|文字首发|bxs.|[\[\]\(《].*百晓生.*|百晓生.不跳字|百.晓.生.|关闭.*广告.*|飘天文学|本站域名就是.*|\(.{0,5}小说更快更好.{0,5}\)|(请在)?百度搜索.*/ig,
+            contentReplace: /最快阅读小说大主宰，尽在百晓生文学网.*|ww.x.om|欢迎大家来到.*?bxs\.cc|百晓生阅读最新最全的小说.*|百晓生网不少字|站长推荐.*|[\[【].*[\]】]|文字首发|[\[\]\(《].*百晓生.*|百晓生.不跳字|百.晓.生.|关闭.*广告.*|飘天文学|本站域名就是.*|\(.{0,5}小说更快更好.{0,5}\)|(请在)?百度搜索.*/ig,
         },
         {siteName: "浩奇文学网",
             url: /^http:\/\/www\.haoqi99\.com\/.*\.shtml$/,
@@ -549,6 +553,7 @@
         "。(,|，|。)": "。",
         "？(,|，)": "？",
         "”(,|，|。)": "”",
+        "@{3,}": "",
 
         // ===星号屏蔽字还原===
         "十有(\\*{2})":"十有八九", "\\*(2)不离十":"八九不离十",
@@ -561,7 +566,7 @@
         "chongdong":"冲动", "缠mian": "缠绵", "成shu": "成熟", "赤lu[oǒ]": "赤裸", "春guang": "春光",
         "dang校": "党校", "da子": "鞑子", "diao丝": "屌丝", "d[úu]\\s{0,2}l[ìi]": "独立", "d?[iì]f[āa]ng":"地方", "d[ìi]d[ūu]":"帝都", "du\\s{0,2}c[áa]i":"独裁",
         "f[ǎa]ngf[óo]":"仿佛", "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "f[èe]nn[ùu]":"愤怒",
-        "gao潮": "高潮", "干chai": "干柴", "gu[oò]ch[ée]ng":"过程", "gu[āa]nx[iì]":"关系", "g[ǎa]nji[àa]o":"感觉",
+        "gao潮": "高潮", "干chai": "干柴", "gu[oò]ch[ée]ng":"过程", "gu[āa]nx[iì]":"关系", "g[ǎa]nji[àa]o":"感觉", "国wu院":"国务院",
         "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "h[ǎa]oxi[àa]ng":"好像", "hu[áa]ngs[èe]":"黄色",
         "j[ìi]nháng":"进行", "jinv": "妓女", "jirou": "鸡肉", "ji者":"记者", "ju花":"菊花","j[īi]动":"激动", "jili[èe]":"激烈", "肌r[òo]u":"肌肉","ji射":"激射", "ji[ēe]ch[uù]":"接触", "j[ùu]li[èe]": "剧烈",
         "k[ěe]n[ée]ng": "可能", "开bao": "开苞",  "k[àa]o近": "靠近",
@@ -576,7 +581,7 @@
         "w[ēe]ixi[ée]":"威胁", "wèizh[ìi]":"位置",
         "亵du": "亵渎", "xing福": "性福", "xiu长": "修长",
         "y[iī]y[àa]ng":"一样", "y[īi]di[ǎa]n":"一点", "y[ǐi]j[īi]ng":"已经", "阳w[ěe]i": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "you惑": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人","旖ni": "旖旎",
-        "z[iì]j[iǐ]": "自己","z[ìi]\\s*you": "自由","zh[iī]d?[àa]u?o":"知道","zha药": "炸药", "zhan有": "占有", "政f[ǔu]": "政府", "zhèng\\s{0,2}f[uǔ]": "政府", "zhōngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]y[oò]u":"左右", "zh[oō]uw[ée]i":"周围",
+        "z[iì]j[iǐ]": "自己","z[ìi]\\s*you": "自由","zh[iī]d?[àa]u?o":"知道","zha药": "炸药", "zhan有": "占有", "政f[ǔu]": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zhōngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]y[oò]u":"左右", "zh[oō]uw[ée]i":"周围",
 
         // ===单字替换，需特殊处理，防止替换图片===
         "b[āà]ng":"棒","bào":"爆","b[àa]":"吧","bī":"逼","bō":"波",
@@ -742,14 +747,14 @@
                 return _headings[0].textContent.trim();
             }
 
-            var possibleTitles = {};
+            var possibleTitles = {},
+                _heading_text;
 
             _headings = document.querySelectorAll(_second_selector);
 
             for (var i = 0; i < _headings.length; i++) {
                 var
                     _heading = _headings[i],
-                    // _heading = $(_heading).find('a').remove()[0],
                     _heading_text = _heading.textContent.trim()
                 ;
 
@@ -810,7 +815,7 @@
 
             // 找到分数最高的值
             var topScoreTitle, score_tmp = 0;
-            for (var _heading_text in possibleTitles) {
+            for (_heading_text in possibleTitles) {
                 if (possibleTitles[_heading_text] > score_tmp) {
                     topScoreTitle = _heading_text;
                     score_tmp = possibleTitles[_heading_text];
@@ -977,7 +982,7 @@
             return url;
         },
         checkNextUrl: function(url){
-            var endNum_regexp = /\/\d+\.html$|\/wcxs-\d+-\d+\/$/;
+            var endNum_regexp = /\/\d+\.html?$|\/wcxs-\d+-\d+\/$/;
             switch(true){
                 case url == '':
                 case rule.nextUrlIgnore && rule.nextUrlIgnore.test(url):
@@ -1065,10 +1070,10 @@
             </div>\
             <div class="content">{content}</div>\
             <div class="chapter-footer-nav">\
-                <a href="{prevUrl}"><<上一页</a> | \
-                <a href="{indexUrl}">目录</a> | \
+                <a class="prev-page" href="{prevUrl}"><<上一页</a> | \
+                <a class="index-page" href="{indexUrl}">目录</a> | \
                 {addBookMark}\
-                <a style="color:{theEndColor}" href="{nextUrl}">下一页>></a>\
+                <a class="next-page" style="color:{theEndColor}" href="{nextUrl}">下一页>></a>\
             </div>\
         ',
 
@@ -1084,7 +1089,7 @@
             var timeout = (site && site.timeout) || 0;
 
             // 框架内 setTimeout 没法使用？
-            if(timeout == 0){
+            if(timeout === 0){
                 reader.launch();
             }else{
                 setTimeout(function(){
@@ -1108,13 +1113,16 @@
                     reader.fixMobile();
 
                     document.title = parser.docTitle;
+                    window.name = "MyNovelReader";
                     document.body.setAttribute("name", "MyNovelReader");
                     document.body.innerHTML = reader.nano(tpl_html, parser);
 
                     // 再次移除其它不相关的。主要起点中文有时候有问题
-                    // setTimeout(function(){
-                    //     $('body > *:not("#wrapper, .readerbtn, #reader-notice")').remove();
-                    // }, 3000);
+                    if(window.location.hostname == "read.qidian.com"){
+                        setTimeout(function(){
+                            $('body > *:not("#wrapper, .readerbtn, #reader-notice")').remove();
+                        }, 3000);
+                    }
 
                     reader.requestUrl = parser.nextUrl;
                     reader.isTheEnd = parser.isTheEnd;
@@ -1292,7 +1300,7 @@
             if(!reader.iframe){
                 var i=document.createElement('iframe');
                 reader.iframe=i;
-                i.name='novelreader-iframe';
+                i.name='mynovelreader-iframe';
                 i.width='100%';
                 i.height='0';
                 i.frameBorder="0";
@@ -1323,7 +1331,7 @@
 
                     reader.loaded(doc);
                 }, timeout);
-            };
+            }
         },
         loaded: function(doc){
             var parser = new Parser(reader.site, doc, reader.curPageUrl);
@@ -1334,6 +1342,8 @@
             if(parser.content){
                 var content = reader.nano(reader.tpl_content, parser);
                 $('#wrapper').append(content);
+
+                // history.pushState(null, parser.chapterTitle, parser.curPageUrl);
 
                 window.setTimeout(function(){
                     reader.fixImageFloats();
@@ -1346,6 +1356,26 @@
             reader.isTheEnd = parser.isTheEnd;
 
             reader.requestNotice.style.display = "none";
+        },
+        searchInBooklink: function(bookName, callback){
+            GM_xmlhttpRequest({
+                method: "POST",
+                url: "http://booklink.me/after_search.php",
+                data: encodeURI("name=" + bookName + "&book=BookLink.Me小说搜索&search_type=book"),
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                onload: function(res){
+                    var doc = parseHTML(res.responseText);
+                    var links = $x("//a[text()='" + bookName + "']", doc, doc);
+                    if(links.length == 1){
+                        $(".index-page").after($("<a></a>").attr({
+                            href: links[0].href
+                        }).text(bookName));
+                    }
+                    // var links = doc.querySelectorAll("table a[href^='charpter.php?site_id=']");
+                }
+            });
         },
         fixImageFloats: function () {
             if(!config.fixImageFloats) return;
@@ -1385,9 +1415,10 @@
             for (var i = 0, l = sites.length; i < l; i++) {
                 url_reg = new RegExp(sites[i].url);
                 if(url_reg.test(window.location.href)){
+                    debug("找到规则：", sites[i]);
                     return sites[i];
                 }
-            };
+            }
         };
 
         var siteinfo = reader.site || getCurSiteInfo();
@@ -1518,7 +1549,7 @@
             noticeDiv.addEventListener("click", function(){
                 noticeDiv.style.display='none';
             }, false);
-        };
+        }
         clearTimeout(noticeDivto);
         clearTimeout(noticeDivto2);
         noticeDiv.innerHTML=html_txt;
@@ -1572,6 +1603,24 @@
         return _text.length;
     }
 
+    function $x(aXPath, aContext, aDocument){
+        var nodes = [];
+        var doc = aDocument || document;
+        var aContext = aContext || doc;
+
+        try {
+          var results = doc.evaluate(aXPath, aContext, null,
+                                     XPathResult.ANY_TYPE, null);
+          var node;
+          while (node = results.iterateNext()) {
+            nodes.push(node);
+          }
+        }
+        catch (ex) {}
+
+        return nodes;
+    }
+
     // jQuery text 完全匹配. e.g. a:econtains('最新章节')
     $.expr[":"].econtains = function(obj, index, meta, stack){return (obj.textContent || obj.innerText || $(obj).text() || "").toLowerCase() == meta[3].toLowerCase();};
      //------------------- 辅助函数 ----------------------------------------
@@ -1580,12 +1629,6 @@
     (function(DOMParser) {"use strict";var DOMParser_proto = DOMParser.prototype, real_parseFromString = DOMParser_proto.parseFromString;try {if ((new DOMParser).parseFromString("", "text/html")) {return;}} catch (ex) {}DOMParser_proto.parseFromString = function(markup, type) {if (/^\s*text\/html\s*(?:;|$)/i.test(type)) {var doc = document.implementation.createHTMLDocument("");doc.body.innerHTML = markup;return doc;} else {return real_parseFromString.apply(this, arguments);}};}(DOMParser));
     // 自定义 parseHTML, 需要上面的 DOMParser
     var parseHTML = function(data){var parser = parseHTML.parser;if(!parser){parser = new DOMParser();}return parser.parseFromString(data, "text/html");};
-
-    var tmp_textarea = document.createElement("textarea");
-    function convertHtml(instr){
-        tmp_textarea.innerHTML = instr;
-        return tmp_textarea.innerHTML;
-    }
 })('\
 /**\
  * 下面的皮肤根据 defpt 的修改而来\
