@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        2.5.2
+// @version        2.5.3
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说清爽阅读脚本。
@@ -15,6 +15,7 @@
 
 // @include        http://read.qidian.com/*,*.aspx
 // @include        http://www.qdmm.com/BookReader/*,*.aspx
+// @include        http://chuangshi.qq.com/read/bookreader/*.html
 // @include        http://www.jjwxc.net/onebook.php?novelid=*&chapterid=*
 // @include        http://book.zongheng.com/chapter/*/*.html
 // @include        http://www.xxsy.net/books/*/*.html
@@ -62,6 +63,7 @@
 // @include        http://www.hao662.com/haoshu/*/*/*.html
 
 // 百度搜索网站
+// @include        http://www.bjxiaoshuo.com/bjxs-*-*/
 // @include        http://www.59shuku.com/xiaoshuo/*/*.htm
 // @include        http://www.16kbook.org/Html/Book/*/*/*.shtml
 // @include        http://www.dixiaoshuo.com/Html/*/*.html
@@ -164,7 +166,7 @@
         booklinkme: true,               // booklink.me 跳转的自动启动
         soduso: false,                  // www.sodu.so 跳转
         BASE_REMAIN_HEIGHT: 1000,
-        DEBUG: false,
+        DEBUG:  GM_getValue("debug") || false,
         fullHref: true,
         content_replacements: true,     // 小说屏蔽字修复
         fixImageFloats: true,           // 图片居中修正
@@ -214,7 +216,6 @@
                     '<a href=\'List.shtm\'>回目录</a>');
             }
         },
-
         // 特殊站点，需再次获取且跨域。添加 class="reader-ajax"，同时需要 src
         {siteName: "起点文学",
             url: "^http://(www|read)\\.(qidian|qdmm|qdwenxue)\\.com/BookReader/\\d+,\\d+.aspx$",
@@ -238,7 +239,6 @@
                 });
             }
         },
-
         // 标题和底部下一页 会到左边
         {siteName: "晋江文学网",
             url: /^http:\/\/www\.jjwxc\.net\/onebook\.php\S*/,
@@ -251,7 +251,6 @@
                 fakeStub.find("div.noveltext").find("div:first, h1").remove();
             }
         },
-
         {siteName: "纵横中文网",
             url: "^http://book\\.zongheng\\.com/\\S+\\/\\d+\\.html$",
             titleReg: /(.*?)-(.*)/,
@@ -259,7 +258,15 @@
                 fakeStub.find('.watermark').remove();
             }
         },
-
+        {siteName: "创世中文网",
+            url: "^http://chuangshi\\.qq\\.com/read/bookreader/\\d+\\.html$",
+            contentSelector: ".bookreadercontent",
+            useiframe: true,
+            timeout: 500,
+            contentPatch: function(fakeStub){
+            	fakeStub.find('.bookreadercontent  > p[style]').remove();
+            }
+        },
         {siteName: "潇湘书院",
             url: /^http:\/\/www\.xxsy\.net\/books\/.*\.html/,
             exampleUrl: "http://www.xxsy.net/books/479031/5210673.html",
