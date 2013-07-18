@@ -9,6 +9,7 @@
 // @grant          GM_addStyle
 // @grant          GM_getValue
 // @grant          GM_setValue
+// @grant          unsafeWindow
 // @updateURL      https://userscripts.org/scripts/source/165951.meta.js
 // @downloadURL    https://userscripts.org/scripts/source/165951.user.js
 // @require        http://code.jquery.com/jquery-1.9.1.min.js
@@ -264,7 +265,7 @@
             useiframe: true,
             timeout: 500,
             contentPatch: function(fakeStub){
-            	fakeStub.find('.bookreadercontent  > p[style]').remove();
+            	fakeStub.find('.bookreadercontent  > p:last').remove();
             }
         },
         {siteName: "潇湘书院",
@@ -416,13 +417,11 @@
         {siteName: "侠客中文网",
             url: /^http:\/\/www\.xkzw\.org\/\w+\/\d+\.html/,
             exampleUrl: "http://www.xkzw.org/xkzw14415/8021095.html",
-            // titleReg: /(.*?) (.*)/,
             contentSelector: ".readmain_inner .cont",
             contentPatch: function(fakeStub){
                 fakeStub.find('title').html(fakeStub.find('.readmain_inner h2').text());
             }
         },
-
         {siteName: "ChinaUnix.net",
             url: /^http:\/\/bbs\.chinaunix\.net\/thread-.*\.html/,
             exampleUrl: "http://bbs.chinaunix.net/thread-4065291-1-1.html",
@@ -1213,11 +1212,8 @@
             if(reader.isEnabled){  // 退出
                 GM_setValue("auto_enable", false);
                 L_setValue("booklinkme_disable_onetime", "true");
-                if(reader.curPageUrl){
-                    unsafeWindow.location = reader.curPageUrl;
-                }else{
-                    window.location.reload();
-                }
+                
+                window.location.reload();
             }else{
                 GM_setValue("auto_enable", true);
                 L_removeValue("booklinkme_disable_onetime");
@@ -1350,7 +1346,8 @@
                 var content = reader.nano(reader.tpl_content, parser);
                 $('#wrapper').append(content);
 
-                // history.pushState(null, parser.chapterTitle, parser.curPageUrl);
+                history.pushState(null, parser.docTitle, parser.curPageUrl);
+                document.title = parser.docTitle;
 
                 window.setTimeout(function(){
                     reader.fixImageFloats();
