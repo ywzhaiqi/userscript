@@ -263,7 +263,7 @@
             url: "^http://chuangshi\\.qq\\.com/read/bookreader/\\d+\\.html$",
             contentSelector: ".bookreadercontent",
             useiframe: true,
-            timeout: 500,
+            timeout: 1500,  // 如果时间太小，翻到后面几页的时候会找不到内容
             contentPatch: function(fakeStub){
             	fakeStub.find('.bookreadercontent  > p:last').remove();
             }
@@ -1212,7 +1212,7 @@
             if(reader.isEnabled){  // 退出
                 GM_setValue("auto_enable", false);
                 L_setValue("booklinkme_disable_onetime", "true");
-                
+
                 window.location.reload();
             }else{
                 GM_setValue("auto_enable", true);
