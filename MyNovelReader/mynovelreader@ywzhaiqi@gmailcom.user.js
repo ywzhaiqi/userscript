@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        2.5.3
+// @version        2.5.4
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说清爽阅读脚本。
@@ -159,7 +159,6 @@
         // window.parent.postMessage('mynovelreader-iframe:DOMLoaded', '*');
         return;
     }
-
 
     // 所有的设置
     var config = {
@@ -372,10 +371,11 @@
             exampleUrl: "http://www.zhuishu.net/files/article/html/2/2092/866717.html",
             titleReg: /(?:正文 )?(.*) (\S+) \S+ - .*/,
             titlePos: 1,
-            contentReplace: /www.zhuiSHu.net/ig,
+            contentSelector: "#content",
+            // contentReplace: /www.zhuiSHu.net/ig,
             contentPatch: function(fakeStub){
                 fakeStub.find("#content").find("div.title").appendTo(fakeStub.find("body"));
-                fakeStub.find("#content").find("div[class], center").remove();
+                fakeStub.find("#content").find("div[class]:not('.divimage'), center, b:contains('最快更新')").remove();
             }
         },
         {siteName: "啃书(图)",
@@ -694,7 +694,7 @@
                      contentPatch(this.$doc);
                      debug("Apply Content Patch Success.");
                 }catch(e){
-                     debug("Error: Content Patch Error!");
+                     debug("Error: Content Patch Error!", e);
                 }
             }
         },
@@ -953,6 +953,7 @@
                 return "{" + (i++) + "}";
             });
 
+
             // 小说屏蔽字修复
             text = contentReplacements(text);
 
@@ -1098,6 +1099,9 @@
             if(timeout === 0){
                 reader.launch();
             }else{
+                if(document.location.hostname == 'chuangshi.qq.com')
+                    timeout = 500;
+
                 setTimeout(function(){
                     reader.launch();
                 }, timeout);
