@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        2.5.4
+// @version        2.5.5
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说清爽阅读脚本。
@@ -64,6 +64,9 @@
 // @include        http://www.hao662.com/haoshu/*/*/*.html
 
 // 百度搜索网站
+// @include        http://www.23us.com/html/*/*/*.html
+// @include        http://www.ranwenxiaoshuo.com/files/article/html/*/*/*.html
+// @include        http://www.ranwenxiaoshuo.com/*/*-*-*.html
 // @include        http://www.bjxiaoshuo.com/bjxs-*-*/
 // @include        http://www.59shuku.com/xiaoshuo/*/*.htm
 // @include        http://www.16kbook.org/Html/Book/*/*/*.shtml
@@ -294,6 +297,11 @@
                 fakeStub.find("#oldtext").find("div[style], script").remove();
             }
         },
+        {siteName: "燃文小说网",
+            url: "http://www\\.ranwenxiaoshuo\\.com/files/article/html/\\d+/\\d+/\\d+\\.html|http://www\\.ranwenxiaoshuo\\.com/\\w+/\\w+-\\d+-\\d+\\.html",
+            titleReg: /(.*?)最新章节(.*?)在线阅读.*/,
+            contentSelector: "#fontsize",
+        },
         {siteName: "无错小说网",
             url: /^http:\/\/www\.wcxiaoshuo\.com\/wcxs[-\d]+\//,
             exampleUrl: "http://www.wcxiaoshuo.com/wcxs-28021-8803615/",
@@ -475,6 +483,21 @@
             url: "http://www.laishuwu.com/html/5/5802/2178429.html",
             contentReplace: "txt\\d+/",
         },
+        {name: "顶点小说",
+            url: "^http://www\\.23us\\.com/html/\\d+/\\d+/\\d+\\.html$",
+            titleReg: "(.*?)-\\S*\\s(.*?)-顶点小说",
+            titlePos: 0,
+            indexSelector: "#footlink a:contains('返回目录')",
+            prevSelector: "#footlink a:contains('上一页')",
+            nextSelector: "#footlink a:contains('下一页')",
+            contentSelector: "#contents",
+            contentReplace: " (看小说到顶点小说网.*)",
+            contentPatch: function(fakeStub){
+                var temp=fakeStub.find('title').text();
+                var realtitle = temp.replace(/第.*卷\s/,'');
+                fakeStub.find('title').html(realtitle);
+            }
+        },
 
         // 内容需要js运行。
         {
@@ -602,7 +625,7 @@
         "nǎi": "奶", "nèn": "嫩", "niào": "尿", "niē": "捏", "nòng": "弄", "nǚ": "女",
         "pào": "炮", "piàn": "片",
         "qiāng": "枪", "qíng": "情", "qīn": "亲", "qiú": "求", "quán": "全",
-        "\br[ìi]\b": "日", "rǔ": "乳",
+        "r[ìi]": "日", "rǔ": "乳",
         "sāo":"骚", "sǎo": "骚", "sè": "色", "shā": "杀", "shēn":"呻", "shén":"神", "shè": "射", "shǐ": "屎", "shì": "侍", "sǐ": "死", "sī": "私", "shǔn": "吮", "sǔn": "吮", "sū": "酥",
         "tān":"贪", "tiǎn": "舔", "tǐng":"挺", "tǐ": "体", "tǒng": "捅", "tōu": "偷", "tou": "偷", "tuǐ": "腿", "tūn": "吞", "tún": "臀", "wēn": "温", "wěn": "吻",
         "xiǎo":"小", "x[ìi]ng": "性", "xiōng": "胸", "xī": "吸", "xí": "习", "xué": "穴", "xuè": "穴", "xùe": "穴",  "xuan":"宣",
@@ -1358,6 +1381,8 @@
                 }, 800);
             }else{
                 reader.removeListener();
+                reader.endNotice = notice("已到达最后一页...", false);
+                reader.isEndNoticed = true;
             }
 
             reader.requestUrl = parser.nextUrl;
