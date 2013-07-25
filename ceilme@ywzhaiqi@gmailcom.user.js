@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             ceil.me@ywzhaiqi@gmail.com
 // @name           ceil.me辅助下载
-// @version        1.2
+// @version        1.4
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi@gmail.com
 // @description    ceil.me PDF杂志直接下载，不再需要点击多次
@@ -12,36 +12,16 @@
 // @run-at         document-end
 // ==/UserScript==
 
-var $ = unsafeWindow.jQuery;
+(function (){
+    var $ = unsafeWindow.jQuery;
 
-function getDoc(url, callback){
-    console.log('GM_xmlhttpRequest: ' + url);
-    GM_xmlhttpRequest({
-        method: 'GET',
-        url: url,
-        onload: function(responseDetail){
-            doc = new DOMParser().parseFromString(responseDetail.responseText, 'text/html');
-            callback(doc);
-        }
+    var ins = $('a[href^="http://www.ceil.me/download/?p="]');
+    if(ins.length == 0)
+        return;
+
+    GM_addStyle('.ext-link { background: none repeat scroll 0% 0% rgb(238, 238, 238) !important; }');
+
+    ins.load(ins[0].href + " .part", null, function(){
+        ins.html(ins.html().replace("下载地址：", ""));
     });
-}
-
-var UIL = {
-    init: function(){
-        var $link = $('a[href^="http://www.ceil.me/download/?p="]');
-        var url = $link.attr('href');
-        if(url){
-            getDoc(url, function(doc){
-                var $dlink = $('a[href^="http://pan.baidu"], a[href^="http://dl.vmall"]', doc);
-                if($dlink.length == 0){
-                    console.log("没有找到下载链接", url);
-                }else{
-                    $link.after($dlink.parent());
-                }
-            });
-        }
-    }
-};
-
-UIL.init();
-
+})();
