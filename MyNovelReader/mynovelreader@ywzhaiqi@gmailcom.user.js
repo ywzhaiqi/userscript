@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        2.5.5
+// @version        2.5.6
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说清爽阅读脚本。
@@ -195,7 +195,7 @@
             "#contentTxt", "#oldtext", "#a_content", "#contents", "#content2", "#content", ".content"],
 
         contentRemove: "script:not(." + READER_AJAX + "), iframe, a, font[color]",          // 内容移除选择器
-        contentReplace: /最新章节|百度搜索|小说章节|全文字手打|“”&nbsp;看|无.弹.窗.小.说.网|追书网/g,
+        contentReplace: /最新.?章节|百度搜索|小说章节|全文字手打|“”&nbsp;看|无.弹.窗.小.说.网|追书网/g,
 
         replaceBrs: /(<br[^>]*>[ \n\r\t]*){2,}/gi,                         // 替换为<p>
     };
@@ -292,7 +292,7 @@
             exampleUrl: "http://www.ranwen.cc/A/3/3428/4446495.html",
             titleReg: /(.*?)-(.*?)-.*/,
             contentSelector: "#oldtext",
-            contentReplace: /最快阅读小说大主宰.*|跟我读Ｈ－u－n 请牢记|非常文学|关闭&lt;广告&gt;|w w.*|”娱乐秀”|[“”]*看|更多精彩小[说說].*/g,
+            contentReplace: /最快阅读小说大主宰.*|跟我读Ｈ－u－n 请牢记|非常文学|关闭&lt;广告&gt;|w w.*|”娱乐秀”|更多精彩小[说說].*/g,
             contentPatch: function(fakeStub) {
                 fakeStub.find("#oldtext").find("div[style], script").remove();
             }
@@ -355,7 +355,7 @@
             url: /^http:\/\/www\.bxs\.cc\/\d+\/\d+\.html$/,
             exampleUrl: "http://www.bxs.cc/22739/8894713.html",
             titleReg: /(.*?)\d*,(.*)/,
-            contentReplace: /最快阅读小说大主宰，尽在百晓生文学网.*|ww.x.om|欢迎大家来到.*?bxs\.cc|百晓生阅读最新最全的小说.*|百晓生网不少字|站长推荐.*|[\[【].*[\]】]|文字首发|[\[\]\(《].*百晓生.*|百晓生.不跳字|百.晓.生.|关闭.*广告.*|飘天文学|本站域名就是.*|\(.{0,5}小说更快更好.{0,5}\)|(请在)?百度搜索.*/ig,
+            contentReplace: /百晓生文学网|最快阅读小说大主宰，尽在百晓生文学网.*|ww.x.om|欢迎大家来到.*?bxs\.cc|百晓生阅读最新最全的小说.*|百晓生网不少字|站长推荐.*|[\[【].*[\]】]|文字首发|[\[\]\(《].*百晓生.*|百晓生.不跳字|百.晓.生.|关闭.*广告.*|飘天文学|本站域名就是.*|\(.{0,5}小说更快更好.{0,5}\)|(请在)?百度搜索.*/ig,
         },
         {siteName: "浩奇文学网",
             url: /^http:\/\/www\.haoqi99\.com\/.*\.shtml$/,
@@ -610,7 +610,7 @@
         "w[ēe]ixi[ée]":"威胁", "wèizh[ìi]":"位置",
         "亵du": "亵渎", "xing福": "性福", "xiu长": "修长",
         "y[iī]y[àa]ng":"一样", "y[īi]di[ǎa]n":"一点", "y[ǐi]j[īi]ng":"已经", "阳w[ěe]i": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "you惑": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人","旖ni": "旖旎",
-        "z[iì]j[iǐ]": "自己","z[ìi]\\s*you": "自由","zh[iī]d?[àa]u?o":"知道","zha药": "炸药", "zhan有": "占有", "政f[ǔu]": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zhōngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]y[oò]u":"左右", "zh[oō]uw[ée]i":"周围",
+        "z[iì]j[iǐ]": "自己","z[ìi]\\s*you": "自由","zh[iī]d?[àa]u?o":"知道","zha药": "炸药", "zhan有": "占有", "政f[ǔu]": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zong理":"总理", "zhōngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]y[oò]u":"左右", "zh[oō]uw[ée]i":"周围", "中nan海":"中南海",
 
         // ===单字替换，需特殊处理，防止替换图片===
         "b[āà]ng":"棒","bào":"爆","b[àa]":"吧","bī":"逼","bō":"波",
