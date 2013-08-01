@@ -20,7 +20,7 @@ UserScripts For Firefox
  - [userscripts@ywzhaiqi@gmailcom.user.js](userscripts@ywzhaiqi@gmailcom.user.js)，userscripts.org 搜索页面只显示中文
 
 
-## 在用的脚本（非原创）
+## 在用的脚本（非原创，仅链接）
 
  - [Crack Url Wait Code Login For Chrome](http://userscripts.org/scripts/show/157621)
  - search_enginejump
