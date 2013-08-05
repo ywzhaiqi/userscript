@@ -67,17 +67,17 @@
     }
 
 	var config = {
+        DEBUG: false,
 		AUTO_ENABLE: true,       // 自动启用总开关。有问题，一些主页也会自动启用
         booklinkme: true,        // booklink.me 跳转的自动启动
         soduso: false,            // www.sodu.so 跳转
         BASE_REMAIN_HEIGHT: 1000,
-        DEBUG: true,
         fullHref: true,
         content_replacements: true,      // 小说屏蔽字修复
         fixImageFloats: true,
 
         disableScript: true,  // Opera 独有
-        disableCSS: true,  // Opera 独有
+        disableCSS: true,     // Opera 独有
 	};
 
 	var rule = {
@@ -88,7 +88,7 @@
 		// 按顺序匹配，匹配到则停止。
 		indexLink: ['//a[contains(text(),"返回书目")][@href]', '//a[contains(text(),"章节目录")][@href]',
 			'//a[contains(text(),"章节列表")][@href]', '//a[contains(text(),"回目录")][@href]',
-			'//a[contains(text(),"目录")][@href]'],
+            '//a[text()="书目"][@href]', '//a[contains(text(),"目录")][@href]'],
 
 		 // 同上。
 		contentSelector: ["#bmsy_content", "#bookpartinfo", "#htmlContent", "#chapter_content", "#chapterContent", "#partbody",
@@ -141,7 +141,7 @@
 		},{
             siteName: "纵横中文（移动版）",
             url: /^http:\/\/m\.zongheng\.com\//i,
-            titleReg: /(.*?)_(.*) \[/,
+            titleReg: /(.*?)_(.*)/,
             contentSelector: "div.yd",
             contentPatch: function(doc){
                 var content = doc.querySelector("div.yd");
@@ -410,8 +410,10 @@
 			}
 		},
 		getTitles: function(){
+            var docTitle = this.doc.title;
+
 			if(this.site && this.site.titleReg){
-				var matches = this.doc.title.match(this.site.titleReg);
+				var matches = docTitle.match(this.site.titleReg);
 				if(matches && matches.length == 3){
 					var titlePos = (this.site.titlePos || 0) + 1,
 						chapterPos = (titlePos == 1) ? 2 : 1;
@@ -430,7 +432,7 @@
 
 			this.docTitle = this.bookTitle
 				? this.bookTitle + ' - ' + this.chapterTitle
-				: this.doc.title;
+				: docTitle;
 		},
 		// 智能获取标题
 		autoGetTitleText: function (doc) {
@@ -891,7 +893,7 @@
 	    },
 	};
 
-	function launch(timeout){
+	function launch(){
 	    var other_enable = function(){
 	        if(config.booklinkme && document.referrer.match(/booklink\.me/)
 	            && !window.location.href.match(/read\.qidian\.com\/BookReader\/\d+\.aspx/)){
@@ -900,33 +902,34 @@
 	        return false;
 	    };
 
-        timeout = timeout || 0;
-
-        setTimeout(function(){
-            reader.init();
-        }, timeout);
+        reader.init();
 	}
 
-    window.readx = reader.init;
-    // 执行
-    reader.getCurSiteInfo();
-    if(location.host == 'chuangshi.qq.com'){
-        window.addEventListener("load", function(){
-            launch(1000);
-        }, false);
-    }else{
-        window.addEventListener("DOMContentLoaded", launch, false);
-    }
+    function init(){
+        window.readx = reader.init;
 
-    if(window.opera){
-        if(config.disableScript && reader.site && !reader.site.useiframe)
-            operaDisableScript();
-
-        if(config.disableCSS)
-            window.opera.addEventListener('BeforeCSS', function(e){
-                e.preventDefault();
+        var info = reader.getCurSiteInfo();
+        if(info && info.useiframe){
+            window.addEventListener("load", function(){
+                var timeout = info.timeout || 0;
+                setTimeout(launch, timeout);
             }, false);
+        }else{
+            window.addEventListener("DOMContentLoaded", launch, false);
+        }
+
+        if(window.opera){
+            if(config.disableScript && info && !info.useiframe)
+                operaDisableScript();
+
+            if(config.disableCSS)
+                window.opera.addEventListener('BeforeCSS', function(e){
+                    e.preventDefault();
+                }, false);
+        }
     }
+
+    init();
 
     function debug(){ if(config.DEBUG) console.log.apply(console, arguments);}
 	function $A(args) { return Array.prototype.slice.call(args)}
