@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader For Opera Mobile
-// @version        2.4.5
+// @version        2.5.0
 // @namespace
 // @author         ywzhaiqi@gmail.com
 // @description    小说阅读脚本，实现清爽阅读。2种模式：自定义站点配置和自动站点配置。
@@ -9,7 +9,9 @@
 // @include        http://read.qidian.com/*,*.aspx
 // @include        http://www.qdmm.com/BookReader/*,*.aspx
 // @include        http://www.jjwxc.net/onebook.php?novelid=*&chapterid=*
+// @include        http://chuangshi.qq.com/read/bookreader/*.html
 // @include        http://book.zongheng.com/chapter/*/*.html
+// @include        http://m.zongheng.com/chapter?bookid=*&cid=*
 // @include        http://www.xxsy.net/books/*/*.html
 // @include        http://book.zhulang.com/*/*.html
 // @include        http://www.17k.com/chapter/*/*.html
@@ -60,15 +62,22 @@
 
 (function(CSS){
 
+    if(window.name == "mynovelreader-iframe"){
+        return;
+    }
+
 	var config = {
 		AUTO_ENABLE: true,       // 自动启用总开关。有问题，一些主页也会自动启用
         booklinkme: true,        // booklink.me 跳转的自动启动
         soduso: false,            // www.sodu.so 跳转
         BASE_REMAIN_HEIGHT: 1000,
-        DEBUG: false,
+        DEBUG: true,
         fullHref: true,
         content_replacements: true,      // 小说屏蔽字修复
-        fixImageFloats: true
+        fixImageFloats: true,
+
+        disableScript: true,  // Opera 独有
+        disableCSS: true,  // Opera 独有
 	};
 
 	var rule = {
@@ -88,7 +97,7 @@
 
 		contentRemove: "script, iframe, a, font[color]",
 		contentReplace: /最新章节|百度搜索|小说章节|全文字手打|“”&nbsp;看|无.弹.窗.小.说.网|追书网/g,
-		
+
 		replaceBrs: /(<br[^>]*>[ \n\r\t]*){2,}/gi   // 替换为<p>
 	};
 
@@ -100,21 +109,16 @@
 		    contentReplace: /起点中文网|www.qidian.com|欢迎广大书友.*/g,
 		    useiframe: true
 		},
-		{
-			// 特殊处理。不是很完美，有时有问题。
-			siteName: "手打吧"
-		    ,url: /^http:\/\/shouda8.com\/\w+\/\d+.html/
-		    ,contentSelector: "#content"
-		    ,contentReplace: /[w\s\[\/\\\(]*.shouda8.com.*|(\/\/)?[全文字]?首发|手打吧|www.shou.*|\(w\/w\/w.shouda8.c\/o\/m 手、打。吧更新超快\)|小说 阅读网 www.xiaoshuoyd .com/ig
-		    ,contentPatch: function(fakeStub){
-		        var scriptSrc = fakeStub.find('body').html().match(/outputContent\('(.*txt)'\)/)[1];
-		        scriptSrc = "http://shouda8.com/ajax.php?f=http://shouda8.com/read" + scriptSrc;
-		        fakeStub.find('#content').attr({
-		            "class": 'reader-ajax',
-		            src: scriptSrc
-		        });
-		    }
-		},{
+		{siteName: "创世中文网",
+            url: "^http://chuangshi\\.qq\\.com/read/bookreader/\\d+\\.html$",
+            contentSelector: ".bookreadercontent",
+            useiframe: true,
+            timeout: 500,  // 如果时间太小，翻到后面几页的时候会找不到内容
+            contentPatch: function(fakeStub){
+                fakeStub.find('.bookreadercontent  > p:last').remove();
+            }
+        },
+        {
 			// 标题和底部下一页 会到左边
 			siteName: "晋江文学网",
 		    url: /^http:\/\/www.jjwxc.net\/onebook.php\S*/,
@@ -135,6 +139,16 @@
 		        fakeStub.find('title').html(realtitle + '-' + fakeStub.find('div.tc h2 em').text());
 		    }
 		},{
+            siteName: "纵横中文（移动版）",
+            url: /^http:\/\/m\.zongheng\.com\//i,
+            titleReg: /(.*?)_(.*) \[/,
+            contentSelector: "div.yd",
+            contentPatch: function(doc){
+                var content = doc.querySelector("div.yd");
+                var elem = content.querySelector("h3");
+                elem.parentNode.removeChild(elem);
+            }
+        },{
 			siteName: "潇湘书院"
 		    ,url: /^http:\/\/www.xxsy.net\/books\/.*.html/
 		    ,contentSelector: "#detail_list"
@@ -145,13 +159,13 @@
 		    ,titleReg: /(.*?)-(.*)/
 		    ,contentSelector: "#readpage_leftntxt"
 		    ,contentPatch: function(fakeStub){
-		        var title = fakeStub.find(".readpage_leftnzgx a:first").text() + "-" + 
+		        var title = fakeStub.find(".readpage_leftnzgx a:first").text() + "-" +
 		            fakeStub.find(".readpage_leftntit").text()
 		        fakeStub.find('title').html(title);
 		    }
 		},
 		//
-		{	
+		{
 			siteName: "燃文",
 		    url: /^http:\/\/www.ranwen.cc\/.*.html$/,
 		    titleReg: /(.*?)-(.*?)-.*/,
@@ -170,7 +184,7 @@
 			contentReplace: {
 			    'ilo-full-src="\\S+\\.jpg" ': "",
 			    '(<center>)?<?img src..(http://www.wcxiaoshuo.com)?(/sss/\\S+\\.jpg).(>| alt."\\d+_\\d+_\\d*\\.jpg" />)(</center>)?': '$3',
-			    "/sss/da.jpg": "打", "/sss/maws.jpg": "吗？", "/sss/baw.jpg": "吧？", "/sss/wuc.jpg": "无", "/sss/maosu.jpg": "：“", "/sss/cuow.jpg": "错", "/sss/ziji.jpg": "自己", "/sss/shenme.jpg": "什么", "/sss/huiqub.jpg": "回去", "/sss/sjian.jpg": "时间", "/sss/zome.jpg": "怎么", "/sss/zhido.jpg": "知道", "/sss/xiaxin.jpg": "相信", "/sss/faxian.jpg": "发现", "/sss/shhua.jpg": "说话", "/sss/dajiex.jpg": "大姐", "/sss/dongxi.jpg": "东西", "/sss/erzib.jpg": "儿子", "/sss/guolair.jpg": "过来", "/sss/xiabang.jpg": "下班", "/sss/zangfl.jpg": "丈夫", "/sss/dianhua.jpg": "电话", "/sss/huilaim.jpg": "回来", "/sss/xiawu.jpg": "下午", "/sss/guoquu.jpg": "过去", "/sss/shangba.jpg": "上班", "/sss/mingtn.jpg": "明天", "/sss/nvrenjj.jpg": "女人", "/sss/shangwo.jpg": "上午", "/sss/shji.jpg": "手机", "/sss/xiaoxinyy.jpg": "小心", "/sss/furene.jpg": "夫人", "/sss/gongzih.jpg": "公子", "/sss/xiansg.jpg": "先生", "/sss/penyouxi.jpg": "朋友", "/sss/xiaoje.jpg": "小姐", "/sss/xifup.jpg": "媳妇", "/sss/nvxudjj.jpg": "女婿", "/sss/xondi.jpg": "兄弟", "/sss/lagong.jpg": "老公", "/sss/lapo.jpg": "老婆", "/sss/meimeid.jpg": "妹妹", "/sss/jiejiev.jpg": "姐姐", "/sss/jiemeiv.jpg": "姐妹", "/sss/xianggx.jpg": "相公", "/sss/6shenumev.jpg": "什么", "/sss/cuoaw.jpg": "错", "/sss/fpefnyoturxi.jpg": "朋友", "/sss/vfsjgigarn.jpg": "时间", "/sss/zzhiedo3.jpg": "知道", "/sss/zibjib.jpg": "自己", "/sss/qdonglxi.jpg": "东西", "/sss/hxiapxint.jpg": "相信", "/sss/fezrormre.jpg": "怎么", "/sss/nvdrfenfjfj.jpg": "女人", "/sss/jhiheejeieev.jpg": "姐姐", "/sss/xdifagojge.jpg": "小姐", "/sss/gggugolgair.jpg": "过来", "/sss/maoashu.jpg": "：“", "/sss/gnxnifawhu.jpg": "下午", "/sss/rgtugoqgugu.jpg": "过去", "/sss/khjukilkaim.jpg": "回来", "/sss/gxhigfadnoxihnyy.jpg": "小心", "/sss/bkbskhhuka.jpg": "说话", "/sss/xeieavnfsg.jpg": "先生", "/sss/yuhhfuiuqub.jpg": "回去", "/sss/pdianphua.jpg": "电话", "/sss/fabxianr.jpg": "发现", "/sss/feilrpto.jpg": "老婆", "/sss/gxronfdri.jpg": "兄弟", "/sss/flfaggofng.jpg": "老公", "/sss/tymyigngtyn.jpg": "明天", "/sss/dfshfhhfjfi.jpg": "手机", "/sss/gstjhranjgwjo.jpg": "上午", "/sss/fmgeyimehid.jpg": "妹妹", "/sss/gxgihftutp.jpg": "媳妇", "/sss/cerztifb.jpg": "儿子", "/sss/gfxgigagbfadng.jpg":"下班", "/sss/gstjhranjg.jpg":"下午", "/sss/hjeirerm6eihv.jpg": "姐妹", "/sss/edajihexr.jpg": "大姐", "/sss/wesfhranrrgba.jpg": "上班", "/sss/gfognggzigh.jpg": "公子", "/sss/frurtefne.jpg": "夫人", "/sss/fzagnggfbl.jpg": "丈夫", "/sss/nvdxfudfjfj.jpg": "女婿", "/sss/xdidafnggx.jpg": "相公", "/sss/zenme.jpg": "怎么", "/sss/gongzi.jpg": "公子", "/sss/ddefr.jpg": "", 
+			    "/sss/da.jpg": "打", "/sss/maws.jpg": "吗？", "/sss/baw.jpg": "吧？", "/sss/wuc.jpg": "无", "/sss/maosu.jpg": "：“", "/sss/cuow.jpg": "错", "/sss/ziji.jpg": "自己", "/sss/shenme.jpg": "什么", "/sss/huiqub.jpg": "回去", "/sss/sjian.jpg": "时间", "/sss/zome.jpg": "怎么", "/sss/zhido.jpg": "知道", "/sss/xiaxin.jpg": "相信", "/sss/faxian.jpg": "发现", "/sss/shhua.jpg": "说话", "/sss/dajiex.jpg": "大姐", "/sss/dongxi.jpg": "东西", "/sss/erzib.jpg": "儿子", "/sss/guolair.jpg": "过来", "/sss/xiabang.jpg": "下班", "/sss/zangfl.jpg": "丈夫", "/sss/dianhua.jpg": "电话", "/sss/huilaim.jpg": "回来", "/sss/xiawu.jpg": "下午", "/sss/guoquu.jpg": "过去", "/sss/shangba.jpg": "上班", "/sss/mingtn.jpg": "明天", "/sss/nvrenjj.jpg": "女人", "/sss/shangwo.jpg": "上午", "/sss/shji.jpg": "手机", "/sss/xiaoxinyy.jpg": "小心", "/sss/furene.jpg": "夫人", "/sss/gongzih.jpg": "公子", "/sss/xiansg.jpg": "先生", "/sss/penyouxi.jpg": "朋友", "/sss/xiaoje.jpg": "小姐", "/sss/xifup.jpg": "媳妇", "/sss/nvxudjj.jpg": "女婿", "/sss/xondi.jpg": "兄弟", "/sss/lagong.jpg": "老公", "/sss/lapo.jpg": "老婆", "/sss/meimeid.jpg": "妹妹", "/sss/jiejiev.jpg": "姐姐", "/sss/jiemeiv.jpg": "姐妹", "/sss/xianggx.jpg": "相公", "/sss/6shenumev.jpg": "什么", "/sss/cuoaw.jpg": "错", "/sss/fpefnyoturxi.jpg": "朋友", "/sss/vfsjgigarn.jpg": "时间", "/sss/zzhiedo3.jpg": "知道", "/sss/zibjib.jpg": "自己", "/sss/qdonglxi.jpg": "东西", "/sss/hxiapxint.jpg": "相信", "/sss/fezrormre.jpg": "怎么", "/sss/nvdrfenfjfj.jpg": "女人", "/sss/jhiheejeieev.jpg": "姐姐", "/sss/xdifagojge.jpg": "小姐", "/sss/gggugolgair.jpg": "过来", "/sss/maoashu.jpg": "：“", "/sss/gnxnifawhu.jpg": "下午", "/sss/rgtugoqgugu.jpg": "过去", "/sss/khjukilkaim.jpg": "回来", "/sss/gxhigfadnoxihnyy.jpg": "小心", "/sss/bkbskhhuka.jpg": "说话", "/sss/xeieavnfsg.jpg": "先生", "/sss/yuhhfuiuqub.jpg": "回去", "/sss/pdianphua.jpg": "电话", "/sss/fabxianr.jpg": "发现", "/sss/feilrpto.jpg": "老婆", "/sss/gxronfdri.jpg": "兄弟", "/sss/flfaggofng.jpg": "老公", "/sss/tymyigngtyn.jpg": "明天", "/sss/dfshfhhfjfi.jpg": "手机", "/sss/gstjhranjgwjo.jpg": "上午", "/sss/fmgeyimehid.jpg": "妹妹", "/sss/gxgihftutp.jpg": "媳妇", "/sss/cerztifb.jpg": "儿子", "/sss/gfxgigagbfadng.jpg":"下班", "/sss/gstjhranjg.jpg":"下午", "/sss/hjeirerm6eihv.jpg": "姐妹", "/sss/edajihexr.jpg": "大姐", "/sss/wesfhranrrgba.jpg": "上班", "/sss/gfognggzigh.jpg": "公子", "/sss/frurtefne.jpg": "夫人", "/sss/fzagnggfbl.jpg": "丈夫", "/sss/nvdxfudfjfj.jpg": "女婿", "/sss/xdidafnggx.jpg": "相公", "/sss/zenme.jpg": "怎么", "/sss/gongzi.jpg": "公子", "/sss/ddefr.jpg": "",
 			    ".*ddefr\\.jpg.*|无(?:错|.*cuoa?w\\.jpg.*)小说网不[少跳]字|w[a-z\\.]*om?|.*由[【无*错】].*会员手打[\\s\\S]*": "",
 			},
 		},
@@ -231,23 +245,6 @@
         	contentPatch: function(){
 
         	}
-        },{
-        	siteName: "啃书(图)",
-            url: /^http:\/\/www.fkzww.net\/thread-.*.html$/,
-            exampleUrl: "http://www.fkzww.net/thread-315537-1-1.html",
-            titleReg: /(.*?) (.*?)-.*/,
-            contentSelector: ".t_msgfontfix",
-            indexSelector: "#nav a:last",
-            contentPatch: function(doc){
-            	var content = doc.querySelector(".t_msgfontfix");
-            	var elems = content.querySelectorAll("img");
-            	for (var i = elems.length - 1; i >= 0; i--) {
-            		var elem = elems[i];
-            		if(elem.getAttribute("width") == "700"){
-            			elem.src = elem.getAttribute("file");
-            		}
-            	}
-            }
         },{
         	siteName: "17k小说网",
             url: /^http:\/\/\S+.17k.com\/chapter\/\S+\/\d+.html$/,
@@ -313,17 +310,17 @@
 	    "强(\\*{2})u5B9D":"强大法宝",
 
 	    // ===双字替换，需特殊处理？===
-	    "暧me[iì]":"暧昧", 
+	    "暧me[iì]":"暧昧",
 	    "běi(\\s|&nbsp;)*j[īi]ng":"北京","半shen": "半身", "b[ìi]j[ìi]ng":"毕竟",
 	    "chongdong":"冲动", "缠mian": "缠绵", "成shu": "成熟", "赤lu[oǒ]": "赤裸", "春guang": "春光",
-	    "dang校": "党校", "da子": "鞑子", "diao丝": "屌丝", "dú\\s*lì": "独立", "d[iì]fāng":"地方", 
+	    "dang校": "党校", "da子": "鞑子", "diao丝": "屌丝", "dú\\s*lì": "独立", "d[iì]fāng":"地方",
 	    "fǎngfó":"仿佛", "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "fènnù":"愤怒",
 	    "gao潮": "高潮", "干chai": "干柴", "gu[oò]chéng":"过程", "guānx[iì]":"关系", "gǎnjiào":"感觉",
 	    "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "hǎoxiàng":"好像", "huángsè":"黄色",
 	    "j[ìi]nháng":"进行", "jinv": "妓女", "jirou": "鸡肉", "ji者":"记者", "ju花":"菊花","j[īi]动":"激动", "肌r[òo]u":"肌肉","ji射":"激射", "jiēch[uù]":"接触", "juli[èe]": "剧烈",
 	    "kěnéng": "可能", "开bao": "开苞",  "kào近": "靠近", "kao近": "靠近",
 	    "ling辱": "凌辱", "luan蛋": "卵蛋",
-	    "mǎny[ìi]":"满意", "mǎshàng":"马上", "méiy[oǒ]u":"没有", "mei国": "美国", "m[íi]ngbái":"明白", "迷huan": "迷幻", "m[íi]n\\s*zhǔ": "民主", 
+	    "mǎny[ìi]":"满意", "mǎshàng":"马上", "méiy[oǒ]u":"没有", "mei国": "美国", "m[íi]ngbái":"明白", "迷huan": "迷幻", "m[íi]n\\s*zhǔ": "民主",
 	    "nàme":"那么", "néngg[oò]u":"能够",
 	    "piáo客":"嫖客", "pángbiān":"旁边",
 	    "q[íi]guài":"奇怪", "qin兽":"禽兽", "q[iī]ngch[uǔ]":"清楚",
@@ -337,24 +334,24 @@
 
 	    // ===单字替换，需特殊处理，防止替换图片===
 	    "b[āà]ng":"棒","bào":"爆","b[àa]":"吧","bī":"逼","bō":"波",
-	    "cāo": "操", "cǎo": "草", "cào": "操", "chāng": "娼", "chang": "娼", "cháo": "潮", "chā": "插", "chéng": "成", "chōu": "抽", "chuáng": "床", "chún": "唇", "ch[ūu]n": "春", "cuō": "搓", "cū": "粗", 
-	    "dǎng": "党", "dàng": "荡", "dāo": "刀", "dòng": "洞", "diao": "屌", 
-	    "fǎ": "法", "féi": "肥", "fù": "妇", "fu": "妇", "guān": "官", 
+	    "cāo": "操", "cǎo": "草", "cào": "操", "chāng": "娼", "chang": "娼", "cháo": "潮", "chā": "插", "chéng": "成", "chōu": "抽", "chuáng": "床", "chún": "唇", "ch[ūu]n": "春", "cuō": "搓", "cū": "粗",
+	    "dǎng": "党", "dàng": "荡", "dāo": "刀", "dòng": "洞", "diao": "屌",
+	    "fǎ": "法", "féi": "肥", "fù": "妇", "fu": "妇", "guān": "官",
 	    "hán": "含", "hóu": "喉", "hòu": "厚", "huā": "花", "huá": "华", "huò": "惑", "hùn": "混", "hún": "魂",
 	    "jiǔ": "九", "j[īi]ng": "精", "jìn": "禁", "jǐng": "警", "jiāng": "江", "jiān": "奸", "jiāo": "交", "jūn": "军", "jū": "拘", "jú": "局", "jī": "激", "激ān":"奸",
-	    "kù": "裤", "k[àa]n": "看", 
+	    "kù": "裤", "k[àa]n": "看",
 	    "[1l]àng": "浪", "liáo": "撩", "liú":"流", "lì":"莉", "liè":"烈", "[1l]uàn":"乱", "lún": "伦", "luǒ": "裸", "lòu": "露", "[l1]ù": "露",
 	    "mǎi": "买", "mài": "卖", "máo": "毛", "mā": "妈", "méng": "蒙", "mén": "门", "miè": "灭", "mí": "迷", "mì": "蜜", "mō": "摸",
-	    "nǎi": "奶", "nèn": "嫩", "niào": "尿", "niē": "捏", "nòng": "弄", "nǚ": "女", 
-	    "pào": "炮", "piàn": "片", 
-	    "qiāng": "枪", "qíng": "情", "qīn": "亲", "qiú": "求", "quán": "全", 
-	    "r[ìi]": "日", "rǔ": "乳", 
-	    "sāo":"骚", "sǎo": "骚", "sè": "色", "shā": "杀", "shēn":"呻", "shén":"神", "shè": "射", "shǐ": "屎", "shì": "侍", "sǐ": "死", "sī": "私", "shǔn": "吮", "sǔn": "吮", "sū": "酥", 
-	    "tān":"贪", "tiǎn": "舔", "tǐng":"挺", "tǐ": "体", "tǒng": "捅", "tōu": "偷", "tou": "偷", "tuǐ": "腿", "tūn": "吞", "tún": "臀", "wēn": "温", "wěn": "吻", 
-	    "xiǎo":"小", "x[ìi]ng": "性", "xiōng": "胸", "xī": "吸", "xí": "习", "xué": "穴", "xuè": "穴", "xùe": "穴", 
-	    "yāng":"央", "yàn":"艳", "y[īi]n":"阴", "yào": "药", "yé": "爷", "yòu": "诱", "zàng": "脏", "yù": "欲", "yín": "淫", 
+	    "nǎi": "奶", "nèn": "嫩", "niào": "尿", "niē": "捏", "nòng": "弄", "nǚ": "女",
+	    "pào": "炮", "piàn": "片",
+	    "qiāng": "枪", "qíng": "情", "qīn": "亲", "qiú": "求", "quán": "全",
+	    "r[ìi]": "日", "rǔ": "乳",
+	    "sāo":"骚", "sǎo": "骚", "sè": "色", "shā": "杀", "shēn":"呻", "shén":"神", "shè": "射", "shǐ": "屎", "shì": "侍", "sǐ": "死", "sī": "私", "shǔn": "吮", "sǔn": "吮", "sū": "酥",
+	    "tān":"贪", "tiǎn": "舔", "tǐng":"挺", "tǐ": "体", "tǒng": "捅", "tōu": "偷", "tou": "偷", "tuǐ": "腿", "tūn": "吞", "tún": "臀", "wēn": "温", "wěn": "吻",
+	    "xiǎo":"小", "x[ìi]ng": "性", "xiōng": "胸", "xī": "吸", "xí": "习", "xué": "穴", "xuè": "穴", "xùe": "穴",
+	    "yāng":"央", "yàn":"艳", "y[īi]n":"阴", "yào": "药", "yé": "爷", "yòu": "诱", "zàng": "脏", "yù": "欲", "yín": "淫",
 	    "zhēn":"针", "zēn":"针", "zhà":"炸", "zhèng":"政", "zhi":"治", "zǒu": "走", "zuì":"罪", "zuò":"做", "zhong":"中",
-	    
+
 	    // ===误替换还原===
 	    "碧欲": "碧玉","美欲": "美玉","欲石": "玉石","惜欲": "惜玉","宝欲": "宝玉",
 	    "品性": "品行","德性": "德行",
@@ -373,7 +370,7 @@
 	    "txt53712/": "",
 	    "\xa0{4,12}":"\xa0\xa0\xa0\xa0\xa0\xa0\xa0"
 	};
-	
+
 	function contentReplacements(s){
 	    for (var key in replacements) {
 	        s = s.replace(new RegExp(key, 'ig'), replacements[key]);
@@ -431,7 +428,7 @@
 				this.chapterTitle = this.autoGetTitleText(this.doc);
 			}
 
-			this.docTitle = this.bookTitle 
+			this.docTitle = this.bookTitle
 				? this.bookTitle + ' - ' + this.chapterTitle
 				: this.doc.title;
 		},
@@ -460,7 +457,7 @@
 		    _headings = doc.querySelectorAll(_second_selector);
 
 		    for (var i = 0; i < _headings.length; i++) {
-		        var 
+		        var
 		            _heading = _headings[i],
 		            _heading_text = _heading.textContent.trim()
 		        ;
@@ -603,7 +600,7 @@
 			        titleRegText += this.bookTitle + "\\d+";
 			    }
 			    text = text.replace(new RegExp(titleRegText, "g"), "");
-			    debug("  Content replace title: " + titleRegText);  
+			    debug("  Content replace title: " + titleRegText);
 			}
 
 			// 小说屏蔽字修复。
@@ -624,7 +621,7 @@
 			    text = $.nano(text, imgs);
 
 			    debug("  小说屏蔽字修复耗时：" + (new Date().getTime() - s) + 'ms');
-			}		
+			}
 
 			return text;
 		},
@@ -717,7 +714,7 @@
 
 	var reader = {
 		site: null,
-	    parsedPages: {}, 
+	    parsedPages: {},
 	    requestUrl: null,
 	    isTheEnd: false,
 	    tpl_content: '\
@@ -735,12 +732,13 @@
 	            <a style="color:{theEndColor}" href="{nextUrl}">下一页>></a>\
 	        </div>\
 	    ',
+        remove: [],
 
 	    init: function(site){
 	        if(!site){
 	            reader.getCurSiteInfo();
 	        }
-	        
+
 	        var parser = new Parser(reader.site);
 
 	        parser.getAll();
@@ -789,7 +787,7 @@
 	    prepDocument: function() {
 	        /* Before we do anything, remove all scripts that are not readability. */
 	        window.onload = window.onunload = function() {};
-	       	
+
 	       	window.onload = window.onunload = function() {};
             window.document.onmouseup = function(){};
             window.document.onmousemove = function(){};
@@ -825,7 +823,7 @@
 	    },
 	    addNextPage: function(nextUrl){
 	    	if(this.site && this.site.useiframe){
-	    		this.frameRequest(nextUrl);
+	    		this.iframeRequest(nextUrl);
 	    		return;
 	    	}
 
@@ -835,13 +833,13 @@
 	        	reader.requestLoad(this);
 	        });
 	    },
-        frameRequest: function(nextUrl){
+        iframeRequest: function(nextUrl){
         	var self = this;
 
     		if(!this.iframe){
     			var i=document.createElement('iframe');
     			this.iframe=i;
-    			i.name='novelreader-iframe';
+    			i.name='mynovelreader-iframe';
     			i.width='100%';
     			i.height='0';
     			i.frameBorder="0";
@@ -893,8 +891,7 @@
 	    },
 	};
 
-	function launch(){
-
+	function launch(timeout){
 	    var other_enable = function(){
 	        if(config.booklinkme && document.referrer.match(/booklink\.me/)
 	            && !window.location.href.match(/read\.qidian\.com\/BookReader\/\d+\.aspx/)){
@@ -903,29 +900,33 @@
 	        return false;
 	    };
 
-	    // if(reader.site || other_enable()){
-	    //     reader.init();
-	    // }
-	    reader.init();
+        timeout = timeout || 0;
+
+        setTimeout(function(){
+            reader.init();
+        }, timeout);
 	}
 
-	function init () {
+    window.readx = reader.init;
+    // 执行
+    reader.getCurSiteInfo();
+    if(location.host == 'chuangshi.qq.com'){
+        window.addEventListener("load", function(){
+            launch(1000);
+        }, false);
+    }else{
+        window.addEventListener("DOMContentLoaded", launch, false);
+    }
 
-		reader.getCurSiteInfo();
+    if(window.opera){
+        if(config.disableScript && reader.site && !reader.site.useiframe)
+            operaDisableScript();
 
-		window.addEventListener("DOMContentLoaded", launch, false);
-		window.readx = reader.init;
-
-		if(reader.site && window.opera){
-			operaDisableScript();
-
-			window.opera.addEventListener('BeforeCSS', function(e){
-				e.preventDefault();
-			}, false);
-		}
-	}
-
-	init();
+        if(config.disableCSS)
+            window.opera.addEventListener('BeforeCSS', function(e){
+                e.preventDefault();
+            }, false);
+    }
 
     function debug(){ if(config.DEBUG) console.log.apply(console, arguments);}
 	function $A(args) { return Array.prototype.slice.call(args)}
