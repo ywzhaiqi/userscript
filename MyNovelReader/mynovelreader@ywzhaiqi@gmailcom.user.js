@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        2.5.8
+// @version        2.5.9
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说清爽阅读脚本。
@@ -177,6 +177,7 @@
     };
 
     var READER_AJAX = "reader-ajax";   // 内容中ajax的 className，不能更改
+    var THE_END_COLOR = "#666666"
 
     // 自动尝试的规则
     var rule = {
@@ -198,7 +199,7 @@
         contentRemove: "script:not(." + READER_AJAX + "), iframe, a, font[color]",          // 内容移除选择器
         contentReplace: /最新.?章节|百度搜索|小说章节|全文字手打|“”&nbsp;看|无.弹.窗.小.说.网|追书网/g,
 
-        replaceBrs: /(<br[^>]*>[ \n\r\t]*){2,}/gi,                         // 替换为<p>
+        replaceBrs: /(<br[^>]*>[ \n\r\t]*){2,}(&nbsp;)*/gi,                         // 替换为<p>
     };
 
     // 自定义站点规则
@@ -212,6 +213,7 @@
         {
             url: "^http://www\\.qirexs\\.com/read-\\d+-chapter-\\d+\\.html",
             contentSelector: "div.page-content",
+            contentReplace: "首发,/.奇热小说网阅读网!|奇热小说网提供.*"
         },
 
         // 详细版规则示例。时不时没法访问。
@@ -952,7 +954,10 @@
             if(!text) return null;
 
             // 去除开头的 <br>
-            text = text.replace(/<br\/?>/, "");
+            // text = text.replace(/<br\/?>/, "");
+
+            // 去掉第一段的 &nbsp;
+            text = text.replace(/^[ \n\r\t]*(&nbsp;)*/, "<p>")
 
             /* Turn all double br's into p's */
             text = text.replace(rule.replaceBrs, '</p>\n<p>');
@@ -1028,7 +1033,7 @@
             this.nextUrl = url;
             this.isTheEnd = !this.checkNextUrl(url);
             if(this.isTheEnd){
-                this.theEndColor = "#666666";
+                this.theEndColor = THE_END_COLOR
             }
 
             return url;
@@ -1409,6 +1414,7 @@
                 reader.removeListener()
                 reader.requestUrl = null
                 reader.isTheEnd = true
+                $(".next-page").last().css("color", THE_END_COLOR);
             }
 
             reader.requestNotice.style.display = "none";
@@ -1708,6 +1714,7 @@ body {background:#EEE;}\
     margin-left:auto;\
     margin-right:auto;\
     font-size:1.2em;\
+    text-indent: 16px;\
 }\
 .content img.blockImage {clear: both;float: none;display: block;margin-left: auto;margin-right: auto;}\
 .chapter-head-nav{\
