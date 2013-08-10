@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        2.5.7
+// @version        2.5.8
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说清爽阅读脚本。
@@ -49,6 +49,7 @@
 // @include        http://www.caiwei.tw/html/*/*.html
 // @include        http://www.hotsk.com/Html/Book/*/*/*.shtml
 // @include        http://www.92to.com/*/*/*.html
+// @include        http://www.qirexs.com/read-*-chapter-*.html
 // 需特殊处理的论坛
 // @include        http://www.fkzww.net/thread-*.html
 
@@ -202,6 +203,17 @@
 
     // 自定义站点规则
     rule.specialSite = [
+        // ===================================
+        {
+            url: "^http://www\\.dawenxue\\.net/html/\\d+/\\d+/\\d+\\.html",
+            contentSelector: "#clickeye_content",
+            contentReplace: "\\(?大文学\\s*www\\.dawenxue\\.net\\)?",
+        },
+        {
+            url: "^http://www\\.qirexs\\.com/read-\\d+-chapter-\\d+\\.html",
+            contentSelector: "div.page-content",
+        },
+
         // 详细版规则示例。时不时没法访问。
         {siteName: "泡书吧",                                               // 站点名字... (可选)
             url: "^http://www\\.paoshu8\\.net/Html/\\S+\\.shtm$",          // // 站点正则... (~~必须~~)
@@ -892,7 +904,13 @@
                 }
             }
 
-            if(content.length === 0) return;
+            if(content.length === 0){
+                this.isTheEnd = true
+                this.nextUrl = null
+                debug("没有找到内容")
+                callback && callback(this)
+                return;
+            }
 
             // 对页面内容处理
             content.find(rule.contentRemove).remove();
@@ -1384,13 +1402,14 @@
                 window.setTimeout(function(){
                     reader.fixImageFloats();
                 }, 800);
-            }else{
-                reader.removeListener();
-                reader.isEndNoticed = true;
-            }
 
-            reader.requestUrl = parser.nextUrl;
-            reader.isTheEnd = parser.isTheEnd;
+                reader.requestUrl = parser.nextUrl
+                reader.isTheEnd = parser.isTheEnd
+            }else{
+                reader.removeListener()
+                reader.requestUrl = null
+                reader.isTheEnd = true
+            }
 
             reader.requestNotice.style.display = "none";
         },
