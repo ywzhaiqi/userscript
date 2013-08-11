@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        2.5.9
+// @version        2.6.0
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说清爽阅读脚本。
@@ -199,7 +199,6 @@
         contentRemove: "script:not(." + READER_AJAX + "), iframe, a, font[color]",          // 内容移除选择器
         contentReplace: /最新.?章节|百度搜索|小说章节|全文字手打|“”&nbsp;看|无.弹.窗.小.说.网|追书网/g,
 
-        replaceBrs: /(<br[^>]*>[ \n\r\t]*){2,}(&nbsp;)*/gi,                         // 替换为<p>
     };
 
     // 自定义站点规则
@@ -238,9 +237,10 @@
             url: "^http://(www|read)\\.(qidian|qdmm|qdwenxue)\\.com/BookReader/\\d+,\\d+.aspx$",
             titleReg: /小说:(.*?)(?:独家首发)\/(.*?)\/.*/,
             contentReplace: /起点中文网|www.qidian.com|欢迎广大书友.*/g,
+            noFixPinyin: true,
             contentPatch: function(fakeStub){
                 fakeStub.find('div#content script:first').addClass('reader-ajax');
-            }
+            },
         },
         // 特殊处理。
         {siteName: "手打吧",
@@ -335,6 +335,7 @@
                 // 去除内容开头、结尾的重复标题
                 var title = fakeStub.find("#htmltimu").text().replace(/\s+/, "\\s*");
                 var content = fakeStub.find("#htmlContent");
+                content.find("div[align='center']").remove()
                 if(title.match(/第\S+章/)){
                     content.html(content.html().replace(new RegExp(title), "").replace(new RegExp(title), ""));
                 }
@@ -959,8 +960,10 @@
             // 去掉第一段的 &nbsp;
             text = text.replace(/^[ \n\r\t]*(&nbsp;)*/, "<p>")
 
+            text = text.replace(/<p>\s+/gi, '<p>');
+
             /* Turn all double br's into p's */
-            text = text.replace(rule.replaceBrs, '</p>\n<p>');
+            text = text.replace(/(<br[^>]*>[ \n\r\t]*){2,}(&nbsp;)*/gi, '</p>\n<p>');
 
             text = text.replace(rule.contentReplace, '');
 
@@ -995,20 +998,22 @@
                 // }
             }
 
-            // 先提取出 img
-            var imgs = {};
-            var i = 0;
-            text = text.replace(/<img[^>]*>/g, function(img){
-                imgs[i] = img;
-                return "{" + (i++) + "}";
-            });
+            if(!this.site.noFixPinyin){
+                // 先提取出 img
+                var imgs = {};
+                var i = 0;
+                text = text.replace(/<img[^>]*>/g, function(img){
+                    imgs[i] = img;
+                    return "{" + (i++) + "}";
+                });
 
 
-            // 小说屏蔽字修复
-            text = contentReplacements(text);
+                // 小说屏蔽字修复
+                text = contentReplacements(text);
 
-            // 还原图片
-            text = reader.nano(text, imgs);
+                // 还原图片
+                text = reader.nano(text, imgs);
+            }
 
             return text;
         },
@@ -1714,7 +1719,7 @@ body {background:#EEE;}\
     margin-left:auto;\
     margin-right:auto;\
     font-size:1.2em;\
-    text-indent: 16px;\
+    text-indent: 2em;\
 }\
 .content img.blockImage {clear: both;float: none;display: block;margin-left: auto;margin-right: auto;}\
 .chapter-head-nav{\
