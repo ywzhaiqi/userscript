@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        2.6.0
+// @version        2.6.1
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说清爽阅读脚本。
@@ -198,7 +198,7 @@
 
         contentRemove: "script:not(." + READER_AJAX + "), iframe, a, font[color]",          // 内容移除选择器
         contentReplace: /最新.?章节|百度搜索|小说章节|全文字手打|“”&nbsp;看|无.弹.窗.小.说.网|追书网/g,
-
+        replaceBrs: /(<br[^>]*>[ \n\r\t]*){2,}/gi    // 替换为<p>
     };
 
     // 自定义站点规则
@@ -213,6 +213,10 @@
             url: "^http://www\\.qirexs\\.com/read-\\d+-chapter-\\d+\\.html",
             contentSelector: "div.page-content",
             contentReplace: "首发,/.奇热小说网阅读网!|奇热小说网提供.*"
+        },
+        {
+            url: "^http://www\\.luoqiu\\.com/html/\\d+/\\d+/\\d+\\.html",
+            contentReplace: "&lt;/p&gt;"
         },
 
         // 详细版规则示例。时不时没法访问。
@@ -958,12 +962,13 @@
             // text = text.replace(/<br\/?>/, "");
 
             // 去掉第一段的 &nbsp;
-            text = text.replace(/^[ \n\r\t]*(&nbsp;)*/, "<p>")
+            text = text.replace(/^(?:\s|&nbsp;)*/, "<p>")
 
-            text = text.replace(/<p>\s+/gi, '<p>');
+            // 去除段落开头的 &nbsp;
+            text = text.replace(/>(?:\s|&nbsp;)+/gi, '>');
 
             /* Turn all double br's into p's */
-            text = text.replace(/(<br[^>]*>[ \n\r\t]*){2,}(&nbsp;)*/gi, '</p>\n<p>');
+            text = text.replace(rule.replaceBrs, '</p>\n<p>');
 
             text = text.replace(rule.contentReplace, '');
 
@@ -982,11 +987,16 @@
                     debug("  Content Replaced");
                 }
 
+
+
                 // 去除内容中包含的标题
                 var titleRegText = "";
                 if(this.bookTitle){
                     titleRegText += this.bookTitle + "\\d+";
                 }
+
+
+
                 text = text.replace(new RegExp(titleRegText, "g"), "");
                 debug("  Content replace title: " + titleRegText);
 
@@ -998,7 +1008,7 @@
                 // }
             }
 
-            if(!this.site.noFixPinyin){
+            if(site && !site.noFixPinyin){
                 // 先提取出 img
                 var imgs = {};
                 var i = 0;
@@ -1007,13 +1017,14 @@
                     return "{" + (i++) + "}";
                 });
 
-
                 // 小说屏蔽字修复
                 text = contentReplacements(text);
 
                 // 还原图片
                 text = reader.nano(text, imgs);
             }
+
+            debug("  handleContentText finished.")
 
             return text;
         },
