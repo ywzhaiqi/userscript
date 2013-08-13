@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             booklinkme@ywzhaiqi@gmail.com
 // @name           booklink.me 增强
-// @version        1.5
+// @version        1.6
 // @author         ywzhaiqi@gmail.com
 // @description    首页一键打开所有未读链接
 // @updataURL      https://userscripts.org/scripts/source/165572.meta.js
@@ -32,25 +32,25 @@ var pc = {
 		if(!appendElem) return;
 
 		var linkBtn = document.createElement("a");
-		linkBtn.href = '#';
+        linkBtn.href = ""
 		linkBtn.title = "一键打开所有未读链接";
 
 		var imgBtn = document.createElement("img");
 		imgBtn.src = "me.png";
-		imgBtn.style.maxWidth = "20px"
-		imgBtn.addEventListener("click", this.openAllUnreadLinks, false);
+		imgBtn.style.maxWidth = "20px";
+        imgBtn.addEventListener("click", this.openAllUnreadLinks, false);
 
 		linkBtn.appendChild(imgBtn);
 		appendElem.appendChild(linkBtn);
-
 		appendElem.style.width = "auto";
 	},
 	openAllUnreadLinks: function(event){
-		var links = $x("//form[1]//img[@alt='未读']/..");
-		links.forEach(function(link){
-			// GM_openInTab(link.href);
-			link.click();
-		});
+        event.preventDefault();
+
+        var links = $x('./ancestor::table[@width="100%"]/descendant::a[img[@alt="未读"]]', event.target)
+        links.forEach(function(link){
+            link.click()
+        })
 	}
 };
 
@@ -85,7 +85,7 @@ var mobile = {
 		var mainElem = $x('//li[text()="主书架"]')[0];
 		if(!mainElem) return;
 
-		var unReadLinks = $x('id("m_main")//span[contains(text(), "未读")]');
+		var unReadLinks = $x('id("m_main")/ul[1]//span[contains(text(), "未读")]');
 		if(unReadLinks.length == 0) return;
 
 		var openAllBtn = document.createElement("span");
