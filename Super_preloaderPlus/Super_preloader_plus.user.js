@@ -1,4 +1,4 @@
-T// ==UserScript==
+// ==UserScript==
 // @name         Super_preloaderPlus
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
