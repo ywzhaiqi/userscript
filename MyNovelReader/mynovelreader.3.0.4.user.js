@@ -1,25 +1,24 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        3.2.1
+// @version        3.0.4
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
-// @description    小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
+// @description    小说清爽阅读脚本。
 // @grant          GM_xmlhttpRequest
 // @grant          GM_addStyle
 // @grant          GM_getValue
 // @grant          GM_setValue
 // @grant          GM_getResourceURL
 // @grant          GM_openInTab
-// @grant          GM_setClipboard
 // @grant          GM_registerMenuCommand
 // @grant          unsafeWindow
-// @homepageURL    https://userscripts.org/scripts/show/165951
 // @updateURL      https://userscripts.org/scripts/source/165951.meta.js
 // @downloadURL    https://userscripts.org/scripts/source/165951.user.js
 // @require        http://code.jquery.com/jquery-1.9.1.min.js
 // @require        http://gsgd.co.uk/sandbox/jquery/easing/jquery.easing.1.3.js
 // @resource fontawesomeWoff http://web-resource.googlecode.com/git/fontawesome-webfont.woff
+// https://github.com/FortAwesome/Font-Awesome/raw/master/font/fontawesome-webfont.woff
 
 // @include        http://read.qidian.com/*,*.aspx
 // @include        http://www.qdmm.com/BookReader/*,*.aspx
@@ -58,7 +57,6 @@
 // @include        http://www.hotsk.com/Html/Book/*/*/*.shtml
 // @include        http://www.92to.com/*/*/*.html
 // @include        http://www.qirexs.com/read-*-chapter-*.html
-// @include        http://www.du00.com/read/*/*/*.html
 // 需特殊处理的论坛
 // @include        http://www.fkzww.net/thread-*.html
 
@@ -73,9 +71,7 @@
 // @include        http://www.suimeng.com/files/article/html/*/*/*.html
 // @include        http://www.hao662.com/haoshu/*/*/*.html
 
-// 其它网站
-// @include        http://www.piaotian.net/html/*/*/*.html
-// @include        http://www.epzww.com/book/*/*
+// 百度搜索网站
 // @include        http://tw.xiaoshuokan.com/haokan/*/*.html
 // @include        http://www.wobudu.com/*/*.html
 // @include        http://www.qb5.com/xiaoshuo/*/*/*.html
@@ -136,7 +132,7 @@
 // @include        http://www.3dllc.com/html/*/*/*.html
 // @include        http://www.xstxt.com/*/*/
 // @include        http://www.zzzcn.com/3z*/*/
-// @include        http://www.zzzcn.com/modules/article/App.php*
+// @include        http://www.zzzcn.com/modules/article/reader.php*
 // @include        http://www.nilongdao.com/book/*/*/*.html
 // @include        http://xs321.net/*/*/
 // @include        http://read.guanhuaju.com/files/article/html/*/*/*.html
@@ -161,40 +157,53 @@
 // @run-at         document-start
 // ==/UserScript==
 
+/**
+支持站点
+
+ - 起点中文网、晋江文学网、纵横中文网、潇湘书院、逐浪
+ - 燃文、无错、书迷楼、冰火中文、百晓生、浩奇、书河
+ - 手打吧、泡书吧、17k、看下、青帝、侠客、
+ - 其它通用小说网站。（没有站点配置的，例如：红袖添香）
+*/
+
 var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
 
-(function(mainCss){
+(function(css){
 
     if(window.name == "mynovelreader-iframe"){
         return;
     }
 
-    // 其它设置
+    // 所有的设置
     var config = {
+        AUTO_ENABLE: true,              // 自动启用总开关。有问题，一些主页也会自动启用
+        booklinkme: true,               // booklink.me 跳转的自动启动
         soduso: false,                  // www.sodu.so 跳转
+        BASE_REMAIN_HEIGHT: 1000,       // 距离底部多少高度（px）开始加载下一页
+        DEBUG: GM_getValue("debug") || false,
         fullHref: true,
         content_replacements: true,     // 小说屏蔽字修复
         fixImageFloats: true,           // 图片居中修正
         paragraphBlank: true,           // 统一段落开头的空格为 2个全角空格
-        end_color: "#666666",           // 最后一页的链接颜色
+        end_color: "#666666"            // 最后一页的链接颜色
     };
 
     var READER_AJAX = "reader-ajax";   // 内容中ajax的 className
 
     // 自动尝试的规则
     var rule = {
-        titleReplace: /^章节目录|^正文/,
-
         nextSelector: "a:contains('下一页'), a:contains('下一章'), a:contains('下页')",
         prevSelector: "a:contains('上一页'), a:contains('上一章'), a:contains('上页')",
-        nextUrlIgnore: /index|list|last|end|BuyChapterUnLogin|^javascript:|book\.zongheng\.com\/readmore/i,         // 忽略的下一页链接，匹配 href
-        nextUrlCompare: /\/\d+(_\d+)?\.html?$|\/wcxs-\d+-\d+\/$|chapter-\d+\.html$/i,        // 忽略的下一页链接（特殊），跟上一页比较
+        nextUrlIgnore: /index|list|last|end|BuyChapterUnLogin|^javascript:/i,         // 忽略的下一页链接，匹配 href
+        nextUrlCompare: /\/\d+\.html?$|\/wcxs-\d+-\d+\/$|chapter-\d+\.html$/i,        // 忽略的下一页链接（特殊），跟上一页比较
 
         // 按顺序匹配，匹配到则停止。econtains 完全相等
         indexSelectors: ["a[href='index.html']", "a:contains('返回书目')", "a:contains('章节目录')", "a:contains('章节列表')",
             "a:econtains('最新章节')", "a:contains('回目录')","a:contains('回书目')", "a:contains('目 录')", "a:contains('目录')"],
 
-        contentSelectors: ["#pagecontent", "#bmsy_content", "#bookpartinfo", "#htmlContent", "#chapter_content", "#chapterContent", "#partbody",
+        titleReplace: /^章节目录|^正文/,
+
+        contentSelectors: ["#bmsy_content", "#bookpartinfo", "#htmlContent", "#chapter_content", "#chapterContent", "#partbody",
             "#article_content", "#BookTextRead", "#booktext", "#BookText", "#readtext", "#text_c", "#txt_td", "#TXT", "#zjneirong",
             ".novel_content", ".readmain_inner", ".noveltext", ".booktext",
             "#contentTxt", "#oldtext", "#a_content", "#contents", "#content2", "#content", ".content"],
@@ -237,15 +246,8 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
         // 特殊站点，需再次获取且跨域。添加 class="reader-ajax"，同时需要 src, charset
         {siteName: "起点文学",
             url: "^http://(www|read)\\.(qidian|qdmm|qdwenxue)\\.com/BookReader/\\d+,\\d+.aspx$",
-            // titleReg: "小说:(.*?)(?:独家首发)/(.*?)/.*",
-            titleSelector: "#lbChapterName",
-            bookNameSelector: ".booktitle .info span:first",
-            contentReplace: {
-                "\\[img=(.*)\\]": "<img src='$1'>",
-                "\\[+CP.*(http://file.*\\.jpg)\\]+": "<img src='$1'>",
-                "起点中文网www.qidian.com欢迎广大书友光临阅读.*": "",
-                '<p>\\s+<a href="?http://www.qidian.com"?>起点中文网.*': ''
-            },
+            titleReg: /小说:(.*?)(?:独家首发)\/(.*?)\/.*/,
+            contentReplace: /起点中文网|www.qidian.com|欢迎广大书友.*/g,
             contentHandle: false,
             contentPatch: function(fakeStub){
                 fakeStub.find('div#content script:first').addClass('reader-ajax');
@@ -257,14 +259,8 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
             titleReg: "(.*?)-(.*)",
             contentPatch: function(fakeStub){
                 fakeStub.find('.watermark').remove();
-                // 给第几章添加空格
-                var chapterTitle = fakeStub.find(".tc > h2").text();
-                var chapterTitle1 = fakeStub.find(".tc > h2 em").text();
-                if(chapterTitle1) {
-                    chapterTitle = chapterTitle.replace(chapterTitle1, " ") + chapterTitle1;
-                }
                 fakeStub.find("title").text(
-                    fakeStub.find(".tc > h1").text() + "-" + chapterTitle);
+                    fakeStub.find(".tc>h1").text() + "-" + fakeStub.find(".tc>h2").text());
             }
         },
         {siteName: "创世中文网",
@@ -274,6 +270,7 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
             contentHandle: false,
             useiframe: true,
             mutationSelector: "#chaptercontainer",  // 内容生成监视器
+            mutationExcludeCount: 1,                // 子元素的个数 - 此数 > 0 才添加监视器
             contentPatch: function(fakeStub){
                 fakeStub.find('.bookreadercontent  > p:last').remove();
             }
@@ -317,7 +314,7 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
             titleReg: /(.*?)-(.*?)-.*/,
             contentSelector: "#oldtext",
             contentRemove: "div[style], script",
-            contentReplace: /\(百度搜\)|访问下载tXt小说|百度搜\|索|文\|学|文学全文.字手打|\((&nbsp;)+|牛过中文..hjsm..首发.转载请保留|\[本文来自\]|♠思♥路♣客レ|※五月中文网 5y ※|无错不跳字|最快阅读小说大主宰.*|跟我读Ｈ－u－n 请牢记|非常文学|关闭&lt;广告&gt;|w w.*|”娱乐秀”|更多精彩小[说說].*/g
+            contentReplace: /牛过中文..hjsm..首发.转载请保留|\[本文来自\]|♠思♥路♣客レ|※五月中文网 5y ※|无错不跳字|最快阅读小说大主宰.*|跟我读Ｈ－u－n 请牢记|非常文学|关闭&lt;广告&gt;|w w.*|”娱乐秀”|更多精彩小[说說].*/g
         },
         {siteName: "燃文小说网",
             url: "http://www\\.ranwenxiaoshuo\\.com/files/article/html/\\d+/\\d+/\\d+\\.html|http://www\\.ranwenxiaoshuo\\.com/\\w+/\\w+-\\d+-\\d+\\.html",
@@ -343,7 +340,7 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
                 // 去除内容开头、结尾的重复标题
                 var title = fakeStub.find("#htmltimu").text().replace(/\s+/, "\\s*");
                 var content = fakeStub.find("#htmlContent");
-                content.find("div[align='center']").remove();
+                content.find("div[align='center']").remove()
                 if(title.match(/第\S+章/)){
                     content.html(content.html().replace(new RegExp(title), "").replace(new RegExp(title), ""));
                 }
@@ -367,7 +364,7 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
             titleReg: /(.*?)最新章节,(.*?)-.*/,
             fixImage: true,
             contentReplace: {
-                "冰火中文\\.|&lt;冰火#中文.*|冰火中文&nbsp;(www.)?binhuo.com|冰.火.中文|绿色小说|lvsexs ": "",
+                "&lt;冰火#中文.*|冰火中文&nbsp;binhuo.com|冰.火.中文|绿色小说|lvsexs ": "",
                 "([^/])www\\.binhuo\\.com": "$1"
             },
             contentPatch: function(fakeStub){
@@ -387,7 +384,7 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
             url: /^http:\/\/www\.shuhe\.cc\/\d+\/\d+/,
             titleReg: "([^\\d]+)\\d*,(.*?)_",
             contentSelector: "#TXT",
-            contentReplace: /\{请在百度搜索.*首发阅读\}|（书河小说网.*?无弹窗）|wxs.o|ww.x.om|[\[【\(].{1,30}[\]\)】]|ff37;.*|书河小说网高速首发.*|TXT下载|全文阅读|第一书河小说网|百书斋.*|首发来自书河小说网|本书最新章节/ig,
+            contentReplace: /（书河小说网.*?无弹窗）|wxs.o|ww.x.om|[\[【\(].{1,30}[\]\)】]|ff37;.*|书河小说网高速首发.*|TXT下载|全文阅读|第一书河小说网|百书斋.*|首发来自书河小说网|本书最新章节/ig,
         },
         {siteName: "爱收藏",
             url: /http:\/\/www\.aishoucang\.com\/\w+\/\d+\.html/,
@@ -402,11 +399,11 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
             url: "^http://www\\.zhuishu\\.net/files/article/html/.*\\.html",
             titleReg: /(?:正文 )?(.*) (\S+) \S+ - .*/,
             titlePos: 1,
+            contentSelector: "#content",
             indexSelector: ".pagebottom>a:contains('目录')",
             nextSelector: ".pagebottom>a:contains('下一页')",
             prevSelector: ".pagebottom>a:contains('上一页')",
             fixImage: true,
-            contentSelector: "#content",
             contentReplace: {
                 "([^/])www\\.ZhuisHu\\.net": "$1",
             },
@@ -432,21 +429,7 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
         {siteName: "猪猪岛小说",
             url: "http://www\\.zhuzhudao\\.com/txt/",
             titleReg: "(.*?)最新章节-(.*?)-",
-            contentReplace: /[“"”]?猪猪岛小说.*|<\/?a[^>]+>|w+\.zhuZhuDao\.com/ig
-        },
-        {siteName: "读零零",
-            url: "http://www\\.du00\\.com/read/\\d+/\\d+/\\d+\\.html",
-            titleReg: "(.*)(?:第\\d+段)?,(.*) - 读零零小说网",
-            titlePos: 1,
-            prevSelector: "#footlink a:first",
-            indexSelector: "#footlink a:contains('目录')",
-            nextSelector: "#footlink a:last",
-            useiframe: true,
-            mutationSelector: "#pagecontent",
-            mutationChildCount: 2,
-            contentRemove: "font",
-            contentReplace: "读零零小说网欢迎您的光临.*",
-            fixImage: true,
+            contentReplace: /[“"”]?猪猪岛小说.*|<\/?a[^>]+>|www\.zhuZhuDao\.com /ig
         },
         {siteName: "17k小说网",
             url: /^http:\/\/\S+\.17k\.com\/chapter\/\S+\/\d+\.html$/,
@@ -547,7 +530,7 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
         {siteName: "热点",
             url: "^http://www\\.hotsk\\.com/Html/Book/\\d+/\\d+/\\d+\\.shtml",
             titleReg: "(.*?) 正文 (.*?) -",
-            contentReplace: "无弹窗小说网|www.zhuZhuDao.com .猪猪岛小说.|小说章节更新最快"
+            contentReplace: "无弹窗小说网"
         },
         {siteName: "落秋中文",
             url: "^http://www\\.luoqiu\\.com/html/\\d+/\\d+/\\d+\\.html",
@@ -598,7 +581,6 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
             contentReplace: "看小说“就爱读书”|binhuo|www\\.92to\\.com",
             useiframe: true,
             mutationSelector: "#main",
-            mutationChildCount: 0,
         },
         {siteName: "就爱读书",
             url: "^http://www\\.92to\\.com/\\w+/\\w+/\\d+\\.html$",
@@ -647,7 +629,7 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
             }
         },
         {siteName: "3Z中文网",
-            url: "^http://www\\.zzzcn\\.com\\/(3z\\d+/\\d+\\/|modules\\/article\\/App\\.php\\?aid=\\d+&cid=\\d+){1}$",
+            url: "^http://www\\.zzzcn\\.com\\/(3z\\d+/\\d+\\/|modules\\/article\\/reader\\.php\\?aid=\\d+&cid=\\d+){1}$",
             titleReg: "(.*?)-(.*)TXT下载",
             contentSelector: "#content3zcn",
             indexSelector: "a:contains('返回目录')",
@@ -679,22 +661,6 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
             indexSelector: "a.redbutt:contains('返回章節目錄')",
             nextSelector: "a.redbutt:contains('下一頁')",
             contentReplace: "[a-z;&]*w.[xｘ]iaoshuokan.com 好看小說網[a-z;&族】）]*"
-        },
-        {siteName: "E品中文网",
-            url: "http://www\\.epzww\\.com/book/\\d+/\\d+",
-            titleReg: "(.*?),(.*?),",
-            contentSelector: "#showcontent",
-        },
-        {siteName: "飘天文学",
-            url: "http://www\\.piaotian\\.net/html/\\d+/\\d+/\\d+\\.html",
-            titleReg: "(.*)最新章节,(.*),飘天文学",
-            contentSelector: "#content",
-            useiframe: true,
-            contentRemove: "table",
-            contentReplace: /[{〖]请在百度搜索.*[}〗]|.(?:百度搜索飄天|无弹窗小说网).*\.Net.|\[飄天.*无弹窗小说网\]/ig,
-            contentPatch: function(fakeStub) {
-                fakeStub.find("#content h1").appendTo(fakeStub.find('body'));
-            }
         }
     ];
 
@@ -724,14 +690,14 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
         "G(\\*{2})":"GSM", "感(\\*{2})彩":"感情色彩",
         "强(\\*{2})u5B9D":"强大法宝",
 
-        // === 双字替换 ===
+        // ===双字替换，需特殊处理？===
         "暧me[iì]":"暧昧",
         "b[ěe]i(\\s|&nbsp;)*j[īi]ng":"北京","半shen": "半身", "b[ìi]j[ìi]ng":"毕竟",
         "ch[oō]ngd[oò]ng":"冲动", "缠mian": "缠绵", "成shu": "成熟", "赤lu[oǒ]": "赤裸", "春guang": "春光",
-        "dang校": "党校", "da子": "鞑子", "diao丝": "屌丝", "d[úu]\\s{0,2}l[ìi]": "独立", "d?[iì]f[āa]ng":"地方", "d[ìi]\\s*d[ūu]":"帝都", "di国":"帝国", "du\\s{0,2}c[áa]i":"独裁",
+        "dang校": "党校", "da子": "鞑子", "diao丝": "屌丝", "d[úu]\\s{0,2}l[ìi]": "独立", "d?[iì]f[āa]ng":"地方", "d[ìi]\\s*d[ūu]":"帝都", "du\\s{0,2}c[áa]i":"独裁",
         "f[ǎa]ngf[óo]":"仿佛", "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "f[èe]nn[ùu]":"愤怒",
         "gao潮": "高潮", "干chai": "干柴", "gu[oò]ch[ée]ng":"过程", "gu[āa]nx[iì]":"关系", "g[ǎa]nji[àa]o":"感觉", "国wu院":"国务院",
-        "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "h[ǎa]oxi[àa]ng":"好像", "hu[áa]ngs[èe]":"黄色", "皇d[ìi]":"皇帝", "昏昏yu睡":"昏昏欲睡",
+        "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "h[ǎa]oxi[àa]ng":"好像", "hu[áa]ngs[èe]":"黄色", "皇d[ìi]":"皇帝",
         "j[ìi]nháng":"进行", "jinv": "妓女", "jirou": "鸡肉", "ji者":"记者", "ju花":"菊花","j[īi]动":"激动", "jili[èe]":"激烈", "肌r[òo]u":"肌肉","ji射":"激射", "ji[ēe]ch[uù]":"接触", "j[ùu]li[èe]": "剧烈", "jǐng惕": "警惕",
         "k[ěe]n[ée]ng": "可能", "开bao": "开苞",  "k[àa]o近": "靠近",
         "ling辱": "凌辱", "luan蛋": "卵蛋", "脸sè": "脸色",
@@ -739,10 +705,10 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
         "n[àa]me":"那么", "n[ée]ngg[oò]u":"能够", "nán\\s{0,2}hǎi": "那会",
         "pi[áa]o客":"嫖客", "p[áa]ngbi[āa]n":"旁边",
         "q[íi]gu[àa]i":"奇怪", "qin兽":"禽兽", "q[iī]ngch[uǔ]":"清楚",
-        "r[úu]gu[oǒ]":"如果", "r[oó]ngy[ìi]":"容易", "ru白色": "乳白色",
-        "sh[iì]ji[eè]":"世界", "sh[ií]ji[aā]n":"时间", "sh[ií]h[oò]u": "时候", "sh[ií]me":"什么", "shi身": "失身", "sh[ūu]j[ìi]":"书记", "shu女": "熟女", "上chuang": "上床", "呻y[íi]n": "呻吟", "sh[ēe]ngzh[íi]": "生殖", "深gu": "深谷", "双xiu": "双修", "生r[ìi]": "生日",
-        "t[uū]r[áa]n":"突然", "tiaojiao": "调教", "推dao": "推倒", "脱guang": "脱光", "t[èe]bi[ée]":"特别", "t[ōo]nggu[òo]":"通过", "tian来tian去":"舔来舔去",
-        "w[ēe]ixi[ée]":"威胁", "wèizh[ìi]":"位置", "wei员":"委员",
+        "r[úu]gu[oǒ]":"如果", "r[oó]ngy[ìi]":"容易",
+        "生r[ìi]": "生日", "sh[iì]ji[eè]":"世界", "sh[ií]ji[aā]n":"时间", "sh[ií]h[oò]u": "时候", "sh[ií]me":"什么", "shi身": "失身", "sh[ūu]j[ìi]":"书记", "shu女": "熟女", "上chuang": "上床", "呻y[íi]n": "呻吟", "sh[ēe]ngzh[íi]": "生殖", "深gu": "深谷", "双xiu": "双修",
+        "t[uū]r[áa]n":"突然", "tiaojiao": "调教", "推dao": "推倒", "脱guang": "脱光", "t[èe]bi[ée]":"特别", "t[ōo]nggu[òo]":"通过",
+        "w[ēe]ixi[ée]":"威胁", "wèizh[ìi]":"位置",
         "亵du": "亵渎", "xing福": "性福", "xiu长": "修长",
         "y[iī]y[àa]ng":"一样", "y[īi]di[ǎa]n":"一点", "y[ǐi]j[īi]ng":"已经", "阳w[ěe]i": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "you惑": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人","旖ni":"旖旎", "yu念":"欲念",
         "z[iì]j[iǐ]": "自己","z[ìi]\\s*you": "自由","zh[iī]d?[àa]u?o":"知道","zha药": "炸药", "zhan有": "占有", "政f[ǔu]": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zong理":"总理", "zhōngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]y[oò]u":"左右", "zh[oō]uw[ée]i":"周围", "中nan海":"中南海", "中j委":"中纪委",
@@ -760,11 +726,11 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
         "nǎi": "奶", "nèn": "嫩", "niào": "尿", "niē": "捏", "nòng": "弄", "nǚ": "女",
         "pào": "炮", "piàn": "片",
         "qiāng": "枪", "qíng": "情", "qīn": "亲", "qiú": "求", "quán": "全",
-        "rì": "日", "([^a-z])ri":"$1日", "rǔ": "乳",
-        "sāo":"骚", "sǎo": "骚", "s[èe]": "色", "shā": "杀", "shēn":"呻", "shén":"神", "shè": "射", "shǐ": "屎", "shì": "侍", "sǐ": "死", "sī": "私", "shǔn": "吮", "sǔn": "吮", "sū": "酥",
+        "rì": "日", "rǔ": "乳",
+        "sāo":"骚", "sǎo": "骚", "sè": "色", "shā": "杀", "shēn":"呻", "shén":"神", "shè": "射", "shǐ": "屎", "shì": "侍", "sǐ": "死", "sī": "私", "shǔn": "吮", "sǔn": "吮", "sū": "酥",
         "tān":"贪", "tiǎn": "舔", "tǐng":"挺", "tǐ": "体", "tǒng": "捅", "tōu": "偷", "tou": "偷", "tuǐ": "腿", "tūn": "吞", "tún": "臀", "wēn": "温", "wěn": "吻",
         "xiǎo":"小", "x[ìi]ng": "性", "xiōng": "胸", "xī": "吸", "xí": "习", "xué": "穴", "xuè": "穴", "xùe": "穴",  "xuan":"宣",
-        "yāng":"央", "yàn":"艳", "y[īi]n":"阴", "yào": "药", "yé": "爷", "yòu": "诱", "zàng": "脏", "([^a-z])y[uù]": "$1欲", "yín": "淫",
+        "yāng":"央", "yàn":"艳", "y[īi]n":"阴", "yào": "药", "yé": "爷", "yòu": "诱", "zàng": "脏", "yù": "欲", "yín": "淫",
         "zhēn":"针", "zēn":"针", "zhà":"炸", "zhèng":"政", "zhi":"治", "zǒu": "走", "zuì":"罪", "zuò":"做", "zhong":"中",
 
         // ===误替换还原===
@@ -814,7 +780,6 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
         this.curPageUrl = curPageUrl || doc.URL;
 
         this.isTheEnd = false;
-        this.isSection = false;
     }
     Parser.prototype = {
         getAll: function(callback){
@@ -825,6 +790,8 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
             this.getIndexUrl();
             this.getNextUrl();
             this.getContent(callback);
+
+            // this.getBookMark();
 
             return this;
         },
@@ -840,6 +807,7 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
             }
         },
         getTitles: function(){
+            debug("Get title: ");
             var docTitle = this.$doc.find("title").text();
 
             if (this.info.titleReg){
@@ -894,12 +862,12 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
                 _search_document_title = ' ' + _document_title.replace(/\s+/gi, ' ') + ' '
             ;
 
-            var _headings = Array.slice(document.querySelectorAll(_main_selector));
+            var _headings = document.querySelectorAll(_main_selector);
             // 去除包含的
             var _tmp = document.querySelectorAll(_second_selector);
             for (var i = 0; i < _tmp.length; i++) {
                 if(!_tmp[i].querySelector(_main_selector))
-                    _headings.push(_tmp[i]);
+                    _headings.push(_tmp[i])
             }
 
             var possibleTitles = {},
@@ -995,10 +963,6 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
             return curTitle;
         },
         getContent: function(callback){
-            if(callback === undefined){
-                callback = function() {};
-            }
-
             var content, contentValue;
             if(this.info.contentSelector){
                 content = this.$doc.find(this.info.contentSelector);
@@ -1015,10 +979,10 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
             }
 
             if(content.length === 0){
-                this.isTheEnd = true;
-                this.nextUrl = null;
-                debug("没有找到内容");
-                callback(this);
+                this.isTheEnd = true
+                this.nextUrl = null
+                debug("没有找到内容")
+                callback && callback(this)
                 return;
             }
 
@@ -1030,18 +994,16 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
                 if(!url) return;
                 var charset = ajaxScript.attr('charset') || 'utf-8';
                 debug('  内容特殊处理 Ajax: ' + url +". charset=" + charset);
-
                 GM_xmlhttpRequest({
                     url: url,
                     method: "GET",
                     overrideMimeType: "text/html;charset=" + charset,
                     onload: function(res){
                         var text = res.responseText.replace(/document.write(ln)?\('/, "")
-                                .replace("');", "")
-                                .replace(/[\n\r]/g, '</p><p>');
-
+                                .replace("');", "");
+                        text = text.replace(/[\n\r]/g, '</p><p>');
                         self.content = self.handleContentText(text, self.info);
-                        callback(self);
+                        callback && callback(self);
                     }
                 });
             }else{
@@ -1052,7 +1014,7 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
                 }
 
                 this.content = this.handleContentText(content.html(), this.info);
-                callback(this);
+                callback && callback(this);
             }
         },
         handleContentText: function(text, info){
@@ -1063,16 +1025,18 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
             /* Turn all double br's into p's */
             text = text.replace(rule.replaceBrs, '</p>\n<p>');
 
+            text = text.replace(rule.contentReplace, '');
+
             if(info){
-                var obj = info.contentReplace;
-                if(obj){
-                    if(typeof obj == 'string'){
-                        text = text.replace(new RegExp(obj, "ig"), '');
-                    }else if(obj instanceof RegExp){
-                        text = text.replace(obj, '');
-                    }else if(typeof obj == 'object'){
-                        for(var key in obj){
-                            text = text.replace(new RegExp(key, "ig"), obj[key]);
+                if(info.contentReplace){
+                    var replace = info.contentReplace;
+                    if(typeof replace == 'string'){
+                        text = text.replace(new RegExp(replace, "ig"), '');
+                    }else if(replace instanceof RegExp){
+                        text = text.replace(replace, '');
+                    }else if(typeof replace == 'object'){
+                        for(var key in replace){
+                            text = text.replace(new RegExp(key, "ig"), replace[key]);
                         }
                     }
                     debug("  Content Replaced");
@@ -1101,10 +1065,8 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
                 text = contentReplacements(text);
 
                 // 还原图片
-                text = nano(text, imgs);
+                text = reader.nano(text, imgs);
             }
-
-            text = text.replace(rule.contentReplace, '');
 
             var $div = $("<div>").html(text);
 
@@ -1119,16 +1081,16 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
             }
 
             // 删除空白的 p
-            $div.find("p, center, div").filter(function(){
-                return this.textContent.trim().length === 0;
+            $div.find("p").filter(function(){
+                return this.textContent.trim().length == 0;
             }).remove();
 
             // 图片居中，所有图像？
-            // if(info.fixImage){
-            //     $div.find("img").each(function(){
-            //         this.className += " blockImage";
-            //     });
-            // }
+            if(info.fixImage){
+                $div.find("img").each(function(){
+                    this.className += " blockImage";
+                });
+            }
 
             text = $div.html();
 
@@ -1160,26 +1122,20 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
             this.nextUrl = url;
             this.isTheEnd = !this.checkNextUrl(url);
             if(this.isTheEnd){
-                this.theEndColor = config.end_color;
+                this.theEndColor = config.end_color
             }
 
             return url;
         },
         checkNextUrl: function(url){
-            if (location.host == "www.du00.com") {
-                if (/\/\d+_\d+\.html$/.test(this.curPageUrl)) {
-                    this.isSection = true;
-                    return true;
-                }
-            }
-
             switch(true){
-                case url === '':
+                case url == '':
                 case rule.nextUrlIgnore.test(url):
                 case url == this.indexUrl:
                 case url == this.prevUrl:
                 case url == this.curPageUrl:
                 case rule.nextUrlCompare.test(this.prevUrl) && !rule.nextUrlCompare.test(url):
+                case /book\.zongheng\.com\/readmore/.test(url):
                     return false;
                 default:
                     return true;
@@ -1226,36 +1182,69 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
 
             this.indexUrl = url;
             return url;
+        },
+        getBookMark: function(){
+            var url = this.curPageUrl;
+            if(url.match(/qidian/)){
+                m = url.match(/\d+/g);
+                bookid = m[0];
+                chapid = m[1];
+                this.addBookMark = '<a href="javascript:加入书架书签" onclick="javascript:addBookMark(\'' +
+                    bookid + '\',\'' + chapid + '\',null)">书签</a> | ';
+            }
         }
     };
 
-    // ====================== App ==============================
-    var App = {
+    // ====================== reader ==============================
+    var reader = {
         isEnabled: false,
         parsedPages: {},
-        pageNum: 1,
         paused: false,
-        curPageUrl: location.href,
+        curPageUrl: "",
         requestUrl: null,
         iframe: null,
         remove: [],
+        tpl_wrapper: '\
+            <div id="menu">\
+                <div id="header">\
+                    <a href="{indexUrl}">{bookTitle}</a>\
+                </div>\
+                <div id="divider"></div>\
+                <ul id="chapter-list">\
+                </ul>\
+            </div>\
+            <div id="wrapper">\
+            </div>\
+            <div id="preferencesBtn">\
+                <a href=""></a>\
+            </div>\
+        ',
+        tpl_content: '<article>\
+                <h1>{chapterTitle}</h1>\
+                {content}\
+            </article>\
+        ',
+        tpl_list: '<li class="chapter"><div>{chapterTitle}</div></li>',
 
         init: function(){
-            if(App.isEnabled) return;
+            if(this.isEnabled) return;
 
-            var isAutoLaunch = App.checkIsAutoLaunch();
+            this.site = this.getCurSiteInfo() || {};
+            var isAutoLaunch = this.checkIsAutoLaunch();
+
             if(isAutoLaunch){
-                App.site = App.getCurSiteInfo() || {};
-
-                if(App.site.mutationSelector){  // 特殊的启动：等待js把内容生成完成
-                   App.addMutationObserve(document, App.launch);
-                }else if(App.site.timeout){  // 延迟启动
-                    setTimeout(App.launch, App.site.timeout);
+                if(this.site.mutationSelector){  // 特殊的启动：等待js把内容生成完成
+                    var success = this.addMutationObserve(window, this.launch);
+                    if(!success){
+                        this.launch();
+                    }
+                }else if(this.site.timeout){  // 延迟启动
+                    setTimeout(this.launch, this.site.timeout);
                 }else{  // NoScript 下 setTimeout 没用
-                    App.launch();
+                    this.launch();
                 }
             }else{
-                App.UI.addButton();
+                reader.UI.addButton();
             }
         },
         getCurSiteInfo: function (){
@@ -1280,122 +1269,125 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
                     L_removeValue("booklinkme_disable_once");
                     return false;
 
-                case App.Config.booklink_enable && /booklink\.me/.test(referrer):
-                    return true;
-
-                case App.Config.disable_auto_launch:
-                    return false;
-
-                case GM_getValue("auto_enable"):
+                case config.AUTO_ENABLE && GM_getValue("auto_enable"):
+                case config.booklinkme && /booklink\.me/.test(referrer):
                 case config.soduso && /www\.sodu\.so/.test(referrer):
                     return true;
                 default:
                     return false;
             }
         },
-        addMutationObserve: function(doc, callback){
-            var shouldAdd = false;
+        addMutationObserve: function(win, callback){
             var selector = this.site.mutationSelector;
-            var target = $(doc).find(selector)[0];
-            if (target) {
-                var mutationChildCount = this.site.mutationChildCount;
-                if(mutationChildCount === undefined){
-                    shouldAdd = true;
-                } else {
-                    if(target.children.length == mutationChildCount)
-                        shouldAdd = true;
+            if(!selector)
+                return false;
+
+            var target = $(win.document).find(selector)[0];
+            if(!target)
+                return false;
+
+            var excludeCount = this.site.mutationExcludeCount || 0;
+            if((target.children.length - excludeCount) > 0)
+                return false;
+
+            var observer = new win.MutationObserver(function(mutations){
+                // console.log(mutations)
+                var mutation = mutations[mutations.length - 1];
+                if(mutation.addedNodes.length){
+                    observer.disconnect();
+                    callback();
                 }
-            }
+            });
+            observer.observe(target, {childList: true});
 
-            if (shouldAdd) {
-                var observer = new MutationObserver(function(mutations){
-                    // console.log(mutations)
-                    var mutation = mutations[mutations.length - 1];
-                    if(mutation.addedNodes.length){
-                        observer.disconnect();
-                        callback();
-                    }
-                });
-                observer.observe(target, {childList: true});
+            debug("添加 MutationObserve 成功：", selector);
 
-                debug("添加 MutationObserve 成功：", selector);
-            }else{
-                callback();
-            }
+            return true;
         },
         launch: function(){
             // 只解析一次，防止多次重复解析一个页面
             if(document.body.getAttribute("name") == "MyNovelReader"){
-                return App.toggle();
+                return reader.toggle();
             }
 
-           if(!App.site){
-                App.site = this.getCurSiteInfo() || {};
-            }
-
-            var parser = new Parser(App.site, document);
-            App.parsedPages[window.location.href.replace(/\/$/, '')] = true;
-
+            var parser = new Parser(reader.site, document);
             parser.getAll(function(){
                 if(parser.content){
-                    App.prepDocument();
+                    debug("reader launched.");
 
-                    App.UI.init();
+                    reader.parsedPages[window.location.href.replace(/\/$/, '')] = true;
 
-                    App.initDocument(parser);
+                    reader.prepDocument();
 
-                    // cache vars
-                    App.$doc = $(document);
-                    App.$chapterList = App.$doc.find("#chapter-list");
-                    App.$content = App.$doc.find("#content");
-                    App.$loading = App.$doc.find("#loading");
-                    App.indexUrl = parser.indexUrl;
-                    App.prevUrl = parser.prevUrl;  // 第一个上一页
+                    reader.UI.addMainStyle();
 
-                    if(parser.prevUrl){  // 加入上一章的链接
-                        $("<li>")
-                            .addClass('chapter')
-                            .append(
-                                $("<a>")
-                                    .attr({
-                                        "real-href": parser.prevUrl,
-                                        "onclick": "return false;"
-                                    })
-                                    .text("上一章")
-                            )
-                            .prependTo(App.$chapterList);
+                    reader.fixMobile();
+
+                    document.title = parser.docTitle;
+                    window.name = "MyNovelReader";
+                    document.body.setAttribute("name", "MyNovelReader");
+                    document.body.innerHTML = reader.nano(reader.tpl_wrapper, parser);
+
+                    reader.registerControls();
+
+                    // 加入上一章的链接
+                    if(parser.prevUrl){
+                        $(reader.nano(reader.tpl_list, {chapterTitle: "上一章"}))
+                            .prependTo("#chapter-list")
+                            .mousedown(function(event){
+                                var url = parser.prevUrl;
+                                switch(event.which){
+                                    case 1:
+                                        location.href = url;
+                                        break;
+                                    case 2:
+                                        GM_openInTab(url);
+                                        break;
+                                }
+                            });
                     }
 
-                    // 章节列表
-                    App.UI.hideMenuList(App.Config.menu_list_hiddden);
-                    $("#menu-bar").click(function(){
-                        App.UI.hideMenuList();
+                    var chapter = $(reader.nano(reader.tpl_content, parser)).appendTo("#wrapper"),
+                        chapterPosition = $("#wrapper").scrollTop() + $(chapter).offset().top,
+                        toChapter = $(reader.nano(reader.tpl_list, parser))
+                            .prependTo("#chapter-list")
+                            .data("position", chapterPosition)
+                            .data("href", location.href);
+
+                    reader.listAddClass(toChapter);
+                    reader.scrollTo(toChapter);
+
+                    $("#wrapper").scroll(function() {
+                        var offset = $(chapter).offset(),
+                            halfWrapperHeight = $("#wrapper").height() / 2,
+                            chapterHeight = $(chapter).height();
+                        if (offset.top > (halfWrapperHeight - chapterHeight) && offset.top < halfWrapperHeight){
+                            reader.listAddClass(toChapter);
+                        }
                     });
 
-                    App.registerControls();
-
-                    App.appendPage(parser, true);
-
-                    // 再次移除其它不相关的，起点有时候有问题
+                    // 再次移除其它不相关的。起点中文有时候问题比较大
                     if(window.location.hostname == "read.qidian.com"){
                         setTimeout(function(){
-                            $('body > *:not("#container, #reader_preferences, .readerbtn")').remove();
+                            $('body > *:not("#menu, #wrapper, #preferencesBtn, .readerbtn, #alert")').remove();
                         }, 3000);
                     }
 
-                    App.requestUrl = parser.nextUrl;
-                    App.isTheEnd = parser.isTheEnd;
+                    reader.requestUrl = parser.nextUrl;
+                    reader.isTheEnd = parser.isTheEnd;
 
+                    reader.addListener();
 
-                    App.isEnabled = true;
-                    App.UI.addButton();
+                    reader.isEnabled = true;
+                    reader.UI.addButton();
+
+                    // reader.fixImageFloats();
 
                     // 有些图片网站高度随着图片加载而变长
                     setTimeout(function(){
-                        App.scroll();
-                    }, 1000);
+                        reader.scroll();
+                    }, 500);
                 }else{
-                    App.UI.notice("<b>错误<b>：没有找到下一页的内容");
                 }
             });
         },
@@ -1405,7 +1397,7 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
             // 破解右键限制
             var doc = document;
             var bd = doc.body;
-            bd.onclick = bd.ondblclick = bd.onselectstart = bd.oncopy = bd.onpaste = bd.onkeydown = bd.oncontextmenu = bd.onmousemove = bd.onselectstart = bd.ondragstart = doc.onselectstart = doc.oncopy = doc.onpaste = doc.onkeydown = doc.oncontextmenu = null;
+            bd.onclick = bd.onselectstart = bd.oncopy = bd.onpaste = bd.onkeydown = bd.oncontextmenu = bd.onmousemove = bd.onselectstart = bd.ondragstart = doc.onselectstart = doc.oncopy = doc.onpaste = doc.onkeydown = doc.oncontextmenu = null;
             doc.onclick = doc.ondblclick = doc.onselectstart = doc.oncontextmenu = doc.onmousedown = doc.onkeydown = function() {
                 return true;
             };
@@ -1428,271 +1420,106 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
             $('*').removeAttr('style');
             $('body').removeAttr('bgcolor');
         },
-        initDocument: function(parser){
-            document.title = parser.docTitle;
-            window.name = "MyNovelReader";
-            document.body.setAttribute("name", "MyNovelReader");
-            document.body.innerHTML = nano('\
-                <div id="container">\
-                    <div id="menu-bar" title="点击显示隐藏章节列表"></div>\
-                    <div id="menu">\
-                        <div id="header" title="打开目录">\
-                            <a href="{indexUrl}">{bookTitle}</a>\
-                        </div>\
-                        <div id="divider"></div>\
-                        <ul id="chapter-list" title="左键滚动，中键打开链接（无阅读模式）">\
-                        </ul>\
-                    </div>\
-                    <div id="content"></div>\
-                    <div id="loading" style="display:none"></div>\
-                    <div id="preferencesBtn">\
-                        <img style="width:16px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAABwklEQVRIibVVzWrCQBAeQk/bdk+bm0aWDQEPHtwVahdavLU9aw6KAQ+SQ86Sa19Aqu0T9NafSw8ttOgr1CewUB9CBL3Yy26x1qRp0A8GhsnO9yUzmxmAhKjX68cAMAeAufK3C875FQAsAWCp/O3CsqyhFlB+Oti2/cAYewrD8FDHarXahWEYUy1gGMbUdd1z/TwMw0PG2JNt2/ex5IyxR02CEJpIKbuEkJGOrRshZCSl7CKEJjrGGHuIFMjlcs9RZElNcWxGEAQHGONxWnKM8TgIgoPYMkkpL9MKqNx4xNX8LyOEvMeSq5uxMZlz3vN9v+D7foFz3os6V61Wz36QNhqNUyHENaV0CACLTUnFYvF6/WVUbJPIglI6FELctFqtMiT59Ha7TdcFVCxJ6XYs0Gw2T1SJBlsq0ZxSOhBC3Hied/QjSTUoqsn9lSb3o879avI61FXbzTUFACiXy7v70Tqdzj7G+COtwJ+jIpPJvKYl12ZZ1kucwJs+iBD6lFJ2TdOMHB2mab7/a1xXKpW9fD5/6zjO3erCcV33PMnCcRwnfuHEYXVlZrPZQWqiKJRKpe8Bt5Ol73leCQBmADBTfiJ8AebTYCRbI3BUAAAAAElFTkSuQmCC"/>\
-                    </div>\
-                    <div id="alert" style="display: none;">\
-                        <p id="App-notice"></p>\
-                    </div>\
-                </div>\
-            ', parser);
+        fixMobile: function(){  // 自适应网页设计
+            var meta = document.createElement("meta");
+            meta.setAttribute("name", "viewport");
+            meta.setAttribute("content", "width=device-width, initial-scale=1");
+            document.head.appendChild(meta);
+        },
+        registerControls: function(){
+            $("#preferencesBtn").click(function(event){
+                event.preventDefault();
+                reader.UI.preferencesShow();
+            });
+
+            GM_registerMenuCommand("小说阅读脚本设置", reader.UI.preferencesShow.bind(reader.UI));
         },
         toggle: function(){
-            if(App.isEnabled){  // 退出
+            if(reader.isEnabled){  // 退出
                 GM_setValue("auto_enable", false);
                 L_setValue("booklinkme_disable_once", "true");
 
-                unsafeWindow.location = App.curPageUrl;
+                unsafeWindow.location = reader.curPageUrl;
             }else{
                 GM_setValue("auto_enable", true);
                 L_removeValue("booklinkme_disable_once");
-                App.isEnabled = true;
-                App.launch();
+                reader.isEnabled = true;
+                reader.launch();
             }
         },
-        removeListener: function(){
-            debug("移除各种事件监听");
-            App.remove.forEach(function(_remove){
-                _remove();
-            });
-        },
-        appendPage: function(parser, isFirst){
-            var chapter = $("article:last");
-            if(chapter.length && parser.isSection) {  // 每次获取的不是一章，而是一节
-                var lastText = chapter.find("p:last").remove().text().trim();
-                var newPage = parser.content.replace(/<p>\s+/, "<p>" + lastText);
-
-                chapter
-                    .find(".chapter-footer-nav").remove()
-                    .end()
-                    .append(newPage)
-                    .append(nano(App.UI.tpl_footer_nav, parser));
-            } else {
-                chapter = $("<article>")
-                    .attr("id", "page-" + App.pageNum)
-                    .append(
-                        $("<h1>").addClass("title").text(parser.chapterTitle)
-                    )
-                    .append(parser.content)
-                    .append(nano(App.UI.tpl_footer_nav, parser))
-                    .appendTo(App.$content);
-
-                App.fixImageFloats(chapter[0]);
-
-                // 添加到章节列表
-                var chapterItem = $("<li>")
-                    .addClass('chapter')
-                    .append(
-                        $("<a>")
-                            .attr({
-                                "href": "#page-" + App.pageNum,
-                                "real-href": parser.curPageUrl,
-                                "onclick": "return false;"
-                            })
-                            .text(parser.chapterTitle)
-                    )
-                    .prependTo(App.$chapterList);
-
-                if(isFirst){
-                    chapterItem.addClass('active');
-                }
-
-                App.pageNum += 1;
-                App.menuItems = App.$chapterList.find("div");
-                App.scrollItems = $("article");
-            }
-        },
-        registerControls: function(){
-            $(document).on({
-                scroll: App.scroll,
-                keyup: App.keyup,
-            });
-
-            App.$content.on({
-                dblclick: App.pauseHandler,
-            });
-
-            // 章节列表点击
-            $(document).on("mousedown", "#chapter-list a", function(event){
+        scrollTo: function (listElement) {
+            $(listElement).mousedown(function (event) {
                 event.preventDefault();
                 switch(event.which){
                     case 1:
-                        var href = $(this).attr("href");
-                        if (href) {
-                            App.scrollToArticle($(href));
-                        } else {
-                            location.href = $(this).attr("real-href");
-                        }
+                        $("#wrapper").animate({scrollTop: $(this).data("position")}, 750, "easeOutExpo");
                         break;
                     case 2:  // middle click
                         L_setValue("booklinkme_disable_once", true);
-                        GM_openInTab($(this).attr("real-href"));
+                        GM_openInTab($(this).data("href"));
                         break;
                 }
-                return false;
             });
-
-            // 滚动激活章节列表
-            var lastId;
-            // App.menuItems = App.$chapterList.find("div");
-            // App.scrollItems = $("article");
-            $(window).scroll(function() {
-                // Get container scroll position
-                var fromTop = $(this).scrollTop() + $(this).height() / 2;
-
-                // Get id of current scroll item
-                var cur = App.scrollItems.map(function() {
-                    if ($(this).offset().top < fromTop)
-                        return this;
-                });
-                // Get the id of the current element
-                cur = cur[cur.length - 1];
-                var id = cur ? cur.id : "";
-
-                if (lastId !== id) {
-                    lastId = id;
-                    // Set/remove active class
-                    App.menuItems
-                        .parent().removeClass("active")
-                        .end().filter("[href=#" + id + "]").parent().addClass("active");
-
-                    App.curFocusElement = cur;
-                }
+        },
+        listAddClass: function (element) {
+            $(element).siblings().removeClass("active");
+            $(element).addClass("active");
+        },
+        addListener: function(){
+            $("#wrapper").bind("dblclick", reader.pauseHandler);
+            // document.addEventListener("dblclick", reader.pauseHandler, false);
+            document.getElementById("wrapper").addEventListener("scroll", reader.scroll, false);
+        },
+        removeListener: function(){
+            debug("移除各种事件监听");
+            reader.remove.forEach(function(_remove){
+                _remove();
             });
-
-            $("#preferencesBtn").click(function(event){
-                event.preventDefault();
-                App.UI.preferencesShow();
-            });
-
-            GM_registerMenuCommand("小说阅读脚本设置", App.UI.preferencesShow.bind(App.UI));
-        },
-        keyup: function(event){
-            var tarNN = event.target.nodeName;
-            if (tarNN != 'BODY' && tarNN != 'HTML') return;
-            switch (event.which) {
-                case 13: // Enter
-                    App.openUrl(App.indexUrl, "主页链接没有找到");
-                    if (App.curFocusElement) {
-                        var title = $(App.curFocusElement).find(".title").text()
-                                .replace(/第?\S+章/, "").trim();
-                        GM_setClipboard(title, "text");
-                    }
-                    break;
-                case 37: // left arrow
-                    var scrollTop = $(window).scrollTop();
-                    if(scrollTop === 0){
-                        location.href = App.prevUrl;
-                    } else {
-                        var offsetTop = $(App.curFocusElement).offset().top;
-                        // 在视野窗口内
-                        if( offsetTop > scrollTop && offsetTop < (scrollTop + $(window).height())){
-                            App.scrollToArticle(App.curFocusElement.previousSibling || 0);
-                        } else {
-                            App.scrollToArticle(App.curFocusElement);
-                        }
-                    }
-                    break;
-                case 39: // right arrow
-                    if(App.getRemain() === 0){
-                        location.href = App.requestUrl;
-                    } else {
-                        if(!App.curFocusElement){
-                            App.curFocusElement = $("article").get(0);
-                        }
-
-                        App.scrollToArticle(App.curFocusElement.nextSibling || $(document).height());
-                    }
-                    break;
-            }
-        },
-        scrollToArticle: function(elem){
-            var offsetTop;
-            if(typeof elem == "number"){
-                offsetTop = elem;
-            } else {
-                offsetTop = $(elem).offset().top - parseInt($(elem).css("margin-top"), 10);
-            }
-
-            $("html, body").stop().animate({
-                scrollTop: offsetTop
-            }, 300);
-        },
-        openUrl: function(url, errorMsg){
-            if (url) {
-                GM_openInTab(url);
-            } else {
-                App.UI.notice(errorMsg);
-            }
         },
         pauseHandler: function(e){
-            App.paused = !App.paused;
-            if(App.paused){
-                App.UI.notice('<b>状态</b>:自动翻页<span style="color:red!important;"><b>暂停</b></span>.');
-                App.$loading.html('自动翻页已经<span style="color:red!important;"><b>暂停</b></span>.').show();
+            reader.paused = !reader.paused;
+            if(reader.paused){
+                notice('<b>状态</b>:'+'自动翻页<span style="color:red!important;"><b>暂停</b></span>.');
             }else{
-                App.UI.notice('<b>状态</b>:自动翻页<span style="color:red!important;"><b>启用</b></span>.');
-                App.scroll();
+                notice('<b>状态</b>:'+'自动翻页<span style="color:red!important;"><b>启用</b></span>.');
+                reader.scroll();
             }
         },
         scroll: function(){
-            if (!App.paused && !App.working && App.getRemain() < App.Config.remain_height) {
-                App.doRequest();
+            var remain = $("#wrapper")[0].scrollHeight - $("#wrapper").height() - $("#wrapper").scrollTop();
+
+            if (!reader.paused && remain < config.BASE_REMAIN_HEIGHT) {
+                reader.doRequest();
             }
 
-            if(App.isTheEnd){
-                App.$loading.html("已到达最后一页...").show();
+            if(reader.isTheEnd){
+                if(reader.isEndNoticed){
+                    if(remain > 50){
+                        $(reader.endNotice).fadeOut(500);
+                        reader.isEndNoticed = false;
+                    }
+                }else if(remain < 20){
+                    reader.endNotice = notice("已到达最后一页...", false);
+                    reader.isEndNoticed = true;
+                }
             }
-        },
-        getRemain: function(){
-            var remain = $(window).scrollTop() + $(window).height() - $(document).height();
-
-            // var scrollHeight = Math.max(document.documentElement.scrollHeight,
-            //                             document.body.scrollHeight);
-            // var remain = scrollHeight - window.innerHeight - window.scrollY;
-            return remain;
         },
         doRequest: function(){
-            App.working = true;
-            var nextUrl = App.requestUrl;
+            var nextUrl = reader.requestUrl;
 
-            if(nextUrl && !App.isTheEnd && !(nextUrl in App.parsedPages)){
-                App.parsedPages[nextUrl] = true;
-                App.curPageUrl = App.requestUrl;
-                App.requestUrl = null;
+            if(nextUrl && !reader.isTheEnd && !(nextUrl in reader.parsedPages)){
+                reader.parsedPages[nextUrl] = true;
+                reader.curPageUrl = reader.requestUrl;
+                reader.requestUrl = null;
 
-                var useiframe = App.site.useiframe;
+                reader.requestNotice = notice("正在加载下一页中...", false);
 
-                App.$loading
-                    .show()
-                    .html("")
-                    .append($("<img>").attr("src", "data:image/gif;base64,R0lGODlhEAAQAMQAAPf39+/v7+bm5t7e3tbW1s7OzsXFxb29vbW1ta2traWlpZycnJSUlIyMjISEhHt7e3Nzc2tra2NjY1paWlJSUkpKSkJCQjo6OjExMSkpKSEhIRkZGRAQEAgICAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQJBQAeACwAAAEADwAOAAAFdaAnet20GAUCceN4LQlyFMRATC3GLEqM1gIc6dFgPDCii6I2YF0eDkinxUkMBBAPBfLItESW2sEjiWS/ItqALJGgRZrNRtvWoDlxFqZdmbY0cVMdbRMWcx54eSMZExQVFhcYGBmBfxWPkZQbfi0dGpIYGiwjIQAh+QQJBQAeACwAAAEADwAOAAAFeKAnep0FLQojceOYQU6DIsdhtVoEywptEBRRZyKBQDKii+JHYGEkxE6LkyAMIB6KRKJpJQuDg2cr8Y7AgjHULCoQ0pUJZWO+uBGeDIVikbYyDgRYHRUVFhcsHhwaGhsYfhuHFxgZGYwbHH4iHBiUlhuYmlMbjZktIQAh+QQFBQAeACwAAAEADwAOAAAFe6Aneh1GQU9UdeOoTVIEOQ2zWG0mSVP0ODYF4iLq7HgaEaaRQCA4HsyOwhp1FgdDxFOZTDYt0cVQSHgo6PCIPOBWKmpRgdDGWCzQ8KUwOHg2FxcYYRwJdBAiGRgZGXkcC3MEjhkalZYTfBMtHRudnhsKcGodHKUcHVUeIQAh+QQJBQAeACwAAAEADwAOAAAFbKAnjp4kURiplmYEQemoTZMpuY/TkBVFVRtRJtJgMDoejaViWT0WiokHc2muMIoEY0pdiRCIgyeDia0OhoJnk8l4PemEh6OprxQFQkS02WiCIhd4HmoiHRx9ImkEA14ciISMBFJeSAQIEBwjIQAh+QQJBQAeACwAAAEADwAOAAAFd6Anel1WTRKFdeO4WRWFStKktdwFU3JNZ6MM5nLZiDQTCCTC4ghXrU7k4bB4NpoMpyXKNBqQa5Y7YiwWHg6WLFK4SWoW95JAMOAbI05xOEhEHWoaFyJ0BgYHWyIcHA4Fj48EBFYtGJKSAwMFFGQdEAgCAgcQih4hACH5BAkFAB4ALAAAAQAPAA4AAAV0oCeKG2ZVFtaNY6dh10lNU8Z2WwbLkyRpI85Gk+GQKr7JqiME3mYSjIe5WbE8GkhkMhVeR48HpLv5ihoOB9l4xTAYYw9nomCLOgzFoiJSEAoIFiIXCwkJC1YVAwMEfwUGBgeBLBMEAouOBxdfHA8HlwgRdiEAIfkECQUAHgAsAAABAA8ADgAABXOgJ4rdpmWZ1o0sZ2YYdlka63XuKVsVVZOuzcrDufQoQxzH1rFMJJiba8jaPCnSjW30lHgGhMJWBIl4D2DLNvOATDwPwSCxHHUgjseFOJAn1B4YDgwND0MTAWAFBgcICgsMUVwDigYICQt7NhwQCGELE1QhACH5BAkFAB4ALAAAAQAPAA4AAAV4oCeOHWdyY+p1JbdpWoam7fZmGYZtYoeZm46Ik7kYhZBBQ6PyWSoZj0FAuKg8mwrF4glQryIKZdL9gicTiVQw4Ko2aYrnwUbMehGJBOPhDAYECVYeGA8PEBNCHhOABgcJCgwNh0wjFQaOCAoLk1EqHBILmg8Vih4hACH5BAkFAB4ALAAAAQAPAA4AAAV6oCd6Hdmd5ThWCee+XCpOwTBteL6lnCAMLVFHQ9SIHgHBgaPyZDKYjcfwszQ9HMwl40kOriKLuDsggD2VtOcwKFibGwrFCiEUEjJSZTLhcgwGBwsYIhkUEhITKRYGCAkKDA0PiBJcKwoKCwwODxETRk0dFA8NDhIYMiEAIfkECQUAHgAsAAABAA8ADgAABXmgJ3rcYwhcN66eJATCsHEpOwXwQGw8rZKDGMIi6vBmokcswWFtNBvVQUdkcTJQj67AGmEyGU+hYOiKMGiP4oC4dDmXS1iCSDR+xYvFovF0FAoLDxgiGxYUFRY/FwsMDQ4PEhOTFH0jFw6QEBKcE5YrHRcTERIUGHghACH5BAkFAB4ALAAAAQAPAA4AAAV4oCd63GMAgfF04zgNQixjrVcJQz4QRLNxI06Bh7CILpkf0CMpGBLL0ebHWhwOl5qno/l5EGCtqAtUmMWeTNfzWCxoNU4maWs0Vq0OBpMBdh4ODxEaIhsXhxkjGRAQEhITExQVFhdRHhoTjo8UFBYbWnoUjhUZLCIhACH5BAkFAB4ALAAAAQAPAA4AAAV5oCd6HIQIgfFw42gZBDEMgjBMbXUYRlHINEFF1FEgEIqLyHKQJToeikLBgI44iskG+mAsMC0RR7NhNRqM8IjMejgcahHbM4E8Mupx2YOJSCZWIxlkUB0TEhIUG2IYg4tyiH8UFRaNGoEeGYgTkxYXGZhEGBWTGI8iIQA7"))
-                    .append("正在载入下一页" + (useiframe ? "(iframe)" : "") + "...");
-
+                var useiframe = reader.site && reader.site.useiframe;
                 if(useiframe){
-                    App.iframeRequest(nextUrl);
+                    reader.iframeRequest(nextUrl);
                 }else{
-                    App.httpRequest(nextUrl);
+                    reader.httpRequest(nextUrl);
                 }
-            }else{
-                App.$loading.html("无法使用阅读模式，请手动点击下一页（快捷键→）").show();
             }
         },
         httpRequest: function(nextUrl){
@@ -1703,15 +1530,15 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
                 overrideMimeType: "text/html;charset=" + document.characterSet,
                 onload: function(res){
                     var doc = parseHTML(res.responseText);
-                    App.loaded(doc);
+                    reader.loaded(doc);
                 }
             });
         },
         iframeRequest: function(nextUrl){
             debug("iframeRequest: " + nextUrl);
-            if (!App.iframe) {
+            if (!reader.iframe) {
                 var i = document.createElement('iframe');
-                App.iframe = i;
+                reader.iframe = i;
                 i.name = 'mynovelreader-iframe';
                 i.width = '100%';
                 i.height = '0';
@@ -1722,13 +1549,13 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
                     visibility:hidden!important;\
                 ';
                 i.src = nextUrl;
-                i.addEventListener('load', App.iframeLoaded, false);
-                App.remove.push(function() {
-                    i.removeEventListener('load', App.iframeLoaded, false);
+                i.addEventListener('load', reader.iframeLoaded, false);
+                reader.remove.push(function() {
+                    i.removeEventListener('load', reader.iframeLoaded, false)
                 });
                 document.body.appendChild(i);
             } else {
-                App.iframe.contentDocument.location.replace(nextUrl);
+                reader.iframe.contentDocument.location.replace(nextUrl);
             }
         },
         iframeLoaded: function(){
@@ -1737,48 +1564,95 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
 
             if(body && body.firstChild){
                 doc = iframe.contentDocument;
+                win = iframe.contentWindow || doc;
 
-                var mutationSelector = App.site.mutationSelector;
+                var mutationSelector = reader.site.mutationSelector;
                 if(mutationSelector){
-                    App.addMutationObserve(doc, function(){
-                        App.loaded(doc);
+                    var success = reader.addMutationObserve(win, function(){
+                        reader.loaded(doc);
                     });
+                    if(!success){
+                        reader.loaded(doc);
+                    }
                 }else{
-                    var timeout = App.site.timeout || 0;
+                    var timeout = reader.site.timeout || 0;
 
                     setTimeout(function(){
-                        App.loaded(doc);
+                        reader.loaded(doc);
                     }, timeout);
                 }
             }
         },
         loaded: function(doc){
-            var parser = new Parser(App.site, doc, App.curPageUrl);
+            var parser = new Parser(reader.site, doc, reader.curPageUrl);
 
-            parser.getAll(App.addNextPage);
+            parser.getAll(reader.addNextPage);
         },
         addNextPage: function(parser){
             if(parser.content){
-                App.appendPage(parser);
+                var chapter = $(reader.nano(reader.tpl_content, parser)).appendTo("#wrapper"),
+                    chapterPosition = $("#wrapper").scrollTop() + $(chapter).offset().top,
+                    toChapter = $(reader.nano(reader.tpl_list, parser))
+                        .prependTo("#chapter-list")
+                        .data("position", chapterPosition)
+                        .data("href", parser.curPageUrl);
+
+                reader.listAddClass(toChapter);
+                reader.scrollTo(toChapter);
+
+                $("#wrapper").scroll(function() {
+                    var offset = $(chapter).offset(),
+                        halfWrapperHeight = $("#wrapper").height() / 2,
+                        chapterHeight = $(chapter).height();
+                    if (offset.top > (halfWrapperHeight - chapterHeight) && offset.top < halfWrapperHeight)
+                        reader.listAddClass(toChapter);
+                });
 
                 // unsafeWindow.history.pushState(null, parser.docTitle, parser.curPageUrl);
-                document.title = parser.docTitle;
+                // document.title = parser.docTitle;
 
-                App.$loading.hide();
-                App.requestUrl = parser.nextUrl;
-                App.isTheEnd = parser.isTheEnd;
+                reader.requestUrl = parser.nextUrl
+                reader.isTheEnd = parser.isTheEnd
             }else{
-                App.removeListener();
-
-                App.$loading.html("错误：没有找到下一页的内容").show();
+                reader.removeListener()
+                $("<div>没有找到下一页的内容</div>")
+                    .css({
+                        "text-align": "center",
+                        "padding": "10px",
+                        "background": "rgb(248, 248, 248)"
+                    })
+                    .appendTo($("#wrapper"))
+                // reader.requestUrl = null
+                // reader.isTheEnd = true
+                // $(".next-page").last().css("color", config.end_color);
             }
 
-            App.working = false;
+            $(reader.requestNotice).fadeOut(500);
+        },
+        searchInBooklink: function(bookName, callback){
+            GM_xmlhttpRequest({
+                method: "POST",
+                url: "http://booklink.me/after_search.php",
+                data: encodeURI("name=" + bookName + "&book=BookLink.Me小说搜索&search_type=book"),
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                onload: function(res){
+                    var doc = parseHTML(res.responseText);
+                    var links = $x("//a[text()='" + bookName + "']", doc, doc);
+                    if(links.length == 1){
+                        $(".index-page").after($("<a></a>").attr({
+                            href: links[0].href
+                        }).text(bookName));
+                    }
+                    // var links = doc.querySelectorAll("table a[href^='charpter.php?site_id=']");
+                }
+            });
         },
         fixImageFloats: function (articleContent) {
             if(!config.fixImageFloats) return;
 
-            articleContent = articleContent || document.getElementById("content");
+            articleContent = articleContent || document.getElementById("wrapper");
 
             var imageWidthThreshold = Math.min(articleContent.offsetWidth, 800) * 0.55,
                 images = articleContent.querySelectorAll('img:not(.blockImage)');
@@ -1790,187 +1664,36 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
                     image.className += " blockImage";
                 }
             }
-        }
+        },
+        _regex: /\{([\w\.]*)\}/g,
+        nano: function(template, data) {
+            return template.replace(this._regex, function(str, key) {
+                var keys = key.split('.'),
+                    value = data[keys.shift()];
+                keys.forEach(function(key) {
+                    value = value[key];
+                });
+                return (value === null || value === undefined) ? '' : value;
+            });
+        },
     };
 
-    App.Config = {
-        get disable_auto_launch() {  // 强制手动启用模式
-            return this._getBooleanConfig("disable_auto_launch", false);
-        },
-        set disable_auto_launch(bool) {
-            GM_setValue("disable_auto_launch", bool);
-        },
-
-        get booklink_enable() {  // booklink.me 跳转的自动启动
-            return this._getBooleanConfig("booklink_enable", true);
-        },
-        set booklink_enable(bool) {
-            GM_setValue("booklink_enable", bool);
-        },
-
-        get debug() {  // 调试
-            if(!this._debug){
-                this._debug = this._getBooleanConfig("debug", false);
+    reader.UI = {
+        addMainStyle: function(){
+            GM_addStyle(css);
+            var prefs_main_css = GM_getValue("main_css");
+            if(prefs_main_css){
+                GM_addStyle(prefs_main_css);
             }
-            return this._debug;
-        },
-        set debug(bool) {
-            GM_setValue("debug", bool);
-        },
-
-        get remain_height() {  // 距离底部多少高度（px）开始加载下一页
-            if(!this._remain_height){
-                this._remain_height = parseInt(GM_getValue("remain_height"), 10) || 1000;
+            if(isFirefox){
+                GM_addStyle("body:after { display: none; }");
             }
-            return this._remain_height;
-        },
-        set remain_height(val) {
-            GM_setValue("remain_height", val);
-        },
-
-        get font_size() {  // 字体大小
-            return GM_getValue("font_size") || "18px";
-        },
-        set font_size(val) {
-            GM_setValue("font_size", val);
-        },
-
-        get content_width() {  // 内容宽度
-            return GM_getValue("content_width") || "800px";
-        },
-        set content_width(val) {
-            GM_setValue("content_width", val);
-        },
-
-        get extra_css() {
-            return GM_getValue("extra_css") || "";
-        },
-        set extra_css(val) {
-            GM_setValue("extra_css", val);
-        },
-
-        get skin_name() {
-            return GM_getValue("skin_name") || "缺省皮肤";
-        },
-        set skin_name(val) {
-            GM_setValue("skin_name", val);
-        },
-
-        get hide_footer_nav() {
-            return this._getBooleanConfig("hide_footer_nav", true);
-        },
-        set hide_footer_nav(bool) {
-            GM_setValue("hide_footer_nav", bool);
-            App.UI.hideFooterNavStyle(bool);
-        },
-
-        get menu_list_hiddden() {
-            return this._getBooleanConfig("menu_list_hiddden", false);
-        },
-        set menu_list_hiddden(bool) {
-            GM_setValue("menu_list_hiddden", bool);
-        },
-
-        _getBooleanConfig: function(configName, defaultValue) {
-            var config = GM_getValue(configName);
-            if(config === undefined) {
-                GM_setValue(configName, defaultValue);
-                config = defaultValue;
-            }
-            return config;
-        }
-    };
-
-    App.UI = {
-        tpl_footer_nav: '<div class="chapter-footer-nav">\
-                <a class="prev-page" href="{prevUrl}">上一页</a> | \
-                <a class="index-page" href="{indexUrl}" title="Enter 键打开目录">目录</a> | \
-                <a class="next-page" style="color:{theEndColor}" href="{nextUrl}">下一页</a>\
-            </div>\
-        ',
-        skins: {
-            "缺省皮肤": "",
-            "暗色皮肤": "body { color: #666; background: rgba(0,0,0,.1); }\
-                .title { color: #222; }",
-            "白底黑字": "body { color: #333; background: white;}\
-                .title { font-weight: bold; border-bottom: 0.1em solid; margin-bottom: 1.857em; padding-bottom: 0.857em;}",
-            "夜间模式": "body { color: #e3e3e3; background: #2d2d2d; } #preferencesBtn { background: white; }",
-            "橙色背景": "body { color: #24272c; background: #FEF0E1; }",
-            "绿色背景": "body { color: #333; background: #d8e2c8; }",
-            "蓝色背景": "body { color: #333; background: #E7F4FE; }",
-            "经典皮肤": "body { color: #333; background-color: #EAEAEE; }\
-                .title { background: #f0f0f0; }",
-        },
-
-        init: function(){
-            App.UI.addStyle();
-
-            App.UI.fixMobile();
-        },
-        addStyle: function(){
-            GM_addStyle(
-                mainCss
-                    .replace("{font_size}", App.Config.font_size)
-                    .replace("{title_font_size}", this.calcTitleFontSize(App.Config.font_size))
-                    .replace("{content_width}", App.Config.content_width)
-                );
-
-            if(App.Config.hide_footer_nav){
-                this.hideFooterNavStyle(true);
-            }
-
-            this.addSkinStyle(App.Config.skin_name);
-
-            this.addExtraStyle(App.Config.extra_css);
-        },
-        hideFooterNavStyle: function(hidden){
-            var navStyle = $("#footer_nav_css");
-            if(hidden) {
-                if(navStyle.length === 0) {
-                    $('<style>')
-                        .attr("id", "footer_nav_css")
-                        .text(".chapter-footer-nav { display: none; }")
-                        .appendTo('head');
-                }
-            } else {
-                navStyle.remove();
-            }
-        },
-        hideMenuList: function(hidden){
-            if(hidden === undefined){
-                hidden = !this.menu_list_hiddden;
-            }
-
-            if(hidden){
-                $("#menu").hide();
-                $("#content").css("margin-left", "");
-            }else{
-                $("#menu").show();
-                $("#content").css("margin-left", "320px");
-            }
-            this.menu_list_hiddden = hidden;
-        },
-        addSkinStyle: function(skin_name){
-            var style = $("#skin_style");
-            if(style.length === 0){
-                style = $('<style id="skin_style">').appendTo('head');
-            }
-
-            style.text(App.UI.skins[skin_name]);
-        },
-        addExtraStyle: function(css){
-            var style = $("#extra_style");
-            if(style.length === 0){
-                style = $('<style id="extra_style">').appendTo('head');
-            }
-
-            style.text(css);
         },
         addButton: function(){
             GM_addStyle('\
                 .readerbtn {\
                     position: fixed;\
-                    right: 10px;\
+                    right: 20px;\
                     bottom: 10px;\
                     z-index: 1597;\
                     padding: 20px 5px;\
@@ -1988,44 +1711,21 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
                 }\
             ');
 
-            $("<div>")
-                .addClass("readerbtn")
-                .html(App.isEnabled ? "退出" : "阅读模式")
-                .mousedown(function(event){
-                    if(event.which == 1){
-                        App.toggle();
-                    }else if(event.which == 2){
-                        event.preventDefault();
-                        L_setValue("booklinkme_disable_once", true);
-                        GM_openInTab(App.curPageUrl);
-                    }
-                })
-                .appendTo('body');
-        },
-        calcTitleFontSize: function(contentFontSizeStr){
-            var m = contentFontSizeStr.match(/([\d\.]+)(px|em|pt)/);
-            if(m) {
-                var size = m[1],
-                    type = m[2];
-                return parseInt(size, 10) * 1.88 + type;
+            // 自定义样式
+            if(db && db.button_css){
+                GM_addStyle(db.button_css);
             }
 
-            return "";
-        },
-        fixMobile: function(){  // 自适应网页设计
-            var meta = document.createElement("meta");
-            meta.setAttribute("name", "viewport");
-            meta.setAttribute("content", "width=device-width, initial-scale=1");
-            document.head.appendChild(meta);
+            var btn = document.createElement("div");
+            btn.className = "readerbtn";
+            btn.innerHTML = reader.isEnabled ? "退出" : "阅读模式";
+            btn.addEventListener("click", reader.toggle, false);
+            document.body.appendChild(btn);
         },
         preferencesShow: function(event){
             if(event){
                 event.preventDefault();
                 event.stopPropagation();
-            }
-
-            if($("#reader_preferences").length){
-                return;
             }
 
             var prefs = $('<div id="reader_preferences">')
@@ -2034,137 +1734,34 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
                     top: "5%",
                     left: "0",
                     width: "100%",
+                    "text-align": "center",
                     "z-index": "30000"
                 });
 
             $("<style>").text('\
                     .body {\
                         color:#333;\
-                        width: 400px;\
+                        width: 550px;\
                         margin: 0 auto;\
                         background: white;\
                         padding: 10px;\
                     }\
-                    .form-row {\
-                        overflow: hidden;\
-                        padding: 8px 12px;\
-                        margin-top: 3px;\
-                        font-size: 11px;\
-                        border-bottom: 1px solid rgb(238, 238, 238);\
-                        border-right: 1px solid rgb(238, 238, 238);\
-                    }\
-                    .form-row label {\
-                        padding-right: 10px;\
-                    }\
-                    .form-row input {\
-                        vertical-align: middle;\
-                        margin-top: 0px;\
-                    }\
-                    textarea, input {\
-                        font-size: 14px;\
-                        padding: 4px 6px;\
-                        border: 1px solid #e5e5e5;\
-                        background: #fff;\
-                        border-radius: 4px;\
-                        color: #666;\
-                        -webkit-transition: all linear .2s;\
-                        transition: all linear .2s;\
-                    }\
-                    textarea {\
-                        overflow: auto;\
-                        vertical-align: top;\
-                    }\
-                    input {\
-                        vertical-align: middle;\
-                        line-height: 20px;\
-                    }\
-                    input[type="textbox"] {\
-                        height: 12px;\
-                    }\
-                    textarea:focus, input:focus {\
-                        border-color: #99baca;\
-                        outline: 0;\
-                        background: #f5fbfe;\
-                        color: #666;\
-                    }\
-                    button {\
-                        vertical-align: middle;\
-                        border-radius: 4px;\
-                        color: #666;\
-                        line-height: 20px;\
-                        font-size: 14px;\
-                        padding: 4px 12px;\
-                        background: #f7f7f7;\
-                        letter-spacing: normal;\
-                        border: 1px solid rgba(0, 0, 0, 0.2);\
-                        border-bottom-color: rgba(0, 0, 0, 0.3);\
-                        background-origin: border-box;\
-                        background-image: -webkit-linear-gradient(top, #fff, #eee);\
-                        background-image: linear-gradient(to bottom, #fff, #eee);\
-                        text-shadow: 0 1px 0 #fff;\
-                    }\
-                    button:hover {\
-                        background-color: #fafafa;\
-                        outline: 0;\
-                        background-image: none;\
-                    }\
-                '.replace(/                    /g, "\n"))
+                ')
                 .appendTo(prefs);
 
             $('<div class="body">')
                 .html('<form id="preferences" class="aligned" name="preferences">\
-                        <div class="form-row">\
-                            <label title="不影响 booklink.me 的启用">\
-                                <input type="checkbox" id="disable-auto-launch" name="disable-auto-launch"/>强制手动启用\
-                            </label>\
-                            <label title="booklink.me 点击的网站强制启用">\
-                                <input type="checkbox" id="booklink-enable" name="booklink-enable"/>booklink 自动启用\
-                            </label>\
-                            <label>\
-                                <input type="checkbox" id="debug" name="debug"/>调试模式\
-                            </label>\
-                        </div>\
-                        <div class="form-row">\
-                            <label>\
-                                <input type="checkbox" id="hide-menu-list"/>默认隐藏章节列表\
-                            </label>\
-                            <label>\
-                                <input type="checkbox" id="hide-footer-nav"/>默认隐藏底部导航栏\
-                            </label>\
-                        </div>\
-                        <div class="form-row">\
-                            <label>\
-                                距离底部\
-                                <input type="textbox" id="remain-height" name="remain-height" size="2" title="距离底部多少高度（px）开始加载下一页"/>\
-                                px 加载下一页\
-                            </label>\
-                        </div>\
-                        <div class="form-row">\
-                            <label>\
-                                <select id="skin">\
-                                </select>\
-                            </label>\
-                            <label>\
-                                字体大小\
-                                <input type="textbox" id="font-size" name="font-size" size="2"/>\
-                            </label>\
-                            <label>\
-                                内容宽度\
-                                <input type="textbox" id="content-width" name="content-width" size="3"/>\
-                            </label>\
-                        </div>\
-                        <div style="text-align:center">\
-                            <h3>额外的样式</h3>\
-                            <textarea id="extra_css" name="extra_css" cols="50" rows="5"></textarea>\
-                            <p>\
-                                <button id="close_button" type="button">关闭</button>\
-                                <button id="save_button" type="button">保存</button>\
-                            </p>\
-                        </div>\
+                        <h3>额外的样式</h3>\
+                        <textarea id="main_css" cols="60" rows="10"></textarea>\
+                        <p>\
+                            <button id="close_button" type="button">关闭</button>\
+                            <button id="save_button" type="button">保存</button>\
+                        </p>\
                     </form>')
                 .appendTo(prefs);
 
             prefs.appendTo($("body"));
+
             this.prefs = prefs;
 
             this.preferencesLoadHandler();
@@ -2174,100 +1771,29 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
             this.prefs = null;
         },
         preferencesLoadHandler: function(){
-            var $form = $("#preferences");
+            this.prefs.find("#main_css")[0].value = GM_getValue("main_css") || "";
 
-            $form.find("#disable-auto-launch").get(0).checked = App.Config.disable_auto_launch;
-            $form.find("#booklink-enable").get(0).checked = App.Config.booklink_enable;
-            $form.find("#debug").get(0).checked = App.Config.debug;
-            $form.find("#hide-menu-list").get(0).checked = App.Config.menu_list_hiddden;
-            $form.find("#hide-footer-nav").get(0).checked = App.Config.hide_footer_nav;
-
-            $form.find("#font-size").get(0).value = App.Config.font_size;
-            $form.find("#content-width").get(0).value = App.Config.content_width;
-            $form.find("#remain-height").get(0).value = App.Config.remain_height;
-            $form.find("#extra_css").get(0).value = App.Config.extra_css;
-
-            // skin
-            var $skin = $form.find("#skin");
-            for(var key in App.UI.skins){
-                $("<option>").text(key).appendTo($skin);
-            }
-            $skin.val(App.Config.skin_name);
-            $skin.change(function(){
-                var key = $(this).find("option:selected").text();
-                App.UI.addSkinStyle(key);
-                App.Config.skin_name = key;
-            });
-
-            $form.find("#font-size").keyup(function(){
-                var titleFontSize = App.UI.calcTitleFontSize(this.value);
-                if(titleFontSize) {
-                    App.$content.css("font-size", this.value);
-                    App.$content.find("h1").css("font-size", titleFontSize);
-                }
-            });
-
-            $form.find("#content-width").keyup(function(){
-                App.$content.css("width", this.value);
-            });
-
-            // button
-            $form.find("#close_button").click(this.preferencesCloseHandler.bind(this));
-            $form.find("#save_button").click(this.preferencesSaveHandler.bind(this));
-        },
-        preferencesCloseHandler: function(){
-            App.$content.css("font-size", "");
-            App.$content.css("width", "");
-            App.$content.find("h1").css("font-size", "");
-
-            this.hide();
+            this.prefs.find("#close_button").click(this.hide.bind(this));
+            this.prefs.find("#save_button").click(this.preferencesSaveHandler.bind(this));
         },
         preferencesSaveHandler: function(){
-            var $form = $("#preferences");
-
-            App.Config.disable_auto_launch = $form.find("#disable-auto-launch").get(0).checked;
-            App.Config.booklink_enable = $form.find("#booklink-enable").get(0).checked;
-            App.Config.debug = $form.find("#debug").get(0).checked;
-
-            App.Config.skin_name = $form.find("#skin").find("option:selected").text();
-            App.Config.font_size = $form.find("#font-size").get(0).value;
-            App.Config.content_width = $form.find("#content-width").get(0).value;
-            App.Config.remain_height = $form.find("#remain-height").get(0).value;
-
-            App.Config.menu_list_hiddden = $form.find("#hide-menu-list").get(0).checked;
-            this.hideMenuList(App.Config.menu_list_hiddden);
-
-            App.Config.hide_footer_nav = $form.find("#hide-footer-nav").get(0).checked;
-
-            var css = $form.find("#extra_css").get(0).value;
-            this.addExtraStyle(css);
-            App.Config.extra_css = css;
-
+            GM_setValue("main_css", this.prefs.find("#main_css")[0].value);
             this.hide();
-        },
-        notice: function (html_txt){
-            var $noticeDiv = $("#alert");
-
-            clearTimeout(App.UI.noticeDivto);
-            $noticeDiv.find("p").html(html_txt);
-            $noticeDiv.fadeIn("fast");
-
-            App.UI.noticeDivto = setTimeout(function(){
-                $noticeDiv.fadeOut(500);
-            },1666);
-
-            return $noticeDiv;
+            window.location.reload();
         }
     };
 
-    window.addEventListener("DOMContentLoaded", App.init, false);
+    // bind reader init
+    reader.init = reader.init.bind(reader);
+
+    window.addEventListener("DOMContentLoaded", reader.init, false);
 
     var db;
     window.postMessage("fromeMyNovelReader.post", "*");
     window.addEventListener('message', function(e) {
         if (db) return;
         var data = e.data;
-        if (typeof data == 'string' && data.indexOf('MyNovelReader.db') === 0) {
+        if (typeof data == 'string' && data.indexOf('MyNovelReader.db') == 0) {
 
             window.removeEventListener('message',arguments.callee,false);
             window.postMessage("fromeMyNovelReader.remove", "*");
@@ -2289,7 +1815,7 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
 
             debug("接收到 MyNovelReader.db 数据");
 
-            window.addEventListener("DOMContentLoaded", App.init, false);
+            window.addEventListener("DOMContentLoaded", reader.init, false);
         }
     }, false);
 
@@ -2298,7 +1824,7 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
     //     详见 http://wiki.greasespot.net/Greasemonkey_access_violation
     unsafeWindow.readx = function(){
         fakeTimeout(function(){
-            App.launch();
+            reader.launch();
         });
     };
 
@@ -2312,10 +1838,41 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
     }
 
 
+    var noticeDiv;
+    var noticeDivto;
+    function notice(html_txt, autoClose){
+        if(!noticeDiv){
+            var div = '<div id="alert">\
+                    <a href=""></a>\
+                    <p id="reader-notice"></p>\
+                </div>\
+            ';
+
+            noticeDiv = $(div).appendTo("body");
+
+            $(noticeDiv).find("a").click(function (event) {
+                event.preventDefault();
+                $(noticeDiv).fadeOut(500);
+            });
+        };
+
+        clearTimeout(noticeDivto);
+        $(noticeDiv).find("p").html(html_txt);
+        $(noticeDiv).fadeIn("fast");
+
+        if(typeof autoClose == 'undefined' || autoClose){
+            noticeDivto = setTimeout(function(){
+                $(noticeDiv).fadeOut(500);
+            },1666);
+        }
+
+        return noticeDiv;
+    }
+
     //------------------- 辅助函数 ----------------------------------------
 
     var debug = (function(){
-        if(!App.Config.debug) return function() {};
+        if(!config.DEBUG) return function() {};
 
         if(isFirefox){
             return console.log;
@@ -2342,25 +1899,32 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
         }catch(e) {}
     }
 
-    // jQuery text 完全匹配. e.g. a:econtains('最新章节')
-    $.expr[":"].econtains = function(obj, index, meta, stack) {
-        return (obj.textContent || obj.innerText || $(obj).text() || "").toLowerCase() == meta[3].toLowerCase();
-    };
+    function $x(aXPath, aContext, aDocument){
+        var nodes = [];
+        var doc = aDocument || document;
+        var aContext = aContext || doc;
 
-    function nano(template, data) {
-        return template.replace(/\{([\w\.]*)\}/g, function(str, key) {
-            var keys = key.split("."),
-                v = data[keys.shift()];
-            for (var i = 0, l = keys.length; i < l; i++) v = v[keys[i]];
-            return (typeof v !== "undefined" && v !== null) ? v : "";
-        });
+        try {
+          var results = doc.evaluate(aXPath, aContext, null,
+                                     XPathResult.ANY_TYPE, null);
+          var node;
+          while (node = results.iterateNext()) {
+            nodes.push(node);
+          }
+        }
+        catch (ex) {}
+
+        return nodes;
     }
+
+    // jQuery text 完全匹配. e.g. a:econtains('最新章节')
+    $.expr[":"].econtains = function(obj, index, meta, stack){return (obj.textContent || obj.innerText || $(obj).text() || "").toLowerCase() == meta[3].toLowerCase();};
 
     function getFullHref(href) {
         if (typeof href == 'undefined') return '';
         if (typeof href != 'string') href = href.getAttribute('href');
 
-        if(!href) return '';
+        if(!href) return null;
 
         var a = getFullHref.a;
         if (!a) {
@@ -2380,91 +1944,33 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
     }
 
 })('\
+    html,\
     body {\
-        background: #F3F2EE;\
-        color: #1F0909;\
-        padding: 0px;\
-        margin: 0px;\
-        font-family: "Microsoft YaHei UI", 微软雅黑, 新宋体, 宋体, arial;\
-    }\
-    a { color: #065488; }\
-    a:link { text-decoration: none; }\
-    #content {\
-        width: {content_width};\
-        font-size: {font_size};\
-        margin-left:auto;\
-        margin-right:auto;\
-        padding-bottom: 15px;\
-    }\
-    article {\
-        line-height: 2.25em;\
-        margin-top: 55px;\
-    }\
-    article h1 {\
-        line-height: 50px;\
-        font-size: {title_font_size};\
+        padding: 0;\
+        margin: 0;\
+        background: rgba(0,0,0,.1);\
         font-weight: normal;\
-        margin: 25px -20px;\
-        padding: 0 20px 10px;\
-        border-bottom: 1px solid rgba(0,0,0,.25);\
+        line-height: 20px;\
+        color: #666;\
+    }\
+    body:after {\
+        content: "";\
+        display: block;\
+        position: absolute;\
+        top: 0;\
+        bottom: 0;\
+        right: 9px;\
+        width: 1px;\
+        background: rgba(0,0,0,.6);\
+    }\
+    @font-face {\
+        font-family: "FontAwesome";\
+        src: url(' + (isFirefox ? '' : 'data:font/woff;charset=utf-8;base64,') + GM_getResourceURL('fontawesomeWoff') + ');\
         font-weight: normal;\
-        text-transform: none;\
+        font-style: normal;\
     }\
-    .chapter-footer-nav {\
-        text-align:center;\
-        font-size:0.9em;\
-        margin:-10px 0px 30px 0px;\
-    }\
-    #loading {\
-        color: white;\
-        text-align: center;\
-        font: 12px "微软雅黑", "宋体", "Times New Roman", "Verdana";\
-        margin-top: 20px;\
-        margin-left: auto;\
-        margin-right: auto;\
-        width: 376px;\
-        height: 32px;\
-        line-height: 32px;\
-        border-radius: 20px;\
-        border: 1px solid #666;\
-        background-color: #333;\
-    }\
-    #loading img {\
-        vertical-align: middle;\
-    }\
-    #preferencesBtn{\
-        position: fixed;\
-        top: 10px;\
-        right: 10px;\
-        z-index: 1597;\
-    }\
-    #alert {\
-        position: fixed;\
-        z-index: 100;\
-        float: auto;\
-        width: auto;\
-        height: auto;\
-        top: 10px;\
-        left: 500px;\
-        background: rgba(215, 240, 253, 0.65);\
-        color: #2d7091;\
-        border: 1px solid rgba(45,112,145,0.3);\
-        border-radius: 4px;\
-        text-shadow: 0 1px 0 #fff;\
-    }\
-    #alert p {\
-        font-size: 13px;\
-        margin: 6px;\
-    }\
-    img.blockImage {clear: both;float: none;display: block;margin-left: auto;margin-right: auto;}\
-    #menu-bar {\
-        border: 2px solid rgba(0,100,255,.9);\
-        position: fixed;\
-        left: 0px;\
-        top: 40%;\
-        height: 100px;\
-        width: 5px;\
-        z-index: 199;\
+    body, h1, h2, h3, h4, h5, h6, .uk-navbar-nav > li > a {\
+        font-family: "ProximaNovaLight", "Helvetica Neue", Helvetica, Arial, sans-serif;\
     }\
     #menu {\
         position: fixed;\
@@ -2503,6 +2009,10 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
     #header a {\
         color: #777777;\
     }\
+    a:link {text-decoration: none;}\
+    a:visited {text-decoration: none;}\
+    a:active {text-decoration: none;}\
+    a:hover {text-decoration: none;}\
     #divider {\
         position: relative;\
         z-index: 300;\
@@ -2522,7 +2032,6 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
         z-index: 200;\
         margin: 0;\
         padding: 0;\
-        cursor: pointer;\
         list-style: none;\
         overflow-y: auto;\
     }\
@@ -2533,7 +2042,7 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
         border-bottom: 1px solid rgba(0,0,0,0.3);\
         box-shadow: 0 1px 0 rgba(255,255,255,0.05);\
     }\
-    .chapter a {\
+    .chapter div {\
         color: #ccc;\
         font-size: 15px;\
         padding: 8px 20px;\
@@ -2542,11 +2051,12 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
         text-shadow: 0 1px 0 rgba(0,0,0,0.5);\
         display: block;\
         text-decoration: none;\
+        cursor: pointer;\
         text-overflow: ellipsis;\
         overflow: hidden;\
         white-space: nowrap;\
     }\
-    .chapter a:before {\
+    .chapter div:before {\
         content: "\\f105";\
         width: 20px;\
         margin-left: -10px;\
@@ -2554,22 +2064,88 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
         font-family: "FontAwesome";\
         text-align: center;\
     }\
-    .chapter a:hover {\
+    .chapter div:hover {\
         background: #404040;\
         color: #fff;\
         outline: 0;\
     }\
-    .chapter.active a {\
+    .chapter.active div {\
         background: #1a1a1a;\
         color: #fff;\
         font-size: 16px;\
         box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);\
     }\
-    @font-face {\
+    #wrapper {\
+        position: fixed;\
+        top: 0;\
+        bottom: 0;\
+        left: 270px;\
+        right: 0;\
+        overflow-y: auto;\
+    }\
+    #preferencesBtn{\
+        position: fixed;\
+        top: 10px;\
+        right: 20px;\
+        z-index: 1597;\
+        width: 20px;\
+    }\
+    #preferencesBtn a:after {\
+        content: "\\f013";\
         font-family: "FontAwesome";\
-        src: url(' + (isFirefox ? '' : 'data:font/woff;charset=utf-8;base64,') + GM_getResourceURL('fontawesomeWoff') + ');\
+    }\
+    article {\
+        font-size:1.2em;\
+        line-height: 2.25em;\
+        padding: 55px 80px;\
+        padding-right: calc(100% - 880px);\
+        box-shadow: 0 -4px 10px rgba(0,0,0,.5);\
+    }\
+    article h1 {\
+        font-size: 36px;\
+        line-height: 50px;\
+        margin: 25px -20px;\
+        padding: 0 20px 10px;\
+        border-bottom: 1px solid rgba(0,0,0,.25);\
+        color: #222;\
         font-weight: normal;\
-        font-style: normal;\
+        text-transform: none;\
+    }\
+    #alert {\
+        right: 20px;\
+        left: 270px;\
+        position: fixed;\
+        margin: 10px;\
+        padding: 6px 10px;\
+        background: rgba(215, 240, 253, 0.65);\
+        color: #2d7091;\
+        border: 1px solid rgba(45,112,145,0.3);\
+        border-radius: 4px;\
+        text-shadow: 0 1px 0 #fff;\
+    }\
+    #alert a {\
+        float: right;\
+        box-sizing: content-box;\
+        display: inline-block;\
+        width: 20px;\
+        line-height: 20px;\
+        text-align: center;\
+        color: inherit;\
+        opacity: .3;\
+        padding: 0;\
+        border: 0;\
+        -webkit-appearance: none;\
+        background: transparent;\
+        text-decoration: none;\
+    }\
+    #alert a:after {\
+        display: block;\
+        content: "\\f00d";\
+        font-family: "FontAwesome";\
+    }\
+    #alert p {\
+        margin: 0;\
+        font-size: 14px;\
     }\
     ::-webkit-scrollbar {\
         height: 9px !important;\

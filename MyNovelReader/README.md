@@ -6,18 +6,27 @@
  - [mynovelreader@ywzhaiqi@gmailcom.user.js](mynovelreader@ywzhaiqi@gmailcom.user.js)，GM 脚本
  - [novelreaderdb@gmailcom.user.js](novelreaderdb@gmailcom.user.js)，自定义配置文件
  - [MyNovelReader.js](MyNovelReader.js)，自用于 Opera Mobile，去除jQuery版。
+ - 3.0.4 由网友 Roger Au 设计，[安装地址](http://userscripts.org/scripts/version/165951/639713.user.js)
 
 ### 需要
 
-Firefox（Greasemonkey/Scriptish）， Chrome（Tampermonkey），Opera（暴力猴） 
+Firefox（Greasemonkey/Scriptish）， Chrome（Tampermonkey），Opera（暴力猴）
+
+### 启用按钮
+
+![按钮启用](http://i1277.photobucket.com/albums/y489/ywzhaiqi/My%20Novel%20Reader/542F7528630994AE_zps50c95a75.png)
+
+### 启用后效果图
+
+![效果图](http://i1277.photobucket.com/albums/y489/ywzhaiqi/My%20Novel%20Reader/6548679C56FE_zps42c320b1.png)
 
 ### 支持站点
 
- - 起点中文网、晋江文学网、纵横中文网、潇湘书院、逐浪等
- - 燃文、无错、书迷楼、冰火中文、百晓生、浩奇、书河等（bookline.me点击的网站）
- - 角度吧、飞库、6小说、笔趣阁、强兵、摩卡、极速等（sodu.so点击的网站）
- - 手打吧、泡书吧、17k、看下、青帝、侠客等
- - 其它小说站点
+- [起点中文网](http://www.qidian.com/Default.aspx)、[纵横中文网]( http://book.zongheng.com/)、[创世中文网](http://chuangshi.qq.com/)、晋江文学网、潇湘书院、逐浪等
+- [燃文](http://www.ranwen.cc/)、[无错](http://www.wcxiaoshuo.com/)、书迷楼、冰火中文、百晓生、浩奇、书河等（[bookline.me](http://booklink.me/)点击的网站）
+- 角度吧、飞库、6小说、笔趣阁、强兵、摩卡、极速等（SoDu.so点击的网站）
+- 手打吧、泡书吧、17k、看下、青帝、侠客等
+- 其它小说站点
 
 ### 特性
 
@@ -28,109 +37,51 @@ Firefox（Greasemonkey/Scriptish）， Chrome（Tampermonkey），Opera（暴力
  - 无错、16K、第一中文等网站图片替换成文字。
  - 自定义阅读样式。
  - 自定义站点规则。
- - 鼠标双击启用停用翻页。
- - 末页链接变灰色。
 
-### 启用按钮
+### 使用说明和技巧
 
-![右侧按钮启用](http://i1277.photobucket.com/albums/y489/ywzhaiqi/5C0F8BF496058BFB811A672C630994AE_zps80424679.png)
-
-### 启用后效果图
-
-![效果图](http://i1277.photobucket.com/albums/y489/ywzhaiqi/5C0F8BF4811A672C6548679C56FE_zps3962153a.png)
-
-### 说明
- 
- - 手动调用代码（Firefox）: `content.window.wrappedJSObject.readx();`，再次调用退出。
- - 如需更改阅读样式和默认设置，安装 https://userscripts.org/scripts/show/169728 这个后在里面更改。
- - 配置中如果设置 `config.AUTO_ENABLE = true`， 则进入阅读模式后会一直启用直至退出，但可能一些站点会有影响，此时请反馈作者或到脚本管理器加入排除列表或设置为 false。
- - 默认设置从 booklink.me 点击的网站自动进入阅读模式
- - **辅助脚本：[booklime.me 辅助](http://userscripts.org/scripts/show/165572)**：一键打开未读章节。
-
-### 自定义样式说明
-
-修改按钮到左边
-
-	var button_css = '\
-	.readerbtn {\
-	    left: 0px !important;\
-	}\
-	';
+  - 默认设置从 booklink.me 点击的网站自动进入阅读模式
+  - 手动调用代码（Firefox）: `content.window.wrappedJSObject.readx();`，再次调用退出。
+  - **辅助脚本：[booklime.me 辅助](http://userscripts.org/scripts/show/165572)**：一键打开未读章节。
+  - 鼠标双击内容暂停翻页。
+  - Enter 键打开目录页，并已复制当前的章节标题到剪贴板，可用查找
+  - Left 键滚到上一页，到顶部则打开上一章
+  - Right 键滚到下一页，到底部则打开下一章
+  - 章节列表的标题为目录链接
+  - 章节列表左键点击滚动，中键打开链接（无阅读模式）
 
 ### 自定义规则说明
 
-	/**
-	 * 注意：
-	 *    1、自定义规则，优先级最高。
-	 *    2、小说阅读脚本只限定在一些网站（非全局），故你所添加的规则可能无法生效。
-	 *       解决方法：反馈给作者或在 Greasemonkey/Scriptish 脚本管理处加入。
-	 *    3、如果定义了站点规则会让内置的同个站点的规则失效
-	 *    4、格式要正确，后面要有,
-	 */
-
-	var SITE_INFO = [
-	    // 极简版规则
-	    {
-	        name: "纵横中文网",
-	        url: "^http://book\\.zongheng\\.com/\\S+\\/\\d+\\.html$",
-	        contentPatch: function(fakeStub){
-	            // 去除隐藏文字
-	            fakeStub.find('.watermark').remove();
-	        }
-	    },
-	    /**
-	     *  特殊规则，内容用js生成。需要用 iframe 方式或补丁方式（二选一）。
-	     *  下面的起点中文也是如此，但采用另一种补丁的方式。
-	     *      iframe方式简单，补丁方式需要分析代码（绿色无污染）。
-	     */
-	    {
-	        name: "读读看",
-	        url: "^http://www\\.dudukan\\.net/html/.*\\.html$",
-	        exampleUrl: "http://www.dudukan.net/html/90/90733/19323854.html",
-	        contentReplace: "看小说.*|binhuo|www\\.92to\\.com",
-	        useiframe: true,    
-	        timeout: 500  // 要等待js把内容生成出来，单位毫秒
-	    },
-
-	    // 详细版规则
-	    {
-	        // 没什么作用，随意起名
-	        name: "起点中文网",
-
-	        // 匹配的地址，正则。2种形式都可以
-	        url: "^http://read\\.qidian\\.com/\\S+/\\d+,\\d+.aspx$",
-
-	        // （可选）标题正则
-	        titleReg: "小说:(.*?)独家首发\\/(.*?)\\/.*",
-	        // （可选）0或1，代表书名的位置，另一个是章节位置
-	        titlePos: 0,
-
-	        // （可选）首页jQuery选择器
-	        indexSelector: ".pageopt a:contains('回目录')",
-	        // （可选）上一页jQuery选择器
-	        prevSelector: "a#PrevLink",
-	        // （可选）下一页jQuery选择器
-	        nextSelector: "a#NextLink",
-
-	        // （可选）内容jQuery选择器
-	        contentSelector: "#content",
-	        // （可选）内容移除，正则表达式或下面的另一个写法
-	        contentReplace: "起点中文网|www\\.qidian\\.com|欢迎广大书友.*",
-	        // contentReplace: {'<img.*?ait="(.*?)".*?>': "$1",}
-
-	        // （可选）下面2个一起。如果加载的下一页没有成功，则设置这个为true或用下面的补丁。
-	        useiframe: false,
-	        timeout: 0,  // 延迟（毫秒），要等页面的js运行完毕才能获取到内容。
-
-	        // （可选）补丁，对页面的提前处理，fakeStub 为 $(document) 对象
-	        contentPatch: function(fakeStub){
-	            fakeStub.find('div#content script:first').addClass('reader-ajax');
-	        }
-	    },
-	];
+安装 https://userscripts.org/scripts/show/169728 后在里面添加，说明在其中。
 
 ### 更新
 
+ - 2013年9月26日，版本 3.2.1。增加滚动激活章节列表，左键、右键的事件。增加设置默认隐藏章节列表。
+ - 2013年9月25日，版本 3.1.9。增加左侧的章节列表，点击可隐藏，滚动激活功能待添加。默认隐藏底部导航栏。
+     - 版本 3.1.8。再次修正起点中文图片问题。
+     - 版本 3.1.7。修正自动查找标题的问题，设置菜单关闭还原不生效。
+ - 2013年9月24日
+     - 版本 3.1.6。修改起点配置，增加对图片的支持。
+     - 版本 3.1.5。新增读零零小说网配置，新增多节合并成一章的功能。
+ - 2013年9月23日
+     - 版本 3.1.4。飘天文学增加移除广告
+     - 版本 3.1.3。增加飘天文学
+     - 版本 3.1.2。修正内容的移除。
+     - 版本 3.1.1。设置的保存改为不刷新页面。
+     - 版本 3.1.0。暂时放弃 3.0.4 的界面，增加皮肤的选择、字体大小等图形设置。
+ - 2013年9月17日
+     - 版本 3.0.4。更改 fontawesome 字体链接到 google code，补全站点规则的 titleReg。
+     - 版本 3.0.3。fix bug.
+     - 版本 3.0.2。修复设置界面重复显示2次的bug，修复起点设置按钮消失的问题。
+ - 2013年9月16日，
+     - 版本 3.0.1。修复 Chrome 下的字体图标问题。
+     - 版本 3.0.0。版本界面大改版，由网友 Roger Au 设计，截图未更新。
+ - 2013年9月14日，版本 2.7.9。改进 3z中文网 规则
+ - 2013年8月25日，版本 2.7.5。修复内容首行缩进，改进 mutation
+ - 2013年8月22日，版本 2.7.4。增加内容 mutation（未完善，用于创世纪等），修改启动方式
+ - .....
+ - 2013年7月18日，版本 2.5.3。增加站点：创世中文网，添加 history.pushState
+ - 2013年7月04日，版本 2.5.1。新增了一些小说屏蔽字修复。
  - 2013年6月25日，版本 2.5.0。新增站点 92to。
  - 2013年6月24日，版本 2.4.8。
  	- 改善冰火图片加载的问题。
@@ -157,7 +108,7 @@ Firefox（Greasemonkey/Scriptish）， Chrome（Tampermonkey），Opera（暴力
  	- 修改无错和16K图片全局替换为个别替换。
  	- 新增配置参数 contentReplace 的另一种写法：`contentReplace: {'<img.*?ait="(.*?)".*?>': "$1",}`
  	- 增加第一中文的站点配置
- - 2013年6月15日，版本 2.3.8。增加无错和16kbook图片的替换，修复Chrome下加载下一页的bug。
+ - 2013年6月15日，版本 2.3.8。增加无措和16kbook图片的替换，修复Chrome下加载下一页的bug。
  - 2013年6月13日，版本 2.3.7。完善框架内的运行，个别站点还有问题。
  - 2013年6月11日，版本 2.3.2。完善非 Firefox 下标题的获取。
  - 2013年6月11日，版本 2.3.1。
@@ -167,9 +118,10 @@ Firefox（Greasemonkey/Scriptish）， Chrome（Tampermonkey），Opera（暴力
  	- 增加自定义站点设置，**需手动更新个人配置文件**，更新时请备份。
  	- 增加 iframe 方式加载下一页。
  	- 完善屏蔽字修复误替换图片。
- - 2013年6月09日，版本 2.2.9。修复内容中移除标题过度的问题。
- - 2013年6月09日，版本 2.2.8。修复屏蔽字替换造成图片错误的问题。
- - 2013年6月09日，版本 2.2.7。修复cookie禁用时脚本不能运行的问题和通知有时不能显示的问题。
+ - 2013年6月09日
+     - 版本 2.2.9。修复内容中移除标题过度的问题。
+     - 版本 2.2.8。修复屏蔽字替换造成图片错误的问题。
+     - 版本 2.2.7。修复cookie禁用时脚本不能运行的问题和通知有时不能显示的问题。
  - 2013年6月08日，版本 2.2.6。增加修改图标位置功能。
  - 2013年6月08日，版本 2.2.3。
  	- 新增了大量屏蔽字修复（来自小说下载阅读器）。
@@ -188,8 +140,9 @@ Firefox（Greasemonkey/Scriptish）， Chrome（Tampermonkey），Opera（暴力
  - 2013年6月06日，版本 2.1。完善了对 Opera 暴力猴下的支持，更改了部分站点信息。
  - 2013年6月05日，版本 **2.0**。采用全新的方法自动查找标题，新增了外部配置文件的支持（参考了部分Super_preloader代码），完善了部分内容。
  - 2013年6月03日，版本 1.8。较多改进。重写了自动获取标题（学习了Clealy），其它多项修改。
- - 2013年5月30日，版本 1.7。增加了一些站点，改进了自动获取标题。
- - 2013年5月30日，版本 1.6.1。修复塔读文学
+ - 2013年5月30日
+     - 版本 1.7。增加了一些站点，改进了自动获取标题。
+     - 版本 1.6.1。修复塔读文学
  - 2013年5月28日，版本 1.6。修复个别站点内容去除广告过多的问题。
  - 2013年5月14日，版本 1.5。限制在指定的一些网站中，未在范围的网站不生效。
  - 2013年5月13日，版本 1.4。增加右边 "阅读模式" 按钮，改自动启用为手动启用。
