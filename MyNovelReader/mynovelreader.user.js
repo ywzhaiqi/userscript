@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        3.5.3
+// @version        3.5.5
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
@@ -37,6 +37,7 @@
 // @include        http://www.xkzw.org/*/*.html
 // @include        http://shouda8.com/*/*.html
 // @include        http://novel.hongxiu.com/*/*/*.shtml
+// @include        http://www.readnovel.com/novel/*.html
 
 // booklink.me
 // @include        http://www.shumilou.com/*/*.html
@@ -81,6 +82,8 @@
 // @include        http://www.ziyuge.com/*/*/*/*/*.html
 
 // 其它网站
+// @include        http://www.wtcxs.com/files/article/html/*/*/*.html
+// @include        http://www.5du5.com/book/*/*/*.html
 // @include        http://book.kanunu.org/*/*/*.html
 // @include        http://paitxt.com/*/*/*.html
 // @include        http://www.shunong.com/yuedu/*/*/*.html
@@ -143,6 +146,7 @@
 // @include        http://www.59to.com/files/article/xiaoshuo/*/*/*.html
 // @include        http://www.dyzww.com/cn/*/*/*.html
 // @include        http://www.9wh.net/*/*/*.html
+// @include        http://www.luoqiu.net/html/*/*/*.html
 // @include        http://www.luoqiu.com/html/*/*/*.html
 // @include        http://www.epzw.com/files/article/html/*/*/*.html
 // @include        http://www.dashubao.com/book/*/*/*.html
@@ -170,9 +174,10 @@
 // @include        http://www.caihongwenxue.com/Html/Book/*/*/*.html
 // @include        http://www.shushuw.cn/shu/*/*.html
 
-// @exclude        */List.shtml
 // @exclude        */List.html
+// @exclude        */List.shtml
 // @exclude        */index.html
+// @exclude        */index.shtml
 
 // @run-at         document-start
 // ==/UserScript==
@@ -199,7 +204,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         content_replacements: true,     // 小说屏蔽字修复
         fixImageFloats: true,           // 图片居中修正
         paragraphBlank: true,           // 统一段落开头的空格为 2个全角空格
-        end_color: "#666666",           // 最后一页的链接颜色
+        end_color: "#666666",           // 最后一页的    链接颜色
     };
 
     var READER_AJAX = "reader-ajax";   // 内容中ajax的 className
@@ -319,7 +324,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             contentSelector: "#zjcontentdiv",
             nextSelector: "a[title='阅读下一章节']",
             contentHandle: false,
-            contentReplace: "本书由潇湘书院首发，请勿转载！ ",
+            contentReplace: "本书由潇湘书院首发，请勿转载！",
             contentPatch: function(fakeStub){
                 fakeStub.find("title").text(fakeStub.find('meta[name="keywords"]').attr("content"));
             }
@@ -335,6 +340,17 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 fakeStub.find('title').html(title);
             }
         },
+        {siteName: "小说阅读网",
+            url: "http://www\\.readnovel\\.com/novel/.*\\.html",
+            titleReg: "(.*)_(.*)免费阅读_小说阅读网",
+            contentSelector: "#article",
+            contentRemove: "div[style]"
+        },
+        
+        // {siteName: "易读",
+        //     url: "http://www.yi-see.com/read_\\d+_\\d+.html",
+        //     contentSelector: 'table[width="900px"][align="CENTER"]'
+        // },
         {siteName: "燃文",
             url: /^http:\/\/www\.ranwen\.cc\/.*\.html$/,
             titleReg: /(.*?)-(.*?)-燃文/,
@@ -405,7 +421,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         {siteName: "百晓生",
             url: /^http:\/\/www\.bxs\.cc\/\d+\/\d+\.html$/,
             titleReg: /(.*?)\d*,(.*)/,
-            contentReplace: /〖百晓生∷.*〗|无弹窗小说网www.bxs.cc|百晓生文学网|最快阅读小说大主宰，尽在百晓生文学网.*|ww.x.om|欢迎大家来到.*?bxs\.cc|百晓生阅读最新最全的小说.*|百晓生网不少字|站长推荐.*|[\[【].*[\]】]|文字首发|[\[\]\(《].*百晓生.*|百晓生.不跳字|百.晓.生.|关闭.*广告.*|飘天文学|本站域名就是.*|\(.{0,5}小说更快更好.{0,5}\)|(请在)?百度搜索.*/ig,
+            contentReplace: /〖百晓生∷.*〗|无弹窗小说网www.bxs.cc|百晓生文学网|最快阅读小说大主宰，尽在百晓生文学网.*|ww.x.om|欢迎大家来到.*?bxs\.cc|百晓生阅读最新最全的小说.*|百晓生网不少字|站长推荐.*|[\[【].*[\]】]|文字首发|[\[\]\(《].*百晓生.*|百晓生.不跳字|百.晓.生.|关闭.*广告.*|飘天文学|本站域名就是.*|\(.{0,5}小说更快更好.{0,5}\)|(请在)?百度搜索.*|\/\/访问下载txt小说&nbsp;\/\//ig,
         },
         {siteName: "浩奇文学网",
             url: /^http:\/\/www\.haoqi99\.com\/.*\.shtml$/,
@@ -544,7 +560,10 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             }
         },
         {siteName: "16K小说网",
-            url: "^http://www\\.16kbook\\.org/Html/Book/\\d+/\\d+/\\d+\\.shtml$" ,
+            url: "^http://www\\.16kbook\\.org/Html/Book/\\d+/\\d+/\\d+\\.shtml$",
+            titleReg: '(\\S+) (.*)- 16K小说网',
+            useiframe: true,
+            contentRemove: '.bdlikebutton',
             contentReplace: {
                 '(<center>)?<?img src..(http://www.16kbook.org)?(/tu/\\S+\\.jpg).(>| alt."\\d+_\\d+_\\d*\\.jpg" />)(</center>)?': "$3",
                 "/tu/shijie.jpg":"世界", "/tu/xiangdao.jpg":"想到", "/tu/danshi.jpg":"但是", "/tu/huilai.jpg":"回来", "/tu/yijing.jpg":"已经", "/tu/zhende.jpg":"真的", "/tu/liliang.jpg":"力量", "/tu/le.jpg":"了", "/tu/da.jpg":"大", "/tu/shengli.jpg":"胜利", "/tu/xiwang.jpg":"希望", "/tu/wandan.jpg":"完蛋", "/tu/de.jpg":"的",
@@ -581,11 +600,11 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         },
         {siteName: "热点",
             url: "^http://www\\.hotsk\\.com/Html/Book/\\d+/\\d+/\\d+\\.shtml",
-            titleReg: "(.*?) 正文 (.*?) -",
-            contentReplace: "无弹窗小说网|www.zhuZhuDao.com .猪猪岛小说.|小说章节更新最快"
+            titleReg: "(.*?) 正文 (.*?)- 热点书库 -",
+            contentReplace: "\\(热点书库首发:www.hotsk.com\\)|无弹窗小说网|www.zhuZhuDao.com .猪猪岛小说.|小说章节更新最快"
         },
         {siteName: "落秋中文",
-            url: "^http://www\\.luoqiu\\.com/html/\\d+/\\d+/\\d+\\.html",
+            url: "^http://www\\.luoqiu\\.(com|net)/html/\\d+/\\d+/\\d+\\.html",
             titleReg: "(.*?)-(.*?)-",
             contentReplace: "&lt;/p&gt;"
         },
@@ -598,7 +617,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         {siteName: "手牵手小说网",
             url: "^http://www\\.sqsxs\\.com/\\d+/\\d+/\\d+\\.html",
             titleReg: "(.*?)最新章节_\\S* (.*)_手牵手小说网",
-            contentReplace: "访问下载txt小说.百度搜.|免费电子书下载"
+            contentReplace: "访问下载txt小说.百度搜.|免费电子书下载|\\(百度搜\\)"
         },
         {siteName: "飞卢小说网",
             url: "^http://b\\.faloo\\.com/p/\\d+/\\d+\\.html",
@@ -663,7 +682,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             url: /^http:\/\/www\.hahawx\.com\/.*htm/,
             titleReg: /(.*?)-(.*?)-.*/,
             contentSelector: "#chapter_content",
-            contentReplace: /(?:好书推荐|书友在看|其他书友正在看|好看的小说|推荐阅读)：。|(www\.)?66c.com|(ｗｗｗ|ｂｏｏｋ).*(ｃｏｍ|ｎｅｔ)|www[a-z\.]*|全文字阅读|无弹窗广告小说网|哈哈文学\(www.hahawx.com\)|souDU.org|Ｓｏｕｄｕ．ｏｒｇ|jīng彩推荐：/ig,
+            contentReplace: /(?:好书推荐|书友在看|其他书友正在看|好看的小说|推荐阅读)：。|(?:www|ｗｗｗ|ｂｏｏｋ).*(?:com|net|org|ｃｏｍ|ｎｅｔ)|全文字阅读|无弹窗广告小说网|哈哈文学\(www.hahawx.com\)|souDU.org|Ｓｏｕｄｕ．ｏｒｇ|jīng彩推荐：/ig,
             contentPatch: function(fakeStub){
                 var content = fakeStub.find("#chapter_content");
                 var m = content.find("script").text().match(/output\((\d+), "(\d+\.txt)"\);/);
@@ -794,6 +813,11 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             url: "http://book\\.kanunu\\.org/.*/\\d+/\\d+\\.html",
             contentSelector: "table:eq(4) p",
         },
+        {siteName: "五月中文网",
+            url: "http://5ycn\\.com/\\d+/\\d+/\\d+\\.html",
+            contentRemove: "div[align='center'], a",
+        },
+
         // {siteName: "雅文言情小说吧",  // 一章分段
         //     url: "http://www\\.yawen8\\.com/\\w+/\\d+/\\d+\\.html",
         //     contentSelector: "#content .txtc"
@@ -850,7 +874,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         "w[ēe]ixi[ée]":"威胁", "wèizh[ìi]":"位置", "wei员":"委员",
         "xiu长": "修长", "亵du": "亵渎", "xing福": "幸福", "小bo":"小波", "xiong([^a-z])":"胸$1",
         "y[iī]y[àa]ng":"一样", "y[īi]di[ǎa]n":"一点", "y[ǐi]j[īi]ng":"已经", "阳w[ěe]i": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "you惑": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人","旖ni":"旖旎", "yu念":"欲念",
-        "z[iì]j[iǐ]": "自己","z[ìi]\\s*you": "自由","zh[iī]d?[àa]u?o":"知道","zha药": "炸药", "zhan有": "占有", "政f[ǔu]": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zong理":"总理", "zhōngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]y[oò]u":"左右", "zh[oō]uw[ée]i":"周围", "中nan海":"中南海", "中j委":"中纪委", "(昨|一)(?:<br>|&nbsp;)*ì":"$1日",
+        "z[iì]j[iǐ]": "自己","z[ìi]\\s*you": "自由","zh[iī]d?[àa]u?o":"知道","zha药": "炸药", "zhan有": "占有", "政f[ǔu]": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zong理":"总理", "zhōngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]y[oò]u":"左右", "zh[oō]uw[ée]i":"周围", "中nan海":"中南海", "中j委":"中纪委", "(昨|一|时|余)(?:<br/?>|&nbsp;|\\s)*ì":"$1日",
 
         // ===单字替换，需特殊处理，防止替换图片===
         "b[āà]ng":"棒","bào":"爆","b[àa]":"吧","bī":"逼","bō":"波",
@@ -1162,6 +1186,8 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             if(!text) return null;
 
             var contentHandle = info.contentHandle === undefined ? true : info.contentHandle;
+
+            // console.debug(text)
 
             // 拼音字、屏蔽字修复
             if(contentHandle){
@@ -1512,7 +1538,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 
             // 再次移除其它不相关的，起点，纵横中文有时候有问题
             setTimeout(function(){
-                $('body > *:not("#container, .readerbtn, #reader_preferences")').remove();
+                $('body > *:not("#container, .readerbtn, #reader_preferences, #uil_blocker,iframe[name=\'mynovelreader-iframe\']")').remove();
             }, 1000);
         },
         prepDocument: function() {
@@ -2050,17 +2076,17 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             UI.fixMobile();
         },
         addStyle: function(){
-            UI.refreshStyle();
+            UI.refreshMainStyle();
 
             if(Config.hide_footer_nav){
                 UI.hideFooterNavStyle(true);
             }
 
-            UI.addSkinStyle(Config.skin_name);
+            UI.refreshSkinStyle(Config.skin_name);
 
-            UI.addExtraStyle(Config.extra_css);
+            UI.refreshExtraStyle(Config.extra_css);
         },
-        refreshStyle: function(){
+        refreshMainStyle: function(){
             if(UI.mainStyle){
                 $(UI.mainStyle).remove();
             }
@@ -2102,7 +2128,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             }
             UI.menu_list_hiddden = hidden;
         },
-        addSkinStyle: function(skin_name){
+        refreshSkinStyle: function(skin_name){
             var style = $("#skin_style");
             if(style.length === 0){
                 style = $('<style id="skin_style">').appendTo('head');
@@ -2110,7 +2136,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 
             style.text(UI.skins[skin_name]);
         },
-        addExtraStyle: function(css){
+        refreshExtraStyle: function(css){
             var style = $("#extra_style");
             if(style.length === 0){
                 style = $('<style id="extra_style">').appendTo('head');
@@ -2180,12 +2206,13 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 return;
             }
 
+            this._loadBlocker();
             var prefs = $('<div id="reader_preferences">')
                 .css({
                     position: "fixed",
                     top: "12%",
                     left: "30%",
-                    width: "500px",
+                    width: "480px",
                     "z-index": "30000"
                 });
 
@@ -2266,13 +2293,11 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                             </label>\
                         </div>\
                         <div class="form-row">\
-                            <label>\
-                                <input type="checkbox" id="hide-menu-bar"/>默认隐藏导航条，通过快捷键（c）切换章节列表\
+                            <label title="通过快捷键（c）切换章节列表">\
+                                <input type="checkbox" id="hide-menu-bar"/>默认隐藏左侧的导航条\
                             </label>\
-                        </div>\
-                        <div class="form-row">\
                             <label>\
-                                <input type="checkbox" id="hide-menu-list"/>默认隐藏章节列表\
+                                <input type="checkbox" id="hide-menu-list"/>默认隐藏左侧的章节列表\
                             </label>\
                             <label>\
                                 <input type="checkbox" id="hide-footer-nav"/>默认隐藏底部导航栏\
@@ -2297,19 +2322,18 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                             <br/><br/>\
                             <label>\
                                 字体大小\
-                                <input type="textbox" id="font-size" name="font-size" size="3"/>\
+                                <input type="textbox" id="font-size" name="font-size" size="6"/>\
                             </label>\
                             <label>\
                                 行高\
-                                <input type="textbox" id="text_line_height" size="5"/>\
+                                <input type="textbox" id="text_line_height" size="6"/>\
                             </label>\
                             <label>\
                                 行宽\
-                                <input type="textbox" id="content_width" size="5"/>\
+                                <input type="textbox" id="content_width" size="6"/>\
                             </label>\
                         </div>\
                         <div style="text-align:center">\
-                            <h3>额外的样式</h3>\
                             <textarea id="extra_css" name="extra_css" style="width:450px;" cols="81" rows="7" placeholder="自定义样式"></textarea>\
                         </div>\
                     </form>')
@@ -2320,9 +2344,19 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 
             UI.preferencesLoadHandler();
         },
+        _loadBlocker: function() {
+            if (UI.blocker == null) {
+                UI.blocker = $('<div>').attr({
+                    id: 'uil_blocker',
+                    style: 'position:fixed;top:0px;left:0px;right:0px;bottom:0px;background-color:#000;opacity:0.5;z-index:10000;'
+                }).appendTo($('body'));
+            }
+        },
         hide: function(){
             if(UI.prefs) UI.prefs.remove();
+            if(UI.blocker) UI.blocker.remove();
             UI.prefs = null;
+            UI.blocker = null;
         },
         preferencesLoadHandler: function(){
             var $form = $("#preferences");
@@ -2350,40 +2384,41 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             $skin.val(Config.skin_name);
             $skin.change(function(){
                 var key = $(this).find("option:selected").text();
-                UI.addSkinStyle(key);
+                UI.refreshSkinStyle(key);
                 Config.skin_name = key;
             });
 
-            // font-size
-            var setFontSize = _.debounce(function(){
-                var titleFontSize = UI.calcTitleFontSize(this.value);
-                if(titleFontSize) {
-                    App.$content.css("font-size", this.value);
-                    App.$content.find("h1").css("font-size", titleFontSize);
+            var preview = _.debounce(function(){
+                switch(this.id){
+                    case "font-size":
+                        var titleFontSize = UI.calcTitleFontSize(this.value);
+                        if(titleFontSize) {
+                            App.$content.css("font-size", this.value);
+                            App.$content.find("h1").css("font-size", titleFontSize);
+                        }
+                        break;
+                    case "font-family":
+                        App.$content.css("font-family", this.value);
+                        break;
+                    case "content_width":
+                        App.$content.css("width", this.value);
+                        break;
+                    case "text_line_height":
+                        App.$content.css("line-height", this.value);
+                        break;
+                    default:
+                        break;
                 }
+                // UI.refreshMainStyle();
             }, 300);
-            $form.find("#font-size").bind("keypress", setFontSize);
-
-            // content_width
-            var setContentWidth = _.debounce(function(){
-                App.$content.css("width", this.value);
-            }, 300);
-            $form.find("#content_width").bind("keypress", setContentWidth);
-
-            // content_width
-            var setLineHeight = _.debounce(function(){
-                App.$content.css("line-height", this.value);
-            }, 300);
-            $form.find("#text_line_height").bind("keypress", setLineHeight);
+            $form.on("keypress", "input", preview);
 
             // button
             $form.find("#close_button").click(UI.preferencesCloseHandler);
             $form.find("#save_button").click(UI.preferencesSaveHandler);
         },
         preferencesCloseHandler: function(){
-            App.$content.css("font-size", "");
-            App.$content.css("width", "");
-            App.$content.css("font-family", Config.font_family);
+            App.$content.removeAttr("style");
             App.$content.find("h1").css("font-size", "");
 
             UI.hide();
@@ -2411,7 +2446,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             Config.hide_footer_nav = $form.find("#hide-footer-nav").get(0).checked;
 
             var css = $form.find("#extra_css").get(0).value;
-            UI.addExtraStyle(css);
+            UI.refreshExtraStyle(css);
             Config.extra_css = css;
 
             UI.hide();

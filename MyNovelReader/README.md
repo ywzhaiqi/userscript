@@ -22,10 +22,11 @@ Firefox（Greasemonkey/Scriptish）， Chrome（Tampermonkey），Opera（暴力
 
 ### 支持站点
 
-- [起点中文网](http://www.qidian.com/Default.aspx)、[纵横中文网]( http://book.zongheng.com/)、[创世中文网](http://chuangshi.qq.com/)、晋江文学网、潇湘书院、逐浪等
-- [燃文](http://www.ranwen.cc/)、[无错](http://www.wcxiaoshuo.com/)、书迷楼、冰火中文、百晓生、浩奇、书河等（[bookline.me](http://booklink.me/)点击的网站）
+- [起点中文网](http://www.qidian.com/Default.aspx)、[纵横中文网]( http://book.zongheng.com/)、[创世中文网](http://chuangshi.qq.com/)、[晋江文学](http://www.jjwxc.net/)、潇湘书院、逐浪等
+- [燃文](http://www.ranwen.cc/)、[百晓生](http://www.bxs.cc/)、[无错](http://www.wcxiaoshuo.com/)、[书迷楼](http://www.shumilou.com/)、[冰火中文](http://www.binhuo.com/)、[浩奇](http://www.haoqi99.com/)、[书河](http://www.shuhe.cc/)、[热点书库](http://www.hotsk.com/)、[哈哈文学](http://www.hahawx.com/)、[读零零](http://www.du00.com/)、[手牵手](http://www.sqsxs.com/)、[万书吧](http://www.wanshuba.com/)等（[bookline.me](http://booklink.me/)点击的网站）
 - 角度吧、飞库、6小说、笔趣阁、强兵、摩卡、极速等（SoDu.so点击的网站）
-- 手打吧、泡书吧、17k、看下、青帝、侠客等
+- 手打吧、泡书吧、17k、[16K](http://www.16kbook.org/)、看下、青帝、侠客等
+- [落秋中文](http://www.luoqiu.net/)、[吾读小说网](http://www.5du5.com/)、[平凡文学网](http://www.wtcxs.com/)
 - 其它小说站点
 
 ### 特性
