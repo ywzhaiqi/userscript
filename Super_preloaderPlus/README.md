@@ -1,6 +1,13 @@
 Super_preloaderPlus.user.js
 ===========================
 
+## 文件说明
+
+- **Super_preloaderPlus_one.user.js**：修改增强2合1版本。
+- **Super_preloader_one.user.js**：整合自原版2个文件，微量修改。
+- **Super_preloader_plus.user.js**
+- **Super_preloader_plus.db.user.js**
+
 ## 修改说明
 
 ### Super_preloaderPlus
