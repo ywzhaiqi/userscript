@@ -3,7 +3,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      5.3.9
+// @version      5.4.7
 // @homepageURL  https://userscripts.org/scripts/show/178900
 // @downloadURL  https://userscripts.org/scripts/source/178900.user.js
 // @updateURL    https://userscripts.org/scripts/source/178900.meta.js
@@ -45,45 +45,6 @@
         window.parent.postMessage('superpreloader-iframe:DOMLoaded', '*');
         return;
     }
-
-    // 浏览器检测
-    var browser = (function(){
-        var UA = navigator.userAgent.toLowerCase();
-        var browser = {
-            opera: false,
-            chrome: false,
-            firefox: false,
-            name: 'unknown',
-            getBrowserName: function() {
-                var self = this;
-                if (self.name != 'unknown') return self.name;
-                for (var i in self) {
-                    if (self.hasOwnProperty(i) && self[i]) {
-                        self.name = i;
-                        return i;
-                    }
-                }
-            },
-        };
-        if (window.opera) {
-            browser.opera = true;
-        } else if (window.chrome) {
-            browser.chrome = true;
-        } else if (typeof XPCNativeWrapper == 'function' && String(XPCNativeWrapper).search(/native\s+code/i) != -1) {
-            browser.firefox = true;
-        } else if (UA.indexOf('applewebkit') != -1) { //UA检测放到最后,伪装的太厉害了.-_-!!
-            //国内的壳浏览器,作为chrome处理.
-            browser.chrome = true;
-            if (UA.indexOf('se 2') != -1) { //记录下搜狗的.
-                browser.sogou = true;
-            }
-        }
-        browser.getBrowserName();
-        return browser;
-    })();
-
-    if (browser.name == 'unknown') return;
-
 
     /////////////////////设置(请注意开关的缩进关系..子开关一般在父开关为true的时候才会生效.)//////////////////////
     var prefs={
@@ -205,13 +166,30 @@
                     if (!x) return;
 
                     var datas = x.nodeValue.match(/'(ap|vid)thumb\d+','[^']+(?:\\x3d)*/g);
-                    datas.forEach(function(text){
+                    datas && datas.forEach(function(text){
                         var arr = text.split("','"),
                             id = arr[0].slice(1),
                             data = arr[1];
                         var m = doc.getElementById(id);
                         if(m)
                             m.setAttribute("src", data.replace(/\\x3d/g, "="));
+                    });
+                },
+                startFilter: function(win, doc) {  // 只作用一次
+                    unsafeWindow.addEventListener("load", function(){
+                        if (unsafeWindow.rwt) {
+                            unsafeWindow.rwt = function () {}
+                        } else {  // Chrome 原生的情况
+                            var removeLinkRedirect = function() {
+                                var links = doc.querySelectorAll('a[onmousedown^="return rwt"]');
+                                for (var i = links.length - 1; i >= 0; i--) {
+                                    links[i].removeAttribute("onmousedown");
+                                }
+                            };
+
+                            removeLinkRedirect();
+                            doc.addEventListener("Super_preloaderPageLoaded", removeLinkRedirect, false);
+                        }
                     });
                 }
             }
@@ -288,6 +266,21 @@
                 useiframe: true
             }
         },
+        {name: '天猫 - 搜索',
+            url: '^http://list\\.tmall\\.com/search_product\\.htm\\?',
+            nextLink: '//a[@class="ui-page-next" and (text()="下一页>>")]',
+            autopager: {
+                // useiframe: true,
+                pageElement: '//div[@id="J_ItemList"]',
+                documentFilter: function(doc){
+                    Array.slice(doc.querySelectorAll('img[data-ks-lazyload]')).forEach(function(img){
+                        img.src = img.getAttribute("data-ks-lazyload");
+                        img.removeAttribute("data-ks-lazyload");
+                    });
+                }
+            },
+            exampleUrl: 'http://bbs.kafan.cn/forum-215-1.html?ccezwsbtkepceiay?yufumynkbjzpoarg',
+        },
 
         // ========================= baidu 其它 ================================================
         {name: '百度贴吧列表',
@@ -295,23 +288,23 @@
             nextLink: '//div[@class="pager clearfix"]/descendant::a[@class="next"]',
             preLink: '//div[@class="pager clearfix"]/descendant::a[@class="pre"]',
             autopager: {
-                pageElement: '//ul[@id="thread_list"]',
-                // useiframe: true,
-                //     iloaded: true,
-                filter: function(pages) {
-                    // 修复图片点击放大、播放音乐等
-                    var doc = unsafeWindow.document;
-                    var wrapper = function () {
-                        var render= frs.ThreadList.render.toString()
-                            .replace('$("ul")', '$("#content_leftList > ul:last")');
-                        eval("render=" + render);
-                        render.apply(frs.ThreadList);
-                     };
-                     var script = doc.createElement('script');
-                     script.textContent = '('+ wrapper +')();';
-                     doc.body.appendChild(script);
-                     doc.body.removeChild(script);
-                }
+                pageElement: '//ul[@id="thread_list"]/li',
+                useiframe: true,
+                    newIframe: true
+                // filter: function(pages) {
+                //     // 修复图片点击放大、播放音乐等
+                //     var doc = unsafeWindow.document;
+                //     var wrapper = function () {
+                //         var render= frs.ThreadList.render.toString()
+                //             .replace('$("ul")', '$("#content_leftList > ul:last")');
+                //         eval("render=" + render);
+                //         render.apply(frs.ThreadList);
+                //      };
+                //      var script = doc.createElement('script');
+                //      script.textContent = '('+ wrapper +')();';
+                //      doc.body.appendChild(script);
+                //      doc.body.removeChild(script);
+                // }
             }
         },
         {name: '百度贴吧帖子',
@@ -320,14 +313,13 @@
             nextLink:'//li[@class="l_pager pager_theme_3"]/descendant::a[text()="下一页"]',
             preLink:'//li[@class="l_pager pager_theme_3"]/descendant::a[text()="上一页"]',
             autopager:{
-                // useiframe: true,
-                //     iloaded: true,
-                //     newIframe: true,
-                pageElement: "css;.l_post",
-                filter: function(pages){
-                    var pb = unsafeWindow.pb;
-                    pb.ForumListV3.initial();
-                }
+                pageElement: "css;#j_p_postlist",  // "css;.l_post"
+                useiframe: true,
+                    newIframe: true,
+                // filter: function(pages){
+                //     var pb = unsafeWindow.pb;
+                //     pb.ForumListV3.initial();
+                // }
             }
         },
         {name: '百度吧内搜索',
@@ -635,10 +627,22 @@
             nextLink: '//div[@class="pages"]//a[@class="next"]',
             pageElement: '//div[@id="threadlist"] | //div[@id="postlist"]',
         },
-        {name: 'Mozilla Firefox中文社区',
-            url: '^http://www\\.firefox\\.net\\.cn/',
+        {name: 'Firefox中文社区 - 帖子',
+            url: '^http://www\\.firefox\\.net\\.cn/read',
             nextLink: '//div[@class="pages"]/a[contains(text(), "下一页")]',
-            pageElement: 'id("J_posts_list")'
+            autopager: {
+                pageElement: 'id("J_posts_list")/*',
+                useiframe: true,
+                    iloaded: true,
+                    newIframe: true
+            }
+        },
+        {name: 'Firefox中文社区 - 列表',
+            url: '^http://www\\.firefox\\.net\\.cn/thread',
+            nextLink: '//div[@class="pages"]/a[contains(text(), "下一页")]',
+            autopager: {
+                pageElement: 'id("J_posts_list")',
+            }
         },
         {name: '傲游浏览器-插件中心',
             url: "^http://extension\\.maxthon\\.cn/",
@@ -1745,7 +1749,16 @@
             autopager:{
                 useiframe:true,
                 remain:1/2,
-                pageElement:'//img[@id="mangaFile"]',
+                pageElement:'//img[@id="comic"]',
+            }
+        },
+        {name: 'CC漫画网',
+            url: "^http://www\\.tuku\\.cc/comic/\\d+/\\d+/",
+            siteExample:'http://www.tuku.cc/comic/6123/1/',
+            nextLink:'auto;',
+            autopager:{
+                pageElement:'//img[@id="Img"]',
+                useiframe:true,
             }
         },
         {name: '新动漫',
@@ -2325,32 +2338,6 @@
         nextPageKey: nextPageKey,
     };
 
-    // 自造简化版 underscroe 库，仅 ECMAScript 5
-    (function(){
-        var root = this;
-
-        // Create a safe reference to the Underscore object for use below.
-        var _ = function(obj){
-            if(obj instanceof _) return obj;
-            if(!(this instanceof _)) return new _(obj);
-            this._wrapped = obj;
-        };
-
-        root._ = _;
-
-        // Return the first value which passes a truth test. Aliased as `detect`.
-        _.find = function(obj, iterator, context){
-            var result;
-            obj.some(function(value, index, array){
-                if(iterator.call(context, value, index, array)){
-                    result = value;
-                    return true;
-                }
-            });
-            return result;
-        };
-    }).call(window);
-
     //动画库
     var Tween = {
         Linear: function(t, b, c, d) {
@@ -2531,6 +2518,69 @@
         'easeInOut',
     ];
 
+    // 浏览器检测
+    var browser = (function(){
+        var UA = navigator.userAgent.toLowerCase();
+        var browser = {
+            opera: false,
+            chrome: false,
+            firefox: false,
+            name: 'unknown',
+            getBrowserName: function() {
+                var self = this;
+                if (self.name != 'unknown') return self.name;
+                for (var i in self) {
+                    if (self.hasOwnProperty(i) && self[i]) {
+                        self.name = i;
+                        return i;
+                    }
+                }
+            },
+        };
+        if (window.opera) {
+            browser.opera = true;
+        } else if (window.chrome) {
+            browser.chrome = true;
+        } else if (typeof XPCNativeWrapper == 'function' && String(XPCNativeWrapper).search(/native\s+code/i) != -1) {
+            browser.firefox = true;
+        } else if (UA.indexOf('applewebkit') != -1) { //UA检测放到最后,伪装的太厉害了.-_-!!
+            //国内的壳浏览器,作为chrome处理.
+            browser.chrome = true;
+            if (UA.indexOf('se 2') != -1) { //记录下搜狗的.
+                browser.sogou = true;
+            }
+        }
+        browser.getBrowserName();
+        return browser;
+    })();
+
+    if (browser.name == 'unknown') return;
+
+    // 自造简化版 underscroe 库，仅 ECMAScript 5
+    (function(){
+        var root = this;
+
+        // Create a safe reference to the Underscore object for use below.
+        var _ = function(obj){
+            if(obj instanceof _) return obj;
+            if(!(this instanceof _)) return new _(obj);
+            this._wrapped = obj;
+        };
+
+        root._ = _;
+
+        // Return the first value which passes a truth test. Aliased as `detect`.
+        _.find = function(obj, iterator, context){
+            var result;
+            obj.some(function(value, index, array){
+                if(iterator.call(context, value, index, array)){
+                    result = value;
+                    return true;
+                }
+            });
+            return result;
+        };
+    }).call(window);
 
     // =============================== run =================================================
 
@@ -2539,9 +2589,36 @@
     var C = console;
     var debug = xbug ? console.log.bind(console) : function() {};
 
-    setTimeout(run, 100);  // 延迟启动
+    var Control = {
+        init: function() {
+            this.debugMenu();
+            this.dblclickPauseMenu();
+        },
+        debugMenu: function () {
+            var cmdStr = "Super_preloader " + (xbug ? "关闭" : "开启") + "调试模式";
+            GM_registerMenuCommand(cmdStr, function(){
+                xbug = !xbug;
+                GM_setValue("debug", xbug);
+                // notice('调试模式已经<b style="color:red">' + (xbug ? "开启" : "关闭") + '</b>');
+                location.reload();
+            });
+        },
+        dblclickPauseMenu: function() {
+            var dblclick = GM_getValue("dblclick_pause");
+            if (dblclick) {
+                superPreloader_DB.prefs.mouseA = false;
+                superPreloader_DB.prefs.Pbutton = [0, 0, 0];
+            }
 
-    registerControls();
+            var cmdStr = (dblclick ? "取消" : "设置为") + "鼠标双击暂停翻页";
+            GM_registerMenuCommand(cmdStr, function(){
+                GM_setValue("dblclick_pause", !dblclick);
+                location.reload();
+            });
+        }
+    };
+    
+    setTimeout(run, 100);  // 延迟启动
 
     function run() {
         if(unsafeWindow.MyNovelReader_isAutoLaunch || document.body.getAttribute("name") == "MyNovelReader"){
@@ -2552,16 +2629,9 @@
 
         browserCompatible();
 
-        init(browser, window, document, superPreloader_DB);
-    }
+        Control.init();
 
-    function registerControls(){
-        GM_registerMenuCommand("Super_preloader " + (xbug ? "关闭" : "开启") + "调试模式", function(){
-            xbug = !xbug;
-            GM_setValue("debug", xbug);
-            // notice('调试模式已经<b style="color:red">' + (xbug ? "开启" : "关闭") + '</b>');
-            location.reload();
-        });
+        init(browser, window, document, superPreloader_DB);
     }
 
     function init(browser, window, document, db) {
@@ -2898,7 +2968,6 @@
             a_newIframe.addEventListener('click', function(){
                 var checked = a_newIframe.checked;
                 a_useiframe.checked = checked;
-                a_iloaded.checked = checked;
             }, false);
 
             var a_starti = $('sp-fw-a_starti'); //开始立即翻页
@@ -3232,7 +3301,6 @@
             function iframeLoaded() {
                 var iframe = this;
                 //alert(this.contentDocument.body)
-                //alert(iframe.contentDocument.body.innerHTML);
                 var body = iframe.contentDocument.body;
                 if (body && body.firstChild) {
                     setTimeout(function() {
@@ -3248,7 +3316,8 @@
             }
 
             function iframeRquest(link) {
-                if (SSS.newIframe || !iframe) {
+                messageR = false;
+                if (SSS.a_newIframe || !iframe) {
                     var i = document.createElement('iframe');
                     iframe = i;
                     i.name = 'superpreloader-iframe';
@@ -3272,8 +3341,9 @@
                                 // alert(e.source);
                                 messageR = true;
                                 iframeLoaded.call(i);
-                            };
-                        };
+                                window.removeEventListener('message', messagehandler, false);
+                            }
+                        }
                         window.addEventListener('message', messagehandler, false);
                         remove.push(function() {
                             window.removeEventListener('message', messagehandler, false);
@@ -3281,7 +3351,6 @@
                     }
                     document.body.appendChild(i);
                 } else {
-                    messageR = false;
                     iframe.src = link;
                     iframe.contentDocument.location = link;
                     // iframe.contentDocument.location.replace(link);
@@ -3572,8 +3641,8 @@
                 var docTitle = getElementByCSS("title", doc).textContent;
 
                 var fragment = document.createDocumentFragment();
-                var pageElement = getAllElements(SSS.a_pageElement, false, doc, win);
-                var ii = pageElement.length;
+                var pageElements = getAllElements(SSS.a_pageElement, false, doc, win);
+                var ii = pageElements.length;
                 if (ii <= 0) {
                     debug('获取下一页的主要内容失败', SSS.a_pageElement);
                     removeL();
@@ -3597,11 +3666,12 @@
 
                 var i, pe_x, pe_x_nn;
                 for (i = 0; i < ii; i++) {
-                    pe_x = pageElement[i];
+                    pe_x = pageElements[i];
                     pe_x_nn = pe_x.nodeName;
                     if (pe_x_nn == 'BODY' || pe_x_nn == 'HTML' || pe_x_nn == 'SCRIPT') continue;
                     fragment.appendChild(pe_x);
                 }
+
                 var scripts = getAllElements('css;script', fragment); //移除脚本
                 var scripts_x;
                 for (i = scripts.length - 1; i >= 0; i--) {
@@ -3627,7 +3697,7 @@
                 }
 
                 var sepdiv = createSep(lastUrl, cplink, nextlink);
-                if (pageElement[0] && pageElement[0].tagName == 'TR') {
+                if (pageElements[0] && pageElements[0].tagName == 'TR') {
                     var insertParent = insertPoint.parentNode;
                     var colNodes = getAllElements('child::tr[1]/child::*[self::td or self::th]', insertParent);
                     var colums = 0;
@@ -3650,7 +3720,7 @@
                 // filter
                 if (SSS.filter && typeof(SSS.filter) == 'function') {
                     try{
-                        SSS.filter(pageElement);
+                        SSS.filter(pageElements);
                         debug("执行 filter(pages) 成功");
                     }catch(e){
                         C.error("执行 filter(pages) 错误", e, SSS.filter.toString());
@@ -3774,13 +3844,13 @@
                         notice('<b>状态</b>:' + '自动翻页<span style="color:red!important;"><b>启用</b></span>.');
                     };
                     scroll();
-                };
+                }
                 var Sctimeout;
 
                 function clearPause() {
                     clearTimeout(Sctimeout);
                     document.removeEventListener('mouseup', arguments.callee, false);
-                };
+                }
 
                 function pausehandler(e) {
                     if (!SSS.a_manualA || ipagesmode || pause) {
@@ -3790,10 +3860,10 @@
                                 Sctimeout = setTimeout(pauseIt, prefs.Atimeout);
                             } else {
                                 pauseIt();
-                            };
-                        };
-                    };
-                };
+                            }
+                        }
+                    }
+                }
                 document.addEventListener(ltype, pausehandler, false);
                 remove.push(function() {
                     document.removeEventListener(ltype, pausehandler, false);
@@ -4025,7 +4095,7 @@
                     SSS.a_manualA = (SIIA.manualA === undefined) ? SIIAD.manualA : SIIA.manualA;
                     SSS.a_enable = (SIIA.enable === undefined) ? SIIAD.enable : SIIA.enable;
                     SSS.a_useiframe = (SIIA.useiframe === undefined) ? SIIAD.useiframe : SIIA.useiframe;
-                    SSS.a_newIframe = (SIIA.a_newIframe === undefined) ? SIIAD.a_newIframe : SIIA.a_newIframe;
+                    SSS.a_newIframe = (SIIA.newIframe === undefined) ? SIIAD.newIframe : SIIA.newIframe;
                     SSS.a_iloaded = (SIIA.iloaded === undefined) ? SIIAD.iloaded : SIIA.iloaded;
                     SSS.a_itimeout = (SIIA.itimeout === undefined) ? SIIAD.itimeout : SIIA.itimeout;
                     //alert(SSS.a_itimeout);
@@ -4041,6 +4111,12 @@
                     // added by me
                     SSS.a_documentFilter = SII.documentFilter || SIIA.documentFilter;
                     SSS.filter = SII.filter || SIIA.filter;
+                }
+
+                // 运行规则的 startFilter
+                if (SIIA.startFilter) {
+                    SIIA.startFilter(window, document);
+                    debug('成功运行 startFilter')
                 }
                 break;
             }
