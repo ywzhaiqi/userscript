@@ -3,7 +3,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      5.4.7
+// @version      5.4.8
 // @homepageURL  https://userscripts.org/scripts/show/178900
 // @downloadURL  https://userscripts.org/scripts/source/178900.user.js
 // @updateURL    https://userscripts.org/scripts/source/178900.meta.js
@@ -154,6 +154,7 @@
                 manualA:false,                                                                                          //是否使用手动翻页.
                 HT_insert:['//div[@id="res"]',2],                                                       //插入方式此项为一个数组: [节点xpath或CSS选择器,插入方式(1：插入到给定节点之前;2：附加到给定节点的里面;)](可选);
                 //HT_insert:['css;div#res',2],
+                stylish: '',   // 新增的自定义样式 
                 documentFilter: function(doc){
                     // 修正 imgsrc
                     Array.slice(doc.querySelectorAll("img[imgsrc]")).forEach(function(img){
@@ -176,9 +177,11 @@
                     });
                 },
                 startFilter: function(win, doc) {  // 只作用一次
-                    unsafeWindow.addEventListener("load", function(){
-                        if (unsafeWindow.rwt) {
-                            unsafeWindow.rwt = function () {}
+                    // 移除 Google 重定向
+                    var gm_win = unsafeWindow;
+                    var remove = function() {
+                        if (gm_win.rwt) {
+                            gm_win.rwt = function () {}
                         } else {  // Chrome 原生的情况
                             var removeLinkRedirect = function() {
                                 var links = doc.querySelectorAll('a[onmousedown^="return rwt"]');
@@ -190,7 +193,13 @@
                             removeLinkRedirect();
                             doc.addEventListener("Super_preloaderPageLoaded", removeLinkRedirect, false);
                         }
-                    });
+                    };
+                    if (win.chrome) {  // chrome 下 load 方式，5次里面会有1次不触发
+                        // console.log('This is chrome.');
+                        remove();
+                    } else {
+                        win.addEventListener("load", remove, false);
+                    }
                 }
             }
         },
@@ -204,6 +213,7 @@
                 remain:1/3,
                 filter:'css; #page',
                 HT_insert:['//div[@id="search"]',1],
+                stylish: '.autopagerize_page_info { margin-bottom: 10px; }',
             }
         },
         {name: '360搜索',
@@ -3246,6 +3256,10 @@
                 return;
             }
 
+            console.log(SSS)
+            if (SSS.a_stylish) {  // 插入自定义样式
+                GM_addStyle(SSS.a_stylish);
+            }
 
             var insertPointP;
             if (insertMode != 2) {
@@ -4111,6 +4125,7 @@
                     // added by me
                     SSS.a_documentFilter = SII.documentFilter || SIIA.documentFilter;
                     SSS.filter = SII.filter || SIIA.filter;
+                    SSS.a_stylish = SIIA.stylish || null;
                 }
 
                 // 运行规则的 startFilter
