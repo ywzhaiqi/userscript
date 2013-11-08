@@ -3,13 +3,14 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      5.4.8
+// @version      5.5.0
 // @homepageURL  https://userscripts.org/scripts/show/178900
 // @downloadURL  https://userscripts.org/scripts/source/178900.user.js
 // @updateURL    https://userscripts.org/scripts/source/178900.meta.js
 // @grant        GM_addStyle
 // @grant        GM_getValue
 // @grant        GM_setValue
+// @grant        GM_xmlhttpRequest
 // @grant        GM_registerMenuCommand
 // @include      http://*
 // @include      https://*
@@ -33,7 +34,6 @@
 // ==/UserScript==
 
 (function() {
-
     if (window.name == 'mynovelreader-iframe') return;
 
     // 如果是取出下一页使用的iframe window
@@ -132,27 +132,28 @@
             // 新增 Array 的格式，依次查找
 
             // preLink:'auto;',
-            preLink: 'a[@id="pnprev"]',
+            preLink: '//a[@id="pnprev"]',
             //preLink:'//table[@id="nav"]/descendant::a[1][parent::td[@class="b"]]',            //上一页链接 xpath 或者 CSS选择器 或者 函数返回值 (可选)
             autopager:{
                 enable:true ,                                                                                               //启用(自动翻页)(可选)
                 useiframe:false,                                                                                        //是否使用iframe翻页(可选)
                     iloaded:false,                                                                                      //是否在iframe完全load之后操作..否则在DOM完成后操作.
                     itimeout:0,                                                                                             //延时多少毫秒后,在操作..
-                    newIframe: false,  // 下一页使用新的 iframe，能解决按钮无法点击的问题，一般设置 iloaded 为 true
-                pageElement:'//div[@id="ires"]',                                                      //主体内容 xpath 或 CSS选择器 或函数返回值(~~必须~~)
+                    newIframe: false,  // 下一页使用新的 iframe，能解决按钮无法点击的问题
+                pageElement: '//div[@id="ires"]',                                                      //主体内容 xpath 或 CSS选择器 或函数返回值(~~必须~~)
                 // pageElement:'css;div#ires',
                 //pageElement:function(doc,win){return doc.getElementById('ires')},
                 //filter:'//li[@class="g"]',                                                                        //(此项功能未完成)xpath 或 CSS选择器从匹配到的节点里面过滤掉符合的节点.
-                remain:1/3,                                                                                                 //剩余页面的高度..是显示高度的 remain 倍开始翻页(可选)
-                    relatedObj:['css;div#navcnt','bottom'],                                                         //以这个元素当做最底的元素,计算页面总高度的计算.(可选)
-                replaceE:'//div[@id="navcnt"]',                                                         //需要替换的部分 xpat h或 CSS选择器 一般是页面的本来的翻页导航(可选);
+                remain: 1/3,                                                                                                 //剩余页面的高度..是显示高度的 remain 倍开始翻页(可选)
+                    relatedObj: ['css;div#navcnt','bottom'],                                                         //以这个元素当做最底的元素,计算页面总高度的计算.(可选)
+                replaceE: '//div[@id="navcnt"]',                                                         //需要替换的部分 xpat h或 CSS选择器 一般是页面的本来的翻页导航(可选);
                 //replaceE:'css;div#navcnt',
-                ipages:[false,3],                                                                                   //立即翻页,第一项是控制是否在js加载的时候立即翻第二项(必须小于maxpage)的页数,比如[true,3].就是说JS加载后.立即翻3页.(可选)
-                separator:true,                                                                                         //是否显示翻页导航(可选)
-                maxpage:66,                                                                                                 //最多翻页数量(可选)
-                manualA:false,                                                                                          //是否使用手动翻页.
-                HT_insert:['//div[@id="res"]',2],                                                       //插入方式此项为一个数组: [节点xpath或CSS选择器,插入方式(1：插入到给定节点之前;2：附加到给定节点的里面;)](可选);
+                ipages: [false,3],                                                                                   //立即翻页,第一项是控制是否在js加载的时候立即翻第二项(必须小于maxpage)的页数,比如[true,3].就是说JS加载后.立即翻3页.(可选)
+                separator: true,                                                                                         //是否显示翻页导航(可选)
+                    separatorReal: true,
+                maxpage: 66,                                                                                                 //最多翻页数量(可选)
+                manualA: false,                                                                                          //是否使用手动翻页.
+                HT_insert: ['//div[@id="res"]',2],                                                       //插入方式此项为一个数组: [节点xpath或CSS选择器,插入方式(1：插入到给定节点之前;2：附加到给定节点的里面;)](可选);
                 //HT_insert:['css;div#res',2],
                 stylish: '',   // 新增的自定义样式 
                 documentFilter: function(doc){
@@ -289,7 +290,6 @@
                     });
                 }
             },
-            exampleUrl: 'http://bbs.kafan.cn/forum-215-1.html?ccezwsbtkepceiay?yufumynkbjzpoarg',
         },
 
         // ========================= baidu 其它 ================================================
@@ -299,6 +299,7 @@
             preLink: '//div[@class="pager clearfix"]/descendant::a[@class="pre"]',
             autopager: {
                 pageElement: '//ul[@id="thread_list"]/li',
+                replaceE: 'css;#frs_list_pager',
                 useiframe: true,
                     newIframe: true
                 // filter: function(pages) {
@@ -324,6 +325,7 @@
             preLink:'//li[@class="l_pager pager_theme_3"]/descendant::a[text()="上一页"]',
             autopager:{
                 pageElement: "css;#j_p_postlist",  // "css;.l_post"
+                replaceE: "css;.l_posts_num > .l_pager",
                 useiframe: true,
                     newIframe: true,
                 // filter: function(pages){
@@ -365,7 +367,7 @@
             nextLink:'auto;',
             autopager: {
                 pageElement:'//div[@id="artibody"]',
-                relatedObj:['//div[@id="artibody"]','bottom'],
+                relatedObj: true,
             }
         },
         {name: '新华网新闻页面',
@@ -380,9 +382,10 @@
         {name: '中国新闻网',
             url:/http:\/\/www\.chinanews\.com\/[a-z]+\/.+\.shtml/i,
             siteExample:'http://www.chinanews.com/英文/年/日期/编号.shtml',
-            nextLink:'auto;',
+            nextLink: '//div[@id="function_code_page"]/a[text()="下一页"]',
             autopager:{
-                pageElement:'//div[@class="left_zw"]',
+                pageElement:'//div[@class="left_zw"] | //div[@class="hd_photo"]',
+                relatedObj: true,
                 HT_insert:['//div[@id="function_code_page"]',1],
                 filter:'//div[@id="function_code_page"]',
             }
@@ -390,10 +393,11 @@
         {name: '中关村在线新闻页面',
             url:/http:\/\/(?:[^\.]+\.)?zol.com.cn\/\d+\/\d+/i,
             siteExample:'http://lcd.zol.com.cn/187/1875145.html',
-            nextLink:'//a[text()="下一页"][@href]',
+            nextLink: ['//div[@class="red_all"]/a', '//a[text()="下一页"][@href]'],
             autopager:{
-                remain:10,
-                pageElement:'//div[@id="cotent_idd"]'
+                pageElement:'//div[@id="cotent_idd"]',
+                relatedObj: true,
+                stylish: '.page, .red_all { display:none; }'
             }
         },
         {name: '虎嗅网',
@@ -418,7 +422,7 @@
             autopager: {
                 pageElement: '//div[@class="content"]',
                 // separator: false,
-                relatedObj:['//div[@class="content"]','bottom'],
+                relatedObj: true,
             }
         },
         {name: '手机凤凰网',
@@ -427,7 +431,7 @@
             autopager: {
                 pageElement: '//div[@class="zwword"]',
                 // separator: false,
-                relatedObj:['//div[@class="zwword"]','bottom'],
+                relatedObj: true,
             }
         },
         {name: '手机环球网',
@@ -437,7 +441,7 @@
                 pageElement: '//div[@class="newscont"]',
                 // separator: false,
                 separatorReal: false,
-                relatedObj:['//div[@class="newscont"]','bottom'],
+                relatedObj: true,
             }
         },
         //======================= 国外新闻 ==========================
@@ -606,22 +610,30 @@
                 }
             }
         },
-        {name: "Discuz 论坛 - 导读",
-            url: "^http://bbs\\.[a-z]+\\.cn/forum\\.php\\?mod=guide",
-            nextLink: '//a[@class="nxt" and (text()="下一页")]',
-            preLink: '//a[@class="prev"]',
-            pageElement: "//form[@method='post'][@name] | //div[@id='postlist'] | //div[@id='threadlist']/div[@class='bm_c']",
+        {name: 'mozest社区',
+            url: /^https?:\/\/g\.mozest\.com/i,
+            nextLink: '//div[@class="pages"]//a[@class="next"]',
+            autopager: {
+                pageElement: '//div[@id="threadlist"] | //div[@id="postlist"]',
+                replaceE: 'css;.pages_btns > .pages'
+            }
         },
-        {name: '卡饭论坛 - 搜索',
-            url: '^http://bbs\\.kafan\\.cn/search\\.php',
-            nextLink: '//a[@class="nxt" and (text()="下一页")]',
-            preLink: '//a[@class="prev"]',
-            pageElement: '//div[@id="threadlist" and @class="slst mtw"]/ul'
+        {name: 'Firefox中文社区 - 列表',
+            url: '^http://www\\.firefox\\.net\\.cn/thread',
+            nextLink: '//div[@class="pages"]/a[contains(text(), "下一页")]',
+            autopager: {
+                pageElement: 'id("J_posts_list")',
+                replaceE: 'css;.pages',
+            }
         },
-        {name: '卡饭论坛_纵横搜索',
-            url: '^http://search\\.kafan\\.cn/f/search\\?q=',
-            nextLink: '//p[@id="pager" and @class="pager"]/a[(text()="下一页>")]',
-            pageElement: '//div[@id="main"]/div/div[@class="result"]',
+        {name: 'Firefox中文社区 - 帖子',
+            url: '^http://www\\.firefox\\.net\\.cn/read',
+            nextLink: '//div[@class="pages"]/a[contains(text(), "下一页")]',
+            autopager: {
+                pageElement: 'id("J_posts_list")/*',
+                useiframe: true,
+                    newIframe: true
+            }
         },
         {name: 'Mozilla Addons',
             url: /^https?:\/\/addons\.mozilla\.org\/[^\/]+\/firefox/i,
@@ -630,28 +642,6 @@
             autopager: {
                 remain: 1 / 4,
                 pageElement: '//div[@class="items"] | //div[@class="separated-listing"]/div[@class="item"] | //ul[@class="personas-grid"] | id("reviews")',
-            }
-        },
-        {name: 'mozest社区',
-            url: /^https?:\/\/g\.mozest\.com/i,
-            nextLink: '//div[@class="pages"]//a[@class="next"]',
-            pageElement: '//div[@id="threadlist"] | //div[@id="postlist"]',
-        },
-        {name: 'Firefox中文社区 - 帖子',
-            url: '^http://www\\.firefox\\.net\\.cn/read',
-            nextLink: '//div[@class="pages"]/a[contains(text(), "下一页")]',
-            autopager: {
-                pageElement: 'id("J_posts_list")/*',
-                useiframe: true,
-                    iloaded: true,
-                    newIframe: true
-            }
-        },
-        {name: 'Firefox中文社区 - 列表',
-            url: '^http://www\\.firefox\\.net\\.cn/thread',
-            nextLink: '//div[@class="pages"]/a[contains(text(), "下一页")]',
-            autopager: {
-                pageElement: 'id("J_posts_list")',
             }
         },
         {name: '傲游浏览器-插件中心',
@@ -664,9 +654,10 @@
             nextLink: "//a[@class='nxt' and (text()='下一页')]",
             autopager: {
                 pageElement: "id('postlist') | id('threadlist')",
+                replaceE: '//div[@class="pg"][child::a[@class="nxt"]]',
                 documentFilter: function(doc) {
                     var firstDiv = doc.querySelector("div[id^='post_']");
-                    firstDiv.parentNode.removeChild(firstDiv);
+                    firstDiv && firstDiv.parentNode.removeChild(firstDiv);
                 }
             }
         },
@@ -675,14 +666,15 @@
             nextLink:'auto;',
             autopager:{
                 pageElement:'//div[@id="threadlist"] | //div[@id="postlist"]',
+                replaceE: '//div[@class="pg"][child::a[@class="nxt"]]',
             }
         },
         {name: 'Discuz 页面跳转修复',
             url:/^http:\/\/(bbs.pcbeta|bbs.besgold|www.pt80)\.(com|net)/i,
             nextLink:'//div[@class="pg"]/descendant::a[@class="nxt"]',
             autopager:{
-                useiframe:false,
                 pageElement:'//div[@id="postlist"] | //form[@id="moderate"]',
+                replaceE: '//div[@class="pg"][child::a[@class="nxt"]]',
             }
         },
         {name: 'vBulletin论坛 加加/看雪/XDA',
@@ -692,6 +684,15 @@
                 pageElement:'//div[@id="posts"]/div[@align="center"] | //table[@class="tborder"][@id="threadslist"]',
             }
         },
+        {name: 'xda-developers',
+            url: "^http://forum\\.xda-developers\\.com/",
+            nextLink: "//td[@class='alt1']/a[@rel='next']",
+            autopager: {
+                pageElement: "//table[@id='threadslist'] | //div[@id='posts']",
+                replaceE: "//div[@class='pagenav']/table[@class='pagenavControls']",
+                separatorReal: false
+            }
+        }, 
         {name: '极限社区',
             url: '^http://bbs\\.themex\\.net/',
             nextLink: '//a[@rel="next"]',
@@ -817,10 +818,13 @@
             }
         },
         {name: 'pconline',
-            url: '^http://itbbs\\.pconline\\.com\\.cn/diy/',
-            nextLink: '//a[@class="next"]',
-            pageElement: '//table[@class="posts"] | id("post_list")',
-            exampleUrl: 'http://itbbs.pconline.com.cn/diy/f250.html',
+            url: '^http://[a-z]+\\.pconline\\.com\\.cn/',
+            nextLink: ['//a[@class="viewAll"][text()="在本页浏览全文"]', 'css;.pconline_page > a.next'],
+            autopager: {
+                pageElement: '//div[@class="content"] | //table[@class="posts"] | id("post_list")',
+                stylish: 'div.pconline_page.pageLast { display:none; }'
+            },
+            exampleUrl: 'http://diy.pconline.com.cn/377/3774616.html',
         },
         {name: '糗事百科',
             url: '^http://www\\.qiushibaike\\.com/',
@@ -2158,12 +2162,31 @@
 
     //统配规则..用来灭掉一些DZ.或者phpwind论坛系统..此组规则..优先级自动降为最低..
     var SITEINFO_TP=[
+        {name: 'Discuz 论坛 - 搜索',
+            url: '^https?://bbs\\.[a-z]+\\.cn/search\\.php\\?mod=forum',
+            preLink: '//div[@class="pages" or @class="pg"]/descendant::a[@class="prev"][@href]',
+            nextLink: '//div[@class="pages" or @class="pg"]/descendant::a[@class="next" or @class="nxt"][@href]',
+            autopager: {
+                pageElement:'//div[@id="threadlist"]',
+                replaceE: '//div[@class="pg"][child::a[@class="nxt"]]'
+            }
+        },
+        {name: "Discuz 论坛 - 导读",
+            url: "^https?://bbs\\.[a-z]+\\.cn/forum\\.php\\?mod=guide",
+            preLink: '//div[@class="pages" or @class="pg"]/descendant::a[@class="prev"][@href]',
+            nextLink: '//div[@class="pages" or @class="pg"]/descendant::a[@class="next" or @class="nxt"][@href]',
+            autopager: {
+                pageElement: "//div[@id='postlist'] | //form[@method='post'][@name] | //div[@id='threadlist']/div[@class='bm_c']",
+                replaceE: '//div[@class="pg"][child::a[@class="nxt"]]'
+            }
+        },
         {name: 'Discuz论坛列表',
             url:/^https?:\/\/(?:www\.[^\/]+\/|[^\/]+\/(?:bbs\/)?)(?:(?:forum)|(?:showforum)|(?:viewforum)|(?:forumdisplay))+/i,
             preLink:'//div[@class="pages" or @class="pg"]/descendant::a[@class="prev"][@href]',
             nextLink:'//div[@class="pages" or @class="pg"]/descendant::a[@class="next" or @class="nxt"][@href] | //div[@class="p_bar"]/a[@class="p_curpage"]/following-sibling::a[@class="p_num"]',
             autopager:{
-                pageElement:'//form[@method="post"][@name] | //div[@id="postlist"]'
+                pageElement:'//form[@method="post"][@name] | //div[@id="postlist"]',
+                replaceE: '//div[@class="pages" or @class="pg"][child::a[@class="next" or @class="nxt"][@href]]'
             }
         },
         {name: 'Discuz论坛帖子',
@@ -2172,6 +2195,7 @@
             nextLink:'//div[@class="pages" or @class="pg"]/descendant::a[@class="next" or @class="nxt"][@href] | //div[@class="p_bar"]/descendant::a[text()="››"]',
             autopager:{
                 pageElement:'//div[@id="postlist"] | //form[@method="post"][@name]',
+                replaceE: '//div[@class="pages" or @class="pg"][child::a[@class="next" or @class="nxt"][@href]]',
                 filter: function(pages){
                     // 回复后插入到最后一页
                     var doc = unsafeWindow.document;
@@ -2570,6 +2594,8 @@
     (function(){
         var root = this;
 
+        var nativeIsArray = Array.isArray;
+
         // Create a safe reference to the Underscore object for use below.
         var _ = function(obj){
             if(obj instanceof _) return obj;
@@ -2578,6 +2604,18 @@
         };
 
         root._ = _;
+
+        var toString = Object.prototype.toString;
+
+        _.isArray = nativeIsArray || function(obj) {
+            return toString.call(obj) == '[object Array]';
+        };
+
+        ['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp'].forEach(function(name){
+            _['is' + name] = function(obj) {
+                return toString.call(obj) == '[object ' + name + ']';
+            };
+        });
 
         // Return the first value which passes a truth test. Aliased as `detect`.
         _.find = function(obj, iterator, context){
@@ -3256,7 +3294,6 @@
                 return;
             }
 
-            console.log(SSS)
             if (SSS.a_stylish) {  // 插入自定义样式
                 GM_addStyle(SSS.a_stylish);
             }
@@ -3279,9 +3316,8 @@
 
             var doc, win;
 
-            function XHRLoaded() {
-                if (this.readyState != 4) return;
-                var str = this.responseText;
+            function XHRLoaded(req) {
+                var str = req.responseText;
                 doc = win = createDocumentByString(str);
 
                 if (!doc) {
@@ -3377,7 +3413,16 @@
                 working = true;
                 floatWO.updateColor('loading');
                 floatWO.CmodeIcon('show');
-                SSS.a_useiframe ? iframeRquest(nextlink) : xhttpRequest(nextlink, XHRLoaded);
+                if (SSS.a_useiframe) {
+                    iframeRquest(nextlink);
+                } else {
+                    GM_xmlhttpRequest({
+                        method: "GET",
+                        url: nextlink,
+                        overrideMimeType: 'text/html; charset=' + document.characterSet,
+                        onload: XHRLoaded
+                    });
+                }
             }
 
             var ipagesmode = SSS.a_ipages[0];
@@ -3826,8 +3871,13 @@
             //返回,剩余高度是总高度的比值.
             var relatedObj_0, relatedObj_1;
             if (SSS.a_relatedObj) {
-                relatedObj_0 = SSS.a_relatedObj[0];
-                relatedObj_1 = SSS.a_relatedObj[1];
+                if (_.isArray(SSS.a_relatedObj)) {
+                    relatedObj_0 = SSS.a_relatedObj[0];
+                    relatedObj_1 = SSS.a_relatedObj[1];
+                } else {
+                    relatedObj_0 = SSS.a_pageElement;
+                    relatedObj_1 = 'bottom';
+                }
             }
 
             function getRemain() {
@@ -3988,46 +4038,50 @@
                     document.body.appendChild(iframe);
                 };
             } else {
-                xhttpRequest(nextlink, function() {
-                    if (this.readyState != 4) return;
-                    var str = this.responseText;
-                    var doc = createDocumentByString(str);
-                    if (!doc) {
-                        C.error('文档对象创建失败!');
-                        return;
-                    };
-                    var images = doc.images;
-                    var isl = images.length;
-                    var img;
-                    var iarray = [];
-                    var i;
-                    var existSRC = {};
-                    var isrc;
-                    for (i = isl - 1; i >= 0; i--) {
-                        isrc = images[i].getAttribute('src');
-                        if (!isrc || existSRC[isrc]) {
-                            continue;
-                        } else {
-                            existSRC[isrc] = true;
-                        }
-                        img = document.createElement('img');
-                        img.src = isrc;
-                        iarray.push(img);
-                    }
-                    if (SSS.viewcontent) {
-                        var containter = cContainer();
-                        var div = containter.div;
-                        i = iarray.length;
-                        containter.div2.innerHTML = '预读取图片张数: ' + '<b>' + i + '</b>' + '<br />' + '预读网址: ' + '<b>' + nextlink + '</b>';
-                        for (i -= 1; i >= 0; i--) {
-                            div.appendChild(iarray[i]);
+                GM_xmlhttpRequest({
+                    method: "GET",
+                    url: nextlink,
+                    overrideMimeType: 'text/html; charset=' + document.characterSet,
+                    onload: function(req) {
+                        var str = req.responseText;
+                        var doc = createDocumentByString(str);
+                        if (!doc) {
+                            C.error('文档对象创建失败!');
+                            return;
                         };
-                    };
-                    floatWO.updateColor('prefetcher');
-                    floatWO.loadedIcon('show');
-                    floatWO.CmodeIcon('hide');
+                        var images = doc.images;
+                        var isl = images.length;
+                        var img;
+                        var iarray = [];
+                        var i;
+                        var existSRC = {};
+                        var isrc;
+                        for (i = isl - 1; i >= 0; i--) {
+                            isrc = images[i].getAttribute('src');
+                            if (!isrc || existSRC[isrc]) {
+                                continue;
+                            } else {
+                                existSRC[isrc] = true;
+                            }
+                            img = document.createElement('img');
+                            img.src = isrc;
+                            iarray.push(img);
+                        }
+                        if (SSS.viewcontent) {
+                            var containter = cContainer();
+                            var div = containter.div;
+                            i = iarray.length;
+                            containter.div2.innerHTML = '预读取图片张数: ' + '<b>' + i + '</b>' + '<br />' + '预读网址: ' + '<b>' + nextlink + '</b>';
+                            for (i -= 1; i >= 0; i--) {
+                                div.appendChild(iarray[i]);
+                            };
+                        };
+                        floatWO.updateColor('prefetcher');
+                        floatWO.loadedIcon('show');
+                        floatWO.CmodeIcon('hide');
+                    }
                 });
-            };
+            }
         }
 
 
@@ -4660,9 +4714,11 @@
             } else if (type == 'function') {
                 ret = selector(doc, win, cplink);
             } else if (selector instanceof Array) {
-                ret = getElement(selector[0], contextNode, doc, win);
-                if(!ret){
-                    ret = getElement(selector[1], contextNode, doc, win);
+                for (var i = 0, l = selector.length; i < l; i++) {
+                    ret = getElement(selector[i], contextNode, doc, win);
+                    if (ret) {
+                        break;
+                    }
                 }
             } else {
                 ret = hrefInc(selector, doc, win);
@@ -4676,35 +4732,58 @@
     // ============================  functions  =======================================
 
     function gmCompatible() { // GM 兼容
-
-        if (typeof GM_getValue === "undefined" || GM_getValue("a", "b") === undefined) {
-            GM_setValue = function(key, value) {
-                window.localStorage.setItem(key, value);
-            };
+        if (typeof GM_getValue != "undefined" && GM_getValue("a", "b") != undefined) {
+            return;
         }
 
-        if (typeof GM_getValue === "undefined" || GM_getValue("a", "b") === undefined) {
-            GM_getValue = function(key, defaultValue) {
-                var value = window.localStorage.getItem(key);
-                if (value == null) value = defaultValue;
-                else if (value == 'true') value = true;
-                else if (value == 'false') value = false;
-                return value;
+        GM_getValue = function(key, defaultValue) {
+            var value = window.localStorage.getItem(key);
+            if (value == null) value = defaultValue;
+            else if (value == 'true') value = true;
+            else if (value == 'false') value = false;
+            return value;
+        };
+        GM_setValue = function(key, value) {
+            window.localStorage.setItem(key, value);
+        };
+        GM_getValue = function(key, defaultValue) {
+            var value = window.localStorage.getItem(key);
+            if (value == null) value = defaultValue;
+            else if (value == 'true') value = true;
+            else if (value == 'false') value = false;
+            return value;
+        };
+        GM_registerMenuCommand = function() {};
+        GM_xmlhttpRequest = function(opt) {
+            var req = new XMLHttpRequest();
+            req.open('GET', opt.url, true);
+            req.overrideMimeType(opt.overrideMimeType);
+            req.onreadystatechange = function (aEvt) {
+                if (req.readyState == 4) {
+                    if (req.status == 200) {
+                        opt.onload(req)
+                    }
+                    else {
+                        opt.onerror()
+                    }
+                }
             }
-        }
-
-        if (typeof GM_addStyle === 'undefined') {
-            GM_addStyle = function(cssStr) {
-                var s = document.createElement("style");
-                s.type = "text/css";
-                s.textContent = cssStr;
-                document.head.appendChild(s);
-            };
-        }
-
-        if (typeof GM_registerMenuCommand === 'undefined') {
-            GM_registerMenuCommand = function() {};
-        }
+            req.send(null)
+        };
+        createHTMLDocumentByString = function(str) {
+            if (document.documentElement.nodeName != 'HTML') {
+                return new DOMParser().parseFromString(str, 'application/xhtml+xml')
+            }
+            // FIXME
+            var html = str.replace(/<script(?:[ \t\r\n][^>]*)?>[\S\s]*?<\/script[ \t\r\n]*>|<\/?(?:i?frame|html|script|object)(?:[ \t\r\n][^<>]*)?>/gi, ' ')
+            var htmlDoc = document.implementation.createHTMLDocument ?
+            document.implementation.createHTMLDocument('apfc') :
+            document.implementation.createDocument(null, 'html', null)
+            var range = document.createRange()
+            range.selectNodeContents(document.documentElement)
+            htmlDoc.documentElement.appendChild(range.createContextualFragment(html))
+            return htmlDoc
+        };
     }
 
     function browserCompatible() {
@@ -4832,14 +4911,6 @@
         noticeDivto = setTimeout(function() {
             noticeDiv.style.display = 'none';
         }, 2000);
-    }
-
-    function xhttpRequest(link, callback) {
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = callback;
-        xhr.open("GET", link, true);
-        xhr.overrideMimeType('text/html; charset=' + document.characterSet);
-        xhr.send(null);
     }
 
     function $C(type, atArr, inner, action, listen) {

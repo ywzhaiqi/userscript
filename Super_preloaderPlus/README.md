@@ -22,13 +22,24 @@ Firefox（Greasemonkey/Scriptish），Chrome（原生/Tampermonkey），Maxthon�
 
 ### 具体修改说明
 
- - 修正 Discuz论坛帖子下一页必须使用 iframe 才能显示头像图片的问题
- - 修正内容为表格时分隔条错位的情况
- - 新增图标状态的显示
- - 新增页面添加后 Super_preloaderPageLoaded 事件
- - 新增 `documentFilter(doc, requestURL, info)`: 对下一页 document 对象进行提前处理，例如增加图片的显示。
- - 新增 `filter(pages)`: 对新增页面后的处理。
- - 小说阅读脚本启用后本脚本不再启用。
+ - 修正：Discuz论坛帖子下一页必须使用 iframe 才能显示头像图片的问题。
+ - 修正：内容为表格时分隔条错位的情况。
+ - 修改了代码结构，删除了部分内容。
+ - 修改：chrome 下用 iframe 加载下一页式的调用。 
+ - 修改：原 xhttpRequest 改为 GM_xmlhttpRequest，可让一些站点在 Noscript 运行。
+ - 修改：`relatedObj: true,` 则会根据规则的 `pageElement` 来计算页面底部。
+ - 新增：新增或修正了诸多规则，增加了一些规则的 preLink。
+ - 新增：新增了一些规则的 `replaceE`，可替换导航栏为下一页的导航栏。
+ - 新增：分隔条显示实际页数（改自lastDream2013），参数 `separatorReal` 可控制各个站点是否显示。
+ - 新增：图标状态的显示。
+ - 新增：下一页添加后触发 `Super_preloaderPageLoaded` 事件。
+ - 新增：`nextLink` 参数的数组形式。
+ - 新增：`newIframe` 参数，每个下一页都使用新的 iframe，可以解决一些下一页按钮点击的问题。详见下面的使用注意。
+ - 新增：`stylish` 参数，可对该站点样式进行修正。
+ - 新增：`startFilter` 参数，找到规则后可先对页面进行提前处理。
+ - 新增：`documentFilter(doc, requestURL, info)` 参数，对下一页 document 对象进行提前处理。
+ - 新增：`filter(pages)` 参数，对新增页面后的处理。
+ - 新增：小说阅读脚本启用后本脚本不再启用。
  - 提高速度，从以下几方面着手
      - 加入 @exclude
      - 禁用自动查找上一页功能，调用的时候才查找。
@@ -37,12 +48,13 @@ Firefox（Greasemonkey/Scriptish），Chrome（原生/Tampermonkey），Maxthon�
 
 ### 独有的功能
 
- - Google 搜索下一页图片（视频）的显示（非 iframe）
- - 百度贴吧列表的点击放大或播放等
+ - Google 搜索下一页图片（视频）的显示，内置去除重定向
+ - 百度贴吧下一页的点击放大，回复按钮可用
  - youtube 搜索页面下一页图片的显示
  - VeryCD 搜索页面图片的显示（非 iframe）
  - 天涯论坛帖子，修复只看楼主
  - 抽屉新热榜修复图片，推荐、收藏、评论点击
+ - 小米论坛下一页第一层的修正
 
 ### 其它说明
 
@@ -74,6 +86,8 @@ Firefox（Greasemonkey/Scriptish），Chrome（原生/Tampermonkey），Maxthon�
 
 ### 更新
 
+ - 2013年11月08日
+     - [版本 5.5.0](http://userscripts.org/scripts/diff/178900/666293)。新增一些规则的replaceE。调整 Discuz 论坛的搜索或导读。"中关村在线"和"太平洋电脑网" 的阅读全部。新增 xda-developers 规则。改为 GM_xmlhttpRequest。
  - 2013年11月07日
      - [版本 5.4.8](http://userscripts.org/scripts/diff/178900/665799)。修正 Chrome 下去除重定向偶尔无作用的问题。
  - 2013年11月05日
