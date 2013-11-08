@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.0
+// @version        3.1
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi@gmail.com
 // @description    批量导出百度盘的下载链接
@@ -17,6 +17,7 @@
 // @include        http://yun.baidu.com/share/home*
 // @include        http://yun.baidu.com/pcloud/album/info*
 // @include        http://pan.baidu.com/disk/home*
+// @exclude        http://yun.baidu.com/share/home*&view=follow
 // @run-at         document-end
 // ==/UserScript==
 
@@ -95,18 +96,23 @@ var App = {
         unsafeWindow.navigator.__defineGetter__('platform', function(){ return '' });
     },
     shareOnePageProcessor: function() {
-        // By Yulei  Share easy downloads helper
-        $('#downFileButtom')
-            .attr({
-                "href": $.parseJSON(disk.util.ViewShareUtils.viewShareData).dlink
-            })
-            .find('b').css('color', 'red');
+        var G = {uk: FileUtils.share_uk,shareid: FileUtils.share_id,fid_list: "[" + disk.util.ViewShareUtils.fsId + "]"};
+
+        $.getJSON(disk.api.RestAPI.normalize(disk.api.RestAPI.SHARE_GET_DLINK, FileUtils.bdstoken), G, function(result) {
+            if (result && result.errno == 0 && result.dlink) {
+                $('#downFileButtom')
+                    .attr({
+                        "href": result.dlink
+                    })
+                    .find('b').css('color', 'red');
+            }
+        });
     },
     shareHomePageProcessor: function() {
         var self = this;
 
         $('section.flag10-fns').attr('title', '双击复制所有链接')
-            [0].addEventListener('click', function(){
+            [0].addEventListener('dblclick', function(){
                 self.copyAllLinks();
             }, false);
     },
