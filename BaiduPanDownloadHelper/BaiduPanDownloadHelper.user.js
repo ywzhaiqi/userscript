@@ -1,14 +1,17 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.1
+// @version        3.2
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi@gmail.com
 // @description    批量导出百度盘的下载链接
+// @grant          GM_getValue
+// @grant          GM_setValue
+// @grant          GM_addStyle
 // @grant          GM_setClipboard
 // @grant          GM_openInTab
 // @grant          GM_xmlhttpRequest
-// @grant          GM_addStyle
+// @grant          GM_registerMenuCommand
 // @homepageURL    http://userscripts.org/scripts/show/162138
 // @updateURL      http://userscripts.org/scripts/source/162138.meta.js
 // @downloadURL    https://userscripts.org/scripts/source/162138.user.js
@@ -94,6 +97,16 @@ var App = {
 
         // 去掉云管家提示，来自 Crack Url Wait Code Login For Chrome
         unsafeWindow.navigator.__defineGetter__('platform', function(){ return '' });
+
+        // 注册菜单
+        GM_registerMenuCommand('设置 Aria2 JSON-RPC Path', function(){
+            var aria2_jsonrpc = GM_getValue('aria2_jsonrpc') || Config.aria2_jsonrpc;
+            var newPath = prompt('Aria2 JSON-RPC Path', aria2_jsonrpc);
+            if (newPath) {
+                GM_setValue('aria2_jsonrpc', newPath);
+                Config.aria2_jsonrpc = newPath;
+            }
+        });
     },
     shareOnePageProcessor: function() {
         var G = {uk: FileUtils.share_uk,shareid: FileUtils.share_id,fid_list: "[" + disk.util.ViewShareUtils.fsId + "]"};
@@ -339,6 +352,12 @@ var App = {
                 } else {
                     aria2.addUri(item.dlink, {out: item.server_filename});
                 }
+            });
+
+            Utilities.useToast({
+                toastMode: disk.ui.Toast.MODE_CAUTION,
+                msg: '添加中...到YAAW界面查看是否添加成功',
+                sticky: false
             });
         };
 
