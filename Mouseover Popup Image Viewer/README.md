@@ -1,0 +1,47 @@
+
+Mouseover Popup Image Viewer
+============================
+
+[Mouseover Popup Image Viewer](http://userscripts.org/scripts/show/109262), 在图片上鼠标悬停放大脚本。
+
+**官方说明与规则**：[MPIV: Host Rules How-To](http://w9p.co/userscripts/mpiv/host_rules.html)
+
+
+规则
+----
+
+非内置，需要手动添加
+
+### 来自官方
+
+百度贴吧
+
+	{"r":"(hiphotos|imgsrc)\\.baidu\\.com/(.+?)/.+?([0-9a-f]{40})","s":"http://$1.baidu.com/$2/pic/item/$3.jpg"}
+
+新浪微博
+
+	{"r":"(ww[0-9]\\.sinaimg\\.cn)/(thumbnail|square)/([a-z0-9]+)", "s":"http://$1/mw1024/$3.jpg"}
+
+Userstyles.org
+
+	{"r":"userstyles\\.org/styles/\\d+/", "q":"a[title]"}
+
+Google Play (Android apps)
+
+	{"r":"(lh\\d+\\.ggpht\\.com/[^=]+)", "s":"https://$1"}
+
+### 我添加的规则
+
+一部分转自 Imagus 扩展
+
+豆瓣
+
+	{"r": "(img\\d+\\.douban\\.com/)(?:(view/)(?:photo|movie_poster_cover)/(?!large)[^/]+|(icon/u(?=\\d))|[sm](?=pic/))(.*)","s": "return 'http://' + m[1] + (m[2] ? m[2] + 'photo/photo' : ((m[3]||'') + 'l')) + m[4];"}
+
+人人影视
+
+	{"r":"(res\\.yyets\\.com\\/ftp\\/\\d+\\/\\d+)\\/[ms]_(.*)","s":"http://$1/$2"}
+
+淘宝
+
+ 	{"r":"((?:img\\d\\d\\.taobaocdn|g(?:[^.]*\\.?){1,2}?\\.alicdn)\\.com\\/)(?:img\\/|tps\\/http:\\/\\/img\\d\\d+\\.taobaocdn\\.com\\/)?((?:imgextra|bao\\/uploaded)\\/i\\d+\\/[^!]+![^.]+\\.[^_]+)_.+","s":"http://$1$2"} 
