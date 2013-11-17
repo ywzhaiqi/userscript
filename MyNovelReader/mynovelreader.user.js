@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        3.6.8
+// @version        3.7.2
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
@@ -105,6 +105,7 @@
 // @include        http://www.qb5.com/xiaoshuo/*/*/*.html
 // @include        http://www.23us.com/html/*/*/*.html
 // @include        http://www.xs222.com/html/*/*/*.html
+// @include        http://www.bixiage.com/*/*/*/*.html
 // @include        http://www.ranwenxiaoshuo.com/files/article/html/*/*/*.html
 // @include        http://www.ranwenxiaoshuo.com/*/*-*-*.html
 // @include        http://www.bjxiaoshuo.com/bjxs-*-*/
@@ -121,6 +122,8 @@
 // @include        http://www.free97.cn/book/*/*/*.html
 // @include        http://www.122s.com/book/*/*.html
 // @include        http://www.123du.net/dudu-*/*/*.html
+// @include        http://www.123du.cc/dudu-*/*/*.html
+// @include        http://www.123du.net/book/*/*.html
 // @include        http://www.hwafa.com/*/*.html
 // @include        http://www.qmshu.com/html/*/*/*.html
 // @include        http://dlzw.cc/article-*-*.html
@@ -361,7 +364,12 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             titleReg: /(.*?)-(.*?)-燃文/,
             contentSelector: "#oldtext",
             contentRemove: "div[style], script",
-            contentReplace: /最快更新78小说|\(?百度搜.\)|访问下载tXt小说|百度搜\|索|文\|学|文学全文.字手打|\((&nbsp;)+|牛过中文..hjsm..首发.转载请保留|\[本文来自\]|♠思♥路♣客レ|※五月中文网 5y ※|无错不跳字|最快阅读小说大主宰.*|跟我读Ｈ－u－n 请牢记|非常文学|关闭&lt;广告&gt;|w w.*|”娱乐秀”|更多精彩小[说說].*|高速更新/g
+            contentReplace: [
+                /最快更新78小说|\(?百度搜.\)|访问下载tXt小说|百度搜\|索|文\|学|文学全文.字手打|\((&nbsp;)+|牛过中文..hjsm..首发.转载请保留|\[本文来自\]|♠思♥路♣客レ|※五月中文网 5y ※|无错不跳字|最快阅读小说大主宰.*|跟我读Ｈ－u－n 请牢记|非常文学|关闭&lt;广告&gt;|w w.*|”娱乐秀”|更多精彩小[说說].*|高速更新/g,
+                /\*文學馆\*|文学馆/g,
+                /提供无弹窗全文字在线阅读.*|高速首发.*如果你觉的本章节还不错的话.*/g,
+                /更新快无弹窗纯文字/g,
+            ]
         },
         {siteName: "燃文小说网",
             url: "http://www\\.ranwenxiaoshuo\\.com/files/article/html/\\d+/\\d+/\\d+\\.html|http://www\\.ranwenxiaoshuo\\.com/\\w+/\\w+-\\d+-\\d+\\.html",
@@ -416,7 +424,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             titleReg: /(.*?)最新章节,(.*?)-.*/,
             fixImage: true,
             contentReplace: {
-                "冰火中文\\.|&lt;冰火#中文.*|冰火中文&nbsp;(www.)?binhuo.com|冰.火.中文|绿色小说|lvsexs ": "",
+                "冰火中文.|&lt;冰火#中文.*|冰火中文&nbsp;(www.)?binhuo.com|冰.火.中文|绿色小说|lvsexs ": "",
                 "([^/])www\\.binhuo\\.com": "$1"
             },
             contentPatch: function(fakeStub){
@@ -429,7 +437,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             contentReplace: [
                 /\/\/(?:&nbsp;|访问下载txt小说|高速更新)+\/\//ig,
                 /〖百晓生∷.*〗|无弹窗小说网www.bxs.cc|百晓生文学网|最快阅读小说大主宰，尽在百晓生文学网.*|ww.x.om|欢迎大家来到.*?bxs\.cc|百晓生阅读最新最全的小说.*|百晓生网不少字|站长推荐.*|文字首发|[\[\]\(《].*百晓生.*|百晓生.不跳字|百.晓.生.|关闭.*广告.*|飘天文学|本站域名就是.*|\(.{0,5}小说更快更好.{0,5}\)|(请在)?百度搜索.*|一秒记住.*为您提供精彩小说阅读.|百晓生|全文阅读|¤本站网址：¤|\/\/&nbsp;访问下载txt小说\/\/◎◎|纯站点\\".*值得收藏的/ig,
-                /[\[【].*?[\]】]/ig
+                /[\[【].*?[\]】]|文[学學][馆館]/ig
             ],
         },
         {siteName: "浩奇文学网",
@@ -500,14 +508,16 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             mutationSelector: "#pagecontent",
             mutationChildCount: 2,
             contentRemove: "font",
-            contentReplace: "读零零小说网欢迎您的光临.*",
+            contentReplace: [
+                "读零零小说网欢迎您的光临.*",
+                "，好看的小说:"
+            ],
             fixImage: true,
             checkSection: true
         },
         {siteName: "奇书屋",
             url: "http://www.qishuwu.com/\\w+/\\d+/",
             titleReg: "(.*)_(.*)_.*_奇书屋",
-
         },
         {siteName: "17k小说网",
             url: /^http:\/\/\S+\.17k\.com\/chapter\/\S+\/\d+\.html$/,
@@ -536,8 +546,12 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             contentSelector: ".t_f:first"
         },
         {siteName: "123du 小说",
-            url: /^http:\/\/www\.123du\.net\/dudu-\d+\/\d+\/\d+\.html/,
-            contentSelector: "#content",
+            url: /^http:\/\/www\.123du\.(?:net|cc)\//,
+            titleReg: "(.*)-(.*) 百家乐",
+            titlePos: 1,
+            contentSelector: "#content, #contents",
+            contentReplace: "一秒记住.www.*|小说最新更新，来123读书www.123du.net",
+            contentRemove: "a",
             contentPatch: function(fakeStub){
                 var content = fakeStub.find("#DivContentBG").html().match(/第\d*页([\s\S]*)一秒记住/)[1];
                 $('<div id="content"/>').html(content).appendTo(fakeStub.find('body'));
@@ -626,7 +640,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         {siteName: "手牵手小说网",
             url: "^http://www\\.sqsxs\\.com/\\d+/\\d+/\\d+\\.html",
             titleReg: "(.*?)最新章节_\\S* (.*)_手牵手小说网",
-            contentReplace: "访问下载txt小说.百度搜.|免费电子书下载|\\(百度搜\\)|『文學吧x吧.』"
+            contentReplace: "访问下载txt小说.百度搜.|免费电子书下载|\\(百度搜\\)|『文學吧x吧.』|¤本站网址：¤"
         },
         {siteName: "飞卢小说网",
             url: "^http://b\\.faloo\\.com/p/\\d+/\\d+\\.html",
@@ -654,6 +668,19 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 var realtitle = temp.replace(/第.*卷\s/,'');
                 fakeStub.find('title').html(realtitle);
             }
+        },
+        {siteName: '笔下阁',
+            url: "^http://www\\.bixiage\\.com/\\w+/\\d+/\\d+/\\d+\\.html",
+            titleReg: "(.*)最新章节免费在线阅读_(.*)_笔下阁",
+            indexSelector: ".read_tools a:contains('返回目录')",
+            prevSelector: ".read_tools a:contains('上一页')",
+            nextSelector: ".read_tools a:contains('下一页')",
+            contentReplace: [
+                "看更新最快的.*www.bixiage.com",
+                "笔下阁为您提供全文字小说.*",
+                "如果你觉得笔下阁不错.*",
+                "本篇是小说.*章节内容，如果你发现内容错误.*"
+            ]
         },
         // 内容需要js运行。
         {siteName: "读读看",
@@ -711,12 +738,16 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         },
         {siteName: "3Z中文网",
             url: "^http://www\\.zzzcn\\.com\\/(3z\\d+/\\d+\\/|modules\\/article\\/App\\.php\\?aid=\\d+&cid=\\d+){1}$",
-            titleReg: "(.*?)-(.*)TXT下载",
+            // titleReg: "(.*?)-(.*)TXT下载",
             contentSelector: "#content3zcn",
             indexSelector: "a:contains('返回目录')",
             prevSelector: "a:contains('上 一 页')",
             nextSelector: "a:contains('下 一 页'), a:contains('返回书架')",
-            contentReplace: "一秒记住.*为您提供精彩小说阅读。",
+            contentReplace: [
+                /[{(][a-z\/.]+(?:首发文字|更新超快)[})]/ig,
+                "手机小说站点（wap.zzzcn.com）",
+                "一秒记住.*为您提供精彩小说阅读。", 
+            ],
             contentPatch: function(fakeStub){
                 fakeStub.find("a:contains('返回书架')").html("下 一 页").attr("href", fakeStub.find("a:contains('返回目录')").attr("href"));
                 fakeStub.find("#content3zcn").find(".titlePos, font.tips, a").remove();
@@ -838,8 +869,18 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         {siteName: "豌豆文学网",
             url: "^http://www.wandoou.com/book/\\d+/\\d+\\.html",
             titleReg: "(.*?)最新章节-(.*?)-",
-            contentReplace: "（豌豆.文.学网.*）|（<a.*www.WandOOu.*）|[/\\]*豌豆文学网.*wandoou.com[/\\]*|[レ★]+.*(?:请支持)?豌.?豆.?文.?学网.*"
+            contentReplace: [
+                /[レ★]+.*(?:请支持)?豌.?豆.?文.?学网.*[レ★]+/ig,
+                /[/\\{]*豌.?豆.?文.?学.?网.*(?:高速更新|\/|\\|})/ig,
+                /[（(【]豌.?豆.?文.?学.*[）)】]/ig,
+                /∷更新快∷∷纯文字∷/ig
+            ]
         },
+        // {siteName: "567中文",
+        //     url: "http://www.xntk.net/book_j.php",
+        //     titleReg: "(.*),(.*)- 567中文",
+        //     contentSelector: "#booktext"
+        // },
         {siteName: "看书啦",
             url: "^http://www.kanshu.la/book/\\w+/\\d+\\.shtml",
             titleReg: "(.*)-(.*)-看书啦",
@@ -1159,33 +1200,41 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 
             return curTitle;
         },
-        getContent: function(callback){
-            if(callback === undefined){
-                callback = function() {};
+        checkContent: function() {
+            var $content;
+
+            var $ajaxScript = this.$doc.find('.' + READER_AJAX);
+            if ($ajaxScript.length > 0) {
+                return true;
             }
 
-            var content, contentValue;
             if(this.info.contentSelector){
-                content = this.$doc.find(this.info.contentSelector);
-            }else{
+                $content = this.$doc.find(this.info.contentSelector);
+            }else{  // 按照顺序选取
                 var selectors = rule.contentSelectors;
-                // 按照顺序选取
                 for(var i = 0, l = selectors.length; i < l; i++){
-                    content = this.$doc.find(selectors[i]);
-                    if(content.length === 1){
+                    $content = this.$doc.find(selectors[i]);
+                    if($content.length > 0){
                         debug("  自动查找内容选择器: " + selectors[i]);
                         break;
                     }
                 }
             }
 
-            if(content.length === 0){
-                this.isTheEnd = true;
-                this.nextUrl = null;
-                debug("没有找到内容");
-                callback(this);
-                return;
+            this.$content = $content[0] ? $content : null;
+
+            return this.$content;
+        },
+        getContent: function(callback){
+            if(callback === undefined){
+                callback = function() {};
             }
+
+            if (!this.$content) {
+                this.$content = this.checkContent();
+            }
+
+            if (!this.$content) return;
 
             // 特殊处理，例如起点
             var self = this;
@@ -1210,7 +1259,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                     }
                 });
             }else{
-                this.content = this.handleContentText(content.html(), this.info);
+                this.content = this.handleContentText(this.$content.html(), this.info);
                 callback(this);
             }
         },
@@ -1244,16 +1293,17 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             // info.contentReplace
             var contentReplace = info.contentReplace;
             if (contentReplace) {
-                var replace = function(rep){
+                var replaceText = function(rep){
                     switch(true) {
                         case _.isRegExp(rep):
                             text = text.replace(rep, '');
                             break;
                         case _.isString(rep):
-                            text = text.replace(new RegExp(rep, 'ig'), '');
+                            var regexp = new RegExp(rep, 'ig');
+                            text = text.replace(regexp, '');
                             break
                         case _.isArray(rep):
-                            rep.forEach(function(r){ replace(r) });
+                            rep.forEach(function(r){ replaceText(r) });
                             break;
                         case _.isObject(rep):
                             var key;
@@ -1264,7 +1314,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                     }
                 };
 
-                replace(contentReplace);
+                replaceText(contentReplace);
             }
 
             if(info){
@@ -1474,7 +1524,8 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             if(App.isLaunched) return;
             App.isLaunched = true;
 
-            if(App.isAutoLaunch){
+            var isAutoLaunch = App.checkIsAutoLaunch();
+            if(isAutoLaunch){
                 App.site = App.getCurSiteInfo();
 
                 if(App.site.mutationSelector){  // 特殊的启动：等待js把内容生成完成
@@ -1490,7 +1541,20 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         },
         getCurSiteInfo: function (){
             var locationHref = location.href;
-            var info = _.find(rule.specialSite, function(x){ return toRE(x.url).test(locationHref); });
+            var rules;
+            try {
+                rules = eval(Config.customSiteinfo);
+            } catch(e) {
+                console.error('载入自定义站点配置错误')
+            }
+
+            if (!_.isArray(rules)) {
+                rules = [];
+            }
+            
+            rules = rules.concat(rule.specialSite);
+
+            var info = _.find(rules, function(x){ return toRE(x.url).test(locationHref); });
             if(!info){
                 info = {};
             }
@@ -1558,20 +1622,19 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             }
 
             var parser = new Parser(App.site, document);
-            App.parsedPages[window.location.href.replace(/\/$/, '')] = true;
-
-            parser.getAll(function(parser){
-                if (parser.content) {
+            var hasContent = !!parser.checkContent();
+            if (hasContent) {
+                document.body.setAttribute("name", "MyNovelReader");
+                App.parsedPages[window.location.href.replace(/\/$/, '')] = true;
+                parser.getAll(function(parser){
                     App.processPage(parser);
-                } else {
-                    console.error("错误：没有找到下一页的内容");
-                }
-            });
+                });
+            } else {
+                console.error("错误：没有找到下一页的内容");
+            }
         },
         processPage: function(parser){
             App.prepDocument();
-
-            UI.init();
 
             App.initDocument(parser);
 
@@ -1608,10 +1671,8 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 
             App.registerControls();
             
-            // 初始化
-            UI.toggleQuietMode();  // 初始化安静模式
-            UI.hideMenuList(Config.menu_list_hiddden);  // 初始化章节列表是否隐藏
-            UI.hidePreferencesButton(Config.hide_preferences_button);  // 初始化设置按钮是否隐藏
+            // UI 的初始化
+            UI.init();
 
             App.curFocusElement = $("article:first").get(0);  // 初始化当前关注的 element
 
@@ -1661,7 +1722,6 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         initDocument: function(parser){
             document.title = parser.docTitle;
             window.name = "MyNovelReader";
-            document.body.setAttribute("name", "MyNovelReader");
             document.body.innerHTML = nano('\
                 <div id="container">\
                     <div id="menu-bar" title="点击显示隐藏章节列表"></div>\
@@ -1764,10 +1824,12 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 
             App.$doc.on("keydown", App.keydown);
 
-            App.$content.on("dblclick", function(){
-                App.pauseHandler();
-            });
-
+            if (Config.dblclickPause) {
+                App.$content.on("dblclick", function(){
+                    App.pauseHandler();
+                });
+            }
+            
             // 左侧章节列表
             App.$menuHeader.click(function(){
                 App.copyCurTitle();
@@ -1832,7 +1894,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                     break;
                 case 39: // right arrow
                     if(App.getRemain() === 0){
-                        location.href = App.requestUrl;
+                        location.href = App.lastRequestUrl || App.requestUrl;
                     } else {
                         App.scrollToArticle(App.curFocusElement.nextSibling || App.$doc.height());
                     }
@@ -1930,6 +1992,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         doRequest: function(){
             App.working = true;
             var nextUrl = App.requestUrl;
+            App.lastRequestUrl = App.requestUrl;
 
             if(nextUrl && !App.isTheEnd && !(nextUrl in App.parsedPages)){
                 App.parsedPages[nextUrl] = true;
@@ -1960,7 +2023,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 method: "GET",
                 overrideMimeType: "text/html;charset=" + document.characterSet,
                 onload: function(res){
-                    var doc = parseHTML(res.responseText);
+                    var doc = createDocumentByString(res.responseText);
                     App.loaded(doc);
                 }
             });
@@ -2085,6 +2148,13 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             GM_setValue("add_nextpage_to_history", bool);
         },
 
+        get dblclickPause() {
+            return this._getBooleanConfig('dblclick_pause', true);
+        },
+        set dblclickPause(bool) {
+            GM_setValue('dblclick_pause', bool);
+        },
+
         get remain_height() {  // 距离底部多少高度（px）开始加载下一页
             if(!this._remain_height){
                 this._remain_height = parseInt(GM_getValue("remain_height"), 10) || 1000;
@@ -2129,6 +2199,13 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         },
         set extra_css(val) {
             GM_setValue("extra_css", val);
+        },
+
+        get customSiteinfo() {
+            return GM_getValue('custom_siteinfo') || '[]';
+        },
+        set customSiteinfo(val) {
+            GM_setValue('custom_siteinfo', val);
         },
 
         get skin_name() {
@@ -2233,6 +2310,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             "夜间模式": "body { color: #e3e3e3; background: #2d2d2d; } #preferencesBtn { background: white; }",
             "橙色背景": "body { color: #24272c; background: #FEF0E1; }",
             "绿色背景": "body { color: #333; background: #d8e2c8; }",
+            "绿色背景2": "body { color: #333; background: #CCE8CF; }",
             "蓝色背景": "body { color: #333; background: #E7F4FE; }",
             "棕黄背景": "body { color: #333; background: #C2A886; }",
             "经典皮肤": "body { color: #333; background-color: #EAEAEE; }\
@@ -2240,20 +2318,22 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         },
 
         init: function(){
-            UI.addStyle();
-
-            UI.fixMobile();
-        },
-        addStyle: function(){
             UI.refreshMainStyle();
-
-            if(Config.hide_footer_nav){
-                UI.hideFooterNavStyle(true);
-            }
 
             UI.refreshSkinStyle(Config.skin_name);
 
             UI.refreshExtraStyle(Config.extra_css);
+
+            UI.fixMobile();
+
+            // 初始化是否隐藏
+            if(Config.hide_footer_nav){
+                UI.hideFooterNavStyle(true);
+            }
+
+            // UI.toggleQuietMode();  // 初始化安静模式
+            UI.hideMenuList(Config.menu_list_hiddden);  // 初始化章节列表是否隐藏
+            UI.hidePreferencesButton(Config.hide_preferences_button);  // 初始化设置按钮是否隐藏
         },
         refreshMainStyle: function(){
             if(UI.mainStyle){
@@ -2433,6 +2513,8 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 transition: all linear .2s;\
             }\
             textarea {\
+                width: 450px;\
+                height: 100px;\
                 overflow: auto;\
                 vertical-align: top;\
             }\
@@ -2441,7 +2523,8 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 outline: 0;\
                 background: #f5fbfe;\
                 color: #666;\
-            }',
+            }\
+            ',
         preferencesHTML: '\
             <form id="preferences" class="aligned" name="preferences">\
                 <span id="top-buttons">\
@@ -2461,24 +2544,24 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 </div>\
                 <div class="form-row">\
                     <label title="通过快捷键切换">\
-                        <input type="checkbox" id="hide-menu-list"/>默认隐藏左侧 <b>章节列表</b>\
+                        <input type="checkbox" id="hide-menu-list"/>隐藏左侧章节列表\
                     </label>\
                     <label>\
-                        <input type="checkbox" id="hide-menu-bar"/>默认隐藏左侧 <b>导航条</b>\
+                        <input type="checkbox" id="hide-footer-nav"/>隐藏底部导航栏\
+                    </label>\
+                </div>\
+                <div class="form-row">\
+                    <label>\
+                        <input type="checkbox" id="hide-menu-bar"/>隐藏左侧导航条\
                     </label>\
                     <label>\
                         <input type="button" id="setHideMenuListKey" style="color:red" />\
                     </label>\
-                </div>\
-                <div class="form-row">\
                     <label title="通过快捷键切换或在 Greasemonkey 用户脚本命令处打开设置窗口">\
-                        <input type="checkbox" id="hide-preferences-button"/>默认隐藏设置按钮\
+                        <input type="checkbox" id="hide-preferences-button"/>隐藏设置按钮\
                     </label>\
                     <label>\
                         <input type="button" id="openPreferences" style="color:red" />\
-                    </label>\
-                    <label>\
-                        <input type="checkbox" id="hide-footer-nav"/>默认隐藏底部导航栏\
                     </label>\
                 </div>\
                 <div class="form-row" style="display:none">\
@@ -2498,6 +2581,9 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                     </label>\
                     <label>\
                         <input type="checkbox" id="add-nextpage-to-history"/>添加下一页到历史记录\
+                    </label>\
+                    <label>\
+                        <input type="checkbox" id="enable-dblclick-pause"/>双击暂停翻页\
                     </label>\
                 </div>\
                 <div class="form-row">\
@@ -2523,8 +2609,13 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                         <input type="textbox" id="content_width" size="6"/>\
                     </label>\
                 </div>\
-                <div style="text-align:center">\
-                    <textarea id="extra_css" name="extra_css" style="width:450px;" cols="81" rows="7" placeholder="自定义样式"></textarea>\
+                <div>\
+                    自定义样式\
+                    <textarea id="extra_css" name="extra_css" placeholder="自定义样式"></textarea>\
+                </div>\
+                <div>\
+                    自定义站点规则\
+                    <textarea id="custom_siteinfo" placeholder="自定义站点规则" />\
                 </div>\
             </form>',
         preferencesShow: function(event){
@@ -2577,6 +2668,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             $form.find("#hide-footer-nav").get(0).checked = Config.hide_footer_nav;
             $form.find("#hide-preferences-button").get(0).checked = Config.hide_preferences_button;
             $form.find("#add-nextpage-to-history").get(0).checked = Config.addToHistory;
+            $form.find("#enable-dblclick-pause").get(0).checked = Config.dblclickPause;
 
             $form.find("#font-family").get(0).value = Config.font_family;
             $form.find("#font-size").get(0).value = Config.font_size;
@@ -2585,6 +2677,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 
             $form.find("#remain-height").get(0).value = Config.remain_height;
             $form.find("#extra_css").get(0).value = Config.extra_css;
+            $form.find("#custom_siteinfo").get(0).value = Config.customSiteinfo;
 
             // 皮肤
             var $skin = $form.find("#skin");
@@ -2651,6 +2744,9 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                     break;
                 case 'hide-preferences-button':
                     UI.hidePreferencesButton(target.checked);
+                    if (target.checked) {
+                        alert('隐藏后通过快捷键或 Greasemonkey 用户脚本命令处调用');
+                    }
                     break;
                 case 'hide-menu-bar':
                     UI.hideMenuBar(target.checked);
@@ -2676,7 +2772,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             }
         },
         preferencesCloseHandler: function(){
-            App.$content.removeAttr("style");
+            // App.$content.removeAttr("style");
             App.$content.find("h1").css("font-size", "");
 
             UI.hide();
@@ -2689,6 +2785,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             Config.isQuietMode = $form.find("#quietMode").get(0).checked;
             Config.debug = $form.find("#debug").get(0).checked;
             Config.addToHistory = $form.find("#add-nextpage-to-history").get(0).checked;
+            Config.dblclickPause = $form.find("#enable-dblclick-pause").get(0).checked;
 
             Config.skin_name = $form.find("#skin").find("option:selected").text();
             Config.font_family = $form.find("#font-family").get(0).value;
@@ -2709,6 +2806,8 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             var css = $form.find("#extra_css").get(0).value;
             UI.refreshExtraStyle(css);
             Config.extra_css = css;
+
+            Config.customSiteinfo = $form.find("#custom_siteinfo").get(0).value;
 
             UI.hide();
         },
@@ -2758,9 +2857,6 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         }
     }, false);
 
-    // 给 Super_preloaderPlus 判断用
-    App.isAutoLaunch = App.checkIsAutoLaunch();
-    unsafeWindow.MyNovelReader_isAutoLaunch = App.isAutoLaunch;
 
     window.addEventListener("DOMContentLoaded", function(){
         App.init()
@@ -2768,20 +2864,22 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 
     // 再次检查是否运行，用上面的方式在 Chrome 下有时候无法触发事件
     // window.addEventListener("load" 方法在 Chrome 下可能会找不到内容
-    if (isChrome) {
-        function launch_ready(delayedNrTimes) {
-            if (!App.isLaunched && document.readyState != 'complete' && delayedNrTimes < 30) {
-                setTimeout(function() {
-                    launch_ready(delayedNrTimes + 1);
-                }, 100);
-                return;
-            }
+    // 下面的方法也不行，Chrome 的加载方式特殊，会找不到内容。
+    // if (isChrome) {
+    //     function launch_ready(delayedNrTimes) {
+    //         if (!App.isLaunched && document.readyState != 'complete' && !document.body && delayedNrTimes < 30) {
+    //             setTimeout(function() {
+    //                 launch_ready(delayedNrTimes + 1);
+    //             }, 100);
+    //             return;
+    //         }
 
-            App.init();
-        }
+    //         console.log(document.body.innerHTML)
+    //         App.init();
+    //     }
 
-        launch_ready(0);
-    }
+    //     launch_ready(0);
+    // }
 
     // 为了防止 Error: Scriptish access violation: unsafeWindow cannot call: GM_getValue
     //     详见 http://wiki.greasespot.net/Greasemonkey_access_violation
@@ -2848,15 +2946,15 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         return a.href;
     }
 
-    function parseHTML(responseText) {
+    function createDocumentByString(str) {
         var doc
         try {
-             doc = new DOMParser().parseFromString(responseText, "text/html");
+             doc = new DOMParser().parseFromString(str, "text/html");
         }catch(ex){}
 
         if (!doc) {
             doc = document.implementation.createHTMLDocument("");
-            doc.querySelector("html").innerHTML = responseText;
+            doc.querySelector("html").innerHTML = str;
         }
         return doc;
     }
@@ -2897,6 +2995,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
     }\
     article {\
         margin-top: 55px;\
+        word-wrap: break-word;\
     }\
     article h1 {\
         clear: both;\
