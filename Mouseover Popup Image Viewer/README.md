@@ -6,6 +6,7 @@ Mouseover Popup Image Viewer
 
 **官方说明与规则**：[MPIV: Host Rules How-To](http://w9p.co/userscripts/mpiv/host_rules.html)
 
+[卡饭链接](http://bbs.kafan.cn/thread-1654392-1-1.html)
 
 规则
 ----
@@ -32,7 +33,7 @@ Google Play (Android apps)
 
 ### 我添加的规则
 
-部分转自 Imagus 扩展、picview。以下几个规则部分反馈给作者。
+部分转自 Imagus 扩展、picview。以下规则部分反馈给作者。
 
 豆瓣
 
