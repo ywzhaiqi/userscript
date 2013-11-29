@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        3.7.2
+// @version        3.7.8
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
@@ -19,8 +19,7 @@
 // @downloadURL    https://userscripts.org/scripts/source/165951.user.js
 // @require        http://code.jquery.com/jquery-1.9.1.min.js
 // @require        http://underscorejs.org/underscore-min.js
-// @require        https://web-resource.googlecode.com/git/jquery.easing.1.3.js
-// @resource fontawesomeWoff https://web-resource.googlecode.com/git/fontawesome-webfont.woff
+// @resource fontawesomeWoff http://web-resource.googlecode.com/git/fontawesome-webfont.woff
 
 // @include        http://read.qidian.com/*,*.aspx
 // @include        http://www.qdmm.com/BookReader/*,*.aspx
@@ -38,6 +37,7 @@
 // @include        http://shouda8.com/*/*.html
 // @include        http://novel.hongxiu.com/*/*/*.shtml
 // @include        http://www.readnovel.com/novel/*.html
+// http://www.tianyabook.com/*/*.htm
 
 // booklink.me
 // @include        http://www.shumilou.com/*/*.html
@@ -66,8 +66,8 @@
 // @include        http://www.du00.com/read/*/*/*.html
 // @include        http://www.qishuwu.com/*/*/
 // @include        http://www.wandoou.com/book/*/*.html
-// 需特殊处理的论坛
-// @include        http://www.fkzww.net/thread-*.html
+// @include        http://www.6yzw.org/*/*.html
+// http://www.fkzww.net/thread-*.html
 
 // www.sodu.so
 // @include        http://www.jiaodu8.com/*/*/*/*.html
@@ -85,6 +85,8 @@
 // @include        http://www.ziyuge.com/*/*/*/*/*.html
 
 // 其它网站
+// @include        http://www.doulaidu.com/*/*/*.html
+// @include        http://www.d586.com/*/*/
 // @include        http://www.kanshu.la/book/*/*.shtml
 // @include        http://www.wtcxs.com/files/article/html/*/*/*.html
 // @include        http://www.5du5.com/book/*/*/*.html
@@ -223,7 +225,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 
         nextSelector: "a:contains('下一页'), a:contains('下一章'), a:contains('下页')",
         prevSelector: "a:contains('上一页'), a:contains('上一章'), a:contains('上页')",
-        nextUrlIgnore: /index|list|last|end|BuyChapterUnLogin|^javascript:|book\.zongheng\.com\/readmore|\/0\.html/i,  // 忽略的下一页链接，匹配 href
+        nextUrlIgnore: /index|list|last|end|BuyChapterUnLogin|^javascript:|book\.zongheng\.com\/readmore|\/0\.html$/i,  // 忽略的下一页链接，匹配 href
         nextUrlCompare: /\/\d+(_\d+)?\.html?$|\/wcxs-\d+-\d+\/$|chapter-\d+\.html$/i,  // 忽略的下一页链接（特殊），跟上一页比较
 
         // 按顺序匹配，匹配到则停止。econtains 完全相等
@@ -354,6 +356,13 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             contentSelector: "#article",
             contentRemove: "div[style]"
         },
+        // {siteName: "天涯在线书库（部分支持）",
+        //     url: /www\.tianyabook\.com\/.*\.htm/,
+        //     titleSelector: ".max, h1:first",
+        //     bookNameSelector: "td[width='70%'] > a[href$='index.htm']",
+        //     contentSelector: "div > span.middle, #texts",
+        //     contentHandle: false,
+        // },
 
         // {siteName: "易读",
         //     url: "http://www.yi-see.com/read_\\d+_\\d+.html",
@@ -366,9 +375,10 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             contentRemove: "div[style], script",
             contentReplace: [
                 /最快更新78小说|\(?百度搜.\)|访问下载tXt小说|百度搜\|索|文\|学|文学全文.字手打|\((&nbsp;)+|牛过中文..hjsm..首发.转载请保留|\[本文来自\]|♠思♥路♣客レ|※五月中文网 5y ※|无错不跳字|最快阅读小说大主宰.*|跟我读Ｈ－u－n 请牢记|非常文学|关闭&lt;广告&gt;|w w.*|”娱乐秀”|更多精彩小[说說].*|高速更新/g,
-                /\*文學馆\*|文学馆/g,
+                /[\(\*◎]*(百度搜)?文[學学][馆館][\)\*）]*|文 学 馆/g,
                 /提供无弹窗全文字在线阅读.*|高速首发.*如果你觉的本章节还不错的话.*/g,
-                /更新快无弹窗纯文字/g,
+                /更新快无弹窗纯文字|书网∷更新快∷无弹窗∷纯文字∷.t！。/g,
+                /一秒记住，本站为您提供热门小说免费阅读。/g,
             ]
         },
         {siteName: "燃文小说网",
@@ -477,19 +487,19 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 fakeStub.find("#content").find("center, b:contains('最快更新')").remove();
             }
         },
-        {siteName: "啃书(图)",
-            url: /^http:\/\/www\.fkzww\.net\/thread-.*\.html$/,
-            titleReg: /(.*?) (.*?)-.*/,
-            contentSelector: "#content",
-            indexSelector: "#nav a:last",
-            fixImage: true,
-            contentPatch: function(fakeStub){
-                $("<div id='content'></div>").append(fakeStub.find(".t_msgfontfix").find("img[width]"))
-                    .appendTo(fakeStub.find("body"));
+        // {siteName: "啃书(图)",
+        //     url: /^http:\/\/www\.fkzww\.net\/thread-.*\.html$/,
+        //     titleReg: /(.*?) (.*?)-.*/,
+        //     contentSelector: "#content",
+        //     indexSelector: "#nav a:last",
+        //     fixImage: true,
+        //     contentPatch: function(fakeStub){
+        //         $("<div id='content'></div>").append(fakeStub.find(".t_msgfontfix").find("img[width]"))
+        //             .appendTo(fakeStub.find("body"));
 
-                fakeStub.find(".next").attr("href", "");
-            }
-        },
+        //         fakeStub.find(".next").attr("href", "");
+        //     }
+        // },
         {siteName: "猪猪岛小说",
             url: "http://www\\.zhuzhudao\\.(?:com|cc)/txt/",
             titleReg: "(.*?)最新章节-(.*?)-",
@@ -648,10 +658,12 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             nextSelector: "a#next_page",
             prevSelector: "a#pre_page",
             indexSelector: "a#huimulu",
-            contentSelector: "#content",
+            contentSelector: "#main > .main0",
+            contentRemove: "> *:not(#con_imginfo, #content)",
             contentReplace: "飞卢小说网 b.faloo.com 欢迎广大书友光临阅读，最新、最快、最火的连载作品尽在飞卢小说网！",
             contentPatch: function(fakeStub){
                 fakeStub.find("#content").find(".p_gonggao").remove()
+                // fakeStub.find("#con_imginfo").prependTo("#content");
             }
         },
         {siteName: "顶点小说",
@@ -835,6 +847,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             url: "http://www.69zw.com/\\w+/\\d+/\\d+/\\d+.html",
             titleSelector: ".chapter_title",
             bookNameSelector: ".readhead h1",
+            contentSelector: ".yd_text2",
             // titleReg: "(.*)?_(.*)-六九中文",
             contentReplace: "[\\*]+本章节来源六九中文.*请到六九中文阅读最新章节[\\*]+|－\\\\[wＷ]+.*书友上传/－"
         },
@@ -866,14 +879,30 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             url: "^http://.*zbzw\\.com/\\w+/\\d+\\.html",
             contentReplace: "精彩小说尽在.*"
         },
+        {siteName: "D586小说网",
+            url: 'http://www\\.d586\\.com/',
+            contentRemove: 'a',
+            contentReplace: [
+                '【www.13800100.com文字首发D5８6小说网】',
+                '【☆D5８6小说网☆//文字首发】.*'
+            ]
+        },
         {siteName: "豌豆文学网",
             url: "^http://www.wandoou.com/book/\\d+/\\d+\\.html",
             titleReg: "(.*?)最新章节-(.*?)-",
             contentReplace: [
-                /[レ★]+.*(?:请支持)?豌.?豆.?文.?学网.*[レ★]+/ig,
+                /[レ★]+.*(?:请支持)?豌.?豆.?文.?学.*[レ★]+/ig,
                 /[/\\{]*豌.?豆.?文.?学.?网.*(?:高速更新|\/|\\|})/ig,
                 /[（(【]豌.?豆.?文.?学.*[）)】]/ig,
                 /∷更新快∷∷纯文字∷/ig
+            ]
+        },
+        {siteName: "都来读小说网",
+            url: /^http:\/\/www\.doulaidu\.com\/[^\/]+\/\d+\/\d+\.html/,
+            useiframe: true,
+            contentReplace: [
+                /www．.+．(?:com|net)/ig,
+                /都来读小说网首发|www\.[a-z0-9]+\.(?:org|com)/ig,
             ]
         },
         // {siteName: "567中文",
@@ -1568,8 +1597,8 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 case L_getValue("booklinkme_disable_once") == 'true':
                     L_removeValue("booklinkme_disable_once");
                     return false;
-                case location.hostname == 'www.fkzww.net' && !document.title.match(/网文快讯/):  // 啃书只自动启用一个地方
-                    return false;
+                // case location.hostname == 'www.fkzww.net' && !document.title.match(/网文快讯/):  // 啃书只自动启用一个地方
+                //     return false;
                 case Config.booklink_enable && /booklink\.me/.test(referrer):
                     return true;
                 case Config.disable_auto_launch:
@@ -2632,7 +2661,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 
             this._loadBlocker();
             UI.$prefs = $('<div id="reader_preferences">')
-                .css('cssText', 'position:fixed; top:12%; left:30%; width:480px; z-index:30000;')
+                .css('cssText', 'position:fixed; top:12%; left:30%; width:500px; z-index:30000;')
                 .append(
                     $('<style>').text(this.preferencesCSS))
                 .append(
@@ -2714,7 +2743,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 }
                 // UI.refreshMainStyle();
             }, 300);
-            $form.on("keypress", "input:textbox", preview);
+            $form.on("input", "input", preview);
 
             // 初始化设置按键
             $form.find("#openPreferences").get(0).value = Config.openPreferencesKey;
@@ -2966,6 +2995,11 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             return new RegExp(obj);
         }
     }
+
+    /*
+     * jQuery Easing v1.3 - http://gsgd.co.uk/sandbox/jquery/easing/
+     */
+    jQuery.easing.jswing=jQuery.easing.swing,jQuery.extend(jQuery.easing,{def:"easeOutQuad",swing:function(a,b,c,d,e){return jQuery.easing[jQuery.easing.def](a,b,c,d,e)},easeInQuad:function(a,b,c,d,e){return d*(b/=e)*b+c},easeOutQuad:function(a,b,c,d,e){return-d*(b/=e)*(b-2)+c},easeInOutQuad:function(a,b,c,d,e){return(b/=e/2)<1?d/2*b*b+c:-d/2*(--b*(b-2)-1)+c},easeInCubic:function(a,b,c,d,e){return d*(b/=e)*b*b+c},easeOutCubic:function(a,b,c,d,e){return d*((b=b/e-1)*b*b+1)+c},easeInOutCubic:function(a,b,c,d,e){return(b/=e/2)<1?d/2*b*b*b+c:d/2*((b-=2)*b*b+2)+c},easeInQuart:function(a,b,c,d,e){return d*(b/=e)*b*b*b+c},easeOutQuart:function(a,b,c,d,e){return-d*((b=b/e-1)*b*b*b-1)+c},easeInOutQuart:function(a,b,c,d,e){return(b/=e/2)<1?d/2*b*b*b*b+c:-d/2*((b-=2)*b*b*b-2)+c},easeInQuint:function(a,b,c,d,e){return d*(b/=e)*b*b*b*b+c},easeOutQuint:function(a,b,c,d,e){return d*((b=b/e-1)*b*b*b*b+1)+c},easeInOutQuint:function(a,b,c,d,e){return(b/=e/2)<1?d/2*b*b*b*b*b+c:d/2*((b-=2)*b*b*b*b+2)+c},easeInSine:function(a,b,c,d,e){return-d*Math.cos(b/e*(Math.PI/2))+d+c},easeOutSine:function(a,b,c,d,e){return d*Math.sin(b/e*(Math.PI/2))+c},easeInOutSine:function(a,b,c,d,e){return-d/2*(Math.cos(Math.PI*b/e)-1)+c},easeInExpo:function(a,b,c,d,e){return 0==b?c:d*Math.pow(2,10*(b/e-1))+c},easeOutExpo:function(a,b,c,d,e){return b==e?c+d:d*(-Math.pow(2,-10*b/e)+1)+c},easeInOutExpo:function(a,b,c,d,e){return 0==b?c:b==e?c+d:(b/=e/2)<1?d/2*Math.pow(2,10*(b-1))+c:d/2*(-Math.pow(2,-10*--b)+2)+c},easeInCirc:function(a,b,c,d,e){return-d*(Math.sqrt(1-(b/=e)*b)-1)+c},easeOutCirc:function(a,b,c,d,e){return d*Math.sqrt(1-(b=b/e-1)*b)+c},easeInOutCirc:function(a,b,c,d,e){return(b/=e/2)<1?-d/2*(Math.sqrt(1-b*b)-1)+c:d/2*(Math.sqrt(1-(b-=2)*b)+1)+c},easeInElastic:function(a,b,c,d,e){var f=1.70158,g=0,h=d;return 0==b?c:1==(b/=e)?c+d:(g||(g=.3*e),h<Math.abs(d)?(h=d,f=g/4):f=g/(2*Math.PI)*Math.asin(d/h),-(h*Math.pow(2,10*(b-=1))*Math.sin((b*e-f)*2*Math.PI/g))+c)},easeOutElastic:function(a,b,c,d,e){var f=1.70158,g=0,h=d;return 0==b?c:1==(b/=e)?c+d:(g||(g=.3*e),h<Math.abs(d)?(h=d,f=g/4):f=g/(2*Math.PI)*Math.asin(d/h),h*Math.pow(2,-10*b)*Math.sin((b*e-f)*2*Math.PI/g)+d+c)},easeInOutElastic:function(a,b,c,d,e){var f=1.70158,g=0,h=d;return 0==b?c:2==(b/=e/2)?c+d:(g||(g=e*.3*1.5),h<Math.abs(d)?(h=d,f=g/4):f=g/(2*Math.PI)*Math.asin(d/h),1>b?-.5*h*Math.pow(2,10*(b-=1))*Math.sin((b*e-f)*2*Math.PI/g)+c:.5*h*Math.pow(2,-10*(b-=1))*Math.sin((b*e-f)*2*Math.PI/g)+d+c)},easeInBack:function(a,b,c,d,e,f){return void 0==f&&(f=1.70158),d*(b/=e)*b*((f+1)*b-f)+c},easeOutBack:function(a,b,c,d,e,f){return void 0==f&&(f=1.70158),d*((b=b/e-1)*b*((f+1)*b+f)+1)+c},easeInOutBack:function(a,b,c,d,e,f){return void 0==f&&(f=1.70158),(b/=e/2)<1?d/2*b*b*(((f*=1.525)+1)*b-f)+c:d/2*((b-=2)*b*(((f*=1.525)+1)*b+f)+2)+c},easeInBounce:function(a,b,c,d,e){return d-jQuery.easing.easeOutBounce(a,e-b,0,d,e)+c},easeOutBounce:function(a,b,c,d,e){return(b/=e)<1/2.75?d*7.5625*b*b+c:2/2.75>b?d*(7.5625*(b-=1.5/2.75)*b+.75)+c:2.5/2.75>b?d*(7.5625*(b-=2.25/2.75)*b+.9375)+c:d*(7.5625*(b-=2.625/2.75)*b+.984375)+c},easeInOutBounce:function(a,b,c,d,e){return e/2>b?.5*jQuery.easing.easeInBounce(a,2*b,0,d,e)+c:.5*jQuery.easing.easeOutBounce(a,2*b-e,0,d,e)+.5*d+c}});
 
 })('\
     body > a { display:none !important; } /*临时解决措施，找不到原因*/ \
