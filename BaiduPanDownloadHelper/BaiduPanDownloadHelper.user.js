@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.5
+// @version        3.5.3
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi@gmail.com
 // @description    批量导出百度盘的下载链接
@@ -17,10 +17,10 @@
 // @downloadURL    https://userscripts.org/scripts/source/162138.user.js
 // @include        *n.baidu.com/share/link*
 // @include        *n.baidu.com/s/*
-// @include        http://yun.baidu.com/share/home*
-// @include        http://yun.baidu.com/pcloud/album/info*
-// @include        http://pan.baidu.com/disk/home*
-// @exclude        http://yun.baidu.com/share/home*&view=follow
+// @include        http*://yun.baidu.com/share/home*
+// @include        http*://yun.baidu.com/pcloud/album/info*
+// @include        http*://pan.baidu.com/disk/home*
+// @exclude        http*://yun.baidu.com/share/home*&view=follow
 // @run-at         document-end
 // ==/UserScript==
 
@@ -84,6 +84,7 @@ var App = {
                         // this.shareDirPageProcessor();
                     } else {
                         this.shareOnePageProcessor();
+                        this.removeDialog();
                     }
                 }
                 break;
@@ -93,9 +94,6 @@ var App = {
     allPageProcessor: function() {
         GM_addStyle(Res.panelCSS);
 
-        // // 去掉云管家提示，来自 Crack Url Wait Code Login For Chrome
-        // unsafeWindow.navigator.__defineGetter__('platform', function(){ return '' });
-
         // 注册菜单
         GM_registerMenuCommand('设置 Aria2 JSON-RPC Path', function(){
             var newPath = prompt('Aria2 JSON-RPC Path', Config.aria2_jsonrpc);
@@ -104,12 +102,17 @@ var App = {
             }
         });
     },
+    removeDialog: function() {
+        // 去掉云管家提示，来自 Crack Url Wait Code Login For Chrome
+        unsafeWindow.navigator.__defineGetter__('platform', function(){ return '' });
+    },
     shareOnePageProcessor: function() {
         var data = null;
 
-        // 获取链接，文件 viewshare_all.js，函数 checkDownloadFile
-        var G = {uk: FileUtils.share_uk,shareid: FileUtils.share_id,fid_list: "[" + disk.util.ViewShareUtils.fsId + "]"};
-        $.getJSON(disk.api.RestAPI.normalize(disk.api.RestAPI.SHARE_GET_DLINK, FileUtils.bdstoken), G, function(result) {
+        // 获取链接，文件 viewshare_all.js，函数 _checkDownloadFile，2013-12-2
+        var url = disk.api.RestAPI.SHARE_GET_DLINK + "&uk=" + FileUtils.share_uk + "&shareid=" + FileUtils.share_id + "&timestamp=" + FileUtils.share_timestamp + "&sign=" + FileUtils.share_sign;
+        var data = { fid_list: "[" + disk.util.ViewShareUtils.fsId + "]" };
+        $.post(url, data, function(result) {
             if (result && result.errno == 0 && result.dlink) {
                 $('#downFileButtom')
                     .attr({

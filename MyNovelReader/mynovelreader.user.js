@@ -85,6 +85,7 @@
 // @include        http://www.ziyuge.com/*/*/*/*/*.html
 
 // 其它网站
+// @include        http://www.xshuotxt.com/*/*/*/*.html
 // @include        http://www.doulaidu.com/*/*/*.html
 // @include        http://www.d586.com/*/*/
 // @include        http://www.kanshu.la/book/*/*.shtml
@@ -375,10 +376,11 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             contentRemove: "div[style], script",
             contentReplace: [
                 /最快更新78小说|\(?百度搜.\)|访问下载tXt小说|百度搜\|索|文\|学|文学全文.字手打|\((&nbsp;)+|牛过中文..hjsm..首发.转载请保留|\[本文来自\]|♠思♥路♣客レ|※五月中文网 5y ※|无错不跳字|最快阅读小说大主宰.*|跟我读Ｈ－u－n 请牢记|非常文学|关闭&lt;广告&gt;|w w.*|”娱乐秀”|更多精彩小[说說].*|高速更新/g,
-                /[\(\*◎]*(百度搜)?文[學学][馆館][\)\*）]*|文 学 馆/g,
+                /[\(\*◎]*(百度搜)?文.?[學学].?[馆館][\)\*）]*|\(百度搜\)/g,
                 /提供无弹窗全文字在线阅读.*|高速首发.*如果你觉的本章节还不错的话.*/g,
                 /更新快无弹窗纯文字|书网∷更新快∷无弹窗∷纯文字∷.t！。/g,
                 /一秒记住，本站为您提供热门小说免费阅读。/g,
+                /\(更新速度最快记住即可找到\)/g,
             ]
         },
         {siteName: "燃文小说网",
@@ -520,7 +522,8 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             contentRemove: "font",
             contentReplace: [
                 "读零零小说网欢迎您的光临.*",
-                "，好看的小说:"
+                "，好看的小说:",
+                "\\*文學馆\\*"
             ],
             fixImage: true,
             checkSection: true
@@ -533,7 +536,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             url: /^http:\/\/\S+\.17k\.com\/chapter\/\S+\/\d+\.html$/,
             titleReg: /(.*?)-(.*?)-.*/,
             contentSelector: "#chapterContent",
-            contentRemove: "#authorSpenk, .like_box, #hotRecommend, .ct0416, .recent_read"
+            contentRemove: "#authorSpenk, .like_box, #hotRecommend, .ct0416, .recent_read, div[style]"
         },
         {siteName: "看下文学",
             url: "^http://www\\.kanxia\\.net/k/\\d*/\\d+/\\d+\\.html$",
@@ -894,7 +897,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 /[レ★]+.*(?:请支持)?豌.?豆.?文.?学.*[レ★]+/ig,
                 /[/\\{]*豌.?豆.?文.?学.?网.*(?:高速更新|\/|\\|})/ig,
                 /[（(【]豌.?豆.?文.?学.*[）)】]/ig,
-                /∷更新快∷∷纯文字∷/ig
+                /∷更新快∷∷纯文字∷|http:永久网址，请牢记！/ig
             ]
         },
         {siteName: "都来读小说网",
@@ -904,6 +907,13 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 /www．.+．(?:com|net)/ig,
                 /都来读小说网首发|www\.[a-z0-9]+\.(?:org|com)/ig,
             ]
+        },
+        {siteName: "小说TXT",
+            url: /^http:\/\/www\.xshuotxt\.com\//,
+            contentReplace: "\\(.*无弹窗全文阅读\\)",
+            contentPatch: function(fakeStub) {
+                fakeStub.find('#title a').remove();
+            }
         },
         // {siteName: "567中文",
         //     url: "http://www.xntk.net/book_j.php",
@@ -965,14 +975,14 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         "暧me[iì]":"暧昧",
         "b[ěe]i(\\s|&nbsp;)*j[īi]ng":"北京","半shen": "半身", "b[ìi]j[ìi]ng":"毕竟",
         "ch[oō]ngd[oò]ng":"冲动", "缠mian": "缠绵", "成shu": "成熟", "赤lu[oǒ]": "赤裸", "春guang": "春光",
-        "dang校": "党校", "da子": "鞑子", "diao丝": "屌丝", "d[úu](?:\\s|<br/>)*l[ìi]": "独立", "d?[iì]f[āa]ng":"地方", "d[ìi]\\s*d[ūu]":"帝都", "di国":"帝国", "du\\s{0,2}c[áa]i":"独裁",
+        "dang校": "党校", "da子": "鞑子", "diao丝": "屌丝", "d[úu](?:\\s|<br/>)*l[ìi]": "独立", "dú *cái":"独裁", "d?[iì]f[āa]ng":"地方", "d[ìi]\\s*d[ūu]":"帝都", "di国":"帝国", "du\\s{0,2}c[áa]i":"独裁",
         "f[ǎa]ngf[óo]":"仿佛", "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "f[èe]nn[ùu]":"愤怒",
         "gao潮": "高潮", "干chai": "干柴", "gu[oò]ch[ée]ng":"过程", "gu[āa]nx[iì]":"关系", "g[ǎa]nji[àa]o":"感觉", "国wu院":"国务院",
         "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "h[ǎa]oxi[àa]ng":"好像", "hu[áa]ngs[èe]":"黄色", "皇d[ìi]":"皇帝", "昏昏yu睡":"昏昏欲睡",
         "j[ìi]nháng":"进行", "jinv": "妓女", "jirou": "鸡肉", "ji者":"记者", "ju花":"菊花","j[īi]动":"激动", "jili[èe]":"激烈", "肌r[òo]u":"肌肉","ji射":"激射", "ji[ēe]ch[uù]":"接触", "j[ùu]li[èe]": "剧烈", "jǐng惕": "警惕",
         "k[ěe]n[ée]ng": "可能", "开bao": "开苞",  "k[àa]o近": "靠近",
         "ling辱": "凌辱", "luan蛋": "卵蛋", "脸sè": "脸色",
-        "m[ǎa]ny[ìi]":"满意", "m[ǎa]sh[àa]ng":"马上", "m[ée]iy[oǒ]u":"没有", "mei国": "美国", "m[íi]ngb[áa]i":"明白", "迷huan": "迷幻", "mi茫":"迷茫", "m[íi]n\\s{0,2}zh[ǔu]": "民主", "迷jian": "迷奸", "mimi糊糊":"迷迷糊糊",
+        "m[ǎa]ny[ìi]":"满意", "m[ǎa]sh[àa]ng":"马上", "m[ée]iy[oǒ]u":"没有", "mei国": "美国", "m[íi]ngb[áa]i":"明白", "迷huan": "迷幻", "mi茫":"迷茫", "m[íi]n\\s{0,2}zh[ǔu]": "民主", "迷jian": "迷奸", "mimi糊糊":"迷迷糊糊", "末(?:\\s|<br/?>)*ì":"末日",
         "n[àa]me":"那么", "n[ée]ngg[oò]u":"能够", "nán\\s{0,2}hǎi": "那会",
         "pi[áa]o客":"嫖客", "p[áa]ngbi[āa]n":"旁边",
         "q[íi]gu[àa]i":"奇怪", "qin兽":"禽兽", "q[iī]ngch[uǔ]":"清楚",
@@ -982,7 +992,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         "w[ēe]ixi[ée]":"威胁", "wèizh[ìi]":"位置", "wei员":"委员",
         "xiu长": "修长", "亵du": "亵渎", "xing福": "幸福", "小bo":"小波", "xiong([^a-z])":"胸$1",
         "y[iī]y[àa]ng":"一样", "y[īi]di[ǎa]n":"一点", "y[ǐi]j[īi]ng":"已经", "阳w[ěe]i": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "you惑": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人","旖ni":"旖旎", "yu念":"欲念", "you敌深入":"诱敌深入",
-        "z[iì]j[iǐ]": "自己","z[ìi]\\s*you": "自由","zh[iī]d?[àa]u?o":"知道","zha药": "炸药", "zhan有": "占有", "政f[ǔu]": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zong理":"总理", "zh[ōo]ngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]y[oò]u":"左右", "zh[oō]uw[ée]i":"周围", "中nan海":"中南海", "中j委":"中纪委", "(昨|一|时|余)(?:<br/?>|&nbsp;|\\s)*ì":"$1日",
+        "z[iì]j[iǐ]": "自己","z[ìi](?:\\s|<br/?>)*y[oó]u": "自由","zh[iī]d?[àa]u?o":"知道","zha药": "炸药", "zhan有": "占有", "政f[ǔu]": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zong理":"总理", "zh[ōo]ngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]y[oò]u":"左右", "zh[oō]uw[ée]i":"周围", "中nan海":"中南海", "中j委":"中纪委", "中zu部":"中组部", "(昨|一|时|余)(?:<br/?>|&nbsp;|\\s)*ì":"$1日",
 
         // === 单字替换 ===
         "b[āà]ng":"棒","bào":"爆","b[àa]":"吧","bī":"逼","bō":"波",
@@ -1717,7 +1727,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             // 再次移除其它不相关的，起点，纵横中文有时候有问题
             setTimeout(function(){
                 $('body > *:not("#container, .readerbtn, #reader_preferences, #uil_blocker,iframe[name=\'mynovelreader-iframe\']")').remove();
-            }, 1500);
+            }, 2000);
         },
         prepDocument: function() {
             window.onload = window.onunload = function() {};
