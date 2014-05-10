@@ -8,11 +8,11 @@
  - [MyNovelReader.js](MyNovelReader.js)，自用于 Opera Mobile，去除jQuery版。
  - 3.0.4 由网友 Roger Au 设计，[安装地址](http://userscripts.org/scripts/version/165951/639713.user.js)
 
-### 需要
+### 说明
 
-Firefox（Greasemonkey/Scriptish）， Chrome（Tampermonkey），Maxthon（暴力猴）
+Firefox（Greasemonkey/Scriptish）， Chrome（Tampermonkey），Maxthon（暴力猴），Opera（暴力猴）
 
-3.0.4 由网友 Roger Au 设计，[安装地址](http://userscripts.org/scripts/version/165951/639713.user.js)
+3.0.4 界面由网友 Roger Au 设计，[安装地址](http://userscripts.org/scripts/version/165951/639713.user.js)
 
 Opera 12 的暴力猴旧版本有个问题，请更新至新版。
 
