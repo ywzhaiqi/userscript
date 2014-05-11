@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.5.3
+// @version        3.5.7
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi@gmail.com
 // @description    批量导出百度盘的下载链接
@@ -19,6 +19,7 @@
 // @include        *n.baidu.com/s/*
 // @include        http*://yun.baidu.com/share/home*
 // @include        http*://yun.baidu.com/pcloud/album/info*
+// @include        http*://yun.baidu.com/pcloud/album/file*
 // @include        http*://pan.baidu.com/disk/home*
 // @exclude        http*://yun.baidu.com/share/home*&view=follow
 // @run-at         document-end
@@ -31,22 +32,29 @@
  *   函数：performSelectionDownload
  */
 
+
 var $ = unsafeWindow.jQuery;
 var isChrome = !!this.chrome;
 
 var Config = {
+    yunGuanjia: false,  // 是否去掉云管家提示
+    debug: false,
+    quickLinks: 'Books=/Books/网络小说\n小说=/Books/小说\n网络小说=/Books/网络小说',
+
     trim_titles: [  // Share Home 标题移除的文字广告
         "[v.BDpan.COM]"
     ],
     aria2_jsonrpc: GM_getValue('aria2_jsonrpc') || 'http://localhost:6800/jsonrpc',
+    YAAW_UA: "user-agent:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_1) AppleWebKit/537.73.11 (KHTML, like Gecko) Version/7.0.1 Safari/537.73.11",
+    YAAW_REF: "Referer:http://pan.baidu.com/disk/home",
     lineBreak: isChrome ? '\r' : '\n',
-    debug: false
 };
 
 var TPLS = {
     normal: '{server_filename}' + Config.lineBreak + '{dlink}',
-    aria2c: 'aria2c -c -x 10 -s 10 --out "{server_filename}" "{dlink}"',
+    aria2c: 'aria2c -c -x 10 -s 10 --out "{server_filename}" "{dlink}" --user-agent="netdisk" --header "Referer:http://pan.baidu.com/disk/home"',
 };
+
 
 var debug = Config.debug ? console.debug.bind(console) : function() {};
 
@@ -78,18 +86,19 @@ var App = {
             case '/pcloud/album/info':
                 this.albumPageProcessor();
                 break;
+            case '/pcloud/album/file':
+                this.albumOnePageProcessor();
+                break;
             default:
                 if (path === '/share/link' || path.indexOf('/s/') !== -1) {
                     if (document.getElementById('barCmdTransfer')) {
                         // this.shareDirPageProcessor();
                     } else {
                         this.shareOnePageProcessor();
-                        this.removeDialog();
                     }
                 }
                 break;
         }
-
     },
     allPageProcessor: function() {
         GM_addStyle(Res.panelCSS);
@@ -101,8 +110,12 @@ var App = {
                 GM_setValue('aria2_jsonrpc', Config.aria2_jsonrpc = newPath);
             }
         });
+
+        if (Config.yunGuanjia) {
+            this.removeYunGuanjia();
+        }
     },
-    removeDialog: function() {
+    removeYunGuanjia: function() {
         // 去掉云管家提示，来自 Crack Url Wait Code Login For Chrome
         unsafeWindow.navigator.__defineGetter__('platform', function(){ return '' });
     },
@@ -138,8 +151,22 @@ var App = {
                 }
             })
             .insertAfter('#downFileButtom');
+
+        // 失效页面添加分享主页链接
+        if (document.title.match(/百度云 网盘-链接不存在/)) {
+            var m = document.location.href.match(/uk=(\d+)/);
+            if (m) {
+                var homeUrl = "home?uk=" + m[1] + "#category/type=0";
+                $('<a>')
+                    .attr('href', homeUrl)
+                    .attr('style', 'margin-left: 10px;')
+                    .text('个人主页')
+                    .appendTo('#share_nofound_des');
+            }
+        }
     },
     shareHomePageProcessor: function() {
+        // http://yun.baidu.com/share/home?uk=53993635&view=share#category/type=0
         var self = this;
 
         $('section.flag10-fns').attr('title', '双击复制所有链接')
@@ -212,11 +239,27 @@ var App = {
     },
     albumPageProcessor: function() {
         var self = this;
-        var _mAlbumId, _mUk;
+        var _mAlbumId, _mUk, _mPage;
 
         _mAlbumId = (disk.ui.album.albuminfo && disk.ui.album.albuminfo.album_id) || disk.getParam("album_id");
         _mUk = (disk.ui.album.uinfo && disk.ui.album.uinfo.uk) || disk.getParam("uk") || disk.getParam("query_uk");
-        this.API_URL = "/pcloud/album/listfile?album_id=" + _mAlbumId + "&query_uk=" + _mUk + "&start=0" + "&limit=100";
+        _mPage = {count: 0,totalPage: 0,nowPage: 1,limit: 60, handle: false}
+
+        var getList = function() {
+            var nowPage = $('#albumPage .page-input-wrap > input').val();
+                _mPage.nowPage = parseInt(nowPage);
+            var restUrl = "/pcloud/album/listfile?album_id=" + _mAlbumId + "&query_uk=" + _mUk + 
+                "&start=" + (_mPage.nowPage - 1) * 60 + "&limit=" + _mPage.limit;
+
+            $.get(restUrl, function(result){
+                if (result && result.errno == 0 && result.list) {
+                    App.showPanel(result.list);
+                    App.toast.setVisible(false);
+                } else {
+                    App.useToast("获取数据出错, " + restUrl);
+                }
+            });
+        }
 
         // 内容由 js 生成
         var clicked = function(e){
@@ -225,13 +268,27 @@ var App = {
                 $('<a class="bbutton" style="margin-left:10px;padding-left:5px;">\
                         <b style="padding-right: 5px;">批量下载</b></a>')
                     .insertAfter($quickFileSave)
-                    [0].onclick = function(){
-                        self.getList();
-                    };
+                    [0].onclick = getList;
+
                 $('body').unbind('click');
             }
         };
         $('body').bind('click', clicked);
+    },
+    albumOnePageProcessor: function() {
+        var data = { fid_list: "[" + disk.util.ViewShareUtils.fsId + "]" };
+        // 增加 YAAW 按钮
+        $('<a class="new-dbtn" href="javascript:;" hidefocus="true">')
+            .css('padding', '0px 5px')
+            .html('YAAW')
+            .click(function(){
+                if (data) {
+                    App.addToYAAW(data);
+                } else {
+                    App.useToast('正在获取链接，请等待');
+                }
+            })
+            .insertAfter('#downFileButtom');
     },
     shareDirPageProcessor: function() {
         var shareId, uk,
@@ -271,6 +328,53 @@ var App = {
             [0].onclick = function(e) {
                 self.downloadAll();
             };
+
+        // 读取设置
+        var quickLinks = GM_getValue('quickLinks');
+        if (quickLinks)
+            Config.quickLinks = quickLinks;
+
+        // 增加自定义快捷目录
+        var addQuickLinks = function() {
+            $('#aside-menu > .quickLink').remove();
+
+            var html = '';
+            var lines = Config.quickLinks.split('\n');
+            lines.forEach(function(line){
+                var offset = line.indexOf('=');
+                if (offset > 0) {
+                    var name = line.substr(0, offset).trim(),
+                        url = line.substr(offset + 1).trim();
+                    html += '<li class="quickLink b-list-item"><a href="#dir/path=' + url + '" unselectable="on" hidefocus="true" class="sprite2">' +
+                        '<span class="text1 drop-list-trigger">' + name + '</span></a></li>';
+                }
+            })
+            $('#aside-menu > li:first')
+                .after(html);
+        };
+        addQuickLinks();
+        
+        // 修正添加后出现滚动条的情况
+        GM_addStyle('.side-options { margin: auto; }');
+
+        // 添加设置对话框
+        var $dialog = $(Res.settingHTML).appendTo('body');
+        GM_addStyle(Res.settingCSS);
+        // 增加设置按钮
+        $('<span class="li"><a href="javascript:;">设置</a></span>')
+            .click(function(){
+                $dialog.find('#quickLinks').val(Config.quickLinks);
+                $dialog.show();
+            })
+            .appendTo('.pulldown.more-info .content');
+        $dialog.find('.cancel').click(function(){
+            $dialog.hide();
+        });
+        $dialog.find('.okay').click(function(){
+            GM_setValue('quickLinks', Config.quickLinks = $dialog.find('#quickLinks').val());
+            addQuickLinks();
+            $dialog.hide();
+        });
     },
     downloadAll: function() {
         this.toast = App.useToast("正在获取中，请稍后...", true);
@@ -326,7 +430,7 @@ var App = {
 
         $.get(restUrl, function(result) {
             self.fetchCount -= 1;
-            if (result && parseInt(result.errno) === 0 && result.list) {
+            if (result && result.errno == 0 && result.list) {
                 if (item) {
                     item.children = result.list;
                 } else {  // 专辑获取到的结果为 checkedItems
@@ -339,21 +443,50 @@ var App = {
         });
     },
     handleResult: function(){
+        var self = this;
+
         // 全部获取完成
         if(this.fetchCount <= 0){
-            debug("全部获取完成", this.checkedItems);
-            this.showPanel();
-            this.toast.setVisible(false);
+            // 2014-5-11， 百度盘改成 post 方式获取下载链接
+            var filelist = [];
+            this.checkedItems.forEach(function(item){
+                if (item.children) {
+                    item.children.forEach(function(i){
+                        filelist.push(i.fs_id);
+                    });
+                } else {
+                    filelist.push(item.fs_id)
+                }
+            });
+
+            var API_URL = 'http://pan.baidu.com/api/download?channel=chunlei&clienttype=0&web=1&bdstoken=' + FileUtils.bdstoken;
+            var sign = FileUtils.base64Encode(FileUtils.sign2(FileUtils.sign3, FileUtils.sign1));
+            var data = {sign: sign, fidlist: "[" + filelist.join(',') + "]", type: 'dlink', timestamp: FileUtils.timestamp};
+            debug('post 方式获取下载链接');
+            $.post(API_URL, data, function(r){
+                if (r.errno == 0) {
+                    var dlinkMap = {}
+                    r.dlink.forEach(function(i){
+                        dlinkMap[i.fs_id] = i.dlink;
+                    });
+
+                    debug("全部获取完成", self.checkedItems);
+                    self.showPanel(self.checkedItems, dlinkMap);
+                    self.toast.setVisible(false);
+                } else {
+
+                }
+            });
         }
     },
-    showPanel: function() {
+    showPanel: function(checkedItems, dlinkMap) {
         if (!this.panel) {
             this.panel = this.createPanel();
-        } else {
-            var linksHTML = this.createDLinksHtml();
-            $("#mDownload-links").html(linksHTML);
-            this.panel.style.display = "block";
         }
+
+        var linksHTML = this.createDLinksHtml(checkedItems, dlinkMap);
+        $("#mDownload-links").html(linksHTML);
+        this.panel.style.display = "block";
     },
     createPanel: function() {
         var self = this;
@@ -363,7 +496,6 @@ var App = {
 
         var links_div = document.createElement("div");
         links_div.id = "mDownload-links";
-        links_div.innerHTML = this.createDLinksHtml();
 
         var closeButton = document.createElement("button");
         closeButton.id = "mDownload-close-button";
@@ -413,18 +545,22 @@ var App = {
 
     dir_tpl: "<b style='padding-left:{padding_left}'>{server_filename}</b>",
     dlinks_tpl: "<a class='dlinks' href={dlink} style='padding-left:{padding_left}'>{server_filename}</a>",
-    createDLinksHtml: function() {
+    createDLinksHtml: function(checkedItems, dlinkMap) {
         var self = this,
             htmls = [],
             isAdded = false;
-        this.checkedItems.forEach(function(item) {
+        checkedItems.forEach(function(item) {
             item.padding_left = "0px";
-            if (parseInt(item.isdir, 10) === 1) {
+
+            if (item.isdir == 1) {
                 htmls.push(template(self.dir_tpl, item));
                 
                 if (Array.isArray(item.children)) {
                     item.children.forEach(function(i) {
                         i.padding_left = "15px";
+                        if (dlinkMap) {
+                            i.dlink = dlinkMap[i.fs_id];
+                        }
                         var tpl = i.dlink ? self.dlinks_tpl : self.dir_tpl;
                         htmls.push(template(tpl, i));
                     });
@@ -433,6 +569,9 @@ var App = {
                 if (!isAdded) {
                     htmls.push("<b>---------------</b>");
                     isAdded = true;
+                }
+                if (dlinkMap) {
+                    item.dlink = dlinkMap[item.fs_id];
                 }
                 htmls.push(template(self.dlinks_tpl, item));
             }
@@ -476,10 +615,10 @@ var App = {
         items.forEach(function(item){
             if (!item.dlink && Array.isArray(item.children)) {
                 item.children.forEach(function(i){
-                    aria2.addUri(i.dlink, {out: i.server_filename});
+                    aria2.addUri(i.dlink, {out: i.server_filename, header: [Config.YAAW_UA, Config.YAAW_REF] });
                 });
             } else {
-                aria2.addUri(item.dlink, {out: item.server_filename});
+                aria2.addUri(item.dlink, {out: item.server_filename, header: [Config.YAAW_UA, Config.YAAW_REF] });
             }
         });
 
@@ -494,31 +633,60 @@ var App = {
     }
 };
 
-var Res = {
-    panelCSS: '\
-        #mDownload-container{\
-            position: fixed;\
-            z-index: 1000;\
-            left: 314px;\
-            top: 120px;\
-            background: white;\
-            padding: 10px;\
-            border: 1px solid rgb(153, 153, 153);\
-            box-shadow: 0px 0px 9px rgb(153, 153, 153);\
-        }\
-        #mDownload-container button{\
-            margin-right: 10px;\
-        }\
-        #mDownload-links{\
-            margin-top: 10px;\
-            max-height: 400px;\
-            overflow: auto;\
-        }\
-        #mDownload-links b{\
-            color: red;\
-        }\
-        ',
-};
+var Res = getMStr(function(){
+    var panelCSS;
+    /*
+        #mDownload-container{
+          position: fixed;
+          z-index: 1000;
+          left: 314px;
+          top: 120px;
+          background: white;
+          padding: 10px;
+          border: 1px solid rgb(153, 153, 153);
+          box-shadow: 0px 0px 9px rgb(153, 153, 153);
+        }
+        #mDownload-container button{
+          margin-right: 10px;
+        }
+        #mDownload-links{
+          margin-top: 10px;
+          max-height: 400px;
+          width: 400px;
+          overflow: auto;
+        }
+        #mDownload-links b{
+          color: red;
+        }
+     */
+
+    var settingHTML;
+    /*
+        <div class="b-panel download-mgr-dialog" style="width: 550px; display: none; left: 338.5px; top: 101.5px;">
+            <div class="dlg-hd b-rlv">
+                <span title="关闭" class="dlg-cnr dlg-cnr-r cancel"></span>
+                <h3>设置</h3>
+            </div>
+            <div style="text-align: center; margin: 10px;">
+                <h2 style="">快捷目录设置</h2>
+                <textarea id="quickLinks" style="width: 500px; height: 160px;"></textarea>
+            </div>
+            <div>
+                <div class="alert-dialog-commands clearfix" style="text-align: center;">
+                    <a class="sbtn okay" href="javascript:;"><b>保存</b></a>
+                    <a class="dbtn cancel" href="javascript:;"><b>关闭</b></a>
+                </div>
+            </div>
+        </div>
+     */
+     var settingCSS;
+     /*
+        .module-header .info .more-info .content {
+            height: 310px;
+        }
+      */
+});
+
 
 var ARIA2 = (function() {
     var jsonrpc_version = '2.0';
@@ -569,6 +737,7 @@ var ARIA2 = (function() {
     }
 })();
 
+
 function template(template, data) {
     return template.replace(/\{([\w\.]*)\}/g, function(str, key) {
         var keys = key.split('.'),
@@ -579,5 +748,22 @@ function template(template, data) {
         return (value === null || value === undefined) ? '' : value;
     });
 }
+
+// 从函数中获取多行注释的字符串
+function getMStr(fn) {
+    var fnSource = fn.toString();
+    var ret = {};
+    fnSource = fnSource.replace(/^[^{]+/, '');
+    // console.log(fnSource);
+    var matched;
+    var reg = /var\s+([$\w]+)[\s\S]*?\/\*([\s\S]+?)\*\//g;
+    while (matched = reg.exec(fnSource)) {
+        // console.log(matched);
+        ret[matched[1]] = matched[2];
+    };
+    
+    return ret;
+}
+
 
 App.init();
