@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        3.9.9
+// @version        4.0.0
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
@@ -17,6 +17,7 @@
 // homepageURL    https://userscripts.org/scripts/show/165951
 // updateURL      https://userscripts.org/scripts/source/165951.meta.js
 // downloadURL    https://userscripts.org/scripts/source/165951.user.js
+
 // @homepageURL    https://greasyfork.org/scripts/292/
 // @updateURL      https://greasyfork.org/scripts/292/code.meta.js
 // @downloadURL    https://greasyfork.org/scripts/292/code.user.js
@@ -93,6 +94,8 @@
 // @include        http://www.ziyuge.com/*/*/*/*/*.html
 
 // 其它网站
+// @include        http://www.173ed.com/read/*/*.html
+// @include        http://www.a240.com/read/*/*.html
 // @include        http://www.zhuishu.com/*/*.html
 // @include        http://www.shuangde.cc/*/*.html
 // @include        http://www.23zw.com/olread/*/*/*.html
@@ -244,8 +247,8 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
     var rule = {
         titleReplace: /^章节目录|^文章正文|^正文|全文免费阅读|最新章节|\(文\)/,
 
-        nextSelector: "a:contains('下一页'), a:contains('下一章'), a:contains('下页')",
-        prevSelector: "a:contains('上一页'), a:contains('上一章'), a:contains('上页')",
+        nextSelector: "a:contains('下一页'), a:contains('下一章'), a:contains('下一节'), a:contains('下页')",
+        prevSelector: "a:contains('上一页'), a:contains('上一章'), a:contains('上一节'), a:contains('上页')",
         // 忽略的下一页链接，匹配 href
         nextUrlIgnore: /index|list|last|end|BuyChapterUnLogin|BookReader\/vip,|^javascript:|book\.zongheng\.com\/readmore|\/0\.html$|www\.shumilou\.com\/to-n-[a-z]+-\d+\.html/i,
         nextUrlCompare: /\/\d+(_\d+)?\.html?$|\/wcxs-\d+-\d+\/$|chapter-\d+\.html$/i,  // 忽略的下一页链接（特殊），跟上一页比较
@@ -792,6 +795,22 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 "\\(看书窝&nbsp;看书窝&nbsp;无弹窗全文阅读\\)"
             ]
         },
+        {siteName: '爱尚小说网',
+            url: 'http://www.a240.com/read/\\d+/\\d+.html',
+            titleReg: '(.*) - (.*?) - 爱尚小说网',
+            titlePos: 1,
+            contentRemove: '.bottem, center',
+            contentReplace: '<!--章节内容开始-->'
+        },
+        {siteName: 'Ｅ度文学网',
+            url: 'http://www.173ed.com/read/\\d+/\\d+.html',
+            contentRemove: 'a[href*="173e"]',
+            contentReplace: [
+                '全文字小说W.*?\\.com',
+                'E度文学网更新最快',
+                'www\\.♀173ed.com♀'
+            ]
+        },
         
         // 内容需要js运行。
         {siteName: "读读看",
@@ -1124,7 +1143,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         // === 双字替换 ===
         "暧m[eè][iì]":"暧昧",
         "b[ěe]i(\\s|&nbsp;)*j[īi]ng":"北京","半shen": "半身", "b[ìi]j[ìi]ng":"毕竟", "报(了?)jing":"报$1警",
-        "ch[oō]ngd[oò]ng":"冲动", "cao(练|作)":"操$1", "缠mian": "缠绵", "成shu": "成熟", "(?:赤|chi)\\s*lu[oǒ]": "赤裸", "春guang": "春光", "chun风":"春风", "沉mi":"沉迷", "沉lun":"沉沦", "刺ji":"刺激", "chao红":"潮红", "初chun":"初春",
+        "ch[oō]ngd[oò]ng":"冲动", "cao(练|作)":"操$1", "缠mian": "缠绵", "成shu": "成熟", "(?:赤|chi)\\s*lu[oǒ]": "赤裸", "春guang": "春光", "chun风":"春风", "沉mi":"沉迷", "沉lun":"沉沦", "刺ji":"刺激", "chao红":"潮红", "初chun":"初春", "＂ｃｈｉ　ｌｕｏ＂":"赤裸",
         "dang校": "党校", "da子": "鞑子", "大tui":"大腿", "diao丝": "屌丝", "d[úu](?:\\s|&nbsp;|<br/>)*l[ìi]": "独立", "d[uú]\\s{0,2}c[áa]i":"独裁", "d?[iì]f[āa]ng":"地方", "d[ìi]\\s*d[ūu]":"帝都", "di国":"帝国", "duo落":"堕落",
         "f[ǎa]ngf[óo]":"仿佛", "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "f[èe]nn[ùu]":"愤怒",
         "gao潮": "高潮", "干chai": "干柴", "gu[oò]ch[ée]ng":"过程", "gu[āa]nx[iì]":"关系", "g[ǎa]nji[àa]o":"感觉", "国wu院":"国务院",

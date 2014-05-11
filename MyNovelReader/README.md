@@ -10,6 +10,8 @@
 
 ### 说明
 
+[greasyfork.org](https://greasyfork.org/scripts/292-my-novel-reader)
+
 Firefox（Greasemonkey/Scriptish）， Chrome（Tampermonkey），Maxthon（暴力猴），Opera（暴力猴）
 
 3.0.4 界面由网友 Roger Au 设计，[安装地址](http://userscripts.org/scripts/version/165951/639713.user.js)
