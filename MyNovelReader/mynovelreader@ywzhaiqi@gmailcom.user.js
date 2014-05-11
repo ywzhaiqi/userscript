@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        4.0.0
+// @version        4.0.1
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
@@ -2576,16 +2576,16 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             "缺省皮肤": "",
             "暗色皮肤": "body { color: #666; background: rgba(0,0,0,.1); }\
                 .title { color: #222; }",
-            "白底黑字": "body { color: black background: white;}\
+            "白底黑字": "body { color: black; background: white;}\
                 .title { font-weight: bold; border-bottom: 0.1em solid; margin-bottom: 1.857em; padding-bottom: 0.857em;}",
             "夜间模式": "body { color: #e3e3e3; background: #2d2d2d; } #preferencesBtn { background: white; }",
             "夜间模式2": "body { color: #679; background: black; } #preferencesBtn { background: white; }",
             "橙色背景": "body { color: #24272c; background: #FEF0E1; }",
-            "绿色背景": "body { color: black background: #d8e2c8; }",
-            "绿色背景2": "body { color: black background: #CCE8CF; }",
-            "蓝色背景": "body { color: black background: #E7F4FE; }",
-            "棕黄背景": "body { color: black background: #C2A886; }",
-            "经典皮肤": "body { color: black background-color: #EAEAEE; }\
+            "绿色背景": "body { color: black; background: #d8e2c8; }",
+            "绿色背景2": "body { color: black; background: #CCE8CF; }",
+            "蓝色背景": "body { color: black; background: #E7F4FE; }",
+            "棕黄背景": "body { color: black; background: #C2A886; }",
+            "经典皮肤": "body { color: black; background-color: #EAEAEE; }\
                 .title { background: #f0f0f0; }",
         },
 
