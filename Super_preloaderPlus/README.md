@@ -3,7 +3,7 @@ Super_preloaderPlus.user.js
 
 ## 文件说明
 
-- **Super_preloaderPlus_one.user.js**：修改增强2合1版本。[userscripts.org](http://userscripts.org/scripts/show/178900)。
+- **Super_preloaderPlus_one.user.js**：修改增强2合1版本。[greasyfork.org](https://greasyfork.org/scripts/293-super-preloaderplus-one)，[userscripts.org](http://userscripts.org/scripts/show/178900)。
 - **Super_preloader_one.user.js**：整合自原版2个文件，微量修改。
 - **Super_preloader_plus.user.js**
 - **Super_preloader_plus.db.user.js**
