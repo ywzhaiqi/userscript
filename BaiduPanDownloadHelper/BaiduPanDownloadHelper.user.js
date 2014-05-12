@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.5.9
+// @version        3.6.0
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi@gmail.com
 // @description    批量导出百度盘的下载链接
@@ -134,6 +134,19 @@ var App = {
     diskHomePageProcessor: function() {  // 个人主页
         var self = this;
         this.API_URL = '/api/list?channel=chunlei&clienttype=0&web=1&num=100&order=time&desc=1';
+
+        // 设置页面标题，根据 hash 变化而变化，方便历史记录检索
+        var setDocumentTitle = function() {
+            var path = decodeURIComponent(disk.getParam('dir/path'));
+            if (path == "") {
+                var m = location.hash.match(/#s\/key=(.*)/);
+                if (m)
+                    path = "搜索：" + m[1];
+            }
+            document.title = '百度云 网盘-' + path;
+        };
+        setDocumentTitle();
+        window.addEventListener('hashchange', setDocumentTitle, false);
 
         // 添加批量下载按钮
         $('<a class="bbtn" style="padding-left:10px"><b>批量下载</b></a>')
@@ -475,6 +488,7 @@ var App = {
 
             if (item.children) {
                 item.children.forEach(function(i){
+                    if (i.dlink) return;
                     filelist.push(i.fs_id);
                 });
             } else {
@@ -509,6 +523,7 @@ var App = {
                 self.showPanel(self.checkedItems, dlinkMap);
                 self.toast.setVisible(false);
             } else {
+                console.error('POST 方式获取错误', r);
                 Utilities.useToast({
                     toastMode: disk.ui.Toast.MODE_CAUTION,
                     msg: disk.util.shareErrorMessage[result.errno],
