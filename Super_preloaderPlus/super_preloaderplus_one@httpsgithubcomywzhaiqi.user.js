@@ -3,7 +3,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.0.4
+// @version      6.0.5
 // homepageURL  https://userscripts.org/scripts/show/178900
 // downloadURL  https://userscripts.org/scripts/source/178900.user.js
 // updateURL    https://userscripts.org/scripts/source/178900.meta.js
@@ -188,9 +188,10 @@
                 maxpage: 66,                                                                                                 //最多翻页数量(可选)
                 manualA: false,                                                                                          //是否使用手动翻页.
                 HT_insert: ['//div[@id="res"]',2],                                                       //插入方式此项为一个数组: [节点xpath或CSS选择器,插入方式(1：插入到给定节点之前;2：附加到给定节点的里面;)](可选);
-                //HT_insert:['css;div#res',2],
-                stylish: '',   // 新增的自定义样式 
+                //HT_insert:['css;div#res',2], 
                 lazyImgSrc: 'imgsrc',
+                // 新增的自定义样式。下面这个是调整 Google 下一页可能出现的图片排列问题。 
+                stylish: '.rg_meta{display:none}.bili{display:inline-block;margin:0 6px 6px 0;overflow:hidden;position:relative;vertical-align:top}._HG{margin-bottom:2px;margin-right:2px}',
                 documentFilter: function(doc){
                     var x = doc.evaluate('//script/text()[contains(self::text(), "data:image/")]', doc, null, 9, null).singleNodeValue;
                     if (x) {
