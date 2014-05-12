@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.5.7
+// @version        3.5.9
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi@gmail.com
 // @description    批量导出百度盘的下载链接
@@ -12,9 +12,14 @@
 // @grant          GM_openInTab
 // @grant          GM_xmlhttpRequest
 // @grant          GM_registerMenuCommand
-// @homepageURL    http://userscripts.org/scripts/show/162138
-// @updateURL      http://userscripts.org/scripts/source/162138.meta.js
-// @downloadURL    https://userscripts.org/scripts/source/162138.user.js
+// homepageURL     http://userscripts.org/scripts/show/162138
+// updateURL       http://userscripts.org/scripts/source/162138.meta.js
+// downloadURL     https://userscripts.org/scripts/source/162138.user.js
+
+// @homepageURL    https://greasyfork.org/scripts/294/
+// @updateURL      https://greasyfork.org/scripts/294/code.meta.js
+// @downloadURL    https://greasyfork.org/scripts/294/code.user.js
+// @require        http://code.jquery.com/jquery-2.1.1.min.js
 // @include        *n.baidu.com/share/link*
 // @include        *n.baidu.com/s/*
 // @include        http*://yun.baidu.com/share/home*
@@ -33,12 +38,11 @@
  */
 
 
-var $ = unsafeWindow.jQuery;
 var isChrome = !!this.chrome;
 
 var Config = {
-    yunGuanjia: false,  // 是否去掉云管家提示
     debug: false,
+    yunGuanjia: false,  // 是否去掉云管家提示
     quickLinks: 'Books=/Books/网络小说\n小说=/Books/小说\n网络小说=/Books/网络小说',
 
     trim_titles: [  // Share Home 标题移除的文字广告
@@ -73,51 +77,152 @@ var Utils = {
 var App = {
     fetchCount: 0,
     init: function() {
-        this.allPageProcessor();
+        var pageType = this.determineCurrentPageType();
+        if (pageType !== null) {
+            this.pageType = pageType;
+            this.processPage(pageType);
+        }
+    },
+    determineCurrentPageType: function() {
+        var pageType = null;
+        var loc = window.location.href.toLowerCase();
+        if (loc.indexOf('/disk/home') != -1) 
+        {
+            pageType = 'diskHome';
+        }
+        else if (loc.indexOf('/share/link') != -1 || loc.indexOf('/s/') != -1) 
+        {
+            pageType = document.getElementById('barCmdTransfer') ? 'shareDir' : 'shareOne';
+        } 
+        else if (loc.indexOf('/share/home') != -1) 
+        {
+            pageType = 'shareHome';
+        } 
+        else if (loc.indexOf('/pcloud/album/info') != -1) 
+        {
+            pageType = 'albumInfo';
+        } 
+        else if (loc.indexOf('/pcloud/album/file') != -1) 
+        {
+            pageType = 'albumFile';
+        }
+        return pageType;
+    },
+    processPage: function(pageType) {
+        if (pageType != null) {
+            var pageProcessor = pageType + 'PageProcessor';
 
-        var path = location.pathname;
-        switch (path) {
-            case '/share/home':
-                // this.shareHomePageProcessor();
-                break;
-            case '/disk/home':
-                this.diskHomePageProcessor();
-                break;
-            case '/pcloud/album/info':
-                this.albumPageProcessor();
-                break;
-            case '/pcloud/album/file':
-                this.albumOnePageProcessor();
-                break;
-            default:
-                if (path === '/share/link' || path.indexOf('/s/') !== -1) {
-                    if (document.getElementById('barCmdTransfer')) {
-                        // this.shareDirPageProcessor();
-                    } else {
-                        this.shareOnePageProcessor();
+            if (typeof(this[pageProcessor]) == 'function') {
+                GM_addStyle(Res.panelCSS);
+
+                // 注册菜单
+                GM_registerMenuCommand('设置 Aria2 JSON-RPC Path', function(){
+                    var newPath = prompt('Aria2 JSON-RPC Path', Config.aria2_jsonrpc);
+                    if (newPath) {
+                        GM_setValue('aria2_jsonrpc', Config.aria2_jsonrpc = newPath);
                     }
+                });
+
+                if (Config.yunGuanjia) {  // 去掉云管家提示，来自 Crack Url Wait Code Login For Chrome
+                    unsafeWindow.navigator.__defineGetter__('platform', function(){ return '' });
                 }
-                break;
-        }
-    },
-    allPageProcessor: function() {
-        GM_addStyle(Res.panelCSS);
 
-        // 注册菜单
-        GM_registerMenuCommand('设置 Aria2 JSON-RPC Path', function(){
-            var newPath = prompt('Aria2 JSON-RPC Path', Config.aria2_jsonrpc);
-            if (newPath) {
-                GM_setValue('aria2_jsonrpc', Config.aria2_jsonrpc = newPath);
+                this[pageProcessor]();
             }
-        });
-
-        if (Config.yunGuanjia) {
-            this.removeYunGuanjia();
         }
     },
-    removeYunGuanjia: function() {
-        // 去掉云管家提示，来自 Crack Url Wait Code Login For Chrome
-        unsafeWindow.navigator.__defineGetter__('platform', function(){ return '' });
+    diskHomePageProcessor: function() {  // 个人主页
+        var self = this;
+        this.API_URL = '/api/list?channel=chunlei&clienttype=0&web=1&num=100&order=time&desc=1';
+
+        // 添加批量下载按钮
+        $('<a class="bbtn" style="padding-left:10px"><b>批量下载</b></a>')
+            .insertAfter('#barCmdDownload')
+            .click(function(){
+                self.downloadAll();
+            })
+
+        // 读取设置
+        var quickLinks = GM_getValue('quickLinks');
+        if (quickLinks)
+            Config.quickLinks = quickLinks;
+
+        // 增加自定义快捷目录
+        var addQuickLinks = function() {
+            $('#aside-menu > .quickLink').remove();
+
+            var html = '';
+            var lines = Config.quickLinks.split('\n');
+            lines.forEach(function(line){
+                var offset = line.indexOf('=');
+                if (offset > 0) {
+                    var name = line.substr(0, offset).trim(),
+                        url = line.substr(offset + 1).trim();
+                    html += '<li class="quickLink b-list-item"><a href="#dir/path=' + url + '" unselectable="on" hidefocus="true" class="sprite2">' +
+                        '<span class="text1 drop-list-trigger">' + name + '</span></a></li>';
+                }
+            })
+            $('#aside-menu > li:first')
+                .after(html);
+        };
+        addQuickLinks();
+        
+        // 修正添加后出现滚动条的情况
+        GM_addStyle('.side-options { margin: auto; }');
+
+        // 添加设置对话框
+        var $dialog = $(Res.settingHTML).appendTo('body');
+        GM_addStyle(Res.settingCSS);
+
+        // 增加设置按钮
+        $('<span class="li"><a href="javascript:;">设置</a></span>')
+            .click(function(){
+                $dialog.find('#quickLinks').val(Config.quickLinks);
+                $dialog.show();
+            })
+            .appendTo('.pulldown.more-info .content');
+        $dialog.find('.cancel').click(function(){
+            $dialog.hide();
+        });
+        $dialog.find('.okay').click(function(){
+            Config.quickLinks = $dialog.find('#quickLinks').val();
+            GM_setValue('quickLinks', Config.quickLinks);
+            addQuickLinks();
+            $dialog.hide();
+        });
+    },
+    shareDirPageProcessor: function() {
+        //  已失效。
+        //  写于 2014-5-12
+        //  只能一个个链接的获取下载地址
+        return;
+
+        var shareId, uk,
+            self = this;
+
+        // 添加批量下载按钮
+        $('<a class="bbtn" style="padding-left:10px"><b>批量下载</b></a>')
+            .appendTo('#file_action_buttons')
+            [0].onclick = function(e) {
+                self.downloadAll();
+            };
+
+        shareId = FileUtils.share_id || disk.getParam['shareid'];
+        uk = FileUtils.sysUK || disk.getParam['uk'];
+        this.API_URL = '/share/list?channel=chunlei&clienttype=0&web=1&page=1&shareid=' + shareId + '&uk=' + uk;
+
+        // 添加右键 "复制" 菜单
+        var observer = new MutationObserver(function(mutations){
+           mutations.forEach(function(mutation){
+               for (var i = mutation.addedNodes.length - 1; i >= 0; i--) {
+                   if(mutation.addedNodes[i].id == "right-context-menu"){
+                       self.addRightContextMenu();
+                       observer.disconnect();
+                   }
+               }
+           });
+        });
+        observer.observe(document.body, { childList: true });
     },
     shareOnePageProcessor: function() {
         var data = null;
@@ -237,7 +342,7 @@ var App = {
                 });
         }, 1000); 
     },
-    albumPageProcessor: function() {
+    albumInfoPageProcessor: function() {
         var self = this;
         var _mAlbumId, _mUk, _mPage;
 
@@ -275,7 +380,7 @@ var App = {
         };
         $('body').bind('click', clicked);
     },
-    albumOnePageProcessor: function() {
+    albumFilePageProcessor: function() {
         var data = { fid_list: "[" + disk.util.ViewShareUtils.fsId + "]" };
         // 增加 YAAW 按钮
         $('<a class="new-dbtn" href="javascript:;" hidefocus="true">')
@@ -290,92 +395,8 @@ var App = {
             })
             .insertAfter('#downFileButtom');
     },
-    shareDirPageProcessor: function() {
-        var shareId, uk,
-            self = this;
 
-        // 添加批量下载按钮
-        $('<a class="bbtn" style="padding-left:10px"><b>批量下载</b></a>')
-            .appendTo('#file_action_buttons')
-            [0].onclick = function(e) {
-                self.downloadAll();
-            };
-
-        shareId = FileUtils.share_id || disk.getParam['shareid'];
-        uk = FileUtils.sysUK || disk.getParam['uk'];
-        this.API_URL = '/share/list?channel=chunlei&clienttype=0&web=1&page=1&shareid=' + shareId + '&uk=' + uk;
-
-        // 添加右键 "复制" 菜单
-        var observer = new MutationObserver(function(mutations){
-           mutations.forEach(function(mutation){
-               for (var i = mutation.addedNodes.length - 1; i >= 0; i--) {
-                   if(mutation.addedNodes[i].id == "right-context-menu"){
-                       self.addRightContextMenu();
-                       observer.disconnect();
-                   }
-               }
-           });
-        });
-        observer.observe(document.body, { childList: true });
-    },
-    diskHomePageProcessor: function() {  // 个人主页
-        var self = this;
-        this.API_URL = '/api/list?channel=chunlei&clienttype=0&web=1&num=100&order=time&desc=1';
-
-        // 添加批量下载按钮
-        $('<a class="bbtn" style="padding-left:10px"><b>批量下载</b></a>')
-            .insertAfter('#barCmdDownload')
-            [0].onclick = function(e) {
-                self.downloadAll();
-            };
-
-        // 读取设置
-        var quickLinks = GM_getValue('quickLinks');
-        if (quickLinks)
-            Config.quickLinks = quickLinks;
-
-        // 增加自定义快捷目录
-        var addQuickLinks = function() {
-            $('#aside-menu > .quickLink').remove();
-
-            var html = '';
-            var lines = Config.quickLinks.split('\n');
-            lines.forEach(function(line){
-                var offset = line.indexOf('=');
-                if (offset > 0) {
-                    var name = line.substr(0, offset).trim(),
-                        url = line.substr(offset + 1).trim();
-                    html += '<li class="quickLink b-list-item"><a href="#dir/path=' + url + '" unselectable="on" hidefocus="true" class="sprite2">' +
-                        '<span class="text1 drop-list-trigger">' + name + '</span></a></li>';
-                }
-            })
-            $('#aside-menu > li:first')
-                .after(html);
-        };
-        addQuickLinks();
-        
-        // 修正添加后出现滚动条的情况
-        GM_addStyle('.side-options { margin: auto; }');
-
-        // 添加设置对话框
-        var $dialog = $(Res.settingHTML).appendTo('body');
-        GM_addStyle(Res.settingCSS);
-        // 增加设置按钮
-        $('<span class="li"><a href="javascript:;">设置</a></span>')
-            .click(function(){
-                $dialog.find('#quickLinks').val(Config.quickLinks);
-                $dialog.show();
-            })
-            .appendTo('.pulldown.more-info .content');
-        $dialog.find('.cancel').click(function(){
-            $dialog.hide();
-        });
-        $dialog.find('.okay').click(function(){
-            GM_setValue('quickLinks', Config.quickLinks = $dialog.find('#quickLinks').val());
-            addQuickLinks();
-            $dialog.hide();
-        });
-    },
+    //--------------------
     downloadAll: function() {
         this.toast = App.useToast("正在获取中，请稍后...", true);
         
@@ -442,42 +463,59 @@ var App = {
             }
         });
     },
-    handleResult: function(){
+    handleResult: function(){  // 全部获取完成
+        if (this.fetchCount > 0) return;
+
         var self = this;
+        
+        // 2014-5-11， 百度盘改成 post 方式获取下载链接
+        var filelist = [];
+        this.checkedItems.forEach(function(item){
+            if (item.dlink) return;
 
-        // 全部获取完成
-        if(this.fetchCount <= 0){
-            // 2014-5-11， 百度盘改成 post 方式获取下载链接
-            var filelist = [];
-            this.checkedItems.forEach(function(item){
-                if (item.children) {
-                    item.children.forEach(function(i){
-                        filelist.push(i.fs_id);
-                    });
-                } else {
-                    filelist.push(item.fs_id)
-                }
-            });
+            if (item.children) {
+                item.children.forEach(function(i){
+                    filelist.push(i.fs_id);
+                });
+            } else {
+                filelist.push(item.fs_id)
+            }
+        });
 
-            var API_URL = 'http://pan.baidu.com/api/download?channel=chunlei&clienttype=0&web=1&bdstoken=' + FileUtils.bdstoken;
-            var sign = FileUtils.base64Encode(FileUtils.sign2(FileUtils.sign3, FileUtils.sign1));
-            var data = {sign: sign, fidlist: "[" + filelist.join(',') + "]", type: 'dlink', timestamp: FileUtils.timestamp};
-            debug('post 方式获取下载链接');
-            $.post(API_URL, data, function(r){
-                if (r.errno == 0) {
-                    var dlinkMap = {}
-                    r.dlink.forEach(function(i){
-                        dlinkMap[i.fs_id] = i.dlink;
-                    });
-
-                    debug("全部获取完成", self.checkedItems);
-                    self.showPanel(self.checkedItems, dlinkMap);
-                    self.toast.setVisible(false);
-                } else {
-
-                }
-            });
+        // 不需要再次获取的直接显示
+        if (filelist.length == 0) {
+            self.showPanel(self.checkedItems);
+            self.toast.setVisible(false);
+            return;
         }
+
+        var restUrl = 'http://pan.baidu.com/api/download?channel=chunlei&clienttype=0&web=1&bdstoken=' + FileUtils.bdstoken,
+            data = {
+                sign: FileUtils.base64Encode(FileUtils.sign2(FileUtils.sign3, FileUtils.sign1)), 
+                fidlist: "[" + filelist.join(',') + "]",
+                type: 'dlink',
+                timestamp: FileUtils.timestamp
+            };
+
+        debug('post 方式获取下载链接');
+        $.post(restUrl, data, function(r){
+            if (r.errno == 0) {
+                var dlinkMap = {}
+                r.dlink.forEach(function(i){
+                    dlinkMap[i.fs_id] = i.dlink;
+                });
+
+                debug("全部获取完成", self.checkedItems);
+                self.showPanel(self.checkedItems, dlinkMap);
+                self.toast.setVisible(false);
+            } else {
+                Utilities.useToast({
+                    toastMode: disk.ui.Toast.MODE_CAUTION,
+                    msg: disk.util.shareErrorMessage[result.errno],
+                    sticky: false
+                });
+            }
+        });
     },
     showPanel: function(checkedItems, dlinkMap) {
         if (!this.panel) {
@@ -659,7 +697,18 @@ var Res = getMStr(function(){
           color: red;
         }
      */
-
+    var panelHTML;
+    /*
+        <div class="b-panel b-dialog common-dialog" style="display: none; left: 249px; top: 105px;width: 625px;height: auto;">
+            <div class="dlg-hd b-rlv">
+                <span class="dlg-cnr dlg-cnr-l"></span>
+                <a href="javascript:;" title="关闭" class="dlg-cnr dlg-cnr-r .close"></a>
+                <h3><em></em>下载链接</h3>
+            </div>
+            <div class="dlg-bd">
+            </div>
+        </div>
+     */
     var settingHTML;
     /*
         <div class="b-panel download-mgr-dialog" style="width: 550px; display: none; left: 338.5px; top: 101.5px;">
