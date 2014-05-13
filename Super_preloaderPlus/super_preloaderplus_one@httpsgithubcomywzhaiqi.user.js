@@ -3,7 +3,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.0.5
+// @version      6.0.6
 // homepageURL  https://userscripts.org/scripts/show/178900
 // downloadURL  https://userscripts.org/scripts/source/178900.user.js
 // updateURL    https://userscripts.org/scripts/source/178900.meta.js
@@ -206,16 +206,11 @@
                                 value: function() { return ''; },
                             });
                         } catch (e) {}
-                    } else {  // Chrome 原生的情况，2014-5-8 已失效
-                        var removeLinkRedirect = function() {
-                            var links = doc.querySelectorAll('a[onmousedown^="return rwt"]');
-                            for (var i = links.length - 1; i >= 0; i--) {
-                                links[i].removeAttribute("onmousedown");
-                            }
-                        };
-
-                        removeLinkRedirect();
-                        doc.addEventListener("Super_preloaderPageLoaded", removeLinkRedirect, false);
+                    } else {  // Chrome 原生的情况
+                        var script = document.createElement('script');
+                        script.type = 'text/javascript';
+                        script.textContent = 'window.rwt = function(){}';
+                        document.documentElement.appendChild(script);
                     }
                 }
             }
