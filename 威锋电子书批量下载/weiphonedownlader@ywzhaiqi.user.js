@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             weiphoneDownlader@ywzhaiqi
 // @name           威锋电子书批量下载
-// @version        1.0
+// @version        1.1
 // @namespace      
 // @author         ywzhaiqi
 // @description    批量下载威锋论坛的电子书
@@ -25,35 +25,50 @@ var RES = getMStr(function(){
 		<button id="downloadButton">批量下载</button>
 		<div id="batchPublish" style="display: none;">
 			<div id="batchHeader">
-				<a id="closeButton" href="javascript:return null" style="float:right">关闭</a>
+				<a id="closeButton" class="aui_close" href="javascript:;">×</a>
 			</div>
 			<div id="batchContent">
 				<pre id="batchedlink"></pre>
 			</div>
 		</div>
+		<div id="batchNotice" style="display:none">
+		</div>
 	</div>
 	 */
 	var cssText;
 	/*
-	#downloadButton {
-		position:fixed;
-		top:80px;
-		right:8px;
-	}
-	#batchPublish {
-		position:fixed;
-		z-index:1001;
-		top:40%;
-		left:35%;
-		width: 530px;
-		background:white;
-		border: 3px solid #AAA;
-	}
-	#batchedlink {
-		width: 500px;
-		height: 250px;
-		overflow: scroll;
-	}
+		#downloadButton {
+			position:fixed;
+			top:80px;
+			right:8px;
+		}
+		#batchPublish {
+			position:fixed;
+			z-index:1001;
+			top:40%;
+			left:35%;
+			width: 530px;
+			background:white;
+			border: 3px solid #AAA;
+		}
+		#batchedlink {
+			width: 500px;
+			height: 250px;
+			overflow: scroll;
+		}
+		#batchNotice {
+			position:fixed;
+			z-index:1001;
+			top:10%;
+			left:35%;
+			background: #F9EDBE;
+			box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.5);
+			border: 1px solid #FBDA91;
+			padding: 5px;
+		}
+		#batchNotice > b {
+			margin-left: 5px;
+		}
 	 */
 });
 
@@ -104,8 +119,12 @@ locationHref.match(/read-htm-tid|mod=viewthread/) != -1 && (function(){
 	})
 
 	jQuery('#downloadButton').click(function(){
-		var links = jQuery.makeArray(jQuery(attachSelector));
+		var links = jQuery.makeArray(jQuery(attachSelector))
+			$batchNotice = $('#batchNotice');
 		var downUrls = [];
+
+		$batchNotice.html('正在获取中...' + '<b>1/' + links.length + '</b>');
+		$batchNotice.show();
 
 		function getDownloadLink() {
 			var link = links.shift();
@@ -122,6 +141,7 @@ locationHref.match(/read-htm-tid|mod=viewthread/) != -1 && (function(){
 							var urls = downUrls.join('\n');
 
 							// console.log(urls);
+							$batchNotice.hide();
 							$('#batchedlink').html(urls);
 							$('#batchPublish').show();
 
@@ -135,6 +155,8 @@ locationHref.match(/read-htm-tid|mod=viewthread/) != -1 && (function(){
 							// window.open('data:text/html;charset=utf-8,<pre>' + encodeURIComponent(urls) + '</pre>');
 							// alert('已复制' + downUrls.length + '条下载链接')
 							return;
+						} else {
+							$batchNotice.html('正在获取中...' + '<b>' + downUrls.length + '/' + links.length + '</b>');
 						}
 
 						getDownloadLink();

@@ -19,6 +19,7 @@ UserScripts For Firefox
  - [shooter.user.js](shooter.user.js)，射手网搜索页面点击按钮直接下载
  - [userscripts.user.js](userscripts.user.js)，userscripts.org 搜索页面只显示中文
  - [smzdm.user.js](smzdm.user.js)，已失效
+ - [威锋电子书批量下载](威锋电子书批量下载)，批量导出[iPad 电子书资源分享区 - 威锋论坛](http://bbs.feng.com/thread-htm-fid-224.html) 附件的下载地址。
 
 ## 在用的脚本（非原创，仅链接）
 
