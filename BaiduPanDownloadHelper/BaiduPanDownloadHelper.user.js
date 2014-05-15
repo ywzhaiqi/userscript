@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.6.0
+// @version        3.6.1
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi@gmail.com
 // @description    批量导出百度盘的下载链接
@@ -55,7 +55,7 @@ var Config = {
 };
 
 var TPLS = {
-    normal: '{server_filename}' + Config.lineBreak + '{dlink}',
+    normal: '{dlink}',
     aria2c: 'aria2c -c -x 10 -s 10 --out "{server_filename}" "{dlink}" --user-agent="netdisk" --header "Referer:http://pan.baidu.com/disk/home"',
 };
 
@@ -132,6 +132,12 @@ var App = {
         }
     },
     diskHomePageProcessor: function() {  // 个人主页
+        /*
+            设置 disk.DEBUG = true
+        关键函数
+            移动：FileUtils.sendMoveCopyFileMessage
+            FileUtils.switchToDir(PATH)  主界面切换到某个文件夹
+         */
         var self = this;
         this.API_URL = '/api/list?channel=chunlei&clienttype=0&web=1&num=100&order=time&desc=1';
 
@@ -482,19 +488,19 @@ var App = {
         var self = this;
         
         // 2014-5-11， 百度盘改成 post 方式获取下载链接
+        // 筛选出没有 dlink 的 fs_id
         var filelist = [];
-        this.checkedItems.forEach(function(item){
-            if (item.dlink) return;
-
-            if (item.children) {
-                item.children.forEach(function(i){
-                    if (i.dlink) return;
-                    filelist.push(i.fs_id);
-                });
-            } else {
-                filelist.push(item.fs_id)
-            }
-        });
+        var filter = function(items) {
+            items.forEach(function(item) {
+                if (item.dlink || item.isdir == 1) return;
+                if (item.children) {
+                    filter(item.children)
+                } else {
+                    filelist.push(item.fs_id)
+                }
+            });
+        };
+        filter(this.checkedItems);
 
         // 不需要再次获取的直接显示
         if (filelist.length == 0) {
@@ -512,10 +518,10 @@ var App = {
             };
 
         debug('post 方式获取下载链接');
-        $.post(restUrl, data, function(r){
-            if (r.errno == 0) {
+        $.post(restUrl, data, function(result){
+            if (result.errno == 0) {
                 var dlinkMap = {}
-                r.dlink.forEach(function(i){
+                result.dlink.forEach(function(i){
                     dlinkMap[i.fs_id] = i.dlink;
                 });
 
@@ -523,7 +529,7 @@ var App = {
                 self.showPanel(self.checkedItems, dlinkMap);
                 self.toast.setVisible(false);
             } else {
-                console.error('POST 方式获取错误', r);
+                console.error('POST 方式获取错误', result);
                 Utilities.useToast({
                     toastMode: disk.ui.Toast.MODE_CAUTION,
                     msg: disk.util.shareErrorMessage[result.errno],
