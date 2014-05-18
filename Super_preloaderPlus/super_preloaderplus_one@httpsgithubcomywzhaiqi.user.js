@@ -3,7 +3,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.0.6
+// @version      6.0.7
 // homepageURL  https://userscripts.org/scripts/show/178900
 // downloadURL  https://userscripts.org/scripts/source/178900.user.js
 // updateURL    https://userscripts.org/scripts/source/178900.meta.js
@@ -655,6 +655,20 @@
                 replaceE: '//div[@id="page2"]'
             }
         },
+        // uAutoPagerize2 会报错
+        // {name: '和讯博客',
+        //     url: /^http:\/\/\d+\.blog\.hexun\.com\//i,
+        //     exampleUrl: 'http://23802543.blog.hexun.com/',
+        //     // nextLink: '//div[@class="PageSkip_1"]/a[@title="下一页"]',
+        //     nextLink: function(doc) {
+        //         var url = doc.querySelector('.PageSkip_1 a[title="下一页"]').getAttribute('href');
+        //         url = url.replace(/(\/p\d+\/).*/, '$1default.html');
+        //         return url;
+        //     },
+        //     autopager: {
+        //         pageElement: 'id("DefaultContainer1_ArticleList_Panel1")'
+        //     }
+        // },
         {name: '汽车之家',
             url: /^http:\/\/www\.autohome\.com\.cn\/.*\.html/i,
             exampleUrl: 'http://www.autohome.com.cn/culture/201310/643479-7.html',
@@ -1268,9 +1282,9 @@
                 pageElement:'//div[@class="fontListBox"]',
             }
         },
-        {name: '霏凡论坛',
+        {name: '霏凡论坛 - 帖子列表',
             url:/http:\/\/bbs\.crsky\.com\/read\.php/i,
-            nextLink:'auto;',
+            nextLink:'//div[@class="pages"]//a[text()=">"]',
             autopager:{
                 // useiframe:true,
                 pageElement:'//div[@class="t5 t2"]',
@@ -3072,7 +3086,7 @@
             }
         },
         {name: 'Discuz论坛列表',
-            url:/^https?:\/\/(?:www\.[^\/]+\/|[^\/]+\/(?:bbs\/)?)(?:(?:forum)|(?:showforum)|(?:viewforum)|(?:forumdisplay))+/i,
+            url:/^https?:\/\/(?:www\.[^\/]+\/|[^\/]+\/(?:bbs\/)?)(?:2b\/)?(?:(?:forum)|(?:showforum)|(?:viewforum)|(?:forumdisplay))+/i,
             preLink:'//div[@class="pages" or @class="pg"]/descendant::a[@class="prev"][@href]',
             nextLink:'//div[@class="pages" or @class="pg"]/descendant::a[@class="next" or @class="nxt"][@href] | //div[@class="p_bar"]/a[@class="p_curpage"]/following-sibling::a[@class="p_num"]',
             autopager:{
@@ -3082,7 +3096,7 @@
             }
         },
         {name: 'Discuz论坛帖子',
-            url:/https?:\/\/(?:www\.[^\/]+\/|[^\/]+\/(?:bbs\/)?)(?:(?:thread)|(?:viewthread)|(?:showtopic)|(?:viewtopic))+/i,
+            url:/https?:\/\/(?:www\.[^\/]+\/|[^\/]+\/(?:bbs\/)?)(?:2b\/)?(?:(?:thread)|(?:viewthread)|(?:showtopic)|(?:viewtopic))+/i,
             preLink:'//div[@class="pages" or @class="pg"]/descendant::a[@class="prev"][@href]',
             nextLink:'//div[@class="pages" or @class="pg"]/descendant::a[@class="next" or @class="nxt"][@href] | //div[@class="p_bar"]/descendant::a[text()="››"]',
             autopager:{
