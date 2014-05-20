@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.6.1
+// @version        3.6.2
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi@gmail.com
 // @description    批量导出百度盘的下载链接
@@ -26,6 +26,8 @@
 // @include        http*://yun.baidu.com/pcloud/album/info*
 // @include        http*://yun.baidu.com/pcloud/album/file*
 // @include        http*://pan.baidu.com/disk/home*
+// @include        http://pan.baidu.com/share/init?*
+// @include        http://yun.baidu.com/share/init?*
 // @exclude        http*://yun.baidu.com/share/home*&view=follow
 // @run-at         document-end
 // ==/UserScript==
@@ -42,7 +44,7 @@ var isChrome = !!this.chrome;
 
 var Config = {
     debug: false,
-    yunGuanjia: false,  // 是否去掉云管家提示
+    yunGuanjia: true,  // 是否去掉云管家提示
     quickLinks: 'Books=/Books/网络小说\n小说=/Books/小说\n网络小说=/Books/网络小说',
 
     trim_titles: [  // Share Home 标题移除的文字广告
@@ -105,6 +107,8 @@ var App = {
         else if (loc.indexOf('/pcloud/album/file') != -1) 
         {
             pageType = 'albumFile';
+        } else if (loc.indexOf('/share/init?') != -1) {  // 分享的初始页面，用于输入密码等
+            pageType = 'shareInit';
         }
         return pageType;
     },
@@ -244,6 +248,10 @@ var App = {
         observer.observe(document.body, { childList: true });
     },
     shareOnePageProcessor: function() {
+        if ($('#share_nofound_des').size() > 0) {  // 文件不存在
+            return;
+        }
+
         var data = null;
 
         // 获取链接，文件 viewshare_all.js，函数 _checkDownloadFile，2013-12-2
@@ -413,6 +421,19 @@ var App = {
                 }
             })
             .insertAfter('#downFileButtom');
+    },
+    shareInitPageProcessor: function() {
+        // 来自 https://greasyfork.org/scripts/1002-网盘自动填写提取密码
+        // 因为 Scriptish bug，同一个作者的2个脚本只能安装一个
+        
+        var sCode = location.hash.slice(1).trim();  // 抓取提取码
+        if (!/^[a-z0-9]{4}$/.test(sCode))  // 检查是否为合法格式 
+            return;
+        // console.log('抓取到的提取码: ', sCode);
+        setTimeout(function() {
+            $('#accessCode').val(sCode);
+            $('#submitBtn').click();
+        }, 10);
     },
 
     //--------------------

@@ -12,7 +12,8 @@ BaiduPanDownloadHelper
 非常感谢 [BaiduPanMD5Button](https://userscripts.org/scripts/show/156906)
 
  - 文件夹式的分享界面，只能一个个链接的获取，连续获取几个就会让你输入验证码，所以只能保存到自己网盘批量下载。
- - **分享主页**：双击复制所有链接到剪贴板，可用 iDown 的 lua 脚本实现直接批量下载。
+ - 新增自动填写提取密码，来自 [网盘自动填写提取密码](https://greasyfork.org/scripts/1002)
+ - **分享主页**：双击复制所有链接到剪贴板，可用 iDown 的 lua 脚本实现直接批量下载。（**lua 脚本已失效**）
  	- TODO: iDown 文件下载的问题。TLF-MiniSD——史蒂芬·斯皮尔伯格 http://yun.baidu.com/s/1zMWXu
  - 勾选条目后，新增右键 “复制"、"复制 aria2" 菜单
 
