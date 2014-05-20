@@ -3,14 +3,15 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.0.8
+// @version      6.0.9
+// @homepageURL  https://greasyfork.org/scripts/178900/
+// @updateURL    https://greasyfork.org/scripts/178900/code.meta.js
+// @downloadURL  https://greasyfork.org/scripts/178900/code.user.js
+
 // homepageURL  https://userscripts.org/scripts/show/178900
 // downloadURL  https://userscripts.org/scripts/source/178900.user.js
 // updateURL    https://userscripts.org/scripts/source/178900.meta.js
 
-// @homepageURL  https://greasyfork.org/scripts/178900/
-// @updateURL    https://greasyfork.org/scripts/178900/code.meta.js
-// @downloadURL  https://greasyfork.org/scripts/178900/code.user.js
 // @grant        GM_addStyle
 // @grant        GM_getValue
 // @grant        GM_setValue
@@ -1160,15 +1161,24 @@
                     newIframe: true
             }
         },
+        {name: 'Mozilla Addons - 用户信息',
+            url: /^https:\/\/addons\.mozilla\.org\/zh-CN\/[^\/]+\/user\//i,
+            exampleUrl: 'https://addons.mozilla.org/zh-CN/firefox/user/Vasiliy_Temnikov/',
+            nextLink: '//p[@class="rel"]/a[@class="button next"]',
+            autopager: {
+                pageElement: 'id("my-addons")',
+                relatedObj: true,
+            }
+        },
         {name: 'Mozilla Addons',
             url: /^https?:\/\/addons\.mozilla\.org\/[^\/]+\/firefox/i,
             siteExample: 'https://addons.mozilla.org/zh-CN/firefox/',
             nextLink: '//p[@class="rel"]/a[@class="button next"][@href] | //ol[@class="pagination"]/li/a[@rel="next"][@href]',
             autopager: {
-                uAutoPagerize2: {
-                    useiframe: true,
-                },
-                pageElement: '//div[@id="pjax-results" or @class="separated-listing"]/div[@class="items"] | //section[@class="primary"]/div/div[@class="items"] | //ul[@class="personas-grid"] | //div[@id="reviews"]',
+                // uAutoPagerize2: {
+                //     useiframe: true,
+                // },
+                pageElement: '//div[@id="pjax-results" or @class="separated-listing"]/div[@class="items"] | //section[@class="primary"]/div/div[@class="items"] | //ul[@class="personas-grid"] | //div[@id="my-addons"] | //div[@id="reviews"]',
                 relatedObj: true,
                 replaceE: 'css;.paginator'
             }
