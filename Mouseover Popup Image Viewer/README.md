@@ -67,6 +67,12 @@ Mouseover Popup Image Viewer
 
 	{"r":"http:\\/\\/fmn\\.(rrimg|rrfmn|xnpic)\\.com\\/(.*)\\/p\\/.*85lt_(.*\\.jpg)","s":"http://fmn.$1.com/$2/$3"}
 
+### 虾米（部分有效）
+
+	{"r":"(img\\.xiami\\.net\\/images\\/artistpic\\/.*)_1\\.jpg","s":"http://$1_4.jpg"} 
+
+	{"r":"(img\\.xiami\\.net\\/images\\/(?:album|artist)\\/.*)_\\d\\.jpg","s":"http://$1.jpg"}
+
 #### 无觅网（有个问题）
 
 	{"r":"www\\.wumii\\.com/item/[^/]+$","s":"var img = node.parentNode.querySelector('.img-clip > img'); if(img && img.src) return img.src;"} 
