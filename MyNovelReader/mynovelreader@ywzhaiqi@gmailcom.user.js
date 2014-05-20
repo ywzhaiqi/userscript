@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        4.0.1
+// @version        4.0.2
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
@@ -27,6 +27,7 @@
 
 // @include        http://read.qidian.com/*,*.aspx
 // @include        http://readbook.qidian.com/bookreader/*,*.html
+// @include        http://free.qidian.com/Free/ReadChapter.aspx?*
 // @include        http://www.qdmm.com/BookReader/*,*.aspx
 // @include        http://www.qdwenxue.com/BookReader/*,*.aspx
 // @include        http://chuangshi.qq.com/read/bookreader/*.html
@@ -77,6 +78,7 @@
 // @include        http://muyuge.com/*/*.html
 // @include        http://bbs.vyming.com/novel-read-*-*.html
 // @include        http://www.9imw.com/novel-read-*-*.html
+// @include        http://www.23zw.com/olread/*/*/*.html
 
 // www.sodu.so
 // @include        http://www.jiaodu8.com/*/*/*/*.html
@@ -94,11 +96,12 @@
 // @include        http://www.ziyuge.com/*/*/*/*/*.html
 
 // 其它网站
+// @include        http://www.ttzw.com/book/*/*.html
+// @include        http://www.uukanshu.com/*/*/*.html
 // @include        http://www.173ed.com/read/*/*.html
 // @include        http://www.a240.com/read/*/*.html
 // @include        http://www.zhuishu.com/*/*.html
 // @include        http://www.shuangde.cc/*/*.html
-// @include        http://www.23zw.com/olread/*/*/*.html
 // @include        http://www.shenmaxiaoshuo.com/ml-*-*/
 // @include        http://www.86kankan.com/read/*/*.html
 // @include        http://www.fkzww.com/*/*/*.html
@@ -257,10 +260,12 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         indexSelectors: ["a[href='index.html']", "a:contains('返回书目')", "a:contains('章节目录')", "a:contains('章节列表')",
             "a:econtains('最新章节')", "a:contains('回目录')","a:contains('回书目')", "a:contains('目 录')", "a:contains('目录')"],
 
-        contentSelectors: ["#pagecontent", "#bmsy_content", "#bookpartinfo", "#htmlContent", "#chapter_content", "#chapterContent", "#partbody",
+        contentSelectors: ["#pagecontent", "#contentbox", "#bmsy_content", "#bookpartinfo", "#htmlContent", "#chapter_content", "#chapterContent", "#partbody",
             "#article_content", "#BookTextRead", "#booktext", "#BookText", "#readtext", "#text_c", "#txt_td", "#TXT", "#zjneirong",
             ".novel_content", ".readmain_inner", ".noveltext", ".booktext",
             "#contentTxt", "#oldtext", "#a_content", "#contents", "#content2", "#content", ".content"],
+
+        bookTitleSelector: ".h1title > .shuming > a[title]",
 
         contentRemove: "script, iframe, font[color]",          // 内容移除选择器
         contentReplace: /最新.?章节|百度搜索|无弹窗小说网|更新快无弹窗纯文字|高品质更新|\(百度搜.\)|全文字手打|“”&nbsp;看|无.弹.窗.小.说.网|追书网|〖∷∷无弹窗∷纯文字∷ 〗/g,
@@ -314,26 +319,21 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 fakeStub.find('div#content script:first').addClass('reader-ajax');
             },
         },
-        {siteName: "78小说网",
-            url: "^http://www\\.78xs\\.com/article/\\d+/\\d+/\\d+.shtml$",
-            contentHandle: false,
-            titleReg: "(.*?) (?:正文 )?(.*) 78小说网",
-         
-            indexSelector: "a:contains('目 录')",
-            prevSelector: "a:contains('上一章')",
-            nextSelector: "a:contains('下一章')",
-         
-            // 获取内容
-            contentSelector: "#content",
-            useiframe: true,
-
-            contentReplace: [
-                "//.*?78xs.*?//", 
-                "\\(全文字小说更新最快\\)",
-            ],
-            contentPatch: function(fakeStub){
-                fakeStub.find('p.title').empty();                      // 去掉内容中带的章节标题
-            }
+        {siteName: "起点中文网免费频道",
+            url: "^http://free\\.qidian\\.com/Free/ReadChapter\\.aspx",
+            titleSelector: ".title > h3",
+            bookTitleSelector: ".site_rect > a:last",
+            contentSelector: "#chapter_cont",
+            contentReplace: {
+                "\\[img=(.*)\\]": "<p><img src='$1'></p><p>",
+                "\\[+CP.*(http://file.*\\.jpg)\\]+": "<p><img src='$1'></p><p>",
+                "\\[bookid=(\\d+)，bookname=(.*?)\\]": "<a href='http://www.qidian.com/Book/$1.aspx'>$2</a>",
+                "www.cmfu.com发布|起点中文网www.qidian.com欢迎广大书友光临阅读.*": "",
+                '(<p>\\s+)?<a href="?http://www.(?:qidian|cmfu).com"?>起点中文网.*': ''
+            },
+            contentPatch: function(fakeStub) {
+                fakeStub.find('#chapter_cont > script:first').addClass('reader-ajax');
+            } 
         },
         {siteName: "纵横中文网",
             url: "^http://book\\.zongheng\\.com/\\S+\\/\\d+\\.html$",
@@ -363,6 +363,15 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             mutationChildCount: 1,
             contentPatch: function(fakeStub){
                 fakeStub.find('.bookreadercontent  > p:last').remove();
+                // 下面的补丁方式目前还不支持获取下一页链接
+                // var cid = fakeStub.find('body').html().match(/ var cid = "(\d+?)",/)[1];
+                // var durl = 'http://chuangshi.qq.com/read/bookreader/' + cid +'/0';
+                // fakeStub.find('body').append('<div id=content></div>');
+                // fakeStub.find('div#content').attr({
+                //     class: 'reader-ajax',
+                //     src: durl,
+                //     charset: 'GB2312'
+                // });
             }
         },
         {siteName: "晋江文学网",
@@ -497,6 +506,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             url: /^http:\/\/www\.bxs\.cc\/\d+\/\d+\.html$/,
             titleReg: /(.*?)\d*,(.*)/,
             contentReplace: [
+                /如果您觉得网不错就多多分享本站谢谢各位读者的支持/ig,
                 /一秒记住【】www.zaidu.cc，本站为您提供热门小说免费阅读。/ig,
                 /（文&nbsp;學馆w&nbsp;ww.w&nbsp;xguan.c&nbsp;om）/ig,
                 /\[<a.*?首发\[百晓生\] \S+/ig,
@@ -575,26 +585,6 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 "〖∷更新快∷无弹窗∷纯文字∷ .〗"
             ]
         },
-        {siteName: "读零零",
-            url: "http://www\\.du00\\.com/read/\\d+/\\d+/[\\d_]+\\.html",
-            titleReg: "(.*?)(?:第\\d+段)?,(.*) - 读零零小说网",
-            titlePos: 1,
-            prevSelector: "#footlink a:first",
-            indexSelector: "#footlink a:contains('目录')",
-            nextSelector: "#footlink a:last",
-            // 内容
-            contentSelector: "#pagecontent, .divimage",
-            useiframe: true,
-            mutationSelector: "#pagecontent",
-            mutationChildCount: 2,
-            contentRemove: "font",
-            contentReplace: [
-                "读零零小说网欢迎您的光临.*?txt格式下载服务",
-                "，好看的小说:|本书最新免费章节请访问。",
-                "\\*文學馆\\*"
-            ],
-            checkSection: true
-        },
         {siteName: "奇书屋",
             url: "http://www.qishuwu.com/\\w+/\\d+/",
             titleReg: "(.*)_(.*)_.*_奇书屋",
@@ -660,17 +650,6 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             contentReplace: {
                 '<img.*?ait="(.*?)".*?>': "$1",
                 'www\\.dyzww\\.com.*|♂|шШщ.*': ""
-            }
-        },
-        {siteName: "16K小说网",
-            url: "^http://www\\.16kbook\\.org/Html/Book/\\d+/\\d+/\\d+\\.shtml$",
-            titleReg: '(\\S+) (.*)- 16K小说网',
-            useiframe: true,
-            contentRemove: '.bdlikebutton',
-            contentReplace: {
-                '(<center>)?<?img src..(http://www.16kbook.org)?(/tu/\\S+\\.jpg).(>| alt."\\d+_\\d+_\\d*\\.jpg" />)(</center>)?': "$3",
-                "/tu/shijie.jpg":"世界", "/tu/xiangdao.jpg":"想到", "/tu/danshi.jpg":"但是", "/tu/huilai.jpg":"回来", "/tu/yijing.jpg":"已经", "/tu/zhende.jpg":"真的", "/tu/liliang.jpg":"力量", "/tu/le.jpg":"了", "/tu/da.jpg":"大", "/tu/shengli.jpg":"胜利", "/tu/xiwang.jpg":"希望", "/tu/wandan.jpg":"完蛋", "/tu/de.jpg":"的",
-                "16kbook\\s*(首发更新|小说网)": "",
             }
         },
         {siteName: "来书屋",
@@ -791,9 +770,6 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             url: "^http://www\\.shuangde\\.cc/.*\\.html",
             bookTitleSelector: '.title > h2 > a',
             contentRemove: '.title, div[align="center"]',
-            contentReplace: [
-                "\\(看书窝&nbsp;看书窝&nbsp;无弹窗全文阅读\\)"
-            ]
         },
         {siteName: '爱尚小说网',
             url: 'http://www.a240.com/read/\\d+/\\d+.html',
@@ -811,14 +787,80 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 'www\\.♀173ed.com♀'
             ]
         },
+        {siteName: "3Z中文网",
+            url: "^http://www\\.zzzcn\\.com\\/(3z\\d+/\\d+\\/|modules\\/article\\/App\\.php\\?aid=\\d+&cid=\\d+){1}$",
+            // titleReg: "(.*?)-(.*)TXT下载",
+            contentSelector: "#content3zcn",
+            indexSelector: "a:contains('返回目录')",
+            prevSelector: "a:contains('上 一 页')",
+            nextSelector: "a:contains('下 一 页'), a:contains('返回书架')",
+            contentReplace: [
+                /[{(][a-z\/.]+(?:首发文字|更新超快)[})]/ig,
+                "手机小说站点（wap.zzzcn.com）",
+                "一秒记住.*为您提供精彩小说阅读。", 
+            ],
+            contentPatch: function(fakeStub){
+                fakeStub.find("a:contains('返回书架')").html("下 一 页").attr("href", fakeStub.find("a:contains('返回目录')").attr("href"));
+                fakeStub.find("#content3zcn").find(".titlePos, font.tips, a").remove();
+            }
+        },
         
-        // 内容需要js运行。
+        // ================== 采用 iframe 方式获取的 ====================
+        {siteName: "16K小说网",
+            url: "^http://www\\.16kbook\\.org/Html/Book/\\d+/\\d+/\\d+\\.shtml$",
+            titleReg: '(\\S+) (.*)- 16K小说网',
+            useiframe: true,
+            contentRemove: '.bdlikebutton',
+            contentReplace: {
+                '(<center>)?<?img src..(http://www.16kbook.org)?(/tu/\\S+\\.jpg).(>| alt."\\d+_\\d+_\\d*\\.jpg" />)(</center>)?': "$3",
+                "/tu/shijie.jpg":"世界", "/tu/xiangdao.jpg":"想到", "/tu/danshi.jpg":"但是", "/tu/huilai.jpg":"回来", "/tu/yijing.jpg":"已经", "/tu/zhende.jpg":"真的", "/tu/liliang.jpg":"力量", "/tu/le.jpg":"了", "/tu/da.jpg":"大", "/tu/shengli.jpg":"胜利", "/tu/xiwang.jpg":"希望", "/tu/wandan.jpg":"完蛋", "/tu/de.jpg":"的",
+                "16kbook\\s*(首发更新|小说网)": "",
+            }
+        },
         {siteName: "读读看",
             url: "^http://www\\.dudukan\\.net/html/.*\\.html$",
             contentReplace: "看小说“就爱读书”|binhuo|www\\.92to\\.com",
             useiframe: true,
             mutationSelector: "#main",
             mutationChildCount: 0,
+        },
+        {siteName: "读零零",
+            url: "http://www\\.du00\\.com/read/\\d+/\\d+/[\\d_]+\\.html",
+            titleReg: "(.*?)(?:第\\d+段)?,(.*) - 读零零小说网",
+            titlePos: 1,
+            prevSelector: "#footlink a:first",
+            indexSelector: "#footlink a:contains('目录')",
+            nextSelector: "#footlink a:last",
+            // 内容
+            contentSelector: "#pagecontent, .divimage",
+            useiframe: true,
+            mutationSelector: "#pagecontent",
+            mutationChildCount: 2,
+            contentRemove: "font",
+            contentReplace: [
+                "读零零小说网欢迎您的光临.*?txt格式下载服务",
+                "，好看的小说:|本书最新免费章节请访问。",
+                "\\*文學馆\\*",
+                "\\(未完待续请搜索，小说更好更新更快!"
+            ],
+            checkSection: true
+        },
+        {siteName: "78小说网",
+            url: "^http://www\\.78xs\\.com/article/\\d+/\\d+/\\d+.shtml$",
+            contentHandle: false,
+            titleReg: "(.*?) (?:正文 )?(.*) 78小说网",
+            indexSelector: "a:contains('目 录')",
+            prevSelector: "a:contains('上一章')",
+            nextSelector: "a:contains('下一章')",
+            contentSelector: "#content",
+            useiframe: true,
+            contentReplace: [
+                "//.*?78xs.*?//", 
+                "\\(全文字小说更新最快\\)",
+            ],
+            contentPatch: function(fakeStub){
+                fakeStub.find('p.title').empty();                      // 去掉内容中带的章节标题
+            }
         },
         {siteName: "151看书网",
             url: "^http://www\\.151kan\\.com/kan/.*\\.html",
@@ -857,47 +899,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             url: "^http://www\\.bookabc\\.net/.*\\.html",
             useiframe: true
         },
-        // 内容js，地址特殊生成。
-        {siteName: "哈哈文学",
-            url: /^http:\/\/www\.hahawx\.com\/.*htm/,
-            titleReg: /(.*?)-(.*?)-.*/,
-            contentSelector: "#chapter_content",
-            contentReplace: /(?:好书推荐|书友在看|其他书友正在看|好看的小说|推荐阅读)：。|(?:www|ｗｗｗ|ｂｏｏｋ).*(?:com|net|org|ｃｏｍ|ｎｅｔ)|全文字阅读|无弹窗广告小说网|哈哈文学\(www.hahawx.com\)|souDU.org|Ｓｏｕｄｕ．ｏｒｇ|jīng彩推荐：/ig,
-            contentPatch: function(fakeStub){
-                var content = fakeStub.find("#chapter_content");
-                var m = content.find("script").text().match(/output\((\d+), "(\d+\.txt)"\);/);
-                if(m && m.length == 3){
-                    var aid = m[1],
-                        files = m[2];
-                    var subDir = "/" + (Math.floor(aid / 1000) + 1);
-                    var subDir2 = "/" + (aid - Math.floor(aid / 1000) * 1000);
-                    var url = "http:\/\/r.xsjob.net\/novel" + subDir + subDir2 + "/" + files;
-                    content.attr({
-                        class: "reader-ajax",
-                        src: url,
-                        charset: "gbk"
-                    });
-                }
-            }
-        },
-        {siteName: "3Z中文网",
-            url: "^http://www\\.zzzcn\\.com\\/(3z\\d+/\\d+\\/|modules\\/article\\/App\\.php\\?aid=\\d+&cid=\\d+){1}$",
-            // titleReg: "(.*?)-(.*)TXT下载",
-            contentSelector: "#content3zcn",
-            indexSelector: "a:contains('返回目录')",
-            prevSelector: "a:contains('上 一 页')",
-            nextSelector: "a:contains('下 一 页'), a:contains('返回书架')",
-            contentReplace: [
-                /[{(][a-z\/.]+(?:首发文字|更新超快)[})]/ig,
-                "手机小说站点（wap.zzzcn.com）",
-                "一秒记住.*为您提供精彩小说阅读。", 
-            ],
-            contentPatch: function(fakeStub){
-                fakeStub.find("a:contains('返回书架')").html("下 一 页").attr("href", fakeStub.find("a:contains('返回目录')").attr("href"));
-                fakeStub.find("#content3zcn").find(".titlePos, font.tips, a").remove();
-            }
-        },
-        // 特殊处理。
+        // ============== 内容需要2次获取的 =========================
         {siteName: "手打吧",
             url: /^http:\/\/shouda8\.com\/\w+\/\d+\.html/,
             contentReplace: /[w\s\[\/\\\(]*.shouda8.com.*|(\/\/)?[全文字]?首发|手打吧|www.shou.*|\(w\/w\/w.shouda8.c\/o\/m 手、打。吧更新超快\)|小说 阅读网 www.xiaoshuoyd .com/ig,
@@ -910,6 +912,46 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 });
             }
         },
+        {siteName: "哈哈文学",
+            url: /^http:\/\/www\.hahawx\.com\/.*htm/,
+            titleReg: /(.*?)-(.*?)-.*/,
+            contentSelector: "#chapter_content",
+            contentReplace: /(?:好书推荐|书友在看|其他书友正在看|好看的小说|推荐阅读)：。|(?:www|ｗｗｗ|ｂｏｏｋ).*(?:com|net|org|ｃｏｍ|ｎｅｔ)|全文字阅读|无弹窗广告小说网|哈哈文学\(www.hahawx.com\)|souDU.org|Ｓｏｕｄｕ．ｏｒｇ|jīng彩推荐：/ig,
+            contentPatch: function(fakeStub){
+                var $content = fakeStub.find("#chapter_content");
+                var m = $content.find("script").text().match(/output\((\d+), "(\d+\.txt)"\);/);
+                if(m && m.length == 3){
+                    var aid = m[1],
+                        files = m[2];
+                    var subDir = "/" + (Math.floor(aid / 1000) + 1),
+                        subDir2 = "/" + (aid - Math.floor(aid / 1000) * 1000);
+                    $content.attr({
+                        class: "reader-ajax",
+                        src: "http://r.xsjob.net/novel" + subDir + subDir2 + "/" + files,
+                        charset: "gbk"
+                    });
+                }
+            }
+        },
+        {siteName: "天天中文",
+            url: "http://www\\.ttzw\\.com/book/\\d+/\\d+\\.html",
+            titleSelector: "#chapter_title",
+            bookTitleSelector: ".fl.pl20 a:last",
+            contentSelector: "#text_area",
+            contentReplace: /www.ttzw.com|www.c66c.com|手机用户请到阅读。|<p>\s*a<\/p>/ig,
+            contentPatch: function(fakeStub) {
+                var m = fakeStub.find('#text_area script').text().match(/outputTxt\("(.*)"\);/);
+                if (m) {
+                    fakeStub.find('#text_area').attr({
+                        class: "reader-ajax",
+                        src: unsafeWindow.getServer() + m[1],
+                        charset: "gbk"
+                    });
+                }
+            }
+        },
+
+        // ===========================================================
         {siteName: "好看小說網",
             url: "http://tw\\.xiaoshuokan\\.com/haokan/\\d+/\\d+\\.html",
             contentSelector: ".bookcontent",
@@ -935,7 +977,6 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 '\\{飘天文学www.piaotian.net感谢各位书友的支持，您的支持就是我们最大的动力\\}'
             ],
         },
-
         {siteName: "天使小说网",
             url: "http://www\\.tsxs\\.cc/files/article/html/\\d+/\\d+/\\d+\\.html",
             contentSelector: "#content"
@@ -1078,9 +1119,13 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 if (m) return m[1];
             }
         },
-        {siteName: "",
+        {siteName: "吾读小说网",
             url: "http://www\\.5du5\\.com/book/.*\\.html",
             contentReplace: '\\(吾读小说网 <a.*无弹窗全文阅读\\)'
+        },
+        {siteName: "UU看书",
+            url: "http://www\\.uukanshu\\.com/.*/\\d+/\\d+.html",
+            contentReplace: "[UＵ]*看书[（\\(].*?[）\\)]文字首发。"
         }
         
         // {siteName: "雅文言情小说吧",  // 一章分段
@@ -1107,7 +1152,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         "[pPｐＰ][sSｓＳ][:：]":"ps:",
         "。{5,7}":"……","~{2,50}":"——","…{3,40}": "……","－{3,20}":"——",
         //"。(,|，|。)": "。",
-        "？(,|，)": "？",
+        // "？(,|，)": "？",
         //"”(,|，|。)": "”",
         "@{3,}": "",
 
@@ -1122,7 +1167,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         "访问下载txt小说":"",
         "fqXSw\\.com":"",
         "\\[\\]":"",
-        "全文字无广告": "",
+        "全文字无广告|\\(看书窝&nbsp;看书窝&nbsp;无弹窗全文阅读\\)": "",
         "uutxt\\.org": "",
         "3vbook\\.cn": "",
         "txt53712/": "",
@@ -1157,11 +1202,11 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         "q[íi]gu[àa]i":"奇怪", "qin兽":"禽兽", "q[iī]ngch[uǔ]":"清楚", "球mi":"球迷", "青chun":"青春", "青lou":"青楼",
         "r[úu]gu[oǒ]":"如果", "r[oó]ngy[ìi]":"容易", "ru白色": "乳白色", "rén员":"人员", "rén形":"人形", "人chao":"人潮", 
         "she(门|术|手|程|击)":"射$1", "sh[iì]ji[eè]":"世界", "sh[ií]ji[aā]n":"时间", "sh[ií]h[oò]u": "时候", "sh[ií]me":"什么", "si人":"私人", "shi女":"侍女", "shi身": "失身", "sh[ūu]j[ìi]":"书记", "shu女": "熟女", "(?:上|shang)chuang": "上床", "呻y[íi]n": "呻吟", "sh[ēe]ngzh[íi]": "生殖", "深gu": "深谷", "双xiu": "双修", "生r[ìi]": "生日", "si盐":"私盐", "shi卫":"侍卫", "si下":"私下", "sao扰":"骚扰", "ｓｈｕａｎｇ　ｆｅｎｇ":"双峰", 
-        "t[uū]r[áa]n":"突然", "tiaojiao": "调教", "推dao": "推倒", "脱guang": "脱光", "t[èe]bi[ée]":"特别", "t[ōo]nggu[òo]":"通过", "tian来tian去":"舔来舔去",
+        "t[uū]r[áa]n":"突然", "tiaojiao": "调教", "偷qing":"偷情", "推dao": "推倒", "脱guang": "脱光", "t[èe]bi[ée]":"特别", "t[ōo]nggu[òo]":"通过", "tian来tian去":"舔来舔去",
         "w[ēe]ixi[ée]":"威胁", "wèizh[ìi]":"位置", "wei员":"委员",
         "xiu长": "修长", "亵du": "亵渎", "xing福": "幸福", "小bo":"小波", "xiong([^a-z])":"胸$1", "小tui":"小腿",
         "yin(谋|险|沉|沟|癸派|后)":"阴$1", "y[iī]y[àa]ng":"一样", "y[īi]di[ǎa]n":"一点", "y[ǐi]j[īi]ng":"已经", "疑huo":"疑惑", "影mi":"影迷",  "阳w[ěe]i": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "(?:you|诱)(?:惑|huo)": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人","旖ni":"旖旎", "yu念":"欲念", "you敌深入":"诱敌深入", "yin(冷|暗)":"阴$1",
-        "z[iì]j[iǐ]": "自己","z[ìi](?:\\s|<br/?>|&nbsp;)*y[oó]u": "自由","zh[iī]d?[àa]u?o":"知道","zha药": "炸药", "zhan有": "占有", "政f[ǔu]": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zong理":"总理", "zh[ōo]ngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]y[oò]u":"左右", "zh[oō]uw[ée]i":"周围", "中nan海":"中南海", "中j委":"中纪委", "中zu部":"中组部", "政zhi局":"政治局", "(昨|一|时|余)(?:<br/?>|&nbsp;|\\s)*ì":"$1日",
+        "z[iì]j[iǐ]": "自己","z[ìi](?:\\s|<br/?>|&nbsp;)*y[oó]u": "自由","zh[iī]d?[àa]u?o":"知道","zha药": "炸药", "zhan有": "占有", "政f[ǔu]": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zong理":"总理", "zh[ōo]ngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]y[oò]u":"左右", "zh[oō]uw[ée]i":"周围", "中nan海":"中南海", "中j委":"中纪委", "中zu部":"中组部", "政zhi局":"政治局", "(昨|一|时|余)(?:<br/?>|&nbsp;|\\s)*ì":"$1日", "照she":"照射",
 
         // === 单字替换 ===
         "b[āà]ng":"棒","bào":"爆","bà":"吧","bī":"逼","bō":"波",
@@ -1221,34 +1266,30 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         return text;
     }
 
+    var Utils = {
+        getUrlHost: function(url) {
+            var a = document.createElement('a');
+            a.href = url;
+            return a.host;
+        }
+    };
+
     // ====================== Parser ==============================
     function Parser(info, doc, curPageUrl){
         this.info = info || {};
         this.doc = doc;
         this.$doc = $(doc);
         this.curPageUrl = curPageUrl || doc.URL;
+        this.curPageHost = Utils.getUrlHost(this.curPageUrl);  // 当前页的 host，后面检验用到
 
+        // 设置初始值
         this.isTheEnd = false;
         this.isSection = false;
 
-        // 当前页的 host，后面检验用到
-        var tmpLink = document.createElement('a');
-        tmpLink.href = this.curPageUrl;
-        this.curPageHost = tmpLink.host;
+        this.applyPatch();
     }
     Parser.prototype = {
-        getAll: function(callback){
-            this.patch();
-
-            this.getTitles();
-            this.getPrevUrl();
-            this.getIndexUrl();
-            this.getNextUrl();
-            this.getContent(callback);
-
-            return this;
-        },
-        patch: function(){
+        applyPatch: function(){
             var contentPatch = this.info.contentPatch;
             if(contentPatch){
                 try {
@@ -1258,6 +1299,40 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                     debug("Error: Content Patch Error!", e);
                 }
             }
+        },
+        hasContent: function() {
+            var $content;
+
+            // var $ajaxScript = this.$doc.find('.' + READER_AJAX);
+            // if ($ajaxScript.length > 0) {
+            //     return true;
+            // }
+
+            if(this.info.contentSelector){
+                $content = this.$doc.find(this.info.contentSelector);
+            }else{  // 按照顺序选取
+                var selectors = rule.contentSelectors;
+                for(var i = 0, l = selectors.length; i < l; i++){
+                    $content = this.$doc.find(selectors[i]);
+                    if($content.length > 0){
+                        debug("  自动查找内容选择器: " + selectors[i]);
+                        break;
+                    }
+                }
+            }
+
+            this.$content = $content;
+
+            return $content.size() > 0;
+        },
+        getAll: function(callback){
+            this.getTitles();
+            this.getPrevUrl();
+            this.getIndexUrl();
+            this.getNextUrl();
+            this.getContent(callback);
+
+            return this;
         },
         getTitles: function(){
             var docTitle = this.$doc.find("title").text();
@@ -1280,6 +1355,12 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 this.bookTitle = this.$doc.find(this.info.bookTitleSelector)
                                     .remove().text().trim();
             }
+            if (!this.bookTitle) {
+                var t = this.$doc.find(rule.bookTitleSelector).text();
+                if (t)
+                    this.bookTitle = t;
+            }
+
             if(!this.chapterTitle){
                 this.chapterTitle = this.autoGetChapterTitle(this.doc);
             }
@@ -1411,41 +1492,16 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 
             return curTitle;
         },
-        checkContent: function() {
-            var $content;
-
-            var $ajaxScript = this.$doc.find('.' + READER_AJAX);
-            if ($ajaxScript.length > 0) {
-                return true;
-            }
-
-            if(this.info.contentSelector){
-                $content = this.$doc.find(this.info.contentSelector);
-            }else{  // 按照顺序选取
-                var selectors = rule.contentSelectors;
-                for(var i = 0, l = selectors.length; i < l; i++){
-                    $content = this.$doc.find(selectors[i]);
-                    if($content.length > 0){
-                        debug("  自动查找内容选择器: " + selectors[i]);
-                        break;
-                    }
-                }
-            }
-
-            this.$content = $content[0] ? $content : null;
-
-            return this.$content;
-        },
         getContent: function(callback){
             if(callback === undefined){
                 callback = function() {};
             }
 
             if (!this.$content) {
-                this.$content = this.checkContent();
+                this.hasContent();
             }
 
-            if (!this.$content) return;
+            if (this.$content.size() <= 0) return;
 
             // 特殊处理，例如起点
             var self = this;
@@ -1455,18 +1511,23 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 if(!url) return;
                 var charset = ajaxScript.attr('charset') || 'utf-8';
                 debug('内容特殊处理 Ajax: ', url, ". charset=" + charset);
-
                 GM_xmlhttpRequest({
                     url: url,
                     method: "GET",
                     overrideMimeType: "text/html;charset=" + charset,
                     onload: function(res){
-                        var text = res.responseText.replace(/document.write(ln)?\('/, "")
-                                .replace("');", "")
-                                .replace(/[\n\r]/g, '</p><p>');
-
-                        self.content = self.handleContentText(text, self.info);
-                        callback(self);
+                        var text = res.responseText;
+                        if (text.indexOf('{"CID":') == 0) {  // 未完成，创世中文的
+                            text = JSON.parse(text).Content;
+                            self.content = $('<div>').html(text).find('.bookreadercontent').html()
+                            callback(self);
+                        } else {
+                            text = text.replace(/document.write(ln)?\('/, "")
+                                    .replace("');", "")
+                                    .replace(/[\n\r]/g, '</p><p>');
+                            self.content = self.handleContentText(text, self.info);
+                            callback(self);
+                        }
                     }
                 });
             }else{
@@ -1478,8 +1539,6 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             if(!text) return null;
 
             var contentHandle = info.contentHandle === undefined ? true : info.contentHandle;
-
-            // GM_setClipboard(text);
 
             // 拼音字、屏蔽字修复
             if(contentHandle){
@@ -1752,11 +1811,11 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             if(App.isLaunched) return;
             App.isLaunched = true;
 
-            var isAutoLaunch = App.checkIsAutoLaunch();
+            var isAutoLaunch = App.isAutoLaunch();
             if(isAutoLaunch){
                 App.site = App.getCurSiteInfo();
 
-                if(App.site.mutationSelector){  // 特殊的启动：等待js把内容生成完成
+                if(App.site.mutationSelector){  // 特殊的启动：等待js把内容生成完毕
                    App.addMutationObserve(document, App.launch);
                 }else if(App.site.timeout){  // 延迟启动
                     setTimeout(App.launch, App.site.timeout);
@@ -1783,13 +1842,16 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             rules = rules.concat(rule.specialSite);
 
             var info = _.find(rules, function(x){ return toRE(x.url).test(locationHref); });
+
             if(!info){
                 info = {};
+                debug("没有找到规则，尝试自动模式。");
+            } else {
+                debug("找到规则：", info);
             }
-            debug("找到规则：", info);
             return info;
         },
-        checkIsAutoLaunch: function (){
+        isAutoLaunch: function (){
             var locationHref = window.location.href,
                 referrer = document.referrer;
             switch(true){
@@ -1850,7 +1912,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             }
 
             var parser = new Parser(App.site, document);
-            var hasContent = !!parser.checkContent();
+            var hasContent = !!parser.hasContent();
             if (hasContent) {
                 document.body.setAttribute("name", "MyNovelReader");
                 App.parsedPages[window.location.href.replace(/\/$/, '')] = true;
@@ -1858,7 +1920,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                     App.processPage(parser);
                 });
             } else {
-                console.error("错误：没有找到下一页的内容");
+                console.error("当前页面没有找到内容");
             }
         },
         processPage: function(parser){
