@@ -51,7 +51,7 @@ Firefox（Greasemonkey/Scriptish），Chrome（原生/Tampermonkey），Maxthon�
 ### 独有的功能
 
  - Google 搜索下一页图片（视频）的显示，内置去除重定向
- - 百度贴吧下一页的点击放大，回复按钮可用
+ - *百度贴吧下一页的点击放大，回复按钮可用，已失效，请改用 [Tieba Preload](https://greasyfork.org/scripts/282-tieba-preload)*
  - youtube 搜索页面下一页图片的显示
  - VeryCD 搜索页面图片的显示（非 iframe）
  - 天涯论坛帖子，修复只看楼主

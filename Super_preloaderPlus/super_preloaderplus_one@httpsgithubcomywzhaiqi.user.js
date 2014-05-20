@@ -3,7 +3,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.0.7
+// @version      6.0.8
 // homepageURL  https://userscripts.org/scripts/show/178900
 // downloadURL  https://userscripts.org/scripts/source/178900.user.js
 // updateURL    https://userscripts.org/scripts/source/178900.meta.js
@@ -37,9 +37,6 @@
 // @exclude      http://cloud.feedly.com/*
 // @exclude      http://openapi.qzone.qq.com/*
 // @exclude      http://weibo.com/*
-
-// @exclude      http://tieba.baidu.com/f?*
-// @exclude      http://tieba.baidu.com/p/*
 // ==/UserScript==
  
 (function() {
@@ -433,6 +430,7 @@
             nextLink: '//div[@class="pager clearfix"]/descendant::a[@class="next"]',
             preLink: '//div[@class="pager clearfix"]/descendant::a[@class="pre"]',
             autopager: {
+                enable: false,
                 pageElement: '//ul[@id="thread_list"]/li',
                 replaceE: 'css;#frs_list_pager',
                 useiframe: true,
@@ -446,6 +444,7 @@
             nextLink:'//ul[@class="l_posts_num"]/descendant::a[text()="下一页"]',
             preLink:'//ul[@class="l_posts_num"]/descendant::a[text()="上一页"]',
             autopager:{
+                enable: false,
                 pageElement: "id('j_p_postlist')",  // "css;.l_post"
                 replaceE: "css;.l_posts_num > .l_pager",
                 useiframe: true,
@@ -1337,8 +1336,7 @@
             nextLink:'auto;',
             autopager:{
                 pageElement:'//div[@class="act mid"]',
-                remain:1/3,
-                relatedObj:['css;div.Comment_box','top'],
+                relatedObj: true
             }
         },
         {name: '3DMGAME',
