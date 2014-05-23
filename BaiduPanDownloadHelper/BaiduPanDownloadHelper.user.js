@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.6.2
+// @version        3.6.3
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi@gmail.com
 // @description    批量导出百度盘的下载链接
@@ -14,20 +14,23 @@
 // @grant          GM_registerMenuCommand
 // homepageURL     http://userscripts.org/scripts/show/162138
 // updateURL       http://userscripts.org/scripts/source/162138.meta.js
-// downloadURL     https://userscripts.org/scripts/source/162138.user.js
+// downloadURL     http://userscripts.org/scripts/source/162138.user.js
 
 // @homepageURL    https://greasyfork.org/scripts/294/
 // @updateURL      https://greasyfork.org/scripts/294/code.meta.js
 // @downloadURL    https://greasyfork.org/scripts/294/code.user.js
 // @require        http://code.jquery.com/jquery-2.1.1.min.js
-// @include        *n.baidu.com/share/link*
-// @include        *n.baidu.com/s/*
+
+// @include        http*://yun.baidu.com/share/link*
+// @include        http*://pan.baidu.com/share/link*
+// @include        http*://yun.baidu.com/s/*
+// @include        http*://pan.baidu.com/s/*
 // @include        http*://yun.baidu.com/share/home*
 // @include        http*://yun.baidu.com/pcloud/album/info*
 // @include        http*://yun.baidu.com/pcloud/album/file*
 // @include        http*://pan.baidu.com/disk/home*
-// @include        http://pan.baidu.com/share/init?*
-// @include        http://yun.baidu.com/share/init?*
+// @include        http*://yun.baidu.com/share/init?*
+// @include        http*://pan.baidu.com/share/init?*
 // @exclude        http*://yun.baidu.com/share/home*&view=follow
 // @run-at         document-end
 // ==/UserScript==
@@ -42,15 +45,12 @@
 
 var isChrome = !!this.chrome;
 
-var Config = {
+var Config = {  // 默认的设置
     debug: false,
-    yunGuanjia: true,  // 是否去掉云管家提示
-    quickLinks: 'Books=/Books/网络小说\n小说=/Books/小说\n网络小说=/Books/网络小说',
 
     trim_titles: [  // Share Home 标题移除的文字广告
         "[v.BDpan.COM]"
     ],
-    aria2_jsonrpc: GM_getValue('aria2_jsonrpc') || 'http://localhost:6800/jsonrpc',
     YAAW_UA: "user-agent:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_1) AppleWebKit/537.73.11 (KHTML, like Gecko) Version/7.0.1 Safari/537.73.11",
     YAAW_REF: "Referer:http://pan.baidu.com/disk/home",
     lineBreak: isChrome ? '\r' : '\n',
@@ -60,7 +60,6 @@ var TPLS = {
     normal: '{dlink}',
     aria2c: 'aria2c -c -x 10 -s 10 --out "{server_filename}" "{dlink}" --user-agent="netdisk" --header "Referer:http://pan.baidu.com/disk/home"',
 };
-
 
 var debug = Config.debug ? console.debug.bind(console) : function() {};
 
@@ -116,23 +115,24 @@ var App = {
         if (pageType != null) {
             var pageProcessor = pageType + 'PageProcessor';
 
+            this.pageType = pageType;
+
             if (typeof(this[pageProcessor]) == 'function') {
-                GM_addStyle(Res.panelCSS);
-
-                // 注册菜单
-                GM_registerMenuCommand('设置 Aria2 JSON-RPC Path', function(){
-                    var newPath = prompt('Aria2 JSON-RPC Path', Config.aria2_jsonrpc);
-                    if (newPath) {
-                        GM_setValue('aria2_jsonrpc', Config.aria2_jsonrpc = newPath);
-                    }
-                });
-
-                if (Config.yunGuanjia) {  // 去掉云管家提示，来自 Crack Url Wait Code Login For Chrome
-                    unsafeWindow.navigator.__defineGetter__('platform', function(){ return '' });
-                }
+                
+                this.allPageProcessor();
 
                 this[pageProcessor]();
             }
+        }
+    },
+    allPageProcessor: function() {
+        GM_addStyle(Res.panelCSS);
+
+        this.registerControls();
+
+        // 去掉云管家提示，来自 Crack Url Wait Code Login For Chrome
+        if (prefs.getRemoveYunGuanjia()) {
+            unsafeWindow.navigator.__defineGetter__('platform', function(){ return '' });
         }
     },
     diskHomePageProcessor: function() {  // 个人主页
@@ -144,6 +144,13 @@ var App = {
          */
         var self = this;
         this.API_URL = '/api/list?channel=chunlei&clienttype=0&web=1&num=100&order=time&desc=1';
+
+        // 添加批量下载按钮
+        $('<a class="bbtn" style="padding-left:10px"><b>批量下载</b></a>')
+            .insertAfter('#barCmdDownload')
+            .click(function(){
+                self.downloadAll();
+            })
 
         // 设置页面标题，根据 hash 变化而变化，方便历史记录检索
         var setDocumentTitle = function() {
@@ -158,61 +165,9 @@ var App = {
         setDocumentTitle();
         window.addEventListener('hashchange', setDocumentTitle, false);
 
-        // 添加批量下载按钮
-        $('<a class="bbtn" style="padding-left:10px"><b>批量下载</b></a>')
-            .insertAfter('#barCmdDownload')
-            .click(function(){
-                self.downloadAll();
-            })
-
-        // 读取设置
-        var quickLinks = GM_getValue('quickLinks');
-        if (quickLinks)
-            Config.quickLinks = quickLinks;
-
-        // 增加自定义快捷目录
-        var addQuickLinks = function() {
-            $('#aside-menu > .quickLink').remove();
-
-            var html = '';
-            var lines = Config.quickLinks.split('\n');
-            lines.forEach(function(line){
-                var offset = line.indexOf('=');
-                if (offset > 0) {
-                    var name = line.substr(0, offset).trim(),
-                        url = line.substr(offset + 1).trim();
-                    html += '<li class="quickLink b-list-item"><a href="#dir/path=' + url + '" unselectable="on" hidefocus="true" class="sprite2">' +
-                        '<span class="text1 drop-list-trigger">' + name + '</span></a></li>';
-                }
-            })
-            $('#aside-menu > li:first')
-                .after(html);
-        };
-        addQuickLinks();
-        
+        UI.addQuickLinks();
         // 修正添加后出现滚动条的情况
         GM_addStyle('.side-options { margin: auto; }');
-
-        // 添加设置对话框
-        var $dialog = $(Res.settingHTML).appendTo('body');
-        GM_addStyle(Res.settingCSS);
-
-        // 增加设置按钮
-        $('<span class="li"><a href="javascript:;">设置</a></span>')
-            .click(function(){
-                $dialog.find('#quickLinks').val(Config.quickLinks);
-                $dialog.show();
-            })
-            .appendTo('.pulldown.more-info .content');
-        $dialog.find('.cancel').click(function(){
-            $dialog.hide();
-        });
-        $dialog.find('.okay').click(function(){
-            Config.quickLinks = $dialog.find('#quickLinks').val();
-            GM_setValue('quickLinks', Config.quickLinks);
-            addQuickLinks();
-            $dialog.hide();
-        });
     },
     shareDirPageProcessor: function() {
         //  已失效。
@@ -249,6 +204,16 @@ var App = {
     },
     shareOnePageProcessor: function() {
         if ($('#share_nofound_des').size() > 0) {  // 文件不存在
+            // 失效页面添加分享主页链接
+            var m = document.location.href.match(/uk=(\d+)/);
+            if (m) {
+                var homeUrl = "home?uk=" + m[1] + "#category/type=0";
+                $('<a>')
+                    .attr('href', homeUrl)
+                    .attr('style', 'margin-left: 10px;')
+                    .text('个人主页')
+                    .appendTo('#share_nofound_des');
+            }
             return;
         }
 
@@ -279,23 +244,14 @@ var App = {
                 if (data) {
                     App.addToYAAW(data);
                 } else {
-                    App.useToast('正在获取链接，请等待');
+                    Utilities.useToast({
+                        toastMode: disk.ui.Toast.MODE_LOADING,
+                        msg: "正在获取链接，请等待",
+                        sticky: false
+                    });
                 }
             })
             .insertAfter('#downFileButtom');
-
-        // 失效页面添加分享主页链接
-        if (document.title.match(/百度云 网盘-链接不存在/)) {
-            var m = document.location.href.match(/uk=(\d+)/);
-            if (m) {
-                var homeUrl = "home?uk=" + m[1] + "#category/type=0";
-                $('<a>')
-                    .attr('href', homeUrl)
-                    .attr('style', 'margin-left: 10px;')
-                    .text('个人主页')
-                    .appendTo('#share_nofound_des');
-            }
-        }
     },
     shareHomePageProcessor: function() {
         // http://yun.baidu.com/share/home?uk=53993635&view=share#category/type=0
@@ -417,7 +373,11 @@ var App = {
                 if (data) {
                     App.addToYAAW(data);
                 } else {
-                    App.useToast('正在获取链接，请等待');
+                    Utilities.useToast({
+                        toastMode: disk.ui.Toast.MODE_LOADING,
+                        msg: "正在获取链接，请等待",
+                        sticky: false
+                    });
                 }
             })
             .insertAfter('#downFileButtom');
@@ -436,9 +396,32 @@ var App = {
         }, 10);
     },
 
-    //--------------------
+    // -------------------------
+    registerControls: function() {
+        debug('registerControls');
+
+        if (this.pageType == 'diskHome') {
+            // 右上角的更多菜单中添加设置按钮
+            $('<span class="li"><a href="javascript:;">设置</a></span>')
+                .click(UI.preferencesShow.bind(UI))
+                .appendTo('.pulldown.more-info .content');
+            // 扩展菜单的高度
+            GM_addStyle('.module-header .info .more-info .content { height: 310px; }');
+        }
+
+
+        if (typeof GM_registerMenuCommand != 'undefined') {
+            GM_registerMenuCommand('BaiduPanDownloadHelper 设置', UI.preferencesShow.bind(UI));
+        }
+    },
+
+    // --------------------
     downloadAll: function() {
-        this.toast = App.useToast("正在获取中，请稍后...", true);
+        this.toast = Utilities.useToast({
+            toastMode: disk.ui.Toast.MODE_LOADING,
+            msg: "正在获取中，请稍后...",
+            sticky: true
+        });
         
         this.getCheckedItems();
     },
@@ -507,21 +490,25 @@ var App = {
         if (this.fetchCount > 0) return;
 
         var self = this;
-        
+
+        debug('得到选择的数据', this.checkedItems);
+
         // 2014-5-11， 百度盘改成 post 方式获取下载链接
         // 筛选出没有 dlink 的 fs_id
         var filelist = [];
         var filter = function(items) {
             items.forEach(function(item) {
-                if (item.dlink || item.isdir == 1) return;
                 if (item.children) {
                     filter(item.children)
                 } else {
-                    filelist.push(item.fs_id)
+                    if (!item.dlink && item.isdir != 1) {
+                        filelist.push(item.fs_id);
+                    }
                 }
             });
         };
         filter(this.checkedItems);
+        debug('筛选出需要再次用 POST 获取的', filelist)
 
         // 不需要再次获取的直接显示
         if (filelist.length == 0) {
@@ -538,7 +525,6 @@ var App = {
                 timestamp: FileUtils.timestamp
             };
 
-        debug('post 方式获取下载链接');
         $.post(restUrl, data, function(result){
             if (result.errno == 0) {
                 var dlinkMap = {}
@@ -546,7 +532,7 @@ var App = {
                     dlinkMap[i.fs_id] = i.dlink;
                 });
 
-                debug("全部获取完成", self.checkedItems);
+                debug("全部获取完成, result=", result, ", dlinkMap=", dlinkMap, ", checkedItems=", self.checkedItems);
                 self.showPanel(self.checkedItems, dlinkMap);
                 self.toast.setVisible(false);
             } else {
@@ -629,6 +615,7 @@ var App = {
         var self = this,
             htmls = [],
             isAdded = false;
+
         checkedItems.forEach(function(item) {
             item.padding_left = "0px";
 
@@ -645,7 +632,7 @@ var App = {
                         htmls.push(template(tpl, i));
                     });
                 }
-            } else if (item.dlink) {
+            } else {
                 if (!isAdded) {
                     htmls.push("<b>---------------</b>");
                     isAdded = true;
@@ -686,7 +673,7 @@ var App = {
         App.useToast('已经复制 <b>' + arr.length + '</b> 条' + (isDlink ? '下载' : '') + '链接到剪贴板')
     },
     addToYAAW: function(items){
-        var aria2 = new ARIA2(Config.aria2_jsonrpc);
+        var aria2 = new ARIA2(prefs.getAria2RPC());
 
         if (!Array.isArray(items)) {
             items = [items];
@@ -705,12 +692,105 @@ var App = {
         App.useToast('添加中...到YAAW界面查看是否添加成功');
     },
     useToast: function(msg, sticky){
+        // disk.ui.Toast.MODE_FAILURE    错误
+        // disk.ui.Toast.MODE_CAUTION    警告
+        // disk.ui.Toast.MODE_LOADING    载入
+        // disk.ui.Toast.MODE_SUCCESS    正常
         return Utilities.useToast({
             toastMode: disk.ui.Toast.MODE_CAUTION,
             msg: msg,
             sticky: sticky || false
         });
     }
+};
+
+var prefs = {
+    getRemoveYunGuanjia: function() { // 是否去掉云管家提示
+        return this._getBooleanConfig('removeYunGuanjia', true);
+    },
+    setRmoveYunGuanjia: function(bool) {
+        GM_setValue('removeYunGuanjia', bool);
+    },
+
+    getAria2RPC: function() {
+        return GM_getValue('aria2_jsonrpc') || 'http://localhost:6800/jsonrpc';
+    },
+    setAria2RPC: function(val) {
+        GM_setValue('aria2_jsonrpc', val);
+    },
+
+    getQuickLinks: function() {
+        return GM_getValue('quickLinks') || 'Books=/Books/网络小说\n小说=/Books/小说\n网络小说=/Books/网络小说';
+    },
+    setQuickLinks: function(val) {
+        GM_setValue('quickLinks', val);
+    },
+
+    _getBooleanConfig : function(configName, defaultValue) {
+        var config = GM_getValue(configName);
+        if (config === undefined) {
+            GM_setValue(configName, defaultValue);
+            config = defaultValue;
+        }
+        return config;
+    }
+};
+
+var UI = {
+    preferencesShow: function() {
+        if (this.$prefs) {
+            this.$prefs.show();
+            return;
+        }
+
+        this.$style = $('<style>').text(Res.preferencesCSS).appendTo('head');
+        this.$prefs = $(Res.preferencesHTML).appendTo('body');
+
+        this.preferencesLoadHandler();
+    },
+    preferencesHide: function() {
+        if (this.$prefs) this.$prefs.remove();
+        if (this.$style) this.$style.remove();
+        this.$prefs = null;
+        this.$style = null;
+    },
+    preferencesLoadHandler: function() {
+        this.$prefs.find('.cancel').click(this.preferencesHide.bind(UI));
+
+        this.$prefs.find('.okay').click(this.preferencesSaveHandler.bind(UI));
+
+        this.$prefs.find('#removeYunGuanjia').attr('checked', prefs.getRemoveYunGuanjia())
+        this.$prefs.find('#aria2RPC').val(prefs.getAria2RPC());
+        this.$prefs.find('#quickLinks').val(prefs.getQuickLinks());
+    },
+    preferencesSaveHandler: function() {
+        prefs.setRmoveYunGuanjia(this.$prefs.find('#removeYunGuanjia').attr('checked'));
+        prefs.setAria2RPC(this.$prefs.find('#aria2RPC').val());
+        // quick links
+        prefs.setQuickLinks(this.$prefs.find('#quickLinks').val());
+        this.addQuickLinks();
+
+        this.preferencesHide();
+    },
+    // 个人主页增加自定义快捷目录
+    addQuickLinks: function() {
+        if (location.pathname != '/disk/home') return;
+
+        $('#aside-menu > .quickLink').remove();
+
+        var html = '';
+        var lines = prefs.getQuickLinks().split('\n');
+        lines.forEach(function(line){
+            var offset = line.indexOf('=');
+            if (offset > 0) {
+                var name = line.substr(0, offset).trim(),
+                    url = line.substr(offset + 1).trim();
+                html += '<li class="quickLink b-list-item"><a href="#dir/path=' + url + '" unselectable="on" hidefocus="true" class="sprite2">' +
+                    '<span class="text1 drop-list-trigger">' + name + '</span></a></li>';
+            }
+        })
+        $('#aside-menu > li:first').after(html);
+    },
 };
 
 var Res = getMStr(function(){
@@ -751,16 +831,37 @@ var Res = getMStr(function(){
             </div>
         </div>
      */
-    var settingHTML;
+    var preferencesHTML;
     /*
-        <div class="b-panel download-mgr-dialog" style="width: 550px; display: none; left: 338.5px; top: 101.5px;">
+        <div id="bdh-preferences" class="b-panel download-mgr-dialog">
             <div class="dlg-hd b-rlv">
                 <span title="关闭" class="dlg-cnr dlg-cnr-r cancel"></span>
-                <h3>设置</h3>
+                <h3>BaiduPanDownloadHelper 设置</h3>
             </div>
-            <div style="text-align: center; margin: 10px;">
-                <h2 style="">快捷目录设置</h2>
-                <textarea id="quickLinks" style="width: 500px; height: 160px;"></textarea>
+            <div style="margin: 10px 15px 5px;">
+                <div style="border:1px solid #F0F0F0; background-color: #FAFAFA;">
+                    <table>
+                        <tr>
+                            <td width="150"><label>全局去除云管家提示</label></td>
+                            <td width="320"><input id="removeYunGuanjia" type="checkbox"></input></td>
+                        </tr>
+                        <tr>
+                            <td><label>ARIA2 RPC：</label></td>
+                            <td><input id="aria2RPC" type="text"></input></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <li class="b-list-item separator-1"></li>
+                                <div style="text-align: center; font-weight: bold; font-size: 13px;">快捷目录设置</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <textarea id="quickLinks" style="width: 500px; height: 160px;"></textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             </div>
             <div>
                 <div class="alert-dialog-commands clearfix" style="text-align: center;">
@@ -769,13 +870,25 @@ var Res = getMStr(function(){
                 </div>
             </div>
         </div>
-     */
-     var settingCSS;
-     /*
-        .module-header .info .more-info .content {
-            height: 310px;
+    */
+   var preferencesCSS;
+   /*
+        #bdh-preferences {
+            width: 550px;
+            left: 338.5px;
+            top: 101.5px;
         }
-      */
+        #bdh-preferences input[type="text"] {
+            width: 90%;
+        }
+        #bdh-preferences table {
+            display: table;
+            border-spacing: 10px;
+            border-collapse: separate;
+            border: 0;
+            width: 100%;
+        }
+    */
 });
 
 

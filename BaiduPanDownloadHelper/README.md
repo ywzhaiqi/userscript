@@ -5,13 +5,36 @@ BaiduPanDownloadHelper
 
 ![效果图](百度盘脚本.png)
 
-## 使用说明
+设置界面（Greasemonkey/Tampermonkey 的用户脚本命令处打开）
 
-支持Firefox（Greasemonkey/Scriptish）， Chrome（Tampermonkey）
+![setting](setting.jpg)
+
+
+安装说明
+--------
+
+支持 Firefox（Greasemonkey/Scriptish）， Chrome（Tampermonkey）
 
 非常感谢 [BaiduPanMD5Button](https://userscripts.org/scripts/show/156906)
 
- - 文件夹式的分享界面，只能一个个链接的获取，连续获取几个就会让你输入验证码，所以只能保存到自己网盘批量下载。
+功能简介
+-------
+
+全部包含的页面会去掉云管家提示（*来自 Crack Url Wait Code Login For Chrome*）
+
+- 个人主页
+    - 选中条目后可点击 "批量下载" 按钮，批量得到下载链接，支持2层目录
+    - 左侧增加自定义快捷目录，设置在 "更多-设置"
+    - 设置页面标题，根据 hash 变化而变化，方便历史记录检索
+- 分享界面（文件夹）
+    - **已失效**，某次改版后只能一个个链接的获取，连续获取几次就会让你输入验证码，所以只能保存到自己网盘批量下载。
+- 分享界面（单文件）
+    - 当文件不存在时，如果可能会添加这个人的分享主页链接
+    - 下载按钮会添加下载链接，变红色
+
+其它说明
+--------
+
  - 新增自动填写提取密码，来自 [网盘自动填写提取密码](https://greasyfork.org/scripts/1002)
  - **分享主页**：双击复制所有链接到剪贴板，可用 iDown 的 lua 脚本实现直接批量下载。（**lua 脚本已失效**）
  	- TODO: iDown 文件下载的问题。TLF-MiniSD——史蒂芬·斯皮尔伯格 http://yun.baidu.com/s/1zMWXu
@@ -20,6 +43,8 @@ BaiduPanDownloadHelper
 更新
 -------
 
+  - 详见 github
+  - ....
   - 2014-05-11，版本 3.5.8。**百度盘改版，修正下载链接的获取**。个人主页新增快捷链接（设置按钮在右上的更多处）。**更改更新地址到 greasyfork**。
   - 2014-01-17，[版本 3.5.7][0]。修正 aria2 的 UA。
   - 2014-01-08，[版本 3.5.6][1]。增加 aria2 的 UA 和 Refer，来着 [解析出来的地址限速的？ -- Userscripts.org][2]。
