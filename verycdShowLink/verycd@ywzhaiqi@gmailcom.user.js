@@ -8,9 +8,10 @@
 // updateURL       http://userscripts.org/scripts/source/158764.meta.js
 
 // @homepageURL    https://greasyfork.org/scripts/301/
+// @updateURL      https://greasyfork.org/scripts/301/code.meta.js
+// @downloadURL    https://greasyfork.org/scripts/301/code.user.js
 // @include        http://www.verycd.com/topics/*
 // @require        http://code.jquery.com/jquery-1.9.1.min.js
-// @namespace https://greasyfork.org/users/145
 // ==/UserScript==
 
 var debug = false;
@@ -108,6 +109,7 @@ var VERYCD = {
 
             this.get(VERYCD.curSitePos);
         }
+
     },
 
     display_sites: function(){
@@ -125,6 +127,7 @@ var VERYCD = {
         // 计算总的大小
         unsafeWindow.em_size('EM4e759f9673554');
     },
+
     tpl_sites: function(){  // 插入的头部模板
         /*
         <table id="other_links">
@@ -141,6 +144,7 @@ var VERYCD = {
         </table>
         */
     }.getMultiLine(),
+
     tpl_content: function(){  // 插入的内容模板
         /*
         <div class="emuletop">电驴资源</div>
@@ -209,6 +213,7 @@ var VERYCD = {
             this.get_dlink_page(site.url);
         }
     },
+
     commondPageProcessor: function(doc){  // 通用的页面处理
         var data = [];
         $(doc).find('a[href^="ed2k"]').each(function(i, el){
