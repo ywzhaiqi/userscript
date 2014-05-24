@@ -21,9 +21,10 @@ function decode(url,target){
 		url: 'http://noe132.duapp.com/baidu2.php?url=' + url,
 		onload: function(response){
 			var newUrl = response.responseText;
-			if (!newUrl) {
+			if (!newUrl || newUrl.indexOf('http') != 0) {
 				return;
 			}
+			// console.log(newUrl)
 			target.setAttribute('href', newUrl);
 		}
 	});
