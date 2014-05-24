@@ -3,7 +3,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.0.9
+// @version      6.1.0
 // @homepageURL  https://greasyfork.org/scripts/178900/
 // @updateURL    https://greasyfork.org/scripts/178900/code.meta.js
 // @downloadURL  https://greasyfork.org/scripts/178900/code.user.js
@@ -117,6 +117,16 @@
         ['猫扑帖子', true, /http:\/\/dzh\.mop\.com\/[a-z]{3,6}\/\d{8}\/.*\.shtml$/i],
         ['铁血社区', true, /^http:\/\/bbs\.tiexue\.net\/.*\.html$/i],
         ['铁血社区-2', true, /^http:\/\/bbs\.qichelian\.com\/bbsqcl\.php\?fid/i],
+        // 像 http://so.baiduyun.me/ 内嵌的百度、Google 框架
+        ['百度网盘搜索引擎-百度', true, /^https?:\/\/www\.baidu\.com\/baidu/i],
+        ['百度网盘搜索引擎-Google', true, /^https?:\/\/74\.125\.128\.147\/custom/i],
+    ];
+
+    // 页面不刷新的站点
+    var HashchangeSites = [
+        { url: /^https?:\/\/(www|encrypted)\.google\..{2,9}\/(webhp|#|$|\?)/, timer: 2000 },
+        { url: /^https?:\/\/www\.baidu\.com\/($|#wd=)/, timer: 1000 },
+        { url: /^https?:\/\/www\.newsmth\.net/, timer: 1000 },
     ];
 
     //////////////////////////---------------规则-------////////////////
@@ -213,6 +223,13 @@
                 }
             }
         },
+        {name: "Google custom",
+            url: /^https?:\/\/74\.125\.128\.147\/custom/i,
+            nextLink: 'id("pnnext") | id("navbar navcnt nav")//td[span]/following-sibling::td[1]/a | id("nn")/parent::a',
+            autopager: {
+                pageElement: '//div[@id="res"]',
+            }
+        },
         {name: '百度搜索',
             url: "^https?://www\\.baidu\\.com/(s|baidu|#wd=)",
             enable:true,
@@ -272,160 +289,15 @@
             }
         },
 
-        // ========================= 知识、阅读 ================================================
-        {name: '豆瓣-书影音评论',
-            url: '^http://.*\\.douban\\.com/subject',
-            nextLink: '//div[@class="paginator"]/span[@class="next"]/a[contains(text(),"后页>")]',
-            autopager: {
-                pageElement: '//ul[contains(@class,"topic-reply")] | //div[@id="comments" or @class="post-comments"]'
-            }
-        },
-        {name: '我的小组话题 - 豆瓣',
-            url: /^http:\/\/www\.douban\.com\/group\//i,
-            exampleUrl: 'http://www.douban.com/group/',
-            nextLink: '//div[@class="paginator"]/span[@class="next"]/a[text()="后页>"]',
-            autopager: {
-                pageElement: 'id("content")/div/div[@class="article"]',
-            }
-        },
-        {name: '豆瓣全站',
-            url: '^http://.*\\.douban\\.com/.*',
-            nextLink: '//div[@class="paginator"]/span[@class="next"]/a[contains(text(),"后页>")]',
-            autopager: {
-                pageElement: 'id("miniblog") | //*[@class="photolst clearfix" or @class="photolst clearbox" or @class="event-photo-list" or @class="poster-col4 clearfix"] | \
-                //div[@id="comment-section"] | //table[@class="olt" or @class="list-b"]/tbody | //div[contains(@class,"clearfix")]/div[@class="article"]'
-            }
-        },
-        {name: '知乎',
-            url: /^http:\/\/www\.zhihu\.com\/collection/i,
-            exampleUrl: 'http://www.zhihu.com/collection/19561986',
-            nextLink: 'auto;',
-            autopager: {
-                pageElement: 'id("zh-list-answer-wrap")/div[@class="zm-item"]',
-                useiframe: true,
-                    newIframe: true
-            }
-        },
-        {name: '译言网',
-            url: '^http://article\\.yeeyan\\.org/.*$',
-            nextLink: '//ul[contains(concat(" ",normalize-space(@class)," "), " y_page") ]/li/a[text()="下一页"]',
-            pageElement: '//div[contains(concat(" ",normalize-space(@class)," "), "content_box")]',
-        },
-        {name: '主题站 | 果壳网 ',
-            url: '^http://www\\.guokr\\.com/(?:site|group|ask|event)/',
-            nextLink: '//ul[@class="gpages"]/li/a[contains(.,"下一页")]',
-            pageElement: '//div[@class="article-list"] | //ul[@class="titles"] | //ul[@class="ask-list"] | //ul[@class="event_list gclear"]',
-        },
-        {name: '大众点评网',
-            url: '^http://www\\.dianping\\.com/.*',
-            nextLink: '//a[@class="NextPage" and @title="下一页" and (text()="下一页")]',
-            pageElement: '//div[@id="searchList"]',
-        },
-        {name: '我们一起成长 | 幸福进化俱乐部共同成长博客圈',
-            url: /^http:\/\/upwith\.me\//i,
-            exampleUrl: 'http://upwith.me/',
-            nextLink: '//div[@class="pagination"]/descendant::a[text()="下一页"]',
-            autopager: {
-                pageElement: '//div[@class="content"]',
-            }
-        },
-        {name: '知乎日报',
-            url: '^http://zhihudaily\\.jd-app\\.com/',
-            nextLink: '//h3/a[text()="<<< 前一天"]',
-            autopager: {
-                pageElement: 'css;body > *',
-                separatorReal: false,
-            },
-            exampleUrl: 'http://zhihudaily.jd-app.com/',
+        // ====== 目前 Super_preloaderPlus_one 不支持用于 uAutoPagerize2 的规则 ==================
+        {name: '水木社区',
+            url: '^http://www\\.newsmth\\.net/nForum',
+            nextLink: '//a[@title="下一页"]',
+            pageElement: '//div[@class="b-content"] | //div[@class="b-content corner"]',
+            exampleUrl: 'http://www.newsmth.net/nForum/#!board/TouHou'
         },
 
-        // ========================= shopping、生活 ================================================
-        {name: "淘宝",
-            url: /^http:\/\/(?!bbs).*\.taobao\.com\//i,
-            nextLink: 'auto;',
-            autopager: {
-                pageElement: '//div[@class="tb-content"] | //div[@id="J_ShopSearchResult"]/div/div[contains(@class, "shop-hesper-bd")]',
-                lazyImgSrc: 'data-lazyload-src|data-ks-lazyload',
-            }
-        },
-        {name: '天猫 - 搜索',
-            url: '^http://list\\.tmall\\.com/search_product\\.htm\\?',
-            nextLink: '//a[@class="ui-page-next" and (text()="下一页>>")]',
-            autopager: {
-                pageElement: '//div[@id="J_ItemList"]',
-                relatedObj: true,
-                replaceE: '//div[@class="ui-page-wrap"]',
-                lazyImgSrc: 'data-lazyload-src|data-ks-lazyload',
-            },
-        },
-        {name: '店内搜索页-淘宝网',
-            url: /^http:\/\/[^.]+\.taobao\.com\/search\.htm\?/i,
-            exampleUrl: 'http://jiaqibaihou.taobao.com/search.htm?spm=a1z10.3.w4002-1381691988.18.GgWBry&mid=w-1381691988-0&search=y&keyword=%BC%AA%C1%D0&pageNo=1',
-            nextLink: '//a[(text()="下一页")][not(@class="disable")]',
-            autopager: {
-                pageElement: '//div[@id="J_ShopSearchResult"]/div/div[contains(@class, "shop-hesper-bd")]',
-                lazyImgSrc: 'data-lazyload-src|data-ks-lazyload',
-            }
-        },
-        {name: '淘宝论坛 ',
-            url: /^http:\/\/bbs\.taobao\.com\//i,
-            exampleUrl: 'http://bbs.taobao.com/catalog/thread/647133-264959947.htm?spm=0.0.0.0.Ji1u2u',
-            nextLink: 'auto;',
-            autopager: {
-                pageElement: 'id("detail")/div[@class="bbd"] | //div[@class="main-wrap"]//div[@class="bd"]/table[@class="posts"]',
-                replaceE: '//div[@class="pagination"]'
-            }
-        },
-        {name: '京东商城',
-            url: /^http:\/\/.*\.jd\.com\//i,
-            exampleUrl: 'http://list.jd.com/670-686-690-0-0-0-0-0-0-0-1-1-1-1-18-1574-29455-0.html',
-            nextLink: 'auto;',
-            autopager: {
-                pageElement: 'id("plist")',
-                useiframe: true,
-                lazyImgSrc: 'data-lazyload',
-            }
-        },
-        {name: '亚马逊',
-            url: /^http:\/\/www\.amazon\.cn\/gp\/search\//i,
-            nextLink: 'auto;',
-            autopager: {
-                pageElement: 'id("mainResults") | id("btfResults")',
-            }
-        },
-        {name: '易迅网',
-            url: /^http:\/\/searchex\.yixun\.com\//i,
-            exampleUrl: 'http://searchex.yixun.com/705798t706810-1001-/?YTAG=3.706810246020',
-            nextLink: '//div[@class="sort_page_num"]/a[@title="下一页"]',
-            autopager: {
-                pageElement: '//UL[@id="itemList"]',
-                lazyImgSrc: 'init_src'
-            }
-        },
-        {name: '前程无忧 - 搜索',
-            url: /^http:\/\/search\.51job\.com\/jobsearch\/search_result/i,
-            nextLink: '//table[@class="searchPageNav"]//td[@class="currPage"]/following-sibling::td[1]/a',
-            autopager: {
-                pageElement: 'id("resultList")',
-            }
-        },
-        {name: '抢了个便宜 | 高性价比正品低价商品推荐网',
-            url: /^http:\/\/www\.qlgpy\.com\//i,
-            nextLink: '//div[@class="wpagenavi"]/a[text()="下页"]',
-            autopager: {
-                pageElement: 'id("wrapmain")//ul[starts-with(@id, "post-")]',
-            }
-        },
-        {name: '杀价帮3C导购网—真实 客观 独立 自由',
-            url: /^http:\/\/www\.shajia\.cn\/article/i,
-            exampleUrl: 'http://www.shajia.cn/article_list.php',
-            nextLink: 'auto;',
-            autopager: {
-                pageElement: 'id("agreement")',
-            }
-        },
-
-        // ========================= baidu 其它 ================================================
+        // =============== baidu 其它 ======================
         {name: '百度贴吧列表',
             url: /^http:\/\/tieba\.baidu\.(cn|com)\/f/i,
             nextLink: '//div[@class="pager clearfix"]/descendant::a[@class="next"]',
@@ -436,7 +308,8 @@
                 replaceE: 'css;#frs_list_pager',
                 useiframe: true,
                     // newIframe: true,
-                iloaded: true
+                    iloaded: true,
+                lazyImgSrc: "bpic"
             }
         },
         {name: '百度贴吧帖子',
@@ -450,6 +323,7 @@
                 replaceE: "css;.l_posts_num > .l_pager",
                 useiframe: true,
                     // newIframe: true,
+                    iloaded: true
                 // filter: function(pages){
                 //     var pb = unsafeWindow.pb;
                 //     pb.ForumListV3.initial();
@@ -491,7 +365,7 @@
             }
         },
 
-        // ========================= news ================================================
+        // ================ news ===========================
         {name: '新浪新闻',
             url: /^http:\/\/news\.sina\.com\.cn\//i,
             exampleUrl: 'http://news.sina.com.cn/c/sd/2013-11-08/165728658916.shtml',
@@ -655,20 +529,18 @@
                 replaceE: '//div[@id="page2"]'
             }
         },
-        // uAutoPagerize2 会报错
-        // {name: '和讯博客',
-        //     url: /^http:\/\/\d+\.blog\.hexun\.com\//i,
-        //     exampleUrl: 'http://23802543.blog.hexun.com/',
-        //     // nextLink: '//div[@class="PageSkip_1"]/a[@title="下一页"]',
-        //     nextLink: function(doc) {
-        //         var url = doc.querySelector('.PageSkip_1 a[title="下一页"]').getAttribute('href');
-        //         url = url.replace(/(\/p\d+\/).*/, '$1default.html');
-        //         return url;
-        //     },
-        //     autopager: {
-        //         pageElement: 'id("DefaultContainer1_ArticleList_Panel1")'
-        //     }
-        // },
+        {name: '和讯博客',
+            url: /^http:\/\/\w+\.blog\.hexun\.com\//i,
+            exampleUrl: 'http://23802543.blog.hexun.com/',
+            nextLink: function(doc) {
+                var url = doc.querySelector('.PageSkip_1 a[title="下一页"]').getAttribute('href');
+                url = url.replace(/(\/p\d+\/).*/, '$1default.html');
+                return url;
+            },
+            autopager: {
+                pageElement: 'id("DefaultContainer1_ArticleList_Panel1")'
+            }
+        },
         {name: '汽车之家',
             url: /^http:\/\/www\.autohome\.com\.cn\/.*\.html/i,
             exampleUrl: 'http://www.autohome.com.cn/culture/201310/643479-7.html',
@@ -742,7 +614,7 @@
             }
         },
 
-        // ========================= video ================================================
+        // ========================= video =====================
         {name: "优酷视频",
             url: "^http://(?:www|u|i)\\.youku\\.com/",
             nextLink: "//a[em/@class='ico_next'] | //a[@title='下一页']",
@@ -832,101 +704,160 @@
             }
         },
 
-        //--- 手机
-        {name: '手机百度百科',
-            url: /^http:\/\/wapbaike\.baidu\.com\//i,
-            exampleUrl: 'http://wapbaike.baidu.com/goodlist?uid=F381CCCD6FD2F58151EFFB4A63BFA4FF&ssid=0&pu=sz%401321_1004&bd_page_type=1&from=844b&st=4&step=2&net=1&bk_fr=bk_more_glist',
-            nextLink: '//div[@class="pages"]/a[text()="下一页"] | //div[@class="page"]/p[@class="next"]/a[text()="下页"] | //table[@class="table next"]//a[text()="下页"] | //a[@class="m-rm-5" and text()="余下全文"]',
-            autopager: {
-                pageElement: '//div[@class="bd"] | //div[@class="list"] | id("lemma-content")',
-                separatorReal: false,
-                replaceE: 'css;.page > .p-num'
-            }
-        },
-        {name: '手机豆瓣',
-            url: /^http:\/\/m\.douban\.com\/.*/i,
-            exampleUrl: 'http://m.douban.com/book/subject/1088065/reviews?session=c0ea1419',
-            nextLink: '//div[@class="pg" or @class="paginator"]/a[text()="下一页"]',
-            autopager: {
-                pageElement: 'id("bd")/div[@class="itm"] | //div[@class="bd"]/div[@class="list"]',
-                separatorReal: false
-            }
-        },
-        {name: '手机新浪新闻',
-            url: /^http:\/\/[a-z]+\.sina\.cn\/\?sa=/i,
-            exampleUrl: 'http://news.sina.cn/?sa=t124d10608655v71&pos=108&vt=4&clicktime=1386267238910&userid=user138626723891024077253801575993',
-            nextLink: 'id("j_loadingBtn")',
-            autopager: {
-                pageElement: 'id("j_articleContent")',
-                relatedObj: true
-            }
-        },
-        {name: '手机网易网',
-            url: '^http://3g\\.163\\.com/[a-z]+/.*\\.html',
-            exampleUrl: 'http://3g.163.com/news/13/0914/04/98N4CSHI0001124J.html',
-            nextLink: ['//a[text()="余下全文"]', '//a[text()="下页"]'],
-            autopager: {
-                pageElement: '//div[@class="content"]',
-                // separator: false,
-                replaceE: '//div[@class="reset marTop10 cBlue"][child::a[text()="下页"]] | //div[child::form[@class="reset"]]',
-                relatedObj: true,
-            }
-        },
-        {name: '手机凤凰网',
-            url: '^http://3g\\.ifeng\\.com/[a-z]+/',
-            exampleUrl: 'http://3g.163.com/news/13/0914/04/98N4CSHI0001124J.html',
-            nextLink: ['//a[text()="余下全文"]', '//a[text()="下一页"]'],
-            autopager: {
-                pageElement: '//div[@class="zwword"]',
-                // separator: false,
-                relatedObj: true,
-            }
-        },
-        {name: '手机环球网',
-            url: '^http://wap\\.huanqiu\\.com/',
-            nextLink: ['//a[text()="余下全文"]', '//a[text()="下一页"]'],
-            autopager: {
-                pageElement: '//div[@class="newscont"]',
-                // separator: false,
-                separatorReal: false,
-                relatedObj: true,
-            }
-        },
-        {name: 'cnBeta.COM - 移动版',
-            url: /^http:\/\/m\.cnbeta\.com\//i,
-            exampleUrl: 'http://m.cnbeta.com/',
-            nextLink: 'id("yw0")/a[@class="page-next"]',
-            autopager: {
-                pageElement: '//div/div/div[@class="list"]',
-            }
-        },
-        {name: '手机版M.BookLink.Me',
-            url: /^http:\/\/m\.booklink\.me\//i,
-            exampleUrl: 'http://m.booklink.me/charpter.php?site_id=2&book_id=69507',
-            nextLink: '//div[@class="sec nav"]/form/a[text()="下一页"]',
-            autopager: {
-                pageElement: 'id("m_main")/ul[@class="list sec"]',
-            }
-        },
-        {name: '开源中国(OSChina.NET)',
-            url: /^http:\/\/m\.oschina\.net\//i,
-            exampleUrl: 'http://m.oschina.net/',
+        // ====================== shopping、生活 ===========================
+        {name: "淘宝",
+            url: /^http:\/\/(?!bbs).*\.taobao\.com\//i,
             nextLink: 'auto;',
             autopager: {
-                pageElement: '//ul[@class="ui-listview"]',
-                useiframe: true
+                pageElement: '//div[@class="tb-content"] | //div[@id="J_ShopSearchResult"]/div/div[contains(@class, "shop-hesper-bd")]',
+                lazyImgSrc: 'data-lazyload-src|data-ks-lazyload',
             }
         },
-        {name: '博客园博客手机版',
-            url: /^http:\/\/m\.cnblogs\.com\/blog\//i,
-            exampleUrl: 'http://m.cnblogs.com/blog/',
-            nextLink: '//a[text()="下一页"]',
+        {name: '天猫 - 搜索',
+            url: '^http://list\\.tmall\\.com/search_product\\.htm\\?',
+            nextLink: '//a[@class="ui-page-next" and (text()="下一页>>")]',
             autopager: {
-                pageElement: '//div[@class="list_item"]',
+                pageElement: '//div[@id="J_ItemList"]',
+                relatedObj: true,
+                replaceE: '//div[@class="ui-page-wrap"]',
+                lazyImgSrc: 'data-lazyload-src|data-ks-lazyload',
+            },
+        },
+        {name: '店内搜索页-淘宝网',
+            url: /^http:\/\/[^.]+\.taobao\.com\/search\.htm\?/i,
+            exampleUrl: 'http://jiaqibaihou.taobao.com/search.htm?spm=a1z10.3.w4002-1381691988.18.GgWBry&mid=w-1381691988-0&search=y&keyword=%BC%AA%C1%D0&pageNo=1',
+            nextLink: '//a[(text()="下一页")][not(@class="disable")]',
+            autopager: {
+                pageElement: '//div[@id="J_ShopSearchResult"]/div/div[contains(@class, "shop-hesper-bd")]',
+                lazyImgSrc: 'data-lazyload-src|data-ks-lazyload',
+            }
+        },
+        {name: '淘宝论坛 ',
+            url: /^http:\/\/bbs\.taobao\.com\//i,
+            exampleUrl: 'http://bbs.taobao.com/catalog/thread/647133-264959947.htm?spm=0.0.0.0.Ji1u2u',
+            nextLink: 'auto;',
+            autopager: {
+                pageElement: 'id("detail")/div[@class="bbd"] | //div[@class="main-wrap"]//div[@class="bd"]/table[@class="posts"]',
+                replaceE: '//div[@class="pagination"]'
+            }
+        },
+        {name: '京东商城',
+            url: /^http:\/\/.*\.jd\.com\//i,
+            exampleUrl: 'http://list.jd.com/670-686-690-0-0-0-0-0-0-0-1-1-1-1-18-1574-29455-0.html',
+            nextLink: 'auto;',
+            autopager: {
+                pageElement: 'id("plist")',
+                useiframe: true,
+                lazyImgSrc: 'data-lazyload',
+            }
+        },
+        {name: '亚马逊',
+            url: /^http:\/\/www\.amazon\.cn\/gp\/search\//i,
+            nextLink: 'auto;',
+            autopager: {
+                pageElement: 'id("mainResults") | id("btfResults")',
+            }
+        },
+        {name: '易迅网',
+            url: /^http:\/\/searchex\.yixun\.com\//i,
+            exampleUrl: 'http://searchex.yixun.com/705798t706810-1001-/?YTAG=3.706810246020',
+            nextLink: '//div[@class="sort_page_num"]/a[@title="下一页"]',
+            autopager: {
+                pageElement: '//UL[@id="itemList"]',
+                lazyImgSrc: 'init_src'
+            }
+        },
+        {name: '前程无忧 - 搜索',
+            url: /^http:\/\/search\.51job\.com\/jobsearch\/search_result/i,
+            nextLink: '//table[@class="searchPageNav"]//td[@class="currPage"]/following-sibling::td[1]/a',
+            autopager: {
+                pageElement: 'id("resultList")',
+            }
+        },
+        {name: '抢了个便宜 | 高性价比正品低价商品推荐网',
+            url: /^http:\/\/www\.qlgpy\.com\//i,
+            nextLink: '//div[@class="wpagenavi"]/a[text()="下页"]',
+            autopager: {
+                pageElement: 'id("wrapmain")//ul[starts-with(@id, "post-")]',
+            }
+        },
+        {name: '杀价帮3C导购网—真实 客观 独立 自由',
+            url: /^http:\/\/www\.shajia\.cn\/article/i,
+            exampleUrl: 'http://www.shajia.cn/article_list.php',
+            nextLink: 'auto;',
+            autopager: {
+                pageElement: 'id("agreement")',
             }
         },
 
-        // ========================= download ================================================
+        // ========================= 知识、阅读 ============================
+        {name: '豆瓣-书影音评论',
+            url: '^http://.*\\.douban\\.com/subject',
+            nextLink: '//div[@class="paginator"]/span[@class="next"]/a[contains(text(),"后页>")]',
+            autopager: {
+                pageElement: '//ul[contains(@class,"topic-reply")] | //div[@id="comments" or @class="post-comments"]'
+            }
+        },
+        {name: '我的小组话题 - 豆瓣',
+            url: /^http:\/\/www\.douban\.com\/group\//i,
+            exampleUrl: 'http://www.douban.com/group/',
+            nextLink: '//div[@class="paginator"]/span[@class="next"]/a[text()="后页>"]',
+            autopager: {
+                pageElement: 'id("content")/div/div[@class="article"]',
+            }
+        },
+        {name: '豆瓣全站',
+            url: '^http://.*\\.douban\\.com/.*',
+            nextLink: '//div[@class="paginator"]/span[@class="next"]/a[contains(text(),"后页>")]',
+            autopager: {
+                pageElement: 'id("miniblog") | //*[@class="photolst clearfix" or @class="photolst clearbox" or @class="event-photo-list" or @class="poster-col4 clearfix"] | \
+                //div[@id="comment-section"] | //table[@class="olt" or @class="list-b"]/tbody | //div[contains(@class,"clearfix")]/div[@class="article"]'
+            }
+        },
+        {name: '知乎',
+            url: /^http:\/\/www\.zhihu\.com\/collection/i,
+            exampleUrl: 'http://www.zhihu.com/collection/19561986',
+            nextLink: 'auto;',
+            autopager: {
+                pageElement: 'id("zh-list-answer-wrap")/div[@class="zm-item"]',
+                useiframe: true,
+                    newIframe: true
+            }
+        },
+        {name: '译言网',
+            url: '^http://article\\.yeeyan\\.org/.*$',
+            nextLink: '//ul[contains(concat(" ",normalize-space(@class)," "), " y_page") ]/li/a[text()="下一页"]',
+            pageElement: '//div[contains(concat(" ",normalize-space(@class)," "), "content_box")]',
+        },
+        {name: '主题站 | 果壳网 ',
+            url: '^http://www\\.guokr\\.com/(?:site|group|ask|event)/',
+            nextLink: '//ul[@class="gpages"]/li/a[contains(.,"下一页")]',
+            pageElement: '//div[@class="article-list"] | //ul[@class="titles"] | //ul[@class="ask-list"] | //ul[@class="event_list gclear"]',
+        },
+        {name: '大众点评网',
+            url: '^http://www\\.dianping\\.com/.*',
+            nextLink: '//a[@class="NextPage" and @title="下一页" and (text()="下一页")]',
+            pageElement: '//div[@id="searchList"]',
+        },
+        {name: '我们一起成长 | 幸福进化俱乐部共同成长博客圈',
+            url: /^http:\/\/upwith\.me\//i,
+            exampleUrl: 'http://upwith.me/',
+            nextLink: '//div[@class="pagination"]/descendant::a[text()="下一页"]',
+            autopager: {
+                pageElement: '//div[@class="content"]',
+            }
+        },
+        {name: '知乎日报',
+            url: '^http://zhihudaily\\.jd-app\\.com/',
+            nextLink: '//h3/a[text()="<<< 前一天"]',
+            autopager: {
+                pageElement: 'css;body > *',
+                separatorReal: false,
+            },
+            exampleUrl: 'http://zhihudaily.jd-app.com/',
+        },
+
+        // ========================= download ===========================
         {name: 'VeryCD搜索页面',
             url: /http:\/\/www\.verycd\.com\/search\/folders.+/i,
             siteExample: 'http://www.verycd.com/search/folders/',
@@ -1111,7 +1042,7 @@
             }
         },
 
-        // ========================= bbs、blog ================================================
+        // ========================= bbs、blog ======================
         {name: '天涯论坛_帖子列表',
             url: '^http://bbs\\.tianya\\.cn/list',
             nextLink: '//a[text()="下一页"]',
@@ -1460,6 +1391,16 @@
                 pageElement:'//div[@class="huitie"]',
             }
         },
+        {name: '猫扑数码、猫扑汽车等',
+            url: /^http:\/\/(?!dzh).*\.mop\.com\/.*\.shtml/i,
+            exampleUrl: 'http://digi.mop.com/sjsj/140522002176016.shtml',
+            nextLink: 'id("nextp") | id("page_use")/a[text()="下一页"]',
+            autopager: {
+                pageElement: '//div[@id="article"] | //div[@class="content"]/div[@class="inner"]/div[@class="nr_con"]',
+                    // filter: 'css;.fxC',  // 去掉每页的分享条
+                relatedObj: true,
+            }
+        },
         {name: '色影无忌帖子',
             url:/http:\/\/forum\.xitek\.com\/showthread/i,
             siteExample:'http://forum.xitek.com/showthread.php?threadid=571986',
@@ -1615,7 +1556,7 @@
             }
         },
         
-        // ========================= software ================================================
+        // ========================= software ================================
         {name: '小众软件',
             url: 'http://www\\.appinn\\.com/',
             nextLink: '//a[@class="nextpostslink"]',
@@ -1686,7 +1627,7 @@
         {name: '软件阁 - 原创绿色软件更新,精品软件共享',
             url: /^http:\/\/www\.lite6\.com\//i,
             exampleUrl: 'http://www.lite6.com/',
-            nextLink: '//ol[@class="page-navigator"]/li/a[@class="next"]',
+            nextLink: '//li[@class="next"]/a',
             autopager: {
                 pageElement: '//div[@class="main"]/div[@class="left"]',
             }
@@ -1754,7 +1695,7 @@
             pageElement: '//div[@id="content"]/div[@class="results"]/ul[@class="packages results"]',
         },
 
-        // ========================= dev ================================================
+        // ========================= dev =================================
         {name: 'User Scripts',
             url: /^https?:\/\/userscripts\.org/i,
             nextLink: 'auto;',
@@ -1833,7 +1774,7 @@
             pageElement: "id(\"mainbar questions\")//div[contains(concat(\" \",@class,\" \"),\" question-summary \")]|id(\"answers\")/div[@class=\"pager-answers\"][1]/following-sibling::*[./following-sibling::div[@class=\"pager-answers\"]]",
         },
 
-        // ========================= novel ================================================
+        // ========================= novel =============================
         {name: '起点文学',
             url:/^http:\/\/(www|read)\.(qidian|qdmm|qdwenxue)\.com\/BookReader\/\d+,\d+/i,
             siteExample:'http://www.qidian.com/BookReader/1545376,27301383.aspx',
@@ -2478,7 +2419,7 @@
             scroll_only: true
         },
 
-        // =============================== manhua ================================================
+        // =============================== manhua ========================
         {name: '天极动漫频道新闻',
             url:/http:\/\/comic\.yesky\.com\/\d+\/.+\.shtml/i,
             siteExample:'http://comic.yesky.com/249/11335749_5.shtml',
@@ -2827,7 +2768,7 @@
             pageElement: 'id("ajaxtable") | id("main")',
             exampleUrl: 'http://t66y.com/thread0806.php?fid=15',
         },
-        {name: ' DLsite 検索結果',
+        {name: 'DLsite 検索結果',
             url: /^http:\/\/(?:[^.]+\.)?dlsite\.com\//i,
             exampleUrl: 'http://www.dlsite.com/home/fsr/=/language/jp/keyword/kon/age_category%5B0%5D/general/per_page/30/show_type/n/page/2',
             nextLink: '//td[@class="page_no"]/ul/li/a[text()="次へ" or text()="Next"]',
@@ -2888,7 +2829,101 @@
             }
         },
 
-        // ===================== google 其它===================
+        //-================ 手机网站 ========================
+        {name: '手机百度百科',
+            url: /^http:\/\/wapbaike\.baidu\.com\//i,
+            exampleUrl: 'http://wapbaike.baidu.com/goodlist?uid=F381CCCD6FD2F58151EFFB4A63BFA4FF&ssid=0&pu=sz%401321_1004&bd_page_type=1&from=844b&st=4&step=2&net=1&bk_fr=bk_more_glist',
+            nextLink: '//div[@class="pages"]/a[text()="下一页"] | //div[@class="page"]/p[@class="next"]/a[text()="下页"] | //table[@class="table next"]//a[text()="下页"] | //a[@class="m-rm-5" and text()="余下全文"]',
+            autopager: {
+                pageElement: '//div[@class="bd"] | //div[@class="list"] | id("lemma-content")',
+                separatorReal: false,
+                replaceE: 'css;.page > .p-num'
+            }
+        },
+        {name: '手机豆瓣',
+            url: /^http:\/\/m\.douban\.com\/.*/i,
+            exampleUrl: 'http://m.douban.com/book/subject/1088065/reviews?session=c0ea1419',
+            nextLink: '//div[@class="pg" or @class="paginator"]/a[text()="下一页"]',
+            autopager: {
+                pageElement: 'id("bd")/div[@class="itm"] | //div[@class="bd"]/div[@class="list"]',
+                separatorReal: false
+            }
+        },
+        {name: '手机新浪新闻',
+            url: /^http:\/\/[a-z]+\.sina\.cn\/\?sa=/i,
+            exampleUrl: 'http://news.sina.cn/?sa=t124d10608655v71&pos=108&vt=4&clicktime=1386267238910&userid=user138626723891024077253801575993',
+            nextLink: 'id("j_loadingBtn")',
+            autopager: {
+                pageElement: 'id("j_articleContent")',
+                relatedObj: true
+            }
+        },
+        {name: '手机网易网',
+            url: '^http://3g\\.163\\.com/[a-z]+/.*\\.html',
+            exampleUrl: 'http://3g.163.com/news/13/0914/04/98N4CSHI0001124J.html',
+            nextLink: ['//a[text()="余下全文"]', '//a[text()="下页"]'],
+            autopager: {
+                pageElement: '//div[@class="content"]',
+                // separator: false,
+                replaceE: '//div[@class="reset marTop10 cBlue"][child::a[text()="下页"]] | //div[child::form[@class="reset"]]',
+                relatedObj: true,
+            }
+        },
+        {name: '手机凤凰网',
+            url: '^http://3g\\.ifeng\\.com/[a-z]+/',
+            exampleUrl: 'http://3g.163.com/news/13/0914/04/98N4CSHI0001124J.html',
+            nextLink: ['//a[text()="余下全文"]', '//a[text()="下一页"]'],
+            autopager: {
+                pageElement: '//div[@class="zwword"]',
+                // separator: false,
+                relatedObj: true,
+            }
+        },
+        {name: '手机环球网',
+            url: '^http://wap\\.huanqiu\\.com/',
+            nextLink: ['//a[text()="余下全文"]', '//a[text()="下一页"]'],
+            autopager: {
+                pageElement: '//div[@class="newscont"]',
+                // separator: false,
+                separatorReal: false,
+                relatedObj: true,
+            }
+        },
+        {name: 'cnBeta.COM - 移动版',
+            url: /^http:\/\/m\.cnbeta\.com\//i,
+            exampleUrl: 'http://m.cnbeta.com/',
+            nextLink: 'id("yw0")/a[@class="page-next"]',
+            autopager: {
+                pageElement: '//div/div/div[@class="list"]',
+            }
+        },
+        {name: '手机版M.BookLink.Me',
+            url: /^http:\/\/m\.booklink\.me\//i,
+            exampleUrl: 'http://m.booklink.me/charpter.php?site_id=2&book_id=69507',
+            nextLink: '//div[@class="sec nav"]/form/a[text()="下一页"]',
+            autopager: {
+                pageElement: 'id("m_main")/ul[@class="list sec"]',
+            }
+        },
+        {name: '开源中国(OSChina.NET)',
+            url: /^http:\/\/m\.oschina\.net\//i,
+            exampleUrl: 'http://m.oschina.net/',
+            nextLink: 'auto;',
+            autopager: {
+                pageElement: '//ul[@class="ui-listview"]',
+                useiframe: true
+            }
+        },
+        {name: '博客园博客手机版',
+            url: /^http:\/\/m\.cnblogs\.com\/blog\//i,
+            exampleUrl: 'http://m.cnblogs.com/blog/',
+            nextLink: '//a[text()="下一页"]',
+            autopager: {
+                pageElement: '//div[@class="list_item"]',
+            }
+        },
+
+        // ============== google 其它======================
         {name: "Google Bookmarks",
             "url": "^https?://www\\.google\\.(?:[^.]{2,3}\\.)?[^./]{2,3}/bookmarks/",
             "nextLink": "//div[contains(concat(\" \", @class, \" \"), \" kd-buttonbar \")]//tr/td[last()-1 or last]/a[img[contains(@src,\"right.png\")]]",
@@ -3014,7 +3049,7 @@
             "pageElement": "id(\"nav\")/preceding-sibling::ul"
         },
 
-        // ========================= github ================================================
+        // ========================= github ================================
         {name: "github mix",
             "url": "^https?://github\\.com/(?:$|dashboard|(?:timeline|[^/]+/[^/]+/(?:comments|network/feed)))",
             "nextLink": "//a[@hotkey=\"l\"]|//div[contains(concat(\" \",@class,\" \"),\" pagination \")]/a",
@@ -3570,6 +3605,10 @@
     var C = console;
     var debug = xbug ? console.log.bind(console) : function() {};
 
+    // 变量
+    var isHashchangeSite = false,
+        hashchangeTimer = 0;
+
     var loadSetting = function(){
         var a_enable = GM_getValue('SITEINFO_D.autopager.enable');
         if (a_enable != undefined) {
@@ -3716,7 +3755,19 @@
             }
         }
 
-        init(browser, window, document);
+        // 查找是否是页面不刷新的站点
+        var locationHref = location.href;
+        var item = _.find(HashchangeSites, function(x){ return toRE(x.url).test(locationHref); });
+        if (item) {
+            isHashchangeSite = true;
+            hashchangeTimer = item.timer;
+            debug('当前是页面不刷新的站点', item);
+            setTimeout(function() {
+                init(browser, window, document);
+            }, hashchangeTimer);
+        } else {
+            init(browser, window, document);
+        }
 
         // 分辨率 高度 > 宽度 的是手机
         if(window.screen.height > window.screen.width){
@@ -3734,6 +3785,9 @@
         var cplink = url;  // 翻上来的最近的页面的url;
         var domain = document.domain; //取得域名.
         var domain_port = url.match(/https?:\/\/([^\/]+)/)[1]; //端口和域名,用来验证是否跨域.
+
+        // 新加的，以示区别
+        var remove = [];  // 需要移除的事件
 
         debug('----------------------------------------------------');
 
@@ -4362,9 +4416,6 @@
                 scroll();
             }
 
-
-            var remove = [];
-
             function removeL() {
                 debug('移除各种事件监听');
                 floatWO.updateColor('Astop');
@@ -4373,24 +4424,19 @@
                     _remove[i]();
                 }
             }
+            if (isHashchangeSite && !hashchangeAdded) {
+                window.addEventListener("hashchange", onhashChange, false);
+                hashchangeAdded = true;
+                debug('成功添加 hashchange 事件');
+            }
 
-            // addHashChange();
-
-            // function addHashChange() {
-            //     if (SSS.hashchange && !hashchangeAdded) {
-            //         window.addEventListener("hashchange", hashchange, false);
-            //         hashchangeAdded = true;
-            //         debug('成功添加 hashchange 事件');
-            //     }
-            // }
-
-            // function hashChange(event) {
-            //     debug("触发 Hashchang 事件");
-            //     removeL();
-            //     setTimeout(function(){
-            //         autopager(SSS, floatWO);
-            //     }, SSS.timer || 0);
-            // }
+            function onhashChange(event) {
+                debug("触发 Hashchang 事件");
+                removeL();
+                setTimeout(function(){
+                    autopager(SSS, floatWO);
+                }, hashchangeTimer);
+            }
 
             function removeScripts(node) {  // 移除元素的 script
                 var scripts = getAllElements('css;script', node); //移除脚本
