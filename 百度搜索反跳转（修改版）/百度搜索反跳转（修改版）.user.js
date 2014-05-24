@@ -7,7 +7,7 @@
 // downloadURL   https://userscripts.org/scripts/source/161812.user.js
 // @icon	     http://tb.himg.baidu.com/sys/portrait/item/d4346e6f65313332ac06
 // @version      1.2.1
-// @note         2014-5-24，增加了翻页脚本的支持
+// @note         2014-5-24，添加支持翻页脚本
 // ==/UserScript==
 
 // 下一页的检测有2种方式
@@ -64,6 +64,7 @@ function addObserver() {
 		for (var i = mutations.length - 1; i >= 0; i--) {
 			if (mutations[i].addedNodes.length) {
 				needAdd = true;
+				break;
 			}
 		}
 
