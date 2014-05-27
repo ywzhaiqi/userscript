@@ -1,13 +1,17 @@
 // ==UserScript==
 // @id             shooter@ywzhaiqi@gmail.com
 // @name           shooter.cn 直接下载
-// @version        1.3
-// @namespace
+// @version        1.4
+// @namespace      https://github.com/ywzhaiqi/
 // @author         ywzhaiqi@gmail.com
 // @description    在 shooter.cn 搜索页面按下载按钮直接下载。语言、发行着色。
-// @include        http://*shooter.cn/search/*
-// @downloadURL    https://userscripts.org/scripts/source/167084.user.js
-// @updateURL      https://userscripts.org/scripts/source/167084.meta.js
+// @include        http://*shooter.cn/search*
+// downloadURL     https://userscripts.org/scripts/source/167084.user.js
+// updateURL       https://userscripts.org/scripts/source/167084.meta.js
+// 
+// @homepageURL    https://greasyfork.org/scripts/304/
+// @updateURL      https://greasyfork.org/scripts/304/code.meta.js
+// @downloadURL    https://greasyfork.org/scripts/304/code.user.js
 // @run-at         document-end
 // ==/UserScript==
 
@@ -30,8 +34,9 @@ GM_addStyle("\
 // 直接下载
 var buttons = document.querySelectorAll("a#downsubbtn");
 for (var i = buttons.length - 1; i >= 0; i--) {
-	buttons[i].setAttribute("onclick", buttons[i].getAttribute("onclick").replace('local_downfile', 'shtgdownfile'));
-};
+  // buttons[i].setAttribute("onclick", buttons[i].getAttribute("onclick").replace('local_downfile', 'shtgdownfile'));
+	buttons[i].setAttribute("href", "javascript:;");
+}
 
 setTimeout(setHighlight, 0);
 

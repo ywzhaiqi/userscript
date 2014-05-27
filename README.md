@@ -17,7 +17,7 @@ UserScripts For Firefox
  - [ceilme.user.js](ceilme.user.js)，[ceil.me 杂志下载网站](http://www.ceil.me/)直接下载，避免点击多次
  - [itpubnet.user.js](itpubnet.user.js)，ITPUB论坛（电子图书与IT文档资料）免登入下载
  - [noNoticetitleflash.user.js](noNoticetitleflash.user.js)，卡饭等论坛去除标题栏闪烁提醒，其它论坛自己添加。
- - [shooter.user.js](shooter.user.js)，射手网搜索页面点击按钮直接下载
+ - [shooter.user.js](shooter.user.js)，在 shooter.cn 搜索页面按下载按钮直接下载。语言、发行着色。[greasyfork.org](https://greasyfork.org/scripts/304).
  - [userscripts.user.js](userscripts.user.js)，userscripts.org 搜索页面只显示中文
  - *[smzdm.user.js](smzdm.user.js)，已失效*
  - [威锋电子书批量下载](威锋电子书批量下载)，批量导出[iPad 电子书资源分享区 - 威锋论坛](http://bbs.feng.com/thread-htm-fid-224.html) 附件的下载地址。
