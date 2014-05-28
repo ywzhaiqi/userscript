@@ -7,12 +7,13 @@
 // downloadURL   https://userscripts.org/scripts/source/161812.user.js
 // @icon	     http://tb.himg.baidu.com/sys/portrait/item/d4346e6f65313332ac06
 // @version      1.2.1
+// @run-at       document-start
 // @note         2014-5-24，添加支持翻页脚本
 // ==/UserScript==
 
-// 下一页的检测有2种方式
-//     0 对 Super_preloaderPlus_one、AutoPagerize、uAutoPagerize、 BaiduMonkeyW 脚本的检测，准确、资源消耗相对更小
-//     1 对所有脚本都适用，但不准确、消耗相对较大。如果非上面的3个脚本，建议用这个。
+// 下一页的支持有2种方式
+//     0 对 Super_preloaderPlus_one、AutoPagerize、uAutoPagerize、 BaiduMonkeyW 脚本的支，准确、资源消耗相对更小
+//     1 对所有脚本都适用，但不准确、消耗相对较大。如果非上面的几个脚本，建议用这个。
 var checkNextPageMethod = 0;
 
 function decode(url,target){
@@ -76,12 +77,41 @@ function addObserver() {
 	observer.observe(document.body, {childList: true, subtree: true});
 }
 
-checkDocument();
+function onHashchange() {
+	window.removeEventListener('hashchange', onHashchange, false);
 
-if (!checkNextPageMethod) {
-	document.addEventListener("GM_AutoPagerizeNextPageLoaded", nextPageLoaded, false);
-	document.addEventListener("Super_preloaderPageLoaded", nextPageLoaded, false);
-	document.addEventListener("bm_NextPageLoaded", nextPageLoaded, false);
-} else {
-	addObserver();
+	var url = window.location.href;
+	if (url.indexOf("http://www.baidu.com/#") >= 0) {
+		console.log("redirect to s?");
+		window.location.href = url.replace("http://www.baidu.com/#", "http://www.baidu.com/s?");
+		return;
+	}
 }
+
+function run() {
+	// 百度搜索 /#wd= 页面重定向到baidu?
+	var url = window.location.href;
+	if (url.indexOf("http://www.baidu.com/#") >= 0) {
+		console.log("redirect to s?");
+		window.location.href = url.replace("http://www.baidu.com/#", "http://www.baidu.com/s?");
+		return;
+	} else if (url == 'http://www.baidu.com/') {
+		console.log('add hashchange Event');
+		window.addEventListener('hashchange', onHashchange, false);
+		return;
+	}
+
+	addEventListener('DOMContentLoaded', function(){
+		checkDocument();
+
+		if (!checkNextPageMethod) {
+			document.addEventListener("GM_AutoPagerizeNextPageLoaded", nextPageLoaded, false);
+			document.addEventListener("Super_preloaderPageLoaded", nextPageLoaded, false);
+			document.addEventListener("bm_NextPageLoaded", nextPageLoaded, false);
+		} else {
+			addObserver();
+		}
+	}, false);
+}
+
+run()
