@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        4.0.2
+// @version        4.0.3
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
@@ -31,7 +31,7 @@
 // @include        http://www.qdmm.com/BookReader/*,*.aspx
 // @include        http://www.qdwenxue.com/BookReader/*,*.aspx
 // @include        http://chuangshi.qq.com/read/bookreader/*.html
-// @include        http://chuangshi.qq.com/read/bk/*/*-m-*.html
+// @include        http://chuangshi.qq.com/*bk/*/*-m-*.html
 // @include        http://www.jjwxc.net/onebook.php?novelid=*
 // @include        http://book.zongheng.com/chapter/*/*.html
 // @include        http://www.xxsy.net/books/*/*.html
@@ -219,7 +219,7 @@
 // @run-at         document-start
 // ==/UserScript==
 
-var isChrome = !!this.chrome;
+var isChrome = !!window.chrome;
 
 var fontawesomeWoff = GM_getResourceURL('fontawesomeWoff');
 if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
@@ -274,7 +274,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 
     // ===================== 自定义站点规则 ======================
     rule.specialSite = [
-        // 详细版规则示例。已经没法访问。
+        // 详细版规则示例。注：该网站已无法访问。
         {siteName: "泡书吧",                                               // 站点名字... (可选)
             url: "^http://www\\.paoshu8\\.net/Html/\\S+\\.shtm$",          // // 站点正则... (~~必须~~)
 
@@ -290,7 +290,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             // 获取内容
             contentSelector: "#BookText",                             // 内容 jQuery 选择器 (不填则尝试自动搜索)
             useiframe: false,                                          // (可选)下一页加载是否使用 iframe
-            mutationSelector: "#chaptercontainer",                    // (可选)内容生成监视器
+            // mutationSelector: "#chaptercontainer",                    // (可选)内容生成监视器
             // 对内容的处理
             contentHandle: false,   // (可选)是否对内容进行特殊处理，诸如拼音字修复等，诸如起点等网站可禁用
             fixImage: true,         // (可选)，图片居中，不分大小
@@ -354,7 +354,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             }
         },
         {siteName: "创世中文网",
-            url: "^http://chuangshi\\.qq\\.com/read/",
+            url: "^http://chuangshi\\.qq\\.com/",
             titleReg: "(.*?)_(.*)_创世中文",
             contentSelector: ".bookreadercontent",
             contentHandle: false,
@@ -841,7 +841,8 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 "读零零小说网欢迎您的光临.*?txt格式下载服务",
                 "，好看的小说:|本书最新免费章节请访问。",
                 "\\*文學馆\\*",
-                "\\(未完待续请搜索，小说更好更新更快!"
+                "\\(未完待续请搜索，小说更好更新更快!",
+                "www\\.DU00\\.com"
             ],
             checkSection: true
         },
@@ -1026,7 +1027,8 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             // titleReg: "(.*)?_(.*)-六九中文",
             contentReplace: [
                 "[\\*]+本章节来源六九中文.*请到六九中文阅读最新章节[\\*]+|－\\\\[wＷ]+.*书友上传/－",
-                "\\请到 www，69zw，com 六*九*中*文*阅读/"
+                "\\请到 www，69zw，com 六*九*中*文*阅读/",
+                "【 注册会员可获私人书架，看书更方便！：】"
             ]
         },
         {siteName: "免费小说阅读网",
@@ -1195,7 +1197,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "h[ǎa]oxi[àa]ng":"好像", "hu[áa]ngs[èe]":"黄色", "皇d[ìi]":"皇帝", "昏昏yu睡":"昏昏欲睡", "回dang":"回荡",
         "jian(臣|细)":"奸$1", "jian货":"贱货", "jing察":"警察", "j[ìi]nháng":"进行", "ji烈":"激烈", "j[iì](nv|女)": "妓女", "jirou": "鸡肉", "ji者":"记者", "ju花":"菊花","j[īi]动":"激动", "jili[èe]":"激烈", "肌r[òo]u":"肌肉","ji射":"激射", "ji[ēe]ch[uù]":"接触", "j[ùu]li[èe]": "剧烈", "jǐng惕": "警惕", "节cao":"节操", "浸yin":"浸淫",
         "k[ěe]n[ée]ng": "可能", "开bao": "开苞",  "k[àa]o近": "靠近", "口wen":"口吻",
-        "ling辱": "凌辱", "luan蛋": "卵蛋", "脸sè": "脸色", "lu出":"露出",
+        "ling辱": "凌辱", "luan蛋": "卵蛋", "脸sè": "脸色", "lu出":"露出", "流máng":"流氓",
         "m[ǎa]ny[ìi]":"满意", "m[ǎa]sh[àa]ng":"马上", "m[ée]iy[oǒ]u":"没有", "mei国": "美国", "m[íi]ngb[áa]i":"明白", "迷huan": "迷幻", "mi茫":"迷茫", "m[íi]n\\s{0,2}zh[ǔu]": "民主", "迷jian": "迷奸", "mimi糊糊":"迷迷糊糊", "末(?:\\s|<br/?>)*ì":"末日", "面se":"面色", "mengmeng":"蒙蒙", 
         "nàme":"那么", "n[ée]ngg[oò]u":"能够", "nán\\s{0,2}hǎi": "那会", "内jian":"内奸",
         "pi[áa]o客":"嫖客", "p[áa]ngbi[āa]n":"旁边",
@@ -1205,7 +1207,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         "t[uū]r[áa]n":"突然", "tiaojiao": "调教", "偷qing":"偷情", "推dao": "推倒", "脱guang": "脱光", "t[èe]bi[ée]":"特别", "t[ōo]nggu[òo]":"通过", "tian来tian去":"舔来舔去",
         "w[ēe]ixi[ée]":"威胁", "wèizh[ìi]":"位置", "wei员":"委员",
         "xiu长": "修长", "亵du": "亵渎", "xing福": "幸福", "小bo":"小波", "xiong([^a-z])":"胸$1", "小tui":"小腿",
-        "yin(谋|险|沉|沟|癸派|后)":"阴$1", "y[iī]y[àa]ng":"一样", "y[īi]di[ǎa]n":"一点", "y[ǐi]j[īi]ng":"已经", "疑huo":"疑惑", "影mi":"影迷",  "阳w[ěe]i": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "(?:you|诱)(?:惑|huo)": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人","旖ni":"旖旎", "yu念":"欲念", "you敌深入":"诱敌深入", "yin(冷|暗)":"阴$1",
+        "yin(谋|险|沉|沟|癸派|后)":"阴$1", "y[iī]y[àa]ng":"一样", "y[īi]di[ǎa]n":"一点", "y[ǐi]j[īi]ng":"已经", "疑huo":"疑惑", "影mi":"影迷",  "阳w[ěe]i": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "(?:you|诱)(?:惑|huo)": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人","旖ni":"旖旎", "yu念":"欲念", "you敌深入":"诱敌深入", "yin(冷|暗)":"阴$1", "影she":"影射",
         "z[iì]j[iǐ]": "自己","z[ìi](?:\\s|<br/?>|&nbsp;)*y[oó]u": "自由","zh[iī]d?[àa]u?o":"知道","zha药": "炸药", "zhan有": "占有", "政f[ǔu]": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zong理":"总理", "zh[ōo]ngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]y[oò]u":"左右", "zh[oō]uw[ée]i":"周围", "中nan海":"中南海", "中j委":"中纪委", "中zu部":"中组部", "政zhi局":"政治局", "(昨|一|时|余)(?:<br/?>|&nbsp;|\\s)*ì":"$1日", "照she":"照射",
 
         // === 单字替换 ===
@@ -1819,7 +1821,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                    App.addMutationObserve(document, App.launch);
                 }else if(App.site.timeout){  // 延迟启动
                     setTimeout(App.launch, App.site.timeout);
-                }else{  // NoScript 下 setTimeout 没用
+                }else{  // NoScript 下 setTimeout 没用？
                     App.launch();
                 }
             }else{
@@ -1862,7 +1864,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 //     return false;
                 case Config.booklink_enable && /booklink\.me/.test(referrer):
                     return true;
-                case Config.disable_auto_launch:
+                case Config.getDisableAutoLaunch():
                     return false;
                 case GM_getValue("auto_enable"):
                 case config.soduso && /www\.sodu\.so/.test(referrer):
@@ -1876,26 +1878,21 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             var selector = App.site.mutationSelector;
             var target = $(doc).find(selector)[0];
             if (target) {
-                var mutationChildCount = App.site.mutationChildCount;
-                if(mutationChildCount === undefined){
+                var childCount = App.site.mutationChildCount;
+                if(childCount == undefined || target.children.length <= childCount){
                     shouldAdd = true;
-                } else {
-                    if(target.children.length <= mutationChildCount)
-                        shouldAdd = true;
                 }
             }
 
             if (shouldAdd) {
                 var observer = new MutationObserver(function(mutations){
-                    // console.log(mutations)
-                    var mutation = mutations[mutations.length - 1];
-                    if(mutation.addedNodes.length){
+                    var nodeAdded = mutations.some(function(x){ return x.addedNodes.length > 0; });
+                    if (nodeAdded) {
                         observer.disconnect();
                         callback();
                     }
                 });
                 observer.observe(target, {childList: true});
-
                 debug("添加 MutationObserve 成功：", selector);
             }else{
                 callback();
@@ -2449,10 +2446,10 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
     };
 
     var Config = {
-        get disable_auto_launch() {  // 强制手动启用模式
+        getDisableAutoLaunch: function() {  // 强制手动启用模式
             return this._getBooleanConfig("disable_auto_launch", false);
         },
-        set disable_auto_launch(bool) {
+        setDisableAutoLaunch: function(bool) {
             GM_setValue("disable_auto_launch", bool);
         },
 
@@ -2617,6 +2614,13 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             return this.hideMenuListKey.toUpperCase().charCodeAt(0);
         },
 
+        get picNightModeCheck() {
+            return this._getBooleanConfig('picNightModeCheck', true);
+        },
+        set picNightModeCheck(bool) {
+            GM_setValue('picNightModeCheck', bool);
+        },
+
         _getBooleanConfig: function(configName, defaultValue) {
             var config = GM_getValue(configName);
             if(config === undefined) {
@@ -2654,7 +2658,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         init: function(){
             UI.refreshMainStyle();
 
-            UI.refreshSkinStyle(Config.skin_name);
+            UI.refreshSkinStyle(Config.skin_name, true);
 
             UI.refreshExtraStyle(Config.extra_css);
 
@@ -2721,10 +2725,18 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             
             App.$menuBar.toggle(!hidden);
         },
-        refreshSkinStyle: function(skin_name){
+        refreshSkinStyle: function(skin_name, isFirst){
             var style = $("#skin_style");
             if(style.length === 0){
                 style = $('<style id="skin_style">').appendTo('head');
+            }
+
+            if (isFirst && Config.picNightModeCheck && skin_name.indexOf('夜间') != -1) {  // 图片章节夜间模式有问题
+                var img = $('#mynovelreader-content img')[0];
+                if (img && img.width > 500 && img.height > 1000) {
+                    style.text(UI.skins['缺省皮肤']);
+                    return;
+                }
             }
 
             style.text(UI.skins[skin_name]);
@@ -2848,7 +2860,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             }\
             textarea {\
                 width: 450px;\
-                height: 100px;\
+                height: 90px;\
                 overflow: auto;\
                 vertical-align: top;\
             }\
@@ -2874,6 +2886,13 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                     </label>\
                     <label>\
                         <input type="checkbox" id="debug" name="debug"/>调试模式\
+                    </label>\
+                    <a href="https://greasyfork.org/scripts/292-my-novel-reader/feedback" target="_blank">反馈地址</a>\
+                </div>\
+                <div class="form-row">\
+                    <label title="图片章节用夜间模式没法看，这个选项在启动时会自动切换到缺省皮肤">\
+                        <input type="checkbox" id="pic-nightmode-check" name="pic-nightmode-check"/>\
+                        <b>（测试）</b>夜间模式的图片章节检测\
                     </label>\
                 </div>\
                 <div class="form-row">\
@@ -2993,10 +3012,12 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             var $form = $("#preferences");
 
             // checkbox
-            $form.find("#disable-auto-launch").get(0).checked = Config.disable_auto_launch;
+            $form.find("#disable-auto-launch").get(0).checked = Config.getDisableAutoLaunch();
             $form.find("#booklink-enable").get(0).checked = Config.booklink_enable;
             $form.find("#debug").get(0).checked = Config.debug;
             $form.find("#quietMode").get(0).checked = Config.isQuietMode;
+            $form.find("#pic-nightmode-check").get(0).checked = Config.picNightModeCheck;
+
             $form.find("#hide-menu-list").get(0).checked = Config.menu_list_hiddden;
             $form.find("#hide-menu-bar").get(0).checked = Config.menu_bar_hidden;
             $form.find("#hide-footer-nav").get(0).checked = Config.hide_footer_nav;
@@ -3114,10 +3135,15 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         preferencesSaveHandler: function(){
             var $form = $("#preferences");
 
-            Config.disable_auto_launch = $form.find("#disable-auto-launch").get(0).checked;
+            var form = document.getElementById('preferences');
+
+            Config.setDisableAutoLaunch(form.elements.namedItem("disable-auto-launch").checked)
+
             Config.booklink_enable = $form.find("#booklink-enable").get(0).checked;
             Config.isQuietMode = $form.find("#quietMode").get(0).checked;
             Config.debug = $form.find("#debug").get(0).checked;
+            Config.picNightModeCheck = $form.find("#pic-nightmode-check").get(0).checked;
+
             Config.addToHistory = $form.find("#add-nextpage-to-history").get(0).checked;
             Config.dblclickPause = $form.find("#enable-dblclick-pause").get(0).checked;
 
