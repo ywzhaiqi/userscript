@@ -3,7 +3,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.1.1
+// @version      6.1.2
 // @homepageURL  https://greasyfork.org/scripts/178900/
 // @updateURL    https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js
 // @downloadURL  https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js
@@ -6030,7 +6030,7 @@
 
     // By lastDream2013，原版只能用于 Firefox
     function getRalativePageStr(lastUrl, currentUrl, nextUrl) {
-        function getRalativePageNumArray(lasturl, url) {
+        var getRalativePageNumArray = function (lasturl, url) {
             if (!lasturl || !url) {
                 return [0, 0];
             }
@@ -6040,15 +6040,15 @@
                 url_info,
                 lasturl_info;
             while (urlarray.length != 0) {
-                url_info = urlarray.pop(),
-                lasturl_info = lasturlarray.pop();
+                url_info = urlarray.pop().replace('p', ''),
+                lasturl_info = lasturlarray.pop().replace('p', '');
                 if (url_info != lasturl_info) {
                     if (/[0-9]+/.test(lasturl_info) && /[0-9]+/.test(url_info))
                         return [parseInt(lasturl_info), parseInt(url_info)];
                 }
             }
             return [0, 0];
-        }
+        };
 
         //论坛和搜索引擎网页显示实际页面信息
         var ralativePageNumarray = [];
@@ -6059,6 +6059,10 @@
             var ralativeOff = ralativePageNumarray[1] - ralativePageNumarray[0]; //用的上一页的相对信息比较的，要补充差值……
             ralativePageNumarray[1] = ralativePageNumarray[1] + ralativeOff;
             ralativePageNumarray[0] = ralativePageNumarray[0] + ralativeOff;
+        }
+
+        if (ralativePageNumarray[0] == NaN) {
+            return '';
         }
 
         var realPageSiteMatch = false;
@@ -6088,14 +6092,12 @@
 
         var ralativePageStr;
         if (realPageSiteMatch) { //如果匹配就显示实际网页信息
-            if (isNaN(ralativePageNumarray[0])) return '';
-
             if (ralativePageNumarray[1] - ralativePageNumarray[0] > 1) { //一般是搜索引擎的第xx - xx项……
-                ralativePageStr = ' [ 实际：第 <span style="color:red!important;">' + ralativePageNumarray[0] + ' - ' + ralativePageNumarray[1] + '</span> 项 ]';
+                ralativePageStr = ' [ 实际：第 <font color="red">' + ralativePageNumarray[0] + ' - ' + ralativePageNumarray[1] + '</font> 项 ]';
             } else if ((ralativePageNumarray[1] - ralativePageNumarray[0]) == 1) { //一般的翻页数，差值应该是1
-                ralativePageStr = ' [ 实际：第 <span style="color:red!important;">' + ralativePageNumarray[0] + '</span> 页 ]';
+                ralativePageStr = ' [ 实际：第 <font color="red">' + ralativePageNumarray[0] + '</font> 页 ]';
             } else if ((ralativePageNumarray[0] == 0 && ralativePageNumarray[1]) == 0) { //找不到的话……
-                ralativePageStr = ' [ 实际网页结束 ]';
+                ralativePageStr = ' [ <font color="red">实际网页结束</font> ]';
             }
         } else {
             ralativePageStr = '';
