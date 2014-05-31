@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        4.0.3
+// @version        4.0.4
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
@@ -15,8 +15,8 @@
 // @grant          GM_registerMenuCommand
 // @grant          unsafeWindow
 // homepageURL    https://userscripts.org/scripts/show/165951
-// updateURL      https://userscripts.org/scripts/source/165951.meta.js
-// downloadURL    https://userscripts.org/scripts/source/165951.user.js
+// updateURL      https://greasyfork.org/scripts/292-my-novel-reader/code/My%20Novel%20Reader.meta.js
+// downloadURL    https://greasyfork.org/scripts/292-my-novel-reader/code/My%20Novel%20Reader.user.js
 
 // @homepageURL    https://greasyfork.org/scripts/292/
 // @updateURL      https://greasyfork.org/scripts/292/code.meta.js
@@ -506,9 +506,9 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             url: /^http:\/\/www\.bxs\.cc\/\d+\/\d+\.html$/,
             titleReg: /(.*?)\d*,(.*)/,
             contentReplace: [
-                /如果您觉得网不错就多多分享本站谢谢各位读者的支持/ig,
                 /一秒记住【】www.zaidu.cc，本站为您提供热门小说免费阅读。/ig,
                 /（文&nbsp;學馆w&nbsp;ww.w&nbsp;xguan.c&nbsp;om）/ig,
+                /\((&nbsp;)*无弹窗全文阅读\)/ig,
                 /\[<a.*?首发\[百晓生\] \S+/ig,
                 /\/\/(?:&nbsp;|访问下载txt小说|高速更新)+\/\//ig,
                 /(www\.)?bxs\.cc/ig,
@@ -1169,6 +1169,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         "访问下载txt小说":"",
         "fqXSw\\.com":"",
         "\\[\\]":"",
+        "如果您觉得网不错就多多分享本站谢谢各位读者的支持": "",
         "全文字无广告|\\(看书窝&nbsp;看书窝&nbsp;无弹窗全文阅读\\)": "",
         "uutxt\\.org": "",
         "3vbook\\.cn": "",
@@ -1646,7 +1647,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             }
 
             // 删除空白的、单个字符的 p
-            text = text.replace(/<p>[　\s。;]+<\/p>/g, "");
+            text = text.replace(/<p>[　\s。;，！\.∷]*<\/p>/g, "");
 
             return text;
         },
@@ -1962,7 +1963,6 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             UI.init();
 
             App.curFocusElement = $("article:first").get(0);  // 初始化当前关注的 element
-
             App.requestUrl = parser.nextUrl;
             App.isTheEnd = parser.isTheEnd;
 
@@ -1973,9 +1973,11 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             setTimeout(App.scroll, 1000);
 
             // 再次移除其它不相关的，起点，纵横中文有时候有问题
-            setTimeout(function(){
+            var clean = function(){
                 $('body > *:not("#container, .readerbtn, #reader_preferences, #uil_blocker,iframe[name=\'mynovelreader-iframe\']")').remove();
-            }, 2000);
+            };
+            setTimeout(clean, 2000);
+            setTimeout(clean, 5000);
 
             if (config.PRELOADER) {
                 App.doRequest();
@@ -2400,7 +2402,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             if(parser.content){
                 App.appendPage(parser);
 
-                if (Config.addToHistory && !App.site.useiframe) {
+                if (Config.addToHistory) {
                     document.title = parser.docTitle;
                     try {
                         unsafeWindow.history.pushState(null, parser.docTitle, parser.curPageUrl);
