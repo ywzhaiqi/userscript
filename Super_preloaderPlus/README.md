@@ -16,8 +16,10 @@ Firefox（Greasemonkey/Scriptish），Chrome（原生/Tampermonkey），Maxthon�
 
 **Firefox 用户**还可使用 uc脚本 [uAutoPagerize2.uc.js](https://github.com/ywzhaiqi/userChromeJS/tree/master/uAutoPagerize2) ，共用同一数据库，2者各有特点。
 
-**Chrome 用户**，Tampermonkey 更耗资源，Chrome 原生安装无法自动更新，新增的设置无法持久保存。在 chrome 30 下简单测试，2组数据：`26M  35M  60M`，`40M  62M  118M`，分别为无、原生、Tampermonkey 下的内存占用。
+**Chrome 用户**，使用 Tampermonkey 方式在某些页面会让内存暴增，而使用原生安装则无此问题，但原生安装无法自动更新，新增的设置无法持久保存。
 
+ - 在 Chrome 30 下简单测试，2组数据：`26M  35M  60M`，`40M  62M  118M`，分别为无、原生、Tampermonkey 下的内存占用。
+ - 2014-5-28，Chrome 35 + Tampermonkey 3.7.48，[测试网址](http://money.163.com/14/0526/07/9T5F25JE00253B0H.html)，该页面内存会暴增至 600M，而使用原生安装内存仅 150M。使用原 NLF 版本测试同样如此。
 
 ### 具体修改说明
 

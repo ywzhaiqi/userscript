@@ -3,10 +3,10 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.1.0
+// @version      6.1.1
 // @homepageURL  https://greasyfork.org/scripts/178900/
-// @updateURL    https://greasyfork.org/scripts/178900/code.meta.js
-// @downloadURL  https://greasyfork.org/scripts/178900/code.user.js
+// @updateURL    https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js
+// @downloadURL  https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js
 
 // homepageURL  https://userscripts.org/scripts/show/178900
 // downloadURL  https://userscripts.org/scripts/source/178900.user.js
@@ -17,8 +17,7 @@
 // @grant        GM_setValue
 // @grant        GM_xmlhttpRequest
 // @grant        GM_registerMenuCommand
-// @include      http://*
-// @include      https://*
+// @include      http*
 // @exclude      http*://mail.google.com/*
 // @exclude      http*://maps.google*   
 // @exclude      http*://www.google.com/reader*
@@ -288,6 +287,14 @@
                 replaceE: 'id("pager")'
             }
         },
+        {name: 'Disconnect Search',
+            url: /^https?:\/\/search\.disconnect\.me\//i,
+            nextLink: 'auto;',
+            autopager: {
+                pageElement: 'id("results")',
+                replaceE: '//div[@class="pagination"]',
+            }
+        },
 
         // ====== 目前 Super_preloaderPlus_one 不支持用于 uAutoPagerize2 的规则 ==================
         {name: '水木社区',
@@ -309,7 +316,7 @@
                 useiframe: true,
                     // newIframe: true,
                     iloaded: true,
-                lazyImgSrc: "bpic"
+                // lazyImgSrc: "bpic",
             }
         },
         {name: '百度贴吧帖子',
@@ -367,7 +374,7 @@
 
         // ================ news ===========================
         {name: '新浪新闻',
-            url: /^http:\/\/news\.sina\.com\.cn\//i,
+            url: /^http:\/\/[a-z]+\.sina\.com\.cn\//i,
             exampleUrl: 'http://news.sina.com.cn/c/sd/2013-11-08/165728658916.shtml',
             nextLink: '//p[@class="page"]/a[text()="下一页"]',
             autopager: {
@@ -433,11 +440,11 @@
             }
         },
         {name: '中关村在线新闻页面',
-            url:/http:\/\/(?:[^\.]+\.)?zol.com.cn\/\d+\/\d+/i,
+            url:/http:\/\/(?:[^\.]+\.)?zol\.com\.cn\/\d+\/\d+/i,
             siteExample:'http://lcd.zol.com.cn/187/1875145.html',
             nextLink: '//div[@class="page"]/a[text()="下一页"]',
             autopager:{
-                pageElement:'//div[@id="cotent_idd"]',
+                pageElement:'//div[@id="cotent_idd" or @id="article-content"]',
                 relatedObj: true,
                 replaceE: 'css;.page'
             }
@@ -607,36 +614,39 @@
 
         //--- 国外新闻
         {name: 'TouringCarTimes',
-            url: '^http://www\\.touringcartimes\\.com/category/',
+            url: /^http:\/\/www\.touringcartimes\.com\/category\//i,
             nextLink: '//li[@class="bpn-next-link"]/a',
             autopager: {
-                pageElement: '//div[@id="archive_page_wrapper"]'
+                pageElement: '//div[@id="archive_page_wrapper"]',
+            }
+        },
+        {name: 'tomshardware',
+            url: /^http:\/\/www\.tomshardware\.com\//i,
+            exampleUrl: 'http://www.tomshardware.com/reviews/chrome-27-firefox-21-opera-next,3534-2.html',
+            nextLink: '//li[@class="item icon active"]/following::a[1]',
+            autopager: {
+                pageElement: '//article[@id="news-content"]',
             }
         },
 
         // ========================= video =====================
-        {name: "优酷视频",
-            url: "^http://(?:www|u|i)\\.youku\\.com/",
-            nextLink: "//a[em/@class='ico_next'] | //a[@title='下一页']",
+        {name: '优酷视频',
+            url: /^http:\/\/(?:www|u|i|tv)\.youku\.com\//i,
+            nextLink: '//a[@title="下一页"] | //li[@class="next"]/a[text()="下一页"] | //a[em/@class="ico_next"] | //a[span/@class="ico__pagenext"]',
             autopager: {
-                pageElement: "//div[@id='list' or @id='listofficial'] | id('imgType') | //div[@class='YK_main']/descendant::div[@class='items']",
-                relatedObj: true
+                pageElement: '//div[@id="list" or @id="listofficial"] | id("getVideoList") | id("imgType") | //div[@class="YK_main" or @class="mainCol"]/descendant::div[@class="items"]',
             }
         },
-        {name: '优酷电视剧—检索',
-            url: '^http://tv\\.youku\\.com/search',
-            nextLink: '//a[span[@class="ico__pagenext"]]',
-            pageElement: '//div[@class="mainCol"]/descendant::div[@class="items"]',
-        },
         {name: "搜库-专找视频",
-            url: "^http://www\\.soku\\.com/",
+            url: "^http://www\\.soku\\.com/search",
             nextLink: '//li[@class="next"]/a[@title="下一页"]',
-            pageElement: "//div[@class='sk-result']/descendant::div[@class='sk-vlist']",
-            siteExample: 'http://www.soku.com/t/nisearch/firefox'
+            autopager: {
+                pageElement: '//div[@class="sk_result"]',
+                separatorReal: false,
+            }
         },
         {name: '爱奇艺',
             url: /^http:\/\/(list|so)\.iqiyi\.com\//i,
-            exampleUrl: ['http://list.iqiyi.com/www/2/18------------2-1-1-1---.html', 'http://so.iqiyi.com/so/q_%E7%81%B5%E4%B9%A6%E5%A6%99%E6%8E%A2'],
             nextLink: '//div[@class="page"]/a[text()="下一页"]',
             autopager: {
                 pageElement: '//div[@class="list_content"]/div[@class="list0"] | //div[@class="s_main"]/descendant::div[@class="mod_sideright clearfix"]/ul',
@@ -1261,14 +1271,15 @@
             nextLink: '//a[@class="page-next"]',
             pageElement: '//div[@id="matterc"]',
         },
-        {name: '游侠网 - 新闻',
-            url: /^http:\/\/www\.ali213\.net\//i,
+        {name: '游侠网',
+            url: /^http:\/\/(?:www|down)\.ali213\.net\//i,
             exampleUrl: 'http://www.ali213.net/news/html/2013-12/91377.html',
-            nextLink: '//a[@id="after_this_page"][@href]',
+            nextLink: 'auto;',
+            // nextLink: '//a[@id="after_this_page"][@href] | //div[@class="p_bar"]/a[text()="下页"] | //div[@class="list_body_page"]/a[@title="下一页"]',
             autopager: {
-                pageElement: '//div[@id="Content"]',
+                pageElement: '//div[@id="Content" or @id="game_content" or @id="rqjxhb"]',
                 relatedObj: true,
-                filter: 'css;.page_fenye'
+                lazyImgSrc: 'data-original'
             }
         },
         {name: '游民星空',
@@ -1397,7 +1408,7 @@
             nextLink: 'id("nextp") | id("page_use")/a[text()="下一页"]',
             autopager: {
                 pageElement: '//div[@id="article"] | //div[@class="content"]/div[@class="inner"]/div[@class="nr_con"]',
-                    // filter: 'css;.fxC',  // 去掉每页的分享条
+                    replaceE: '//div[@class="page"]',
                 relatedObj: true,
             }
         },
@@ -1555,6 +1566,42 @@
                 pageElement: 'id("search_con")/div[@class="icon_list icon_list_165"]',
             }
         },
+        {name: '昵图网',
+            url: /^http:\/\/[a-z]+\.nipic\.com\//i,
+            exampleUrl: 'http://soso.nipic.com/search.aspx?t=tk&q=%B7%E2%C3%E6',
+            nextLink: 'auto;',
+            autopager: {
+                pageElement: 'id("bd") | //center/table[@width="900" and @cellspacing="0" and @cellpadding="0" and @border="0"]',
+                lazyImgSrc: "data-original",
+                stylish: '.lazy { display: block; }'
+            }
+        },
+        {name: '素材天下',
+            url: /^http:\/\/www\.sucaitianxia\.com\//i,
+            exampleUrl: 'http://www.sucaitianxia.com/psd/Index.html',
+            nextLink: 'auto;',
+            autopager: {
+                pageElement: '//div[@class="home_19"]/div[@class="left"]/div[@class="mid"]',
+            }
+        },
+        {name: 'easyicon.net',
+            url: '^http://www\\.easyicon\\.net/iconsearch/',
+            nextLink: '//div[@class="pages_all"]/a[text()="下一页>"]',
+            pageElement: 'id("result_right_layout")',
+            exampleUrl: 'http://www.easyicon.net/iconsearch/feed/&color=black',
+        },
+        {name: 'iconarchive',
+            url: '^http://www\\.iconarchive\\.com/search\\?q=*',
+            nextLink: '//div[@class="pagination"]/a[@class="next"]',
+            pageElement: 'id("layout-search-content")',
+            exampleUrl: 'http://www.iconarchive.com/search?q=pin',
+        },
+        {name: 'Find Icons',
+            url: '^http://findicons\\.com/search/',
+            nextLink: '//div[@class="pages"]/a[contains(text(), "Next") or contains(text(), "下一页")]',
+            pageElement: 'id("search_con")/div[@class="icon_list icon_list_165"]',
+            exampleUrl: 'http://findicons.com/search/earth',
+        },
         
         // ========================= software ================================
         {name: '小众软件',
@@ -1632,6 +1679,12 @@
                 pageElement: '//div[@class="main"]/div[@class="left"]',
             }
         },
+        {name: 'Yanu | 分享优秀、纯净、绿色、实用的精品软件',
+            url: '^http://www\\.ccav1\\.com/*',
+            nextLink: 'id("content-list")/div[@class="pagination"]/a[text()="下页"]',
+            pageElement: '//div[@id="content-list"]',
+            exampleUrl: 'http://www.ccav1.com/',
+        },
         {name: '绿软家园(绿色下载站)',
             url: /^http:\/\/www\.downg\.com\/.*\.html/i,
             exampleUrl: 'http://www.downg.com/list/r_1_1.html',
@@ -1705,11 +1758,10 @@
             }
         },
         {name: 'User scripts on Greasy Fork',
-            url: '^https://greasyfork\\.org/scripts',
+            url: /^https:\/\/greasyfork\.org/i,
             nextLink: '//a[@rel="next"]',
             autopager: {
-                pageElement: 'id("browse-script-list")',
-                replaceE: '//div[@class="pagination"]'
+                pageElement: 'id("browse-script-list") | id("Content")/ul',
             }
         },
         {name: 'User Styles',
@@ -2565,6 +2617,28 @@
                 pageElement:'//img[@id="curPic"]',
                 useiframe:true,
                 replaceE: 'id("Pages")'
+            }
+        },
+        {name: '热血漫画',
+            url:/^http:\/\/www\.rexuedongman\.com\/comic\//i,
+            siteExample:'http://www.rexuedongman.com/comic/2957/36463/index.html?p=2',
+            nextLink: {
+                startAfter:'?p=',
+                mFails:[/^http:\/\/www\.rexuedongman\.com\/comic\/.+/i,'?p=1'],
+                inc:1,
+                isLast:function(doc,win,lhref){
+                    var select = doc.getElementById('pageSelect');
+                    if (select) {
+                        var s2os = select.options;
+                        var s2osl = s2os.length;
+                        if (select.selectedIndex == s2osl - 1) return true;
+                    }
+                },
+            },
+            autopager:{
+                useiframe:true,
+                // maxpage:20,
+                pageElement:'//img[@id="mangaFile"]',
             }
         },
         {name: '99漫画old',
@@ -5902,10 +5976,7 @@
     // ============================  functions  =======================================
 
     function gmCompatible() { // GM 兼容
-        if (typeof unsafeWindow == "undefined") unsafeWindow = window;
-        if (typeof GM_getValue != "undefined" && GM_getValue("a", "b") != undefined) {
-            return;
-        }
+        // 替换默认的 GM_addStyle 函数，因为 Greasemonkey 没有返回值
 
         GM_addStyle = function(css){
             var s = document.createElement('style');
@@ -5914,6 +5985,10 @@
             s.appendChild(document.createTextNode(css));
             return (document.getElementsByTagName('head')[0] || document.documentElement).appendChild(s);
         };
+        if (typeof unsafeWindow == "undefined") unsafeWindow = window;
+        if (typeof GM_getValue != "undefined" && GM_getValue("a", "b") != undefined) {
+            return;
+        }
         GM_getValue = function(key, defaultValue) {
             var value = window.localStorage.getItem(key);
             if (value == null) value = defaultValue;
