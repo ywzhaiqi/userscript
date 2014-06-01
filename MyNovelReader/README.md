@@ -49,7 +49,7 @@ Opera 12 的暴力猴旧版本有个问题，请更新至新版。
 ### 使用说明和技巧
 
 - 默认设置从 booklink.me 点击的网站自动进入阅读模式
-- **书签调用方式**：[调用 My Novel Reader](javascript:readx%20&&%20readx();)，将此链接加为书签即可手动调用（右键或拖动到书签栏）。
+- **书签调用方式**：<a href="javascript:readx();">调用 My Novel Reader</a>，将此链接加为书签即可手动调用（右键或拖动到书签栏）。如果此链接无法正确显示，请手动设置地址为 javascript:readx\(\);
 - **手动调用代码（Firefox）**: `content.window.wrappedJSObject.readx();`，再次调用退出。
 - **辅助脚本：[booklime.me 辅助](http://userscripts.org/scripts/show/165572)**：一键打开未读章节。
 - 鼠标双击内容暂停翻页。
