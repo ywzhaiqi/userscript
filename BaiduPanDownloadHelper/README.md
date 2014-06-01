@@ -20,8 +20,8 @@ BaiduPanDownloadHelper
 功能简介
 -------
 
-全部包含的页面会去掉云管家提示（*来自 Crack Url Wait Code Login For Chrome*）
-
+- 全局
+	- 默认去除云管家提示，*来自 Crack Url Wait Code Login For Chrome*
 - 个人主页
     - 选中条目后可点击 "批量下载" 按钮，批量得到下载链接，支持2层目录
     - 左侧增加自定义快捷目录，设置在 "更多-设置"
@@ -36,14 +36,14 @@ BaiduPanDownloadHelper
 --------
 
  - 新增自动填写提取密码，来自 [网盘自动填写提取密码](https://greasyfork.org/scripts/1002)
- - **分享主页**：双击复制所有链接到剪贴板，可用 iDown 的 lua 脚本实现直接批量下载。（**lua 脚本已失效**）
+ - 分享主页：双击复制所有链接到剪贴板，可用 iDown 的 lua 脚本实现直接批量下载。（**lua 脚本已失效**）
  	- TODO: iDown 文件下载的问题。TLF-MiniSD——史蒂芬·斯皮尔伯格 http://yun.baidu.com/s/1zMWXu
  - 勾选条目后，新增右键 “复制"、"复制 aria2" 菜单
 
 更新
 -------
 
-  - 详见 github
+  - 详见 [History for BaiduPanDownloadHelper](https://github.com/ywzhaiqi/userscript/commits/master/BaiduPanDownloadHelper)
   - ....
   - 2014-05-11，版本 3.5.8。**百度盘改版，修正下载链接的获取**。个人主页新增快捷链接（设置按钮在右上的更多处）。**更改更新地址到 greasyfork**。
   - 2014-01-17，[版本 3.5.7][0]。修正 aria2 的 UA。
