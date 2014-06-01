@@ -3,14 +3,12 @@
 
 ### 文件说明
 
- - [mynovelreader@ywzhaiqi@gmailcom.user.js](mynovelreader@ywzhaiqi@gmailcom.user.js)，GM 脚本
+ - [mynovelreader@ywzhaiqi@gmailcom.user.js](mynovelreader@ywzhaiqi@gmailcom.user.js)，GM 脚本，[greasyfork 地址](https://greasyfork.org/scripts/292-my-novel-reader)
  - [novelreaderdb@gmailcom.user.js](novelreaderdb@gmailcom.user.js)，自定义配置文件
- - [MyNovelReader.js](MyNovelReader.js)，自用于 Opera Mobile，去除jQuery版。
+ - [MyNovelReader.mobile.js](MyNovelReader.mobile.js)，自用于 Opera Mobile 12，去除jQuery版。
  - 3.0.4 由网友 Roger Au 设计，[安装地址](http://userscripts.org/scripts/version/165951/639713.user.js)
 
 ### 说明
-
-[greasyfork.org](https://greasyfork.org/scripts/292-my-novel-reader)
 
 Firefox（Greasemonkey/Scriptish）， Chrome（Tampermonkey），Maxthon（暴力猴），Opera（暴力猴）
 
@@ -36,6 +34,7 @@ Opera 12 的暴力猴旧版本有个问题，请更新至新版。
 - 手打吧、泡书吧、17k、[16K](http://www.16kbook.org/)、看下、青帝、侠客等
 - [落秋中文](http://www.luoqiu.net/)、[吾读小说网](http://www.5du5.com/)、[平凡文学网](http://www.wtcxs.com/)
 - 其它小说站点
+- 百度贴吧：可通过手动书签的方式调用。
 
 ### 特性
 
@@ -50,9 +49,11 @@ Opera 12 的暴力猴旧版本有个问题，请更新至新版。
 ### 使用说明和技巧
 
 - 默认设置从 booklink.me 点击的网站自动进入阅读模式
-- 手动调用代码（Firefox）: `content.window.wrappedJSObject.readx();`，再次调用退出。
+- **书签调用方式**：[调用 My Novel Reader](javascript:readx%20&&%20readx();)，将此链接加为书签即可手动调用（右键或拖动到书签栏）。
+- **手动调用代码（Firefox）**: `content.window.wrappedJSObject.readx();`，再次调用退出。
 - **辅助脚本：[booklime.me 辅助](http://userscripts.org/scripts/show/165572)**：一键打开未读章节。
 - 鼠标双击内容暂停翻页。
+- 鼠标中键点击 "退出" 按钮则为临时退出模式。
 - Enter 键打开目录页，并已复制当前的章节标题到剪贴板，可用查找
 - Left 键滚到上一页，到顶部则打开上一章
 - Right 键滚到下一页，到底部则打开下一章
@@ -65,6 +66,8 @@ Opera 12 的暴力猴旧版本有个问题，请更新至新版。
 
 ### 更新
 
+- 详见 [History for MyNovelReader - github](https://github.com/ywzhaiqi/userscript/commits/master/MyNovelReader)
+- .....
 - 2013年12月07日
     - [版本 3.7.9](http://userscripts.org/scripts/diff/165951/689214)。修正几个规则。
 - 2013年11月28日

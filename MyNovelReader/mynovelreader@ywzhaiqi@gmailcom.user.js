@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        4.0.4
+// @version        4.0.5
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
@@ -15,12 +15,12 @@
 // @grant          GM_registerMenuCommand
 // @grant          unsafeWindow
 // homepageURL    https://userscripts.org/scripts/show/165951
-// updateURL      https://greasyfork.org/scripts/292-my-novel-reader/code/My%20Novel%20Reader.meta.js
-// downloadURL    https://greasyfork.org/scripts/292-my-novel-reader/code/My%20Novel%20Reader.user.js
+// updateURL      https://userscripts.org/scripts/source/165951.meta.js
+// downloadURL    https://userscripts.org/scripts/source/165951.user.js
 
 // @homepageURL    https://greasyfork.org/scripts/292/
-// @updateURL      https://greasyfork.org/scripts/292/code.meta.js
-// @downloadURL    https://greasyfork.org/scripts/292/code.user.js
+// @updateURL      https://greasyfork.org/scripts/292-my-novel-reader/code/My%20Novel%20Reader.meta.js
+// @downloadURL    https://greasyfork.org/scripts/292-my-novel-reader/code/My%20Novel%20Reader.user.js
 // @require        http://code.jquery.com/jquery-1.9.1.min.js
 // @require        http://cdn.jsdelivr.net/underscorejs/1.6.0/underscore-min.js
 // @resource fontawesomeWoff http://web-resource.googlecode.com/git/fontawesome-webfont.woff
@@ -45,6 +45,8 @@
 // @include        http://novel.hongxiu.com/*/*/*.shtml
 // @include        http://www.readnovel.com/novel/*.html
 // http://www.tianyabook.com/*/*.htm
+
+// @include        http://tieba.baidu.com/p/*
 
 // booklink.me
 // @include        http://www.shumilou.com/*/*.html
@@ -269,6 +271,9 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 
         contentRemove: "script, iframe, font[color]",          // 内容移除选择器
         contentReplace: /最新.?章节|百度搜索|无弹窗小说网|更新快无弹窗纯文字|高品质更新|\(百度搜.\)|全文字手打|“”&nbsp;看|无.弹.窗.小.说.网|追书网|〖∷∷无弹窗∷纯文字∷ 〗/g,
+        removeLineRegExp: /<p>[　\s。;，！\.∷〖]*<\/p>/g,  // 移除只有一个字符的行
+
+        // 以下不常改
         replaceBrs: /(<br[^>]*>[ \n\r\t]*){1,}/gi,    // 替换为<p>
     };
 
@@ -412,6 +417,16 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             titleReg: "(.*)_(.*)免费阅读_小说阅读网",
             contentSelector: "#article",
             contentRemove: "div[style]"
+        },
+
+        {siteName: "百度贴吧（手动启用）",
+            url: /^http:\/\/tieba\.baidu.com\/p\//,
+            titleSelector: "h1.core_title_txt",
+            // contentSelector: "div[id^='post_content_']",
+            contentSelector: "#j_p_postlist",
+            contentRemove: ".share_btn_wrapper, #sofa_post, .d_author",
+            // 显示楼层的分割线
+            style: ".clear { border-top:1px solid #cccccc; margin-bottom: 50px;}",
         },
         // {siteName: "天涯在线书库（部分支持）",
         //     url: /www\.tianyabook\.com\/.*\.htm/,
@@ -582,7 +597,8 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             bookTitleSelector: ".headinfo a:first",
             contentRemove: "p:contains(精品推荐：), p:contains(，免费小说阅读基地！), a",
             contentReplace: [
-                "〖∷更新快∷无弹窗∷纯文字∷ .〗"
+                "〖∷更新快∷无弹窗∷纯文字∷ .〗",
+                "逸名文学屋："
             ]
         },
         {siteName: "奇书屋",
@@ -1044,7 +1060,10 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         },
         {siteName: "努努书坊",
             url: "http://book\\.kanunu\\.org/.*/\\d+/\\d+\\.html",
+            titleReg: /(.*) - (.*) - 小说在线阅读 - .* - 努努书坊/,
+            titlePos: 1,
             contentSelector: "table:eq(4) p",
+            indexSelector: "a[href^='./']",
         },
         {siteName: "五月中文网",
             url: "^http://5ycn\\.com/\\d+/\\d+/\\d+\\.html",
@@ -1185,6 +1204,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         "cao之过急":"操之过急",
         "大公无si":"大公无私",
         "fu道人家":"妇道人家",
+        "奸yin掳掠":"奸淫掳掠",
         "空dangdang":"空荡荡",
         "yin奉阳违":"阴奉阳违", "一yin一阳":"一阴一阳",
 
@@ -1198,7 +1218,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "h[ǎa]oxi[àa]ng":"好像", "hu[áa]ngs[èe]":"黄色", "皇d[ìi]":"皇帝", "昏昏yu睡":"昏昏欲睡", "回dang":"回荡",
         "jian(臣|细)":"奸$1", "jian货":"贱货", "jing察":"警察", "j[ìi]nháng":"进行", "ji烈":"激烈", "j[iì](nv|女)": "妓女", "jirou": "鸡肉", "ji者":"记者", "ju花":"菊花","j[īi]动":"激动", "jili[èe]":"激烈", "肌r[òo]u":"肌肉","ji射":"激射", "ji[ēe]ch[uù]":"接触", "j[ùu]li[èe]": "剧烈", "jǐng惕": "警惕", "节cao":"节操", "浸yin":"浸淫",
         "k[ěe]n[ée]ng": "可能", "开bao": "开苞",  "k[àa]o近": "靠近", "口wen":"口吻",
-        "ling辱": "凌辱", "luan蛋": "卵蛋", "脸sè": "脸色", "lu出":"露出", "流máng":"流氓",
+        "ling辱": "凌辱", "luan蛋": "卵蛋", "脸sè": "脸色", "lu出":"露出", "流máng":"流氓", "lun理":"伦理",
         "m[ǎa]ny[ìi]":"满意", "m[ǎa]sh[àa]ng":"马上", "m[ée]iy[oǒ]u":"没有", "mei国": "美国", "m[íi]ngb[áa]i":"明白", "迷huan": "迷幻", "mi茫":"迷茫", "m[íi]n\\s{0,2}zh[ǔu]": "民主", "迷jian": "迷奸", "mimi糊糊":"迷迷糊糊", "末(?:\\s|<br/?>)*ì":"末日", "面se":"面色", "mengmeng":"蒙蒙", 
         "nàme":"那么", "n[ée]ngg[oò]u":"能够", "nán\\s{0,2}hǎi": "那会", "内jian":"内奸",
         "pi[áa]o客":"嫖客", "p[áa]ngbi[āa]n":"旁边",
@@ -1647,7 +1667,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             }
 
             // 删除空白的、单个字符的 p
-            text = text.replace(/<p>[　\s。;，！\.∷]*<\/p>/g, "");
+            text = text.replace(rule.removeLineRegExp, "");
 
             return text;
         },
@@ -1814,6 +1834,11 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             if(App.isLaunched) return;
             App.isLaunched = true;
 
+            // 百度贴吧的不好判断，手动调用 readx 启用
+            if (location.href.match(/^http:\/\/tieba\.baidu.com\/p\//)) {
+                return;
+            }
+
             var isAutoLaunch = App.isAutoLaunch();
             if(isAutoLaunch){
                 App.site = App.getCurSiteInfo();
@@ -1953,6 +1978,11 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                             .text("上一章")
                     )
                     .prependTo(App.$chapterList);
+            }
+
+            // 插入站点样式
+            if (App.site.style) {
+                GM_addStyle(App.site.style);
             }
 
             App.appendPage(parser, true);
@@ -3252,12 +3282,12 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
     };
 
     function fakeTimeout(callback) {
-      // Register event listener
-      window.document.body.addEventListener("timeoutEvent", callback, false);
-      // Generate and dispatch synthetic event
-      var ev = document.createEvent("HTMLEvents");
-      ev.initEvent("timeoutEvent", true, false);
-      window.document.body.dispatchEvent(ev);
+        // Register event listener
+        window.document.body.addEventListener("timeoutEvent", callback, false);
+        // Generate and dispatch synthetic event
+        var ev = document.createEvent("HTMLEvents");
+        ev.initEvent("timeoutEvent", true, false);
+        window.document.body.dispatchEvent(ev);
     }
 
 
@@ -3470,8 +3500,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         box-shadow: 0 1px 0 rgba(255,255,255,0.05), inset 0 1px 3px rgba(0,0,0,0.3);\
     }\
     #chapter-list {\
-        position: absolute;\
-        top: 46px;\
+        position: relative;\
         bottom: 0;\
         left: 0;\
         right: 0;\
