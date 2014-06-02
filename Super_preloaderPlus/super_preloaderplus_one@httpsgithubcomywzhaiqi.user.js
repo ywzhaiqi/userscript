@@ -3,7 +3,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.1.2
+// @version      6.1.3
 // @homepageURL  https://greasyfork.org/scripts/178900/
 // @updateURL    https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js
 // @downloadURL  https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js
@@ -1116,9 +1116,7 @@
             siteExample: 'https://addons.mozilla.org/zh-CN/firefox/',
             nextLink: '//p[@class="rel"]/a[@class="button next"][@href] | //ol[@class="pagination"]/li/a[@rel="next"][@href]',
             autopager: {
-                // uAutoPagerize2: {
-                //     useiframe: true,
-                // },
+
                 pageElement: '//div[@id="pjax-results" or @class="separated-listing"]/div[@class="items"] | //section[@class="primary"]/div/div[@class="items"] | //ul[@class="personas-grid"] | //div[@id="my-addons"] | //div[@id="reviews"]',
                 relatedObj: true,
                 replaceE: 'css;.paginator'
@@ -6028,23 +6026,30 @@
         }
     }
 
-    // By lastDream2013，原版只能用于 Firefox
+    // By lastDream2013 略加修改，原版只能用于 Firefox
     function getRalativePageStr(lastUrl, currentUrl, nextUrl) {
         var getRalativePageNumArray = function (lasturl, url) {
             if (!lasturl || !url) {
                 return [0, 0];
             }
 
-            var lasturlarray = lasturl.split(/-|\.|\&|\/|=|#/),
-                urlarray = url.split(/-|\.|\&|\/|=|#/),
+            var lasturlarray = lasturl.split(/-|\.|\&|\/|=|#|\?/),
+                urlarray = url.split(/-|\.|\&|\/|=|#|\?/),
                 url_info,
                 lasturl_info;
+            // 一些 url_info 为 p1,p2,p3 之类的
+            var handleInfo = function(s) {
+                if (s) {
+                    return s.replace('p', '');
+                }
+                return s;
+            };
             while (urlarray.length != 0) {
-                url_info = urlarray.pop().replace('p', ''),
-                lasturl_info = lasturlarray.pop().replace('p', '');
+                url_info = handleInfo(urlarray.pop()),
+                lasturl_info = handleInfo(lasturlarray.pop());
                 if (url_info != lasturl_info) {
-                    if (/[0-9]+/.test(lasturl_info) && /[0-9]+/.test(url_info))
-                        return [parseInt(lasturl_info), parseInt(url_info)];
+                    if (/[0-9]+/.test(url_info) && (url_info == "2" || /[0-9]+/.test(lasturl_info)))
+                        return [parseInt(lasturl_info) || 1, parseInt(url_info)];
                 }
             }
             return [0, 0];
@@ -6061,7 +6066,8 @@
             ralativePageNumarray[0] = ralativePageNumarray[0] + ralativeOff;
         }
 
-        if (ralativePageNumarray[0] == NaN) {
+        // console.log('[获取实际页数] ', '要比较的3个页数：',arguments, '，得到的差值:', ralativePageNumarray);
+        if (isNaN(ralativePageNumarray[0]) || isNaN(ralativePageNumarray[1])) {
             return '';
         }
 
