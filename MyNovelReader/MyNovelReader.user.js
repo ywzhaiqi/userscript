@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        4.0.5
+// @version        4.0.6
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
@@ -23,7 +23,7 @@
 // @downloadURL    https://greasyfork.org/scripts/292-my-novel-reader/code/My%20Novel%20Reader.user.js
 // @require        http://code.jquery.com/jquery-1.9.1.min.js
 // @require        http://cdn.jsdelivr.net/underscorejs/1.6.0/underscore-min.js
-// @resource fontawesomeWoff http://web-resource.googlecode.com/git/fontawesome-webfont.woff
+// @resource fontawesomeWoff https://github.com/FortAwesome/Font-Awesome/raw/master/fonts/fontawesome-webfont.woff
 
 // @include        http://read.qidian.com/*,*.aspx
 // @include        http://readbook.qidian.com/bookreader/*,*.html
@@ -422,6 +422,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         {siteName: "百度贴吧（手动启用）",
             url: /^http:\/\/tieba\.baidu.com\/p\//,
             titleSelector: "h1.core_title_txt",
+            bookTitleSelector: ".card_title_fname",
             // contentSelector: "div[id^='post_content_']",
             contentSelector: "#j_p_postlist",
             contentRemove: ".share_btn_wrapper, #sofa_post, .d_author",
@@ -1215,7 +1216,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         "dang校": "党校", "da子": "鞑子", "大tui":"大腿", "diao丝": "屌丝", "d[úu](?:\\s|&nbsp;|<br/>)*l[ìi]": "独立", "d[uú]\\s{0,2}c[áa]i":"独裁", "d?[iì]f[āa]ng":"地方", "d[ìi]\\s*d[ūu]":"帝都", "di国":"帝国", "duo落":"堕落",
         "f[ǎa]ngf[óo]":"仿佛", "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "f[èe]nn[ùu]":"愤怒",
         "gao潮": "高潮", "干chai": "干柴", "gu[oò]ch[ée]ng":"过程", "gu[āa]nx[iì]":"关系", "g[ǎa]nji[àa]o":"感觉", "国wu院":"国务院",
-        "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "h[ǎa]oxi[àa]ng":"好像", "hu[áa]ngs[èe]":"黄色", "皇d[ìi]":"皇帝", "昏昏yu睡":"昏昏欲睡", "回dang":"回荡",
+        "hù士":"护士", "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "h[ǎa]oxi[àa]ng":"好像", "hu[áa]ngs[èe]":"黄色", "皇d[ìi]":"皇帝", "昏昏yu睡":"昏昏欲睡", "回dang":"回荡",
         "jian(臣|细)":"奸$1", "jian货":"贱货", "jing察":"警察", "j[ìi]nháng":"进行", "ji烈":"激烈", "j[iì](nv|女)": "妓女", "jirou": "鸡肉", "ji者":"记者", "ju花":"菊花","j[īi]动":"激动", "jili[èe]":"激烈", "肌r[òo]u":"肌肉","ji射":"激射", "ji[ēe]ch[uù]":"接触", "j[ùu]li[èe]": "剧烈", "jǐng惕": "警惕", "节cao":"节操", "浸yin":"浸淫",
         "k[ěe]n[ée]ng": "可能", "开bao": "开苞",  "k[àa]o近": "靠近", "口wen":"口吻",
         "ling辱": "凌辱", "luan蛋": "卵蛋", "脸sè": "脸色", "lu出":"露出", "流máng":"流氓", "lun理":"伦理",
@@ -2008,6 +2009,8 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             };
             setTimeout(clean, 2000);
             setTimeout(clean, 5000);
+            setTimeout(clean, 8000);
+            setTimeout(clean, 10000);
 
             if (config.PRELOADER) {
                 App.doRequest();
