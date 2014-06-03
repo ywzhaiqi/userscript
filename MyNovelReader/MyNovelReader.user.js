@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        4.0.6
+// @version        4.0.7
 // @namespace      ywzhaiqigmail.com
 // @author         ywzhaiqi
 // @description    小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
@@ -23,7 +23,7 @@
 // @downloadURL    https://greasyfork.org/scripts/292-my-novel-reader/code/My%20Novel%20Reader.user.js
 // @require        http://code.jquery.com/jquery-1.9.1.min.js
 // @require        http://cdn.jsdelivr.net/underscorejs/1.6.0/underscore-min.js
-// @resource fontawesomeWoff https://github.com/FortAwesome/Font-Awesome/raw/master/fonts/fontawesome-webfont.woff
+// @resource fontawesomeWoff http://libs.baidu.com/fontawesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3
 
 // @include        http://read.qidian.com/*,*.aspx
 // @include        http://readbook.qidian.com/bookreader/*,*.html
@@ -225,7 +225,7 @@ var isChrome = !!window.chrome;
 
 var fontawesomeWoff = GM_getResourceURL('fontawesomeWoff');
 if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
-    fontawesomeWoff = "http://web-resource.googlecode.com/git/fontawesome-webfont.woff";
+    fontawesomeWoff = "http://libs.baidu.com/fontawesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3";
 } else if (isChrome) {
     fontawesomeWoff = "data:font/woff;charset=utf-8;base64," + fontawesomeWoff;
 }
