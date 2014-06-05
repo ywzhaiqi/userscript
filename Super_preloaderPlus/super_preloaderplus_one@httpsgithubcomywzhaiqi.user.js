@@ -3,7 +3,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.1.3
+// @version      6.1.4
 // @homepageURL  https://greasyfork.org/scripts/178900/
 // @updateURL    https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js
 // @downloadURL  https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js
@@ -6048,8 +6048,9 @@
                 url_info = handleInfo(urlarray.pop()),
                 lasturl_info = handleInfo(lasturlarray.pop());
                 if (url_info != lasturl_info) {
-                    if (/[0-9]+/.test(url_info) && (url_info == "2" || /[0-9]+/.test(lasturl_info)))
-                        return [parseInt(lasturl_info) || 1, parseInt(url_info)];
+                    if (/[0-9]+/.test(url_info) && (url_info == "2" || /[0-9]+/.test(lasturl_info))) {
+                        return [(parseInt(lasturl_info) || 1), parseInt(url_info)];
+		    }
                 }
             }
             return [0, 0];

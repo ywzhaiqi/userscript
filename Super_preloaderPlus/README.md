@@ -1,5 +1,5 @@
-Super_preloaderPlus.user.js
-===========================
+Super_preloaderPlus
+===================
 
 ## 文件说明
 
