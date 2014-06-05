@@ -3,10 +3,14 @@
 
 ### 文件说明
 
- - [mynovelreader@ywzhaiqi@gmailcom.user.js](mynovelreader@ywzhaiqi@gmailcom.user.js)，GM 脚本，[greasyfork 地址](https://greasyfork.org/scripts/292-my-novel-reader)
- - [novelreaderdb@gmailcom.user.js](novelreaderdb@gmailcom.user.js)，自定义配置文件
- - [MyNovelReader.mobile.js](MyNovelReader.mobile.js)，自用于 Opera Mobile 12，去除jQuery版。
- - 3.0.4 由网友 Roger Au 设计，[安装地址](http://userscripts.org/scripts/version/165951/639713.user.js)
+- [MyNovelReader.user.js](MyNovelReader.user.js)，GM 脚本，[greasyfork 地址](https://greasyfork.org/scripts/292-my-novel-reader)
+- [MyNovelReader.mobile.js](MyNovelReader.mobile.js)，自用于 Opera Mobile 12，去除jQuery版。
+- old
+	- [mynovelreader.3.0.4.user.js](old/mynovelreader.3.0.4.user.js)，由网友 Roger Au 设计的 3.0.4 版。
+	- [novelreaderdb@gmailcom.user.js](old/novelreaderdb@gmailcom.user.js)，自定义配置文件，旧版。
+	- [mynovelreader2.user.js](old/mynovelreader2.user.js)，2系列最后一个版本。
+	- [MyNovelReader3.user.coffee](old/MyNovelReader3.user.coffee)，2转3时用 coffee 写的，已弃用。
+	- [mynovelreader-iframe方式-有问题.user.js](mynovelreader-iframe方式-有问题.user.js)，采用 iframe 方式加载而不需要刷新页面。有问题，旧版。
 
 ### 说明
 
