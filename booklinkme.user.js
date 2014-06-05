@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             booklinkme@ywzhaiqi@gmail.com
 // @name           booklink.me 增强
-// @version        1.8
+// @version        1.9
 // @author         ywzhaiqi@gmail.com
 // @description    首页一键打开所有未读链接
 // @updataURL      https://userscripts.org/scripts/source/165572.meta.js
@@ -16,6 +16,10 @@
 var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
 
 (function(){
+
+    var Config = {
+        clickedColor: "666666",
+    };
 
     var CSS = ".mclicked {color: #666666} ";
 
@@ -56,28 +60,26 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
 
             var links = $x('./ancestor::table[@width="100%"]/descendant::a[img[@alt="未读"]]', event.target);
             links.forEach(function(link){
+                // 忽略没有盗版的
+                var chapterLink = link.parentNode.nextSibling.nextSibling.querySelector('a');
+                if (chapterLink.querySelector('font[color="800000"]')) {
+                    return;
+                }
+
                 if(isFirefox)
                     link.click();
                 else
                     GM_openInTab(link.href);
+
+                // 设置点击后的样式
+                // 未读左边的 1x 链接
+                link.parentNode.previousSibling.querySelector('font').setAttribute('color', Config.clickedColor);
+                chapterLink.classList.add('mclicked');
             });
-            // var iID = setInterval(openLink, 500);
-            // function openLink(){
-            //     var link = links.shift();
-            //     if(link){
-            //         if(isFirefox)
-            //             link.click();
-            //         else
-            //             GM_openInTab(link.href);
-            //     }else{
-            //         clearInterval(iID);
-            //     }
-            // }
         }
     };
 
     var mobile = {
-        readed_color: "#666666",
 
         init: function(){
             addStyle(CSS);
@@ -118,8 +120,8 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
             openAllBtn.style.color = "red";
             openAllBtn.innerHTML = "(" + unReadLinks.length + "未读)";
             var openOneLink = function(){
-                var link = unReadLinks.pop().parentNode
-                link.setAttribute("target", "_blank")
+                var link = unReadLinks.pop().parentNode;
+                link.setAttribute("target", "_blank");
                 link.click()
                 link.className = "mclicked";
                 if(unReadLinks.length == 0){
@@ -172,34 +174,30 @@ var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
         }
     }
 
-    function $x(aXPath, aContext){
+    function $x(aXPath, aContext) {
         var nodes = [];
         var doc = document;
         var aContext = aContext || doc;
 
         try {
-          var results = doc.evaluate(aXPath, aContext, null,
-                                     XPathResult.ANY_TYPE, null);
-          var node;
-          while (node = results.iterateNext()) {
-            nodes.push(node);
-          }
-        }
-        catch (ex) {}
+            var results = doc.evaluate(aXPath, aContext, null,
+                XPathResult.ANY_TYPE, null);
+            var node;
+            while (node = results.iterateNext()) {
+                nodes.push(node);
+            }
+        } catch (ex) {}
 
         return nodes;
     }
 
     function addStyle(css) {
-        if (typeof GM_addStyle != 'undefined') GM_addStyle(css);
-        else {
-            var heads = document.getElementsByTagName('head');
-            if (heads.length > 0) {
-                var node = document.createElement('style');
-                node.type = 'text/css';
-                node.innerHTML = css;
-                heads[0].appendChild(node);
-            }
+        var heads = document.getElementsByTagName('head');
+        if (heads.length > 0) {
+            var node = document.createElement('style');
+            node.type = 'text/css';
+            node.innerHTML = css;
+            heads[0].appendChild(node);
         }
     }
 
