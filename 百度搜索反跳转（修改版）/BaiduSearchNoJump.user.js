@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Baidu 百度搜索反跳转（修改版）
+// @name         BaiduSearchNoJump
 // @namespace    noe132
 // @modified     ywzhaiqi
-// @description  改自 百度搜索反跳转，增加了翻页脚本的支持、不刷新页面的支持。
+// @description  百度搜索反跳转（修改版），增加了翻页脚本的支持、不刷新页面的支持。
 // @include      http://www.baidu.com/*
 // @homepageURL  https://greasyfork.org/scripts/1771/
 // @updateURL    https://greasyfork.org/scripts/1771/code.meta.js
@@ -100,7 +100,6 @@ function addMutationObserver(selector, callback) {
 
 
 
-var url = location.href;
 
 checkDocument();
 
@@ -120,6 +119,8 @@ addMutationObserver('#wrapper_wrapper', function(){
 //  addNextPageObserver();
 // }
 
+// var url = location.href;
+// 
 // // 添加不刷新页面的支持
 // if (url.match(/^https?:\/\/www\.baidu\.com\/[^#]*($|#wd=)/)) {
 //  addMutationObserver('#wrapper_wrapper', function(){

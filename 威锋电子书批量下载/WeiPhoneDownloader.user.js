@@ -1,8 +1,8 @@
 // ==UserScript==
-// @id             weiphoneDownlader@ywzhaiqi
+// @id             WeiPhoneDownloader@ywzhaiqi
 // @name           威锋电子书批量下载
 // @version        1.1
-// @namespace      
+// @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @description    批量下载威锋论坛的电子书
 // @homepageURL    https://greasyfork.org/scripts/668/
@@ -88,7 +88,14 @@ locationHref.match(/thread-htm-fid|mod=forumdisplay/) != -1 && (function(){
 		"《放开那三国》威锋版火爆上线",
 		"《天天爱萌仙》",
 		"炉石传说",
-		"用同步推",
+		"同步推",
+		"苹果手游",
+		"苹果助手",
+		"兔兔助手",
+		"同步推",
+		"赢iPad mini",
+		"得iPhone",
+		"iPad mini2大奖"
 	];
 
 	// 隐藏置顶广告的行
@@ -123,8 +130,8 @@ locationHref.match(/read-htm-tid|mod=viewthread/) != -1 && (function(){
 			$batchNotice = $('#batchNotice');
 		var downUrls = [];
 
-		$batchNotice.html('正在获取中...' + '<b>1/' + links.length + '</b>');
-		$batchNotice.show();
+		$batchNotice.html('正在获取中...' + '<b>1/' + links.length + '</b>')
+			.show();
 
 		function getDownloadLink() {
 			var link = links.shift();
