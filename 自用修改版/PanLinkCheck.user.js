@@ -3,7 +3,7 @@
 // @namespace   http://jixun.org/
 // @version     1.0.0.4
 // @description 浏览网页的时候检查死链
-// @include     http*://*
+// @include     http://www.jebook.org/bbs/*
 // @copyright   2012+, Jixun
 // @run-at      document-start
 // @grant       GM_xmlhttpRequest
@@ -11,9 +11,6 @@
 // ==/UserScript==
 
 (function () {
-  var console = {
-    log: false ? window.console.log.bind(window.console) : function(){},
-  };
 
   var $$ = {
     styleAdded: false
@@ -227,16 +224,20 @@
   }
   
   function main () {
-    var links = document.querySelectorAll ('a'),
-        arrLink = [];
+    var links = document.links;
+
+    var arrLink = [].filter.call(links, function(link) {
+      var url = link.getAttribute ('href'),
+          fullUrl = link.href;
+
+      return !link.hasAttribute('thisLinkChecked')
+          && fullUrl.substr(0, 4).toLowerCase() == 'http'
+          && url.trim().substr(0,1) != '#'
+          && url.trim().substr(0,11) != 'javascript:'
+          && url.replace(/\s/g, '') != ''
+    });
+
     
-    for (var i=0; i<links.length; i++) {
-      if (!links[i].hasAttribute('thisLinkChecked')
-          && links[i].href.substr(0, 4).toLowerCase() == 'http'
-          && links[i].getAttribute ('href').trim().substr(0,1) != '#'
-          && links[i].getAttribute ('href').replace(/\s/g, '') != '')
-        arrLink.push(links[i]);
-    }
     arrLink.forEach (function (e) {
       var bSkip = false,
           sCurLink = (e.href.match(/\:\/\/(.+)/)[1]).replace(/^www\./, '');
