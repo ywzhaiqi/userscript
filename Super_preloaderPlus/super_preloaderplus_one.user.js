@@ -3,7 +3,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.1.4
+// @version      6.1.5
 // @homepageURL  https://greasyfork.org/scripts/178900/
 // @updateURL    https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js
 // @downloadURL  https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js
@@ -181,20 +181,20 @@
                     iloaded:false,                                                                                      //是否在iframe完全load之后操作..否则在DOM完成后操作.
                     itimeout:0,                                                                                             //延时多少毫秒后,在操作..
                     newIframe: false,  // 下一页使用新的 iframe，能解决按钮无法点击的问题
-                pageElement: '//div[@id="ires"]',                                                      //主体内容 xpath 或 CSS选择器 或函数返回值(~~必须~~)
+                pageElement: '//div[@id="ires"]',                                          //主体内容 xpath 或 CSS选择器 或函数返回值(~~必须~~)
                 // pageElement:'css;div#ires',
                 //pageElement:function(doc,win){return doc.getElementById('ires')},
                 //filter:'//li[@class="g"]',                                                                        //(此项功能未完成)xpath 或 CSS选择器从匹配到的节点里面过滤掉符合的节点.
                 remain: 1/3,                                                                                                 //剩余页面的高度..是显示高度的 remain 倍开始翻页(可选)
                     relatedObj: ['css;div#navcnt','bottom'],                                                         //以这个元素当做最底的元素,计算页面总高度的计算.(可选)
-                replaceE: '//div[@id="navcnt"]',                                                         //需要替换的部分 xpat h或 CSS选择器 一般是页面的本来的翻页导航(可选);
+                replaceE: '//div[@id="navcnt"]',                 //需要替换的部分 xpat h或 CSS选择器 一般是页面的本来的翻页导航(可选);
                 //replaceE:'css;div#navcnt',
-                ipages: [false,3],                                                                                   //立即翻页,第一项是控制是否在js加载的时候立即翻第二项(必须小于maxpage)的页数,比如[true,3].就是说JS加载后.立即翻3页.(可选)
-                separator: true,                                                                                         //是否显示翻页导航(可选)
+                ipages: [false,3],                               //立即翻页,第一项是控制是否在js加载的时候立即翻第二项(必须小于maxpage)的页数,比如[true,3].就是说JS加载后.立即翻3页.(可选)
+                separator: true,                                 //是否显示翻页导航(可选)
                     separatorReal: true,
-                maxpage: 66,                                                                                                 //最多翻页数量(可选)
-                manualA: false,                                                                                          //是否使用手动翻页.
-                HT_insert: ['//div[@id="res"]',2],                                                       //插入方式此项为一个数组: [节点xpath或CSS选择器,插入方式(1：插入到给定节点之前;2：附加到给定节点的里面;)](可选);
+                maxpage: 66,                                     //最多翻页数量(可选)
+                manualA: false,                                  //是否使用手动翻页.
+                HT_insert: ['//div[@id="res"]',2],               //插入方式此项为一个数组: [节点xpath或CSS选择器,插入方式(1：插入到给定节点之前;2：附加到给定节点的里面;)](可选);
                 //HT_insert:['css;div#res',2], 
                 lazyImgSrc: 'imgsrc',
                 // 新增的自定义样式。下面这个是调整 Google 下一页可能出现的图片排列问题。 
@@ -236,6 +236,7 @@
             preLink:'//p[@id="page"]/a[contains(text(),"上一页")][@href]',
             autopager:{
                 pageElement:'css;div#container',
+                ipages: [true,3], 
                 remain:1/3,
                 filter:'css; #page',
                 HT_insert:['//div[@id="search"]',1],
@@ -724,7 +725,7 @@
             }
         },
         {name: '天猫 - 搜索',
-            url: '^http://list\\.tmall\\.com/search_product\\.htm\\?',
+            url: '^http://list\\.tmall\\.com//?search_product\\.htm\\?',
             nextLink: '//a[@class="ui-page-next" and (text()="下一页>>")]',
             autopager: {
                 pageElement: '//div[@id="J_ItemList"]',
@@ -1479,6 +1480,12 @@
                 pageElement: 'id("thread_inlinemod_form") | id("postlist")',
             }
         },
+        {name: '天猫魔盒论坛',
+            url: '^http://www\\.znds\\.com/*',
+            nextLink: '//a[contains(text(), "下一页")]',
+            pageElement: 'id("threadlist")/div[@class="bm_c"]',
+            exampleUrl: 'http://www.znds.com/bbs-172-3.html',
+        },
 
         // ========================= picture ================================================
         {name: 'Flickr搜索',
@@ -1524,6 +1531,7 @@
                 replaceE: '//div[@class="pagination"]'
             }
         },
+        // === mm ===
         {name: 'Show妹子',
             url:/^http:\/\/www\.showmeizi\.com\/\w+\/\d+/i,
             siteExample:'http://www.showmeizi.com/',
@@ -1548,6 +1556,37 @@
                 pageElement:'//div[@class="clearfix"]/div[@class="grid_10"]/div[@class="post postimg"]/p/a',
             }
         },
+        {name: '7160美女图片',
+            url: '^http://www\\.7160\\.com/*/*/',
+            nextLink: '//a[text()="下一页"]',
+            pageElement: 'id("arc")/div/div/div/a/img',
+            exampleUrl: 'http://www.7160.com/meinv/11988/',
+        },
+        {name: '七丽丽图库|7lili.com',
+            url: '^http://www\.7lili\.com/.+/.+/.+/.+\.html',
+            nextLink: '//a[text()="下一页"]',
+            pageElement: '//div/div/div/a/img',
+            exampleUrl: 'http://www.7lili.com/p/xinggan/201403/30333.html',
+        },
+        {name: '极品妹妹吧',
+            url: '^http://www\\.jpmm8\\.com/html/*/',
+            nextLink: '//a[text()="下一页"]',
+            pageElement: '//div/div/div/a/img',
+            exampleUrl: 'http://www.jpmm8.com/html/wlmm/12163.html',
+        },
+        {name: '明星网',
+            url: '^http://tuku\\.mingxing\\.com/*',
+            nextLink: '//a[@title="下一页"]',
+            pageElement: '//div/div/div/div/p/a/img',
+            exampleUrl: 'http://tuku.mingxing.com/xiezhen/30820/1.html',
+        },
+        {name: 'kds模特大本营',
+            url: '^http://model\\.kdslife\\.com/show/photo/*',
+            nextLink: '//a[contains(text(), "下一张")]',
+            pageElement: 'id("mainPic")',
+            exampleUrl: 'http://model.kdslife.com/show/photo/20256.html',
+        },
+        // === 壁纸、素材、icon
         {name: '桌酷壁纸',
             url: /^http:\/\/www\.zhuoku\.com\/.*\.htm/i,
             exampleUrl: 'http://www.zhuoku.com/zhuomianbizhi/computer-kuan/20140107052306.htm',
@@ -1556,12 +1595,18 @@
                 pageElement: 'id("liebiao")',
             }
         },
-        {name: 'Find Icons',
-            url: /^http:\/\/findicons\.com\/search\//i,
-            exampleUrl: 'http://findicons.com/search/earth',
-            nextLink: '//div[@class="pages"]/a[contains(text(), "Next")]',
+        {name: '统一壁纸站',
+            url: '^http://www\\.3987\\.com/desk/wall/*',
+            nextLink: '//a[@hidefocus="true" and @target="_self" and @title="下一页"]',
+            pageElement: 'id("Article")/div[@class="big-pic"]',
+            exampleUrl: 'http://www.3987.com/desk/wall/31420.html',
+        },
+        {name: '素材天下',
+            url: /^http:\/\/www\.sucaitianxia\.com\//i,
+            exampleUrl: 'http://www.sucaitianxia.com/psd/Index.html',
+            nextLink: 'auto;',
             autopager: {
-                pageElement: 'id("search_con")/div[@class="icon_list icon_list_165"]',
+                pageElement: '//div[@class="home_19"]/div[@class="left"]/div[@class="mid"]',
             }
         },
         {name: '昵图网',
@@ -1572,14 +1617,6 @@
                 pageElement: 'id("bd") | //center/table[@width="900" and @cellspacing="0" and @cellpadding="0" and @border="0"]',
                 lazyImgSrc: "data-original",
                 stylish: '.lazy { display: block; }'
-            }
-        },
-        {name: '素材天下',
-            url: /^http:\/\/www\.sucaitianxia\.com\//i,
-            exampleUrl: 'http://www.sucaitianxia.com/psd/Index.html',
-            nextLink: 'auto;',
-            autopager: {
-                pageElement: '//div[@class="home_19"]/div[@class="left"]/div[@class="mid"]',
             }
         },
         {name: 'easyicon.net',
