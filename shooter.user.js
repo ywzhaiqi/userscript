@@ -71,8 +71,7 @@
         var aContext = aContext || doc;
 
         try {
-            var results = doc.evaluate(aXPath, aContext, null,
-                XPathResult.ANY_TYPE, null);
+            var results = doc.evaluate(aXPath, aContext, null, XPathResult.ANY_TYPE, null);
             var node;
             while (node = results.iterateNext()) {
                 nodes.push(node);
