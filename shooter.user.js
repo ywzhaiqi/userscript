@@ -1,11 +1,12 @@
 // ==UserScript==
 // @id             shooter@ywzhaiqi@gmail.com
 // @name           shooter.cn 直接下载
-// @version        1.5
+// @version        1.6
 // @namespace      https://github.com/ywzhaiqi/
 // @author         ywzhaiqi@gmail.com
 // @description    在 shooter.cn 搜索页面按下载按钮直接下载。语言、发行着色。
 // @include        http://*shooter.cn/search*
+// @include        http://www.shooter.cn/xml/list/sub/*
 // downloadURL     https://userscripts.org/scripts/source/167084.user.js
 // updateURL       https://userscripts.org/scripts/source/167084.meta.js
 // 
@@ -71,7 +72,8 @@
         var aContext = aContext || doc;
 
         try {
-            var results = doc.evaluate(aXPath, aContext, null, XPathResult.ANY_TYPE, null);
+            var results = doc.evaluate(aXPath, aContext, null,
+                XPathResult.ANY_TYPE, null);
             var node;
             while (node = results.iterateNext()) {
                 nodes.push(node);
