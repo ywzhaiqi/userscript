@@ -3,7 +3,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.1.5
+// @version      6.1.6
 // @homepageURL  https://greasyfork.org/scripts/178900/
 // @updateURL    https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js
 // @downloadURL  https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js
@@ -716,11 +716,16 @@
         },
 
         // ====================== shopping、生活 ===========================
+        {name: '淘宝搜索',
+            url: '^http://(?:list|s|search[^.]*)\\.taobao\\.com/search',
+            nextLink: '//a[@class="page-next"]',
+            pageElement: '//div[@class="tb-content"]',
+        },
         {name: "淘宝",
             url: /^http:\/\/(?!bbs).*\.taobao\.com\//i,
             nextLink: 'auto;',
             autopager: {
-                pageElement: '//div[@class="tb-content"] | //div[@id="J_ShopSearchResult"]/div/div[contains(@class, "shop-hesper-bd")]',
+                pageElement: '//div[@id="J_ShopSearchResult"]/div/div[contains(@class, "shop-hesper-bd")]',
                 lazyImgSrc: 'data-lazyload-src|data-ks-lazyload',
             }
         },
@@ -1369,6 +1374,14 @@
             },
             exampleUrl: 'http://diy.pconline.com.cn/377/3774616.html',
         },
+        {name: 'Chiphell',
+            url: /^http:\/\/www\.chiphell\.com\/(?!forum)/i,
+            nextLink: 'auto;',
+            autopager: {
+                pageElement: 'id("ct")/div[@class="mn"]/div[@class="bm"]/div[@class="bm_c xld"] | id("article_content")/../..',
+                replaceE: '//div[@class="pg"]',
+            }
+        },
         {name: '糗事百科',
             url: '^http://www\\.qiushibaike\\.com/',
             nextLink: '//a[@class="next" and @title="下一页"]',
@@ -1684,7 +1697,7 @@
             nextLink: '//li[@class="pager-next"]/a',
             pageElement: 'id("forum")/table|id("comments")/*[not(@class="item-list")]'
         },
-        {name: 'PortableAppC - 有中国特色的便携软件 | PortableApps 中文站',
+        {name: 'PortableAppC - 有中国特色的便携软件',
             url: /^http:\/\/www\.portableappc\.com\//i,
             exampleUrl: 'http://www.portableappc.com/',
             nextLink: '//a[@class="nextpostslink"]',
@@ -1760,7 +1773,7 @@
                 pageElement: 'id("main")',
             }
         },
-        {name: '天天资源网 ttrar.com - 精品 绿色 免费 便携 软件 - 博客型首页',
+        {name: '天天资源网',
             url: /^http:\/\/www\.ttrar\.com\//i,
             exampleUrl: 'http://www.ttrar.com/',
             nextLink: '//div[@id="page"]/a[text()="..."] | //div[@class="page"]/a[text()="下一页"]',
@@ -1775,6 +1788,14 @@
             nextLink: 'auto;',
             autopager: {
                 pageElement: 'id("content")',
+            }
+        },
+        {name: '天天软件',
+            url: /^http:\/\/www\.tt7z\.com\//i,
+            nextLink: 'auto;',
+            autopager: {
+                pageElement: '//ul[@class="articlelist-ul"]',
+                replaceE: '//div[@id="left_content_list"]/div[@class="page"]'
             }
         },
         {name: 'Sublime text - Packages',
@@ -2518,9 +2539,11 @@
             }
         },
         {name: '暴走漫画',
-            url: '^http://baozoumanhua\\.com/',
+            url: /^http:\/\/(baozou|baozoumanhua)\.com\//i,
             nextLink: '//div[@class="pagebar"]/a[text()="下一页" or @class="next"] | //a[@class="next" and (text()="下一页")]',
-            pageElement: '//div[@class="main cf"]/div[@class="content-block cf"]/div[1]',
+            autopager: {
+                pageElement: '//div[@class="main cf"]/div[@class="content-block cf"]/div[1]',
+            }
         },
         {name: '178漫画',
             url: "^http://www\\.dmzj\\.com/.+/.+shtml|^http://manhua\\.178\\.com/.+/.+shtml",
