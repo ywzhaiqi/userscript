@@ -13,6 +13,8 @@ GM 脚本
     - [小说阅读脚本 - userscripts.org][2]
 - [BaiduPanDownloadHelper](BaiduPanDownloadHelper)
     - 批量导出百度盘的下载链接
+- [BaiduSearchNoJump](BaiduSearchNoJump)
+	- 百度搜索反跳转。
 - [Mouseover Popup Image Viewer](Mouseover Popup Image Viewer)
     - 在图片上鼠标悬停放大，主要是一些自写的规则。
 - [Super_preloaderPlus](Super_preloaderPlus)
@@ -69,6 +71,7 @@ GM 脚本
 
 ### 按作者分类
 
+- [文科 profile](https://greasyfork.org/users/54-%E6%96%87%E7%A7%91)：里面有一些人的主页。
 - [NLF][20]
 	- [search_engineJump][21]
 	- [stopGoogleRedirection][22]
@@ -94,7 +97,7 @@ GM 脚本
 	- [百度网盘助手][46]
 	- [百度音乐助手][47]：[git.oschina.net][48]，[直接打开地址][49]
 	- [虾米音乐助手][50]
-- [lkytal]
+- lkytal
 	- [greasyfork 主页][51]
 	- [Popup Search][52]：选中文字翻译或搜索
 	- [Text To link][53]：把文字链接转换为可点击链接。
@@ -124,10 +127,11 @@ GM 脚本
 - [YouTube Center ][77]，[greasyfork.org][78]
 - [yyets.com get douban ][79]， 在 yyets.com 影视详情页面显示该电影的豆瓣搜索结果，看评分。如果登录了豆瓣可以看到自己是否“看过”。
 - [豆藤 Bean vine ][80]，需要自己修改下 @include。
+- [legnaleurc/nopicads](https://github.com/legnaleurc/nopicads)
 
 ### 其它
 
-- [為什麼你們就是不能加個空格呢？][81]
+- [為什麼你們就是不能加個空格呢？ - ][81]
 
 
 Greasemonkey 和 Scriptish
@@ -138,7 +142,7 @@ Greasemonkey 和 Scriptish
 	- 输出到控制台的信息中文可能不正常。
 	- 安装脚本时没有进度条，如果 require 数量较多，需要等待安装窗口的出现。
 	- 不支持 GM_info、@grant。
-	- **严重bug**，同一个作者的2个中文文件名脚本，会被安装在同一个目录，同一时间只能安装一个脚本。
+	- **严重bug**，存在于 0.1.11 版本，同一个作者的2个中文文件名脚本，会被安装在同一个目录，同一时间只能安装一个脚本。最新 nightly 版（0.1.13pre）已修复。
 
 ### 设置及转换
 
