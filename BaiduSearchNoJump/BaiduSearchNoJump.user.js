@@ -11,10 +11,12 @@
 // updateURL     https://userscripts.org/scripts/source/161812.meta.js
 // downloadURL   https://userscripts.org/scripts/source/161812.user.js
 // @icon         http://tb.himg.baidu.com/sys/portrait/item/d4346e6f65313332ac06
-// @version      2014.5.28 1.2.1 
+// @version      2014.06.10
+// @grant        GM_xmlhttpRequest
 // @run-at       document-end
-// @note         2014-5-28，增加对百度不刷新页面的支持
-// @note         2014-5-24，增加对翻页脚本的支持
+// @note         2014-06-10，放弃原服务器解析的方法，改用 HEAD 方式。
+// @note         2014-05-28，增加对百度不刷新页面的支持
+// @note         2014-05-24，增加对翻页脚本的支持
 // ==/UserScript==
 
 // 下一页的支持有2种方式（已不准确）
@@ -23,19 +25,36 @@
 
 var checkNextPageMethod = 0;
 
+var locationHref = location.href;
+
 function decode(url,target){
+    //  原方法，已失效
+    // GM_xmlhttpRequest({
+    //     method: "GET",
+    //     url: 'http://noe132.duapp.com/baidu2.php?url=' + url,
+    //     onload: function(response){
+    //         var newUrl = response.responseText;
+    //         if (!newUrl || newUrl.indexOf('http') != 0) {
+    //             return;
+    //         }
+    //         // console.log('get', newUrl)
+    //         target.setAttribute('href', newUrl);
+    //     }
+    // });
+    // 
+    
     GM_xmlhttpRequest({
-        method: "GET",
-        url: 'http://noe132.duapp.com/baidu2.php?url=' + url,
-        onload: function(response){
-            var newUrl = response.responseText;
-            if (!newUrl || newUrl.indexOf('http') != 0) {
-                return;
-            }
-            // console.log(newUrl)
+        method: 'HEAD',
+        url: url,
+        headers: {
+            "Referer": locationHref,
+        },
+        onload: function(response) {
+            var newUrl = response.finalUrl;
+            // console.log('111', newUrl);
             target.setAttribute('href', newUrl);
         }
-    });
+    })
 }
 
 function checkDocument(doc) {
@@ -98,9 +117,6 @@ function addMutationObserver(selector, callback) {
     observer.observe(watch, {childList: true});
 }
 
-
-
-
 checkDocument();
 
 // 添加下一页和不刷新页面的支持
@@ -108,6 +124,7 @@ addMutationObserver('#wrapper_wrapper', function(){
     // console.log('元素被添加')
     checkDocument();
 });
+
 
 
 // // 添加下一页的支持
