@@ -1,13 +1,21 @@
 BaiduSearchNoJump
 ================
 
-百度搜索反跳转。最早改自 [百度搜索反跳转](http://userscripts.org:8080/scripts/show/161812)，已和原版本完全不一样。
+百度搜索反跳转。最早改自 [百度搜索反跳转](http://userscripts.org:8080/scripts/show/161812)，已和原版完全不一样。
 
 - 放弃原服务器解析的方法，改用 HEAD 方式。
 - 增加了翻页脚本的支持。
 - 增加了不刷新页面、首页搜索的支持。
+- [greasyfork 地址](https://greasyfork.org/scripts/1771)
+- [github 地址](https://github.com/ywzhaiqi/userscript/tree/master/BaiduSearchNoJump)
+- [卡饭论坛链接](http://bbs.kafan.cn/forum.php?mod=viewthread&tid=1736678&page=1&extra=#pid31492392)
 
-[greasyfork 地址](https://greasyfork.org/scripts/1771)，[github 地址](https://github.com/ywzhaiqi/userscript/tree/master/%E7%99%BE%E5%BA%A6%E6%90%9C%E7%B4%A2%E5%8F%8D%E8%B7%B3%E8%BD%AC%EF%BC%88%E4%BF%AE%E6%94%B9%E7%89%88%EF%BC%89)
+### 更新
+
+- [History for BaiduSearchNoJump.user.js - github](https://github.com/ywzhaiqi/userscript/commits/master/BaiduSearchNoJump/BaiduSearchNoJump.user.js)
+- 2014-5-28，放弃重定向方法，改用监视内容部分变化的方法。增加 greasyfork 更新链接。
+- 2014-5-28，增加 百度搜索 /#wd= 页面重定向到baidu?
+- 2014-5-24，修正：跳过解析得到的非完整链接
 
 ### 旧的说明（已不准确）
 
