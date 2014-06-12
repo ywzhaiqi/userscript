@@ -1,13 +1,12 @@
 // ==UserScript==
 // @name           userscripts 只显示中文
 // @namespace      https://github.com/ywzhaiqi
-// @version        1.3
+// @version        1.4
 // @author         ywzhaiqi@gmail.com
 // @description    在 userscripts、greasyfork 脚本页面只显示中文脚本，支持 AutoPager 和其它翻页脚本。
 
 // 注： UserScriptLoader.uc.js 可能不支持正则
-// @include        http*://userscripts.org/scripts?page=*
-// @include        http*://userscripts.org/scripts/search?q=*
+// @include        http*://userscripts.org*/scripts*
 // @include        http*://greasyfork.org/scripts*
 // @include        http*://userscripts-mirror.org/scripts*
 // @grant          none
@@ -18,7 +17,7 @@
 
 var Config = {
 	debug: false,
-	chineseRegExp: /[\u4E00-\u9FA5]/,
+	chineseRegExp: /[\u4E00-\u9Fa5]/,
 };
 
 var Sites = {
@@ -36,9 +35,9 @@ var hided = false,
 	site;
 
 function init() {
-	var host = location.host;
+	var hostname = location.hostname;
 
-	site = Sites[host];
+	site = Sites[hostname];
 	if (!site) {
 		return;
 	}
