@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.6.3
+// @version        3.6.4
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi@gmail.com
 // @description    批量导出百度盘的下载链接
@@ -112,7 +112,7 @@ var App = {
         return pageType;
     },
     processPage: function(pageType) {
-        if (pageType != null) {
+        if (pageType !== null) {
             var pageProcessor = pageType + 'PageProcessor';
 
             this.pageType = pageType;
@@ -132,7 +132,7 @@ var App = {
 
         // 去掉云管家提示，来自 Crack Url Wait Code Login For Chrome
         if (prefs.getRemoveYunGuanjia()) {
-            unsafeWindow.navigator.__defineGetter__('platform', function(){ return '' });
+            unsafeWindow.navigator.__defineGetter__('platform', function(){ return ''; });
         }
     },
     diskHomePageProcessor: function() {  // 个人主页
@@ -150,12 +150,12 @@ var App = {
             .insertAfter('#barCmdDownload')
             .click(function(){
                 self.downloadAll();
-            })
+            });
 
         // 设置页面标题，根据 hash 变化而变化，方便历史记录检索
         var setDocumentTitle = function() {
             var path = decodeURIComponent(disk.getParam('dir/path'));
-            if (path == "") {
+            if (path === "") {
                 var m = location.hash.match(/#s\/key=(.*)/);
                 if (m)
                     path = "搜索：" + m[1];
@@ -217,7 +217,7 @@ var App = {
             return;
         }
 
-        var data = null;
+        var cacheResult = null;
 
         // 获取链接，文件 viewshare_all.js，函数 _checkDownloadFile，2013-12-2
         var url = disk.api.RestAPI.SHARE_GET_DLINK + "&uk=" + FileUtils.share_uk + "&shareid=" + FileUtils.share_id + "&timestamp=" + FileUtils.share_timestamp + "&sign=" + FileUtils.share_sign;
@@ -229,7 +229,7 @@ var App = {
                         "href": result.dlink
                     })
                     .find('b').css('color', 'red');
-                data = result;
+                cacheResult = result;
             } else {
                 console.error(result);
                 $('#downFileButtom').click();
@@ -331,7 +331,7 @@ var App = {
 
         _mAlbumId = (disk.ui.album.albuminfo && disk.ui.album.albuminfo.album_id) || disk.getParam("album_id");
         _mUk = (disk.ui.album.uinfo && disk.ui.album.uinfo.uk) || disk.getParam("uk") || disk.getParam("query_uk");
-        _mPage = {count: 0,totalPage: 0,nowPage: 1,limit: 60, handle: false}
+        _mPage = {count: 0,totalPage: 0,nowPage: 1,limit: 60, handle: false};
 
         var getList = function() {
             var nowPage = $('#albumPage .page-input-wrap > input').val();
@@ -347,7 +347,7 @@ var App = {
                     App.useToast("获取数据出错, " + restUrl);
                 }
             });
-        }
+        };
 
         // 内容由 js 生成
         var clicked = function(e){
@@ -384,7 +384,7 @@ var App = {
     },
     shareInitPageProcessor: function() {
         // 来自 https://greasyfork.org/scripts/1002-网盘自动填写提取密码
-        // 因为 Scriptish bug，同一个作者的2个脚本只能安装一个
+        // 因为 Scriptish 0.1.11 的 bug，同一个作者的2个脚本只能安装一个
         
         var sCode = location.hash.slice(1).trim();  // 抓取提取码
         if (!/^[a-z0-9]{4}$/.test(sCode))  // 检查是否为合法格式 
@@ -499,7 +499,7 @@ var App = {
         var filter = function(items) {
             items.forEach(function(item) {
                 if (item.children) {
-                    filter(item.children)
+                    filter(item.children);
                 } else {
                     if (!item.dlink && item.isdir != 1) {
                         filelist.push(item.fs_id);
@@ -508,7 +508,7 @@ var App = {
             });
         };
         filter(this.checkedItems);
-        debug('筛选出需要再次用 POST 获取的', filelist)
+        debug('筛选出需要再次用 POST 获取的', filelist);
 
         // 不需要再次获取的直接显示
         if (filelist.length == 0) {
@@ -527,7 +527,7 @@ var App = {
 
         $.post(restUrl, data, function(result){
             if (result.errno == 0) {
-                var dlinkMap = {}
+                var dlinkMap = {};
                 result.dlink.forEach(function(i){
                     dlinkMap[i.fs_id] = i.dlink;
                 });
@@ -670,7 +670,7 @@ var App = {
         if (typeof isDlink == 'undefined') isDlink = true;
 
         GM_setClipboard(arr.join(Config.lineBreak), 'text');
-        App.useToast('已经复制 <b>' + arr.length + '</b> 条' + (isDlink ? '下载' : '') + '链接到剪贴板')
+        App.useToast('已经复制 <b>' + arr.length + '</b> 条' + (isDlink ? '下载' : '') + '链接到剪贴板');
     },
     addToYAAW: function(items){
         var aria2 = new ARIA2(prefs.getAria2RPC());
@@ -759,12 +759,12 @@ var UI = {
 
         this.$prefs.find('.okay').click(this.preferencesSaveHandler.bind(UI));
 
-        this.$prefs.find('#removeYunGuanjia').attr('checked', prefs.getRemoveYunGuanjia())
+        this.$prefs.find('#removeYunGuanjia').attr('checked', prefs.getRemoveYunGuanjia());
         this.$prefs.find('#aria2RPC').val(prefs.getAria2RPC());
         this.$prefs.find('#quickLinks').val(prefs.getQuickLinks());
     },
     preferencesSaveHandler: function() {
-        prefs.setRmoveYunGuanjia(this.$prefs.find('#removeYunGuanjia').attr('checked'));
+        prefs.setRmoveYunGuanjia(this.$prefs.find('#removeYunGuanjia')[0].checked);
         prefs.setAria2RPC(this.$prefs.find('#aria2RPC').val());
         // quick links
         prefs.setQuickLinks(this.$prefs.find('#quickLinks').val());
@@ -788,7 +788,7 @@ var UI = {
                 html += '<li class="quickLink b-list-item"><a href="#dir/path=' + url + '" unselectable="on" hidefocus="true" class="sprite2">' +
                     '<span class="text1 drop-list-trigger">' + name + '</span></a></li>';
             }
-        })
+        });
         $('#aside-menu > li:first').after(html);
     },
 };
@@ -897,7 +897,7 @@ var ARIA2 = (function() {
 
     function get_auth(url) {
         return url.match(/^(?:(?![^:@]+:[^:@\/]*@)[^:\/?#.]+:)?(?:\/\/)?(?:([^:@]*(?::[^:@]*)?)?@)?/)[1];
-    };
+    }
 
     function request(jsonrpc_path, method, params) {
         var request_obj = {
@@ -928,7 +928,7 @@ var ARIA2 = (function() {
         // xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
         // if (auth) xhr.setRequestHeader("Authorization", "Basic " + btoa(auth));
         // xhr.send(JSON.stringify(request_obj));
-    };
+    }
 
     return function(jsonrpc_path) {
         this.jsonrpc_path = jsonrpc_path;
@@ -938,12 +938,12 @@ var ARIA2 = (function() {
             ]);
         };
         return this;
-    }
+    };
 })();
 
 
-function template(template, data) {
-    return template.replace(/\{([\w\.]*)\}/g, function(str, key) {
+function template(tpl, data) {
+    return tpl.replace(/\{([\w\.]*)\}/g, function(str, key) {
         var keys = key.split('.'),
             value = data[keys.shift()];
         keys.forEach(function(key) {
@@ -964,7 +964,7 @@ function getMStr(fn) {
     while (matched = reg.exec(fnSource)) {
         // console.log(matched);
         ret[matched[1]] = matched[2];
-    };
+    }
     
     return ret;
 }
