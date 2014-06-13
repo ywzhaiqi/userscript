@@ -12,6 +12,6 @@ userscripts.user.js
 更新
 ----
 
-- [History foruserscripts 只显示中文 - github](https://github.com/ywzhaiqi/userscript/commits/master/userscripts%20%E5%8F%AA%E6%98%BE%E7%A4%BA%E4%B8%AD%E6%96%87)
+- [History for userscripts 只显示中文 - github](https://github.com/ywzhaiqi/userscript/commits/master/userscripts%20%E5%8F%AA%E6%98%BE%E7%A4%BA%E4%B8%AD%E6%96%87)
 - 1.3，重写，增加对 greasyfork.org、userscripts-mirror 的支持。
 - 1.2.1 更新日志在 [versions of userscripts 只显示中文 - Userscripts.org](http://userscripts-mirror.org/scripts/versions/165568.html)
