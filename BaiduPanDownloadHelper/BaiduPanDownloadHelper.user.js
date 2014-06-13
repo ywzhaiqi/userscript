@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.6.4
+// @version        3.6.5
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi@gmail.com
 // @description    批量导出百度盘的下载链接
@@ -12,6 +12,7 @@
 // @grant          GM_openInTab
 // @grant          GM_xmlhttpRequest
 // @grant          GM_registerMenuCommand
+// @grant          GM_deleteValue
 // homepageURL     http://userscripts.org/scripts/show/162138
 // updateURL       http://userscripts.org/scripts/source/162138.meta.js
 // downloadURL     http://userscripts.org/scripts/source/162138.user.js
@@ -129,6 +130,18 @@ var App = {
         GM_addStyle(Res.panelCSS);
 
         this.registerControls();
+
+        // 下面的去除云管家，会对上传插件无法显示上传文件夹
+        // 故对此进行修正
+        if (typeof GM_getValue("removeYunGuanjia") != 'undefined') {
+            Utilities.useToast({
+                toastMode: disk.ui.Toast.MODE_CAUTION,
+                msg: '<b>全局去除云管家</b>会造成主页的上传文件夹功能失效，故默认禁用。',
+                sticky: true
+            });
+
+            GM_deleteValue("removeYunGuanjia");
+        }
 
         // 去掉云管家提示，来自 Crack Url Wait Code Login For Chrome
         if (prefs.getRemoveYunGuanjia()) {
@@ -706,10 +719,10 @@ var App = {
 
 var prefs = {
     getRemoveYunGuanjia: function() { // 是否去掉云管家提示
-        return this._getBooleanConfig('removeYunGuanjia', true);
+        return this._getBooleanConfig('removeYunGuanjiaFix', false);
     },
     setRmoveYunGuanjia: function(bool) {
-        GM_setValue('removeYunGuanjia', bool);
+        GM_setValue('removeYunGuanjiaFix', bool);
     },
 
     getAria2RPC: function() {
@@ -841,8 +854,8 @@ var Res = getMStr(function(){
             <div style="margin: 10px 15px 5px;">
                 <div style="border:1px solid #F0F0F0; background-color: #FAFAFA;">
                     <table>
-                        <tr>
-                            <td width="150"><label>全局去除云管家提示</label></td>
+                        <tr title="会造成主页的上传文件夹功能失效">
+                            <td width="150"><label>全局去除云管家</label></td>
                             <td width="320"><input id="removeYunGuanjia" type="checkbox"></input></td>
                         </tr>
                         <tr>
