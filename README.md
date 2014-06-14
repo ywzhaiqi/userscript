@@ -59,79 +59,80 @@ GM 脚本
     - [Tieba_Markdown][10]：为百度贴吧添加Markdown支持。
 - 百度盘脚本
     - [BaiduPanDownloadHelper][11]
-    - [网盘工具箱][12]
-    - [百度网盘导出工具][13]，导出 Aria2rpc, Aria2, Wget, IDM 。不支持 Scriptish，Greasemonkey 导出不会弹出对话框（2014-4-24）
-    - [DUChan_Assistant][14]，Yet another ThunderAssistant copy apply to Baidupan。
+    - [百度网盘助手][12]
+    - [网盘工具箱][13]
+    - [百度网盘导出工具][14]，导出 Aria2rpc, Aria2, Wget, IDM 。不支持 Scriptish，Greasemonkey 导出不会弹出对话框（2014-4-24）
+    - [DUChan_Assistant][15]，Yet another ThunderAssistant copy apply to Baidupan。
 - 图片类
-    - [nolazyload][15]
-    - [Mouseover Popup Image Viewer][16]
-    - [MiniblogImgPop - 微博浮图][17]
-    - [新浪微博之我要看大图 Weibo Larger Pics][18]
-- [眼不见心不烦（新浪微博）][19]
+    - [nolazyload][16]
+    - [Mouseover Popup Image Viewer][17]
+    - [MiniblogImgPop - 微博浮图][18]
+    - [新浪微博之我要看大图 Weibo Larger Pics][19]
+- [眼不见心不烦（新浪微博）][20]
 
 ### 按作者分类
 
-- [文科 profile][20]：里面有一些人的主页。
-- [NLF][21]
-	- [search_engineJump][22]
-	- [stopGoogleRedirection][23]
-    - [flashViewer][24]
-    - [picViewer][25]
-    - [YoukuSS][26]
-    - [Super_preloader][27]，[Super_preloader.db][28]
-- [binux][29] / [ThunderLixianExporter][30]
-- [yulei][31]
-    - [Share easy downloads helper][32]
-    - [Crack Url Wait Code Login][33]
-    - [Music liker for Beauty][34]
-    - [True URL downloads 2(Ⅱ)][35]
+- [文科 profile][21]：里面有一些人的主页。
+- [NLF][22]
+	- [search_engineJump][23]
+	- [stopGoogleRedirection][24]
+    - [flashViewer][25]
+    - [picViewer][26]
+    - [YoukuSS][27]
+    - [Super_preloader][28]，[Super_preloader.db][29]
+- [binux][30] / [ThunderLixianExporter][31]
+- [yulei][32]
+    - [Share easy downloads helper][33]
+    - [Crack Url Wait Code Login][34]
+    - [Music liker for Beauty][35]
+    - [True URL downloads 2(Ⅱ)][36]
 - JixunMoe
-	- [userscripts 主页][36]，[greasyfork 主页][37]，[github 主页][38]
-	- [Bypass Wait, Code, & Login For Chrome][39]：以前名叫 [Crack Url Wait Code Login For Chrome][40]，但有删节。
-    - [Userscripts.org 风险脚本过滤器][41]
-    - [网盘自动填写提取密码][42]
-    - [网盘死链检查][43]
-    - [贴吧免跳转链][44]
+	- [userscripts 主页][37]，[greasyfork 主页][38]，[github 主页][39]
+	- [Bypass Wait, Code, & Login For Chrome][40]：以前名叫 [Crack Url Wait Code Login For Chrome][41]，但有删节。
+    - [Userscripts.org 风险脚本过滤器][42]
+    - [网盘自动填写提取密码][43]
+    - [网盘死链检查][44]
+    - [贴吧免跳转链][45]
 - 有一份田 (youyifentian)
-	- [git.oschina.net][45]，[userscripts.org][46]，[greasyfork.org][47]
-	- [百度网盘助手][48]
-	- [百度音乐助手][49]：[git.oschina.net][50]，[直接打开地址][51]
-	- [虾米音乐助手][52]
+	- [git.oschina.net][46]，[userscripts.org][47]，[greasyfork.org][48]
+	- [百度网盘助手][49]
+	- [百度音乐助手][50]：[git.oschina.net][51]，[直接打开地址][52]
+	- [虾米音乐助手][53]
 - lkytal
-	- [greasyfork 主页][53]
-	- [Popup Search][54]：选中文字翻译或搜索
-	- [Text To link][55]：把文字链接转换为可点击链接。
-	- [Google Image Search Context Menu][56]
+	- [greasyfork 主页][54]
+	- [Popup Search][55]：选中文字翻译或搜索
+	- [Text To link][56]：把文字链接转换为可点击链接。
+	- [Google Image Search Context Menu][57]
 - Gerald（寂寞的原子）：暴力猴作者，贴吧相关的脚本
-	- [greasyfork 主页][57]，[个人主页][58]，[github 主页][59]
+	- [greasyfork 主页][58]，[个人主页][59]，[github 主页][60]
 - trespassersW
-	- [greasyfork 主页][60]
-	- [google cache comeback][61]
-	- [userstyles.org css highlighter][62]
-	- [uso-mirror][63]
-- [LiuLang/monkey-videos][64]，常用视频网站的油㺅脚本，解析得到视频地址。
-- [Chrome扩展下载助手][65]
-- [CL1024 - 草榴社区][66]，[greasyfork.org][67]
-- [cnbeta-comments][68]
-- [Crack Url Wait Code Login][69]
-- [Crack Url Wait Code Login For Chrome][70]
-- [Douban Book Shopping Helper][71]，为各大购书网站的界面添加豆瓣评分与链接，并提供价格对比 。
+	- [greasyfork 主页][61]
+	- [google cache comeback][62]
+	- [userstyles.org css highlighter][63]
+	- [uso-mirror][64]
+- [LiuLang/monkey-videos][65]，常用视频网站的油㺅脚本，解析得到视频地址。
+- [Chrome扩展下载助手][66]
+- [CL1024 - 草榴社区][67]，[greasyfork.org][68]
+- [cnbeta-comments][69]
+- [Crack Url Wait Code Login][70]
+- [Crack Url Wait Code Login For Chrome][71]
+- [Douban Book Shopping Helper][72]，为各大购书网站的界面添加豆瓣评分与链接，并提供价格对比 。
 - Douban Download Search，增加豆瓣电影、图书的下载搜索链接。
-- [doubanIMDb][72]，在豆瓣电影的页面显示IMDb评分, 烂番茄指数 。
-- [picViewer][73]，围观图。
-- [searchEngineJump][74]，方便的在各个引擎之间跳转。
-- [Share easy downloads helper ][75]
-- [stopGoogleRedirection ][76]，禁止google的搜索结果重定向。
-- **[ThunderLixianExporter][77]**
-- [tiebaAllsign][78]
-- [YouTube Center ][79]，[greasyfork.org][80]
-- [yyets.com get douban ][81]， 在 yyets.com 影视详情页面显示该电影的豆瓣搜索结果，看评分。如果登录了豆瓣可以看到自己是否“看过”。
-- [豆藤 Bean vine ][82]，需要自己修改下 @include。
-- [legnaleurc/nopicads][83]
+- [doubanIMDb][73]，在豆瓣电影的页面显示IMDb评分, 烂番茄指数 。
+- [picViewer][74]，围观图。
+- [searchEngineJump][75]，方便的在各个引擎之间跳转。
+- [Share easy downloads helper ][76]
+- [stopGoogleRedirection ][77]，禁止google的搜索结果重定向。
+- **[ThunderLixianExporter][78]**
+- [tiebaAllsign][79]
+- [YouTube Center ][80]，[greasyfork.org][81]
+- [yyets.com get douban ][82]， 在 yyets.com 影视详情页面显示该电影的豆瓣搜索结果，看评分。如果登录了豆瓣可以看到自己是否“看过”。
+- [豆藤 Bean vine ][83]，需要自己修改下 @include。
+- [legnaleurc/nopicads][84]
 
 ### 其它
 
-- [為什麼你們就是不能加個空格呢？ - ][84]
+- [為什麼你們就是不能加個空格呢？ - ][85]
 
 
 Greasemonkey 和 Scriptish
@@ -147,7 +148,7 @@ Greasemonkey 和 Scriptish
 ### 设置及转换
 
 - Scriptish 取消勾选 `要求用户脚本使用 HTTPS 更新`，该选项可能会让脚本更新失败
-- [How To: Manually transfer user scripts from Greasemonkey to Scriptish · scriptish/scriptish Wiki][85]
+- [How To: Manually transfer user scripts from Greasemonkey to Scriptish · scriptish/scriptish Wiki][86]
 
 
 [BookLink.Me:小说搜索引擎]: http://booklink.me/
@@ -165,77 +166,78 @@ Greasemonkey 和 Scriptish
 [9]: http://userscripts.org/scripts/show/152918
 [10]: https://greasyfork.org/scripts/1921-tieba-markdown
 [11]: http://userscripts.org:8080/scripts/show/162138
-[12]: http://userscripts.org:8080/scripts/show/159911
-[13]: http://userscripts.org:8080/scripts/show/178301
-[14]: http://userscripts.org:8080/scripts/show/141767
-[15]: http://userscripts.org/scripts/show/151249
-[16]: http://userscripts.org/scripts/show/109262
-[17]: http://userscripts.org/scripts/show/83994
-[18]: http://userscripts.org/scripts/show/173273
-[19]: https://greasyfork.org/scripts/1708-%E7%9C%BC%E4%B8%8D%E8%A7%81%E5%BF%83%E4%B8%8D%E7%83%A6-%E6%96%B0%E6%B5%AA%E5%BE%AE%E5%8D%9A/
-[20]: https://greasyfork.org/users/54-%E6%96%87%E7%A7%91
-[21]: http://userscripts.org:8080/users/202260/scripts
-[22]: http://userscripts.org:8080/scripts/show/84970
-[23]: http://userscripts.org:8080/scripts/show/186798
-[24]: http://userscripts.org:8080/scripts/show/187351
-[25]: http://userscripts.org:8080/scripts/show/105741
-[26]: http://userscripts.org:8080/scripts/show/84972
-[27]: http://userscripts.org:8080/scripts/show/84937
-[28]: http://userscripts.org:8080/scripts/show/93080
-[29]: https://github.com/binux
-[30]: https://github.com/binux/ThunderLixianExporter
-[31]: http://userscripts.org:8080/users/494707/scripts
-[32]: http://userscripts.org:8080/scripts/show/155175
-[33]: http://userscripts.org:8080/scripts/show/153190
-[34]: http://userscripts.org:8080/scripts/show/161719
-[35]: http://userscripts.org:8080/scripts/show/157556
-[36]: http://userscripts.org:8080/users/474953/scripts
-[37]: https://greasyfork.org/users/44-jixunmoe
-[38]: https://github.com/JixunMoe
-[39]: https://greasyfork.org/scripts/125-bypass-wait-code-login-for-chrome
-[40]: http://userscripts.org:8080/scripts/show/157621
-[41]: http://userscripts.org:8080/scripts/show/164600
-[42]: https://greasyfork.org/scripts/1002-%E7%BD%91%E7%9B%98%E8%87%AA%E5%8A%A8%E5%A1%AB%E5%86%99%E6%8F%90%E5%8F%96%E5%AF%86%E7%A0%81
-[43]: https://greasyfork.org/scripts/1262-%E7%BD%91%E7%9B%98%E6%AD%BB%E9%93%BE%E6%A3%80%E6%9F%A5
-[44]: https://greasyfork.org/scripts/126-%E8%B4%B4%E5%90%A7%E5%85%8D%E8%B7%B3%E8%BD%AC%E9%93%BE
-[45]: http://git.oschina.net/youyifentian
-[46]: http://userscripts.org:8080/users/528225/scripts
-[47]: https://greasyfork.org/users/297-%E6%9C%89%E4%B8%80%E4%BB%BD%E7%94%B0
-[48]: https://greasyfork.org/scripts/986-%E7%99%BE%E5%BA%A6%E7%BD%91%E7%9B%98%E5%8A%A9%E6%89%8B
-[49]: https://greasyfork.org/scripts/483-%E7%99%BE%E5%BA%A6%E9%9F%B3%E4%B9%90%E5%8A%A9%E6%89%8B
-[50]: http://git.oschina.net/youyifentian/script_baidumusic
-[51]: http://git.oschina.net/youyifentian/script_baidumusic/raw/master/baidumusicscript.js
-[52]: https://greasyfork.org/scripts/987-%E8%99%BE%E7%B1%B3%E9%9F%B3%E4%B9%90%E5%8A%A9%E6%89%8B
-[53]: https://greasyfork.org/users/152-lkytal
-[54]: https://greasyfork.org/scripts/340-popup-search
-[55]: https://greasyfork.org/scripts/342-text-to-link
-[56]: https://greasyfork.org/scripts/344-google-image-search-context-menu
-[57]: https://greasyfork.org/users/48-gerald
-[58]: http://geraldl.ml/
-[59]: https://github.com/gera2ld
-[60]: https://greasyfork.org/users/5-trespassersw
-[61]: https://greasyfork.org/scripts/725-google-cache-comeback
-[62]: https://greasyfork.org/scripts/41-userstyles-org-css-highlighter
-[63]: https://greasyfork.org/scripts/2222-uso-mirror
-[64]: https://github.com/LiuLang/monkey-videos
-[65]: http://userscripts.org:8080/scripts/show/156472
-[66]: http://userscripts.org:8080/scripts/show/151695
-[67]: https://greasyfork.org/scripts/1983-cl1024
-[68]: http://userscripts.org:8080/scripts/show/152818
-[69]: http://userscripts.org:8080/scripts/show/153190
-[70]: http://userscripts.org:8080/scripts/show/157621
-[71]: http://userscripts.org:8080/scripts/show/172327
-[72]: http://userscripts.org:8080/scripts/show/103552
-[73]: http://userscripts.org:8080/scripts/show/105741
-[74]: http://userscripts.org:8080/scripts/show/84970
-[75]: http://userscripts.org:8080/scripts/show/155175
-[76]: http://userscripts.org:8080/scripts/show/186798
-[77]: http://binux.github.io/ThunderLixianExporter/
-[78]: https://greasyfork.org/scripts/152-tiebaallsign
-[79]: http://userscripts.org:8080/scripts/show/114002
-[80]: https://greasyfork.org/scripts/943-youtube-center
-[81]: http://userscripts.org:8080/scripts/show/131503
-[82]: http://userscripts.org:8080/scripts/show/49911
-[83]: https://github.com/legnaleurc/nopicads
-[84]: https://greasyfork.org/scripts/2185-%E7%82%BA%E4%BB%80%E9%BA%BC%E4%BD%A0%E5%80%91%E5%B0%B1%E6%98%AF%E4%B8%8D%E8%83%BD%E5%8A%A0%E5%80%8B%E7%A9%BA%E6%A0%BC%E5%91%A2
-[85]: https://github.com/scriptish/scriptish/wiki/How-To%3A--Manually-transfer-user-scripts-from-Greasemonkey-to-Scriptish
+[12]: https://greasyfork.org/scripts/986-%E7%99%BE%E5%BA%A6%E7%BD%91%E7%9B%98%E5%8A%A9%E6%89%8B
+[13]: http://userscripts.org:8080/scripts/show/159911
+[14]: http://userscripts.org:8080/scripts/show/178301
+[15]: http://userscripts.org:8080/scripts/show/141767
+[16]: http://userscripts.org/scripts/show/151249
+[17]: http://userscripts.org/scripts/show/109262
+[18]: http://userscripts.org/scripts/show/83994
+[19]: http://userscripts.org/scripts/show/173273
+[20]: https://greasyfork.org/scripts/1708-%E7%9C%BC%E4%B8%8D%E8%A7%81%E5%BF%83%E4%B8%8D%E7%83%A6-%E6%96%B0%E6%B5%AA%E5%BE%AE%E5%8D%9A/
+[21]: https://greasyfork.org/users/54-%E6%96%87%E7%A7%91
+[22]: http://userscripts.org:8080/users/202260/scripts
+[23]: http://userscripts.org:8080/scripts/show/84970
+[24]: http://userscripts.org:8080/scripts/show/186798
+[25]: http://userscripts.org:8080/scripts/show/187351
+[26]: http://userscripts.org:8080/scripts/show/105741
+[27]: http://userscripts.org:8080/scripts/show/84972
+[28]: http://userscripts.org:8080/scripts/show/84937
+[29]: http://userscripts.org:8080/scripts/show/93080
+[30]: https://github.com/binux
+[31]: https://github.com/binux/ThunderLixianExporter
+[32]: http://userscripts.org:8080/users/494707/scripts
+[33]: http://userscripts.org:8080/scripts/show/155175
+[34]: http://userscripts.org:8080/scripts/show/153190
+[35]: http://userscripts.org:8080/scripts/show/161719
+[36]: http://userscripts.org:8080/scripts/show/157556
+[37]: http://userscripts.org:8080/users/474953/scripts
+[38]: https://greasyfork.org/users/44-jixunmoe
+[39]: https://github.com/JixunMoe
+[40]: https://greasyfork.org/scripts/125-bypass-wait-code-login-for-chrome
+[41]: http://userscripts.org:8080/scripts/show/157621
+[42]: http://userscripts.org:8080/scripts/show/164600
+[43]: https://greasyfork.org/scripts/1002-%E7%BD%91%E7%9B%98%E8%87%AA%E5%8A%A8%E5%A1%AB%E5%86%99%E6%8F%90%E5%8F%96%E5%AF%86%E7%A0%81
+[44]: https://greasyfork.org/scripts/1262-%E7%BD%91%E7%9B%98%E6%AD%BB%E9%93%BE%E6%A3%80%E6%9F%A5
+[45]: https://greasyfork.org/scripts/126-%E8%B4%B4%E5%90%A7%E5%85%8D%E8%B7%B3%E8%BD%AC%E9%93%BE
+[46]: http://git.oschina.net/youyifentian
+[47]: http://userscripts.org:8080/users/528225/scripts
+[48]: https://greasyfork.org/users/297-%E6%9C%89%E4%B8%80%E4%BB%BD%E7%94%B0
+[49]: https://greasyfork.org/scripts/986-%E7%99%BE%E5%BA%A6%E7%BD%91%E7%9B%98%E5%8A%A9%E6%89%8B
+[50]: https://greasyfork.org/scripts/483-%E7%99%BE%E5%BA%A6%E9%9F%B3%E4%B9%90%E5%8A%A9%E6%89%8B
+[51]: http://git.oschina.net/youyifentian/script_baidumusic
+[52]: http://git.oschina.net/youyifentian/script_baidumusic/raw/master/baidumusicscript.js
+[53]: https://greasyfork.org/scripts/987-%E8%99%BE%E7%B1%B3%E9%9F%B3%E4%B9%90%E5%8A%A9%E6%89%8B
+[54]: https://greasyfork.org/users/152-lkytal
+[55]: https://greasyfork.org/scripts/340-popup-search
+[56]: https://greasyfork.org/scripts/342-text-to-link
+[57]: https://greasyfork.org/scripts/344-google-image-search-context-menu
+[58]: https://greasyfork.org/users/48-gerald
+[59]: http://geraldl.ml/
+[60]: https://github.com/gera2ld
+[61]: https://greasyfork.org/users/5-trespassersw
+[62]: https://greasyfork.org/scripts/725-google-cache-comeback
+[63]: https://greasyfork.org/scripts/41-userstyles-org-css-highlighter
+[64]: https://greasyfork.org/scripts/2222-uso-mirror
+[65]: https://github.com/LiuLang/monkey-videos
+[66]: http://userscripts.org:8080/scripts/show/156472
+[67]: http://userscripts.org:8080/scripts/show/151695
+[68]: https://greasyfork.org/scripts/1983-cl1024
+[69]: http://userscripts.org:8080/scripts/show/152818
+[70]: http://userscripts.org:8080/scripts/show/153190
+[71]: http://userscripts.org:8080/scripts/show/157621
+[72]: http://userscripts.org:8080/scripts/show/172327
+[73]: http://userscripts.org:8080/scripts/show/103552
+[74]: http://userscripts.org:8080/scripts/show/105741
+[75]: http://userscripts.org:8080/scripts/show/84970
+[76]: http://userscripts.org:8080/scripts/show/155175
+[77]: http://userscripts.org:8080/scripts/show/186798
+[78]: http://binux.github.io/ThunderLixianExporter/
+[79]: https://greasyfork.org/scripts/152-tiebaallsign
+[80]: http://userscripts.org:8080/scripts/show/114002
+[81]: https://greasyfork.org/scripts/943-youtube-center
+[82]: http://userscripts.org:8080/scripts/show/131503
+[83]: http://userscripts.org:8080/scripts/show/49911
+[84]: https://github.com/legnaleurc/nopicads
+[85]: https://greasyfork.org/scripts/2185-%E7%82%BA%E4%BB%80%E9%BA%BC%E4%BD%A0%E5%80%91%E5%B0%B1%E6%98%AF%E4%B8%8D%E8%83%BD%E5%8A%A0%E5%80%8B%E7%A9%BA%E6%A0%BC%E5%91%A2
+[86]: https://github.com/scriptish/scriptish/wiki/How-To%3A--Manually-transfer-user-scripts-from-Greasemonkey-to-Scriptish
