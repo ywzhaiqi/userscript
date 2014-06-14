@@ -1,142 +1,221 @@
 // ==UserScript==
 // @name           userscripts 只显示中文
 // @namespace      https://github.com/ywzhaiqi
-// @version        1.4
+// @version        1.5
 // @author         ywzhaiqi@gmail.com
 // @description    在 userscripts、greasyfork 脚本页面只显示中文脚本，支持 AutoPager 和其它翻页脚本。
 
-// 注： UserScriptLoader.uc.js 可能不支持正则
-// @include        http*://userscripts.org*/scripts*
 // @include        http*://greasyfork.org/scripts*
-// @include        http*://userscripts-mirror.org/scripts*
-// @grant          none
+// @include        http*://userscripts.org*/scripts*
+// @include        http*://userscripts-mirror.org*/scripts*
+// @grant          GM_getValue
+// @grant          GM_setValue
 // @run-at         document-end
 // ==/UserScript==
 
 (function(){
 
 var Config = {
-	debug: false,
-	chineseRegExp: /[\u4E00-\u9Fa5]/,
+    debug: false,
+    buttonID: 'gm-userscript-show-chinese',
+    // 需要？稍微减少 MutationObserver 的触发？
+    igoreAddedNodeName: ['script', 'hr', 'p', 'button'],
+
+    chineseRegExp: /[\u4E00-\u9Fa5]/,
+    // 日文包含：1、片假名（Katakana） 2、平假名（Hiragana） 3、汉字
+    // 下面正则检测的是 片假名 和 平假名
+    japaneseRegexp: /[\u30A0-\u30FF]|[\u3040-\u309F]/,
 };
 
+
 var Sites = {
-	// 站点 host: [要隐藏行的 css 选择器，要检测的 css 选择器（是前面的子选择器）]
-	'greasyfork.org': ['.script-list > li', 'article'],
-	'userscripts.org': ['tr[id^="scripts-"]', '.title, .desc'],
-	'userscripts-mirror.org': ['tr[id^="scripts-"]', '.title, .desc'],
+    // line、test 的后一个使用了 "Greasy Fork (Firefox)" 脚本
+    'greasyfork.org': {
+        button: '#script-list-filter',                     // 按钮插入的位置
+        line: '.script-list > li, #script-table > tr[id]', // 要隐藏的行（css 选择器）
+        test: 'article, td',                               // 要检测的对象（css 选择器）
+    },
+
+    'userscripts.org': {
+        button: '#content th.la',
+        line: 'tr[id^="scripts-"]',
+        test: '.title, .desc',
+    },
 };
+
+Sites['userscripts-mirror.org'] = Sites['userscripts'];
 
 
 var debug = Config.debug ? console.log.bind(console) : function() {};
 
-
-var hided = false,
-	site;
+var onlyChinese,
+    info,
+    style;
 
 function init() {
-	var hostname = location.hostname;
+    var hostname = location.hostname;
 
-	site = Sites[hostname];
-	if (!site) {
-		return;
-	}
+    info = Sites[hostname];
+    if (!info) {
+        return;
+    }
 
-	var parent = document.querySelector("#content th.la, #script-list-filter");
-	if (!parent) {
-		return ;
-	}
+    var buttonParent = document.querySelector(info.button);
+    if (!buttonParent) {
+        return;
+    }
 
-	addStyle(".gm-mhide {display:none !important}");
+    // load setting
+    onlyChinese = GM_getValue('onlyChinese', false);
 
-	addButton(parent);
+    if (onlyChinese) {
+        addHiddenStyle();
+    }
 
-	// 增加对 翻页脚本的支持
-	addMutationObserver('body', function(){
-		if (hided) {
-			hideOthers();
-		} else {
-			showAll();
-		}
-	});
+    addButton(buttonParent);
+
+    checkScriptNode();
+
+    // 增加对 翻页脚本的支持
+    addMutationObserver('body', checkScriptNode);
+}
+
+function addHiddenStyle() {
+    var cssArr = info.line.split(',').map(function(selector) {
+        return selector + ':not([gm-script-lan="zh"]) {display:none !important}';
+    });
+
+    style = document.createElement('style');
+    style.textContent = cssArr.join('\n');
+    document.head.appendChild(style);
+}
+
+function removeHiddenStyle() {
+    if (style) {
+        document.head.removeChild(style);
+    }
+}
+
+
+function checkScriptNode() {
+    var scripts = document.querySelectorAll(info.line);
+    var script,
+        nodes;
+    for (var i = scripts.length - 1; i >= 0; i--) {
+        script = scripts[i];
+
+        if (script.hasAttribute('gm-script-lan')) {
+            continue;
+        }
+
+        nodes = script.querySelectorAll(info.test);
+        if (nodes) {
+            script.setAttribute('gm-script-lan', getScriptLan(nodes));
+        }
+    }
+}
+
+function getScriptLan(nodes) {
+    for (var i = nodes.length - 1, text; i >= 0; i--) {
+        text = nodes[i].textContent;
+
+        if (text.match(Config.japaneseRegexp)) {
+            return 'jp';
+        }
+
+        if (text.match(Config.chineseRegExp)) {
+            return 'zh';
+        }
+    }
+
+    return 'other';
 }
 
 function addButton(parent) {
-	var button = document.createElement('button');
-	button.type = "button";
-	button.innerHTML = "只显示中文";
-	button.onclick = function(){
-		if(hided){
-			showAll();
-			button.innerHTML = "只显示中文";
-		}else{
-			hideOthers();
-			button.innerHTML = "显示全部";
-		}
-	};
-	
-	parent.appendChild(button);
+    var button = document.createElement('button');
+    button.type = "button";
+    button.id = Config.buttonID;
+    button.innerHTML = onlyChinese ? "显示全部" : "只显示中文";
+    button.onclick = function(){
+        if (onlyChinese) {
+            removeHiddenStyle();
+            button.innerHTML = "只显示中文";
+        } else {
+            addHiddenStyle();
+            button.innerHTML = "显示全部";
+        }
+
+        onlyChinese = !onlyChinese;
+        GM_setValue('onlyChinese', onlyChinese);
+    };
+
+    parent.appendChild(button);
 }
-
-function showAll () {
-	var trs = document.querySelectorAll(".gm-mhide");
-	for (var i = trs.length - 1; i >= 0; i--) {
-		trs[i].classList.remove("gm-mhide");
-	}
-
-	hided = false;
-}
-
-// 隐藏其它，只显示中文
-function hideOthers(){
-	var scripts = document.querySelectorAll(site[0] + ':not(.gm-mhide)'),
-		script, checkElems;
-
-	debug('要检查的行是：', scripts, '选择器是：' + site[0] + ':not(.gm-mhide)');
-
-	var hasChinese = function (elems) {
-		for (var i = elems.length - 1; i >= 0; i--) {
-			if (elems[i].textContent.match(Config.chineseRegExp)) {
-				return true;
-			}
-		}
-
-		return false;
-	};
-
-	for (var i = scripts.length - 1; i >= 0; i--) {
-		script = scripts[i];
-
-		checkElems = script.querySelectorAll(site[1]);
-		if (!hasChinese(checkElems)) {
-			script.classList.add('gm-mhide');
-		}
-	}
-
-	hided = true;
-}
-
 
 function addMutationObserver(selector, callback) {
     var watch = document.querySelector(selector);
     if (!watch) return;
 
     var observer = new MutationObserver(function(mutations){
-        var nodeAdded = mutations.some(function(x){ return x.addedNodes.length > 0; });
+        // 排除设定里的插入对象
+        var nodeAdded = mutations.some(function(x){
+            return [].some.call(x.addedNodes, function(node) {
+                return node.localName && Config.igoreAddedNodeName.indexOf(node.localName) == -1;
+            });
+        });
         if (nodeAdded) {
+            // console.log(mutations)
             // observer.disconnect();
-            callback();
+            callback(mutations);
         }
     });
     observer.observe(watch, {childList: true, subtree: true});
 }
 
 
-function addStyle(css) {
-	var style = document.createElement('style');
-	style.textContent = css;
-	return document.head.appendChild(style);
-}
+// function showAll () {
+//  var trs = document.querySelectorAll(".gm-mhide");
+//  for (var i = trs.length - 1; i >= 0; i--) {
+//      trs[i].classList.remove("gm-mhide");
+//  }
+
+//  onlyChinese = false;
+// }
+
+// // 隐藏其它，只显示中文
+// function hideOthers(){
+//  var scripts = document.querySelectorAll(info.line + ':not(.gm-mhide)'),
+//      script, checkElems;
+
+//  debug('要检查的行是：', scripts, '选择器是：' + info.line + ':not(.gm-mhide)');
+
+//  var hasChinese = function (elems) {
+//      for (var i = elems.length - 1, text; i >= 0; i--) {
+//          text = elems[i].textContent;
+
+//          if (text.match(Config.japaneseRegexp)) {
+//              continue;
+//          }
+
+//          if (text.match(Config.chineseRegExp)) {
+//              return true;
+//          }
+//      }
+
+//      return false;
+//  };
+
+//  for (var i = scripts.length - 1; i >= 0; i--) {
+//      script = scripts[i];
+
+//      checkElems = script.querySelectorAll(info.test);
+//      if (!hasChinese(checkElems)) {
+//          script.classList.add('gm-mhide');
+//      }
+//  }
+
+//  onlyChinese = true;
+// }
 
 
 init();
