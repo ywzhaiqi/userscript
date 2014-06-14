@@ -1,9 +1,12 @@
 // ==UserScript==
 // @name           userscripts 只显示中文
 // @namespace      https://github.com/ywzhaiqi
-// @version        1.5
+// @version        1.6
 // @author         ywzhaiqi@gmail.com
 // @description    在 userscripts、greasyfork 脚本页面只显示中文脚本，支持 AutoPager 和其它翻页脚本。
+// @homepageURL    https://greasyfork.org/scripts/305
+// @updateURL      https://greasyfork.org/scripts/305/code/305.meta.js
+// @downloadURL    https://greasyfork.org/scripts/305/code/305.user.js
 
 // @include        http*://greasyfork.org/scripts*
 // @include        http*://userscripts.org*/scripts*
@@ -29,11 +32,11 @@ var Config = {
 
 
 var Sites = {
-    // line、test 的后一个使用了 "Greasy Fork (Firefox)" 脚本
+    // 兼容了 "Greasy Fork (Firefox)"、"GreasyFork 中文" 脚本
     'greasyfork.org': {
         button: '#script-list-filter',                     // 按钮插入的位置
         line: '.script-list > li, #script-table > tr[id]', // 要隐藏的行（css 选择器）
-        test: 'article, td',                               // 要检测的对象（css 选择器）
+        test: 'p, header, td',                             // 要检测的对象（css 选择器）
     },
 
     'userscripts.org': {
