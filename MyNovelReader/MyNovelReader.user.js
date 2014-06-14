@@ -1,10 +1,11 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        4.0.7
-// @namespace      ywzhaiqigmail.com
+// @version        4.0.8
+// @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @description    小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
+// @license        GPL version 3
 // @grant          GM_xmlhttpRequest
 // @grant          GM_addStyle
 // @grant          GM_getValue
@@ -98,6 +99,8 @@
 // @include        http://www.ziyuge.com/*/*/*/*/*.html
 
 // 其它网站
+// @include        http://read.shuhaha.com/Html/Book/*/*/*.html
+// @include        http://www.biqi.me/files/article/html/*/*/*.html
 // @include        http://www.ttzw.com/book/*/*.html
 // @include        http://www.uukanshu.com/*/*/*.html
 // @include        http://www.173ed.com/read/*/*.html
@@ -267,7 +270,8 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             ".novel_content", ".readmain_inner", ".noveltext", ".booktext",
             "#contentTxt", "#oldtext", "#a_content", "#contents", "#content2", "#content", ".content"],
 
-        bookTitleSelector: ".h1title > .shuming > a[title]",
+        // 书名。最后一个意思是顶部章节导航的最后一个链接可能是书名。
+        bookTitleSelector: ".h1title > .shuming > a[title], .chapter_nav > div:first > a:last",
 
         contentRemove: "script, iframe, font[color]",          // 内容移除选择器
         contentReplace: /最新.?章节|百度搜索|无弹窗小说网|更新快无弹窗纯文字|高品质更新|\(百度搜.\)|全文字手打|“”&nbsp;看|无.弹.窗.小.说.网|追书网|〖∷∷无弹窗∷纯文字∷ 〗/g,
@@ -420,14 +424,14 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         },
 
         {siteName: "百度贴吧（手动启用）",
+            enable: false,
             url: /^http:\/\/tieba\.baidu.com\/p\//,
             titleSelector: "h1.core_title_txt",
             bookTitleSelector: ".card_title_fname",
-            // contentSelector: "div[id^='post_content_']",
+
             contentSelector: "#j_p_postlist",
             contentRemove: ".share_btn_wrapper, #sofa_post, .d_author",
-            // 显示楼层的分割线
-            style: ".clear { border-top:1px solid #cccccc; margin-bottom: 50px;}",
+            style: ".clear { border-top:1px solid #cccccc; margin-bottom: 50px;}",  // 显示楼层的分割线
         },
         // {siteName: "天涯在线书库（部分支持）",
         //     url: /www\.tianyabook\.com\/.*\.htm/,
@@ -524,12 +528,13 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             contentReplace: [
                 /一秒记住【】www.zaidu.cc，本站为您提供热门小说免费阅读。/ig,
                 /（文&nbsp;學馆w&nbsp;ww.w&nbsp;xguan.c&nbsp;om）/ig,
-                /\((&nbsp;)*无弹窗全文阅读\)/ig,
+                /\((?:&nbsp;)*(?:无弹窗)?全文阅读\)/ig,
                 /\[<a.*?首发\[百晓生\] \S+/ig,
                 /\/\/(?:&nbsp;|访问下载txt小说|高速更新)+\/\//ig,
                 /(www\.)?bxs\.cc/ig,
+                /百晓生.不跳字|不跳字。/ig,
                 /（未完待续&nbsp;http:\/\/www.Bxs.cc&nbsp;89免费小说阅《百晓生文学网》）/g,
-                /〖百晓生∷.*〗|《?百晓生文学网》?|最快阅读小说大主宰，尽在百晓生文学网.*|ww.x.om|欢迎大家来到.*?bxs\.cc|百晓生阅读最新最全的小说.*|百晓生网不少字|站长推荐.*|文字首发|百晓生.不跳字|百.晓.生.|关闭.*广告.*|飘天文学|本站域名就是.*|\(.{0,5}小说更快更好.{0,5}\)|(请在)?百度搜索.*|一秒记住.*为您提供精彩小说阅读.|百晓生|全文阅读|¤本站网址：¤|\/\/&nbsp;访问下载txt小说\/\/◎◎|纯站点\\".*值得收藏的/ig,
+                /〖百晓生∷.*〗|《?百晓生文学网》?|最快阅读小说大主宰，尽在百晓生文学网.*|ww.x.om|欢迎大家来到.*?bxs\.cc|百晓生阅读最新最全的小说.*|百晓生网不少字|站长推荐.*|文字首发|百.晓.生.|关闭.*广告.*|飘天文学|本站域名就是.*|\(.{0,5}小说更快更好.{0,5}\)|(请在)?百度搜索.*|一秒记住.*为您提供精彩小说阅读.|百晓生|¤本站网址：¤|\/\/&nbsp;访问下载txt小说\/\/◎◎|纯站点\\".*值得收藏的/ig,
                 /文[学學][馆館]|www\.biquge\.cc|(http:\/\/)?www\.Bxs\.cc|(请牢记)?soudu．org/ig,
                 /请搜索，小说更好更新更快!|最快文字更新无弹窗无广|\(即可找到本站\)|无广告看着就是爽!|更多全本txt小说请到下载|∷更新快∷∷纯文字∷/ig,
             ],
@@ -555,7 +560,8 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         },
         {siteName: "木鱼哥",
             url: /http:\/\/muyuge\.com\/\w+\/\d+\.html/,
-            titleReg: "(.*?) (.*)_木鱼哥",
+            titleSelector: "#yueduye h1",
+            bookTitleSelector: ".readerNav > li > a:last",
             indexSelector: ".readerFooterPage a[title='(快捷:回车键)']",
             // useiframe: true,
             // mutationSelector: "#content",
@@ -683,6 +689,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             nextSelector: "#papgbutton a:contains('手机下一章'), #nextpage",
             contentReplace: [
                 "\\[www.*?\\]",
+                "\\(&nbsp;&nbsp;\\)",
                 "提供无弹窗全文字在线阅读，更新速度更快文章质量更好，如果您觉得不错就多多分享本站!谢谢各位读者的支持!",
                 "高速首发.*?，本章节是.*?地址为如果你觉的本章节还不错的话请不要忘记向您qq群和微博里的朋友推荐哦！"
             ]
@@ -720,7 +727,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         {siteName: "手牵手小说网",
             url: "^http://www\\.sqsxs\\.com/\\d+/\\d+/\\d+\\.html",
             titleReg: "(.*?)最新章节_\\S* (.*)_手牵手小说网",
-            contentReplace: "访问下载txt小说.百度搜.|免费电子书下载|\\(百度搜\\)|『文學吧x吧.』|¤本站网址：¤"
+            contentReplace: "★百度搜索，免费阅读万本★|访问下载txt小说.百度搜.|免费电子书下载|\\(百度搜\\)|『文學吧x吧.』|¤本站网址：¤"
         },
         {siteName: "六月中文网，盗梦人小说网",
             url: "^http://www\\.(?:6yzw\\.org|daomengren\\.com)/.*\\.html",
@@ -820,6 +827,21 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 fakeStub.find("a:contains('返回书架')").html("下 一 页").attr("href", fakeStub.find("a:contains('返回目录')").attr("href"));
                 fakeStub.find("#content3zcn").find(".titlePos, font.tips, a").remove();
             }
+        },
+        {siteName: "比奇中文网",
+            url: "http://www\\.biqi\\.me/files/article/html/\\d+/\\d+/\\d+\\.html",
+            titleSelector: "#lbChapterName",
+            bookTitleSelector: "#TOPNAV td:first > a:last",
+            contentReplace: [
+                "http://www.biqi.me比奇中文网永久网址，请牢记！",
+                "www.biqi.me比奇中文网一直在为提高阅读体验而努力，喜欢请与好友分享！",
+                "[｛【]比奇中文网首发www.biqi.me[｝】]",
+            ]
+        },
+        {siteName: "书哈哈小说网",
+            url: "http://read\\.shuhaha\\.com/Html/Book/\\d+/\\d+/\\d+\\.html",
+            titleSelector: "#htmltimu",
+            bookTitleSelector: [".srcbox > a:nth-child(2)", /目录$/],
         },
         
         // ================== 采用 iframe 方式获取的 ====================
@@ -1187,7 +1209,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         "<a>手机用户请到m.qidian.com阅读。</a>": "",
         ".{2,4}中文网欢迎广大书友": "",
         "访问下载txt小说":"",
-        "fqXSw\\.com":"",
+        "fqXSw\\.com":"", "\\.5ｄｕ":"",
         "\\[\\]":"",
         "如果您觉得网不错就多多分享本站谢谢各位读者的支持": "",
         "全文字无广告|\\(看书窝&nbsp;看书窝&nbsp;无弹窗全文阅读\\)": "",
@@ -1197,7 +1219,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         "\xa0{4,12}":"\xa0\xa0\xa0\xa0\xa0\xa0\xa0",
 
         // === 星号屏蔽字还原 ===
-        "十有(\\*{2})":"十有八九", "\\*{2}不离十":"八九不离十",
+        "十有(\\*{2})":"十有八九","十有bā'九":"十有八九",  "\\*{2}不离十":"八九不离十",
         "G(\\*{2})":"GSM", "感(\\*{2})彩":"感情色彩",
         "强(\\*{2})u5B9D":"强大法宝",
 
@@ -1211,12 +1233,12 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 
         // === 双字替换 ===
         "暧m[eè][iì]":"暧昧",
-        "b[ěe]i(\\s|&nbsp;)*j[īi]ng":"北京","半shen": "半身", "b[ìi]j[ìi]ng":"毕竟", "报(了?)jing":"报$1警",
+        "b[ěe]i(\\s|&nbsp;)*j[īi]ng":"北京","半shen": "半身", "b[ìi]j[ìi]ng":"毕竟", "报(了?)jing":"报$1警", "bèi'pò":"被迫",
         "ch[oō]ngd[oò]ng":"冲动", "cao(练|作)":"操$1", "缠mian": "缠绵", "成shu": "成熟", "(?:赤|chi)\\s*lu[oǒ]": "赤裸", "春guang": "春光", "chun风":"春风", "沉mi":"沉迷", "沉lun":"沉沦", "刺ji":"刺激", "chao红":"潮红", "初chun":"初春", "＂ｃｈｉ　ｌｕｏ＂":"赤裸",
         "dang校": "党校", "da子": "鞑子", "大tui":"大腿", "diao丝": "屌丝", "d[úu](?:\\s|&nbsp;|<br/>)*l[ìi]": "独立", "d[uú]\\s{0,2}c[áa]i":"独裁", "d?[iì]f[āa]ng":"地方", "d[ìi]\\s*d[ūu]":"帝都", "di国":"帝国", "duo落":"堕落",
         "f[ǎa]ngf[óo]":"仿佛", "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "f[èe]nn[ùu]":"愤怒",
         "gao潮": "高潮", "干chai": "干柴", "gu[oò]ch[ée]ng":"过程", "gu[āa]nx[iì]":"关系", "g[ǎa]nji[àa]o":"感觉", "国wu院":"国务院",
-        "hù士":"护士", "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "h[ǎa]oxi[àa]ng":"好像", "hu[áa]ngs[èe]":"黄色", "皇d[ìi]":"皇帝", "昏昏yu睡":"昏昏欲睡", "回dang":"回荡",
+        "hù士":"护士", "há'guó":"韩国", "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "h[ǎa]oxi[àa]ng":"好像", "hu[áa]ngs[èe]":"黄色", "皇d[ìi]":"皇帝", "昏昏yu睡":"昏昏欲睡", "回dang":"回荡",
         "jian(臣|细)":"奸$1", "jian货":"贱货", "jing察":"警察", "j[ìi]nháng":"进行", "ji烈":"激烈", "j[iì](nv|女)": "妓女", "jirou": "鸡肉", "ji者":"记者", "ju花":"菊花","j[īi]动":"激动", "jili[èe]":"激烈", "肌r[òo]u":"肌肉","ji射":"激射", "ji[ēe]ch[uù]":"接触", "j[ùu]li[èe]": "剧烈", "jǐng惕": "警惕", "节cao":"节操", "浸yin":"浸淫",
         "k[ěe]n[ée]ng": "可能", "开bao": "开苞",  "k[àa]o近": "靠近", "口wen":"口吻",
         "ling辱": "凌辱", "luan蛋": "卵蛋", "脸sè": "脸色", "lu出":"露出", "流máng":"流氓", "lun理":"伦理",
@@ -1228,9 +1250,9 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         "she(门|术|手|程|击)":"射$1", "sh[iì]ji[eè]":"世界", "sh[ií]ji[aā]n":"时间", "sh[ií]h[oò]u": "时候", "sh[ií]me":"什么", "si人":"私人", "shi女":"侍女", "shi身": "失身", "sh[ūu]j[ìi]":"书记", "shu女": "熟女", "(?:上|shang)chuang": "上床", "呻y[íi]n": "呻吟", "sh[ēe]ngzh[íi]": "生殖", "深gu": "深谷", "双xiu": "双修", "生r[ìi]": "生日", "si盐":"私盐", "shi卫":"侍卫", "si下":"私下", "sao扰":"骚扰", "ｓｈｕａｎｇ　ｆｅｎｇ":"双峰", 
         "t[uū]r[áa]n":"突然", "tiaojiao": "调教", "偷qing":"偷情", "推dao": "推倒", "脱guang": "脱光", "t[èe]bi[ée]":"特别", "t[ōo]nggu[òo]":"通过", "tian来tian去":"舔来舔去",
         "w[ēe]ixi[ée]":"威胁", "wèizh[ìi]":"位置", "wei员":"委员",
-        "xiu长": "修长", "亵du": "亵渎", "xing福": "幸福", "小bo":"小波", "xiong([^a-z])":"胸$1", "小tui":"小腿",
-        "yin(谋|险|沉|沟|癸派|后)":"阴$1", "y[iī]y[àa]ng":"一样", "y[īi]di[ǎa]n":"一点", "y[ǐi]j[īi]ng":"已经", "疑huo":"疑惑", "影mi":"影迷",  "阳w[ěe]i": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "(?:you|诱)(?:惑|huo)": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人","旖ni":"旖旎", "yu念":"欲念", "you敌深入":"诱敌深入", "yin(冷|暗)":"阴$1", "影she":"影射",
-        "z[iì]j[iǐ]": "自己","z[ìi](?:\\s|<br/?>|&nbsp;)*y[oó]u": "自由","zh[iī]d?[àa]u?o":"知道","zha药": "炸药", "zhan有": "占有", "政f[ǔu]": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zong理":"总理", "zh[ōo]ngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]y[oò]u":"左右", "zh[oō]uw[ée]i":"周围", "中nan海":"中南海", "中j委":"中纪委", "中zu部":"中组部", "政zhi局":"政治局", "(昨|一|时|余)(?:<br/?>|&nbsp;|\\s)*ì":"$1日", "照she":"照射",
+        "xiu长": "修长", "亵du": "亵渎", "xing福": "幸福", "小bo":"小波", "xiong([^a-z])":"胸$1", "小tui":"小腿", "xiàn\\'zhì":"限制",
+        "yin(冷|暗|谋|险|沉|沟|癸派|后)":"阴$1", "y[iī]y[àa]ng":"一样", "y[īi]di[ǎa]n":"一点", "y[ǐi]j[īi]ng":"已经", "疑huo":"疑惑", "影mi":"影迷",  "阳w[ěe]i": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "(?:you|诱)(?:惑|huo)": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人","旖ni":"旖旎", "yu念":"欲念", "you敌深入":"诱敌深入", "影she":"影射", "牙qian":"牙签",
+        "z[iì]j[iǐ]": "自己","z[ìi](?:\\s|<br/?>|&nbsp;)*y[oó]u": "自由","zh[iī]d?[àa]u?o":"知道","zhì'fú":"制服", "zha药": "炸药", "zhan有": "占有", "政f[ǔu]": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zong理":"总理", "zh[ōo]ngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]y[oò]u":"左右", "zh[oō]uw[ée]i":"周围", "中nan海":"中南海", "中j委":"中纪委", "中zu部":"中组部", "政zhi局":"政治局", "(昨|一|时|余)(?:<br/?>|&nbsp;|\\s)*ì":"$1日", "照she":"照射",
 
         // === 单字替换 ===
         "b[āà]ng":"棒","bào":"爆","bà":"吧","bī":"逼","bō":"波",
@@ -1361,6 +1383,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         getTitles: function(){
             var docTitle = this.$doc.find("title").text();
 
+            // 获取章节标题
             if (this.info.titleReg){
                 var matches = docTitle.match(new RegExp(this.info.titleReg));
                 if(matches && matches.length == 3){
@@ -1371,22 +1394,21 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 }
 
                 debug("  TitleReg:", this.info.titleReg, matches);
-            } else if (this.info.titleSelector){
-                this.chapterTitle = this.$doc.find(this.info.titleSelector).text();
-            }
+            } else {
+               this.chapterTitle = this.getTitleFromInfo(this.info.titleSelector);
 
-            if(this.info.bookTitleSelector){
-                this.bookTitle = this.$doc.find(this.info.bookTitleSelector)
-                                    .remove().text().trim();
+               this.bookTitle = this.getTitleFromInfo(this.info.bookTitleSelector);
             }
-            if (!this.bookTitle) {
-                var t = this.$doc.find(rule.bookTitleSelector).text();
-                if (t)
-                    this.bookTitle = t;
-            }
-
+             
             if(!this.chapterTitle){
                 this.chapterTitle = this.autoGetChapterTitle(this.doc);
+            }
+
+            if (!this.bookTitle) {
+                var t = this.$doc.find(rule.bookTitleSelector).text();
+                if (t) {
+                    this.bookTitle = t;
+                }
             }
 
             // 标题间增加一个空格
@@ -1403,13 +1425,37 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             debug("  Chapter Title: " + this.chapterTitle);
             debug("  Document Title: " + this.docTitle);
         },
+        getTitleFromInfo: function(selectorOrArray) {
+            var title = null;
+            if (!selectorOrArray) {
+                return title;
+            }
+
+            var selector,
+                replace;
+
+            if (_.isArray(selectorOrArray)) {
+                selector = selectorOrArray[0];
+                replace = selectorOrArray[1];
+            } else {
+                selector = selectorOrArray;
+            }
+
+            title = this.$doc.find(selector).remove().text().trim();
+
+            if (replace) {
+                title = title.replace(toRE(replace), '');
+            }
+
+            return title;
+        },
         // 智能获取章节标题
         autoGetChapterTitle: function (document) {
             debug("AutoGetTitle start");
 
             var
                 _main_selector = "h1, h2, h3",
-                _second_selector = "#TextTitle, #title, .ChapterName, div.h1",
+                _second_selector = "#TextTitle, #title, .ChapterName, #lbChapterName, div.h1",
                 _positive_regexp = /第?\S+[章节卷回]|\d{2,4}/,
                 _negative_regexp = /[上下]一章/,
                 _title_remove_regexp = /最新章节|书书网/,
@@ -1812,7 +1858,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             }
             a.href = href;
 
-            // 检测 host 是否和 当前页的一样
+            // 检测 host 是否和 当前页的一致
             if (a.host != this.curPageHost) {
                 a.host = this.curPageHost;
             }
@@ -1834,16 +1880,14 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         init: function(){
             if(App.isLaunched) return;
             App.isLaunched = true;
-
-            // 百度贴吧的不好判断，手动调用 readx 启用
-            if (location.href.match(/^http:\/\/tieba\.baidu.com\/p\//)) {
+            
+            App.site = App.getCurSiteInfo();
+            // 百度贴吧不好判断，手动调用 readx 启用
+            if (App.site.enable === false) {
                 return;
             }
 
-            var isAutoLaunch = App.isAutoLaunch();
-            if(isAutoLaunch){
-                App.site = App.getCurSiteInfo();
-
+            if(App.isAutoLaunch()){
                 if(App.site.mutationSelector){  // 特殊的启动：等待js把内容生成完毕
                    App.addMutationObserve(document, App.launch);
                 }else if(App.site.timeout){  // 延迟启动
@@ -1856,7 +1900,6 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             }
         },
         getCurSiteInfo: function (){
-            var locationHref = location.href;
             var rules;
             try {
                 rules = eval(Config.customSiteinfo);
@@ -1869,9 +1912,9 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             }
             
             rules = rules.concat(rule.specialSite);
+            var locationHref = location.href;
 
             var info = _.find(rules, function(x){ return toRE(x.url).test(locationHref); });
-
             if(!info){
                 info = {};
                 debug("没有找到规则，尝试自动模式。");
@@ -1884,8 +1927,8 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             var locationHref = window.location.href,
                 referrer = document.referrer;
             switch(true){
-                case L_getValue("booklinkme_disable_once") == 'true':
-                    L_removeValue("booklinkme_disable_once");
+                case L_getValue("mynoverlreader_disable_once") == 'true':
+                    L_removeValue("mynoverlreader_disable_once");
                     return false;
                 // case location.hostname == 'www.fkzww.net' && !document.title.match(/网文快讯/):  // 啃书只自动启用一个地方
                 //     return false;
@@ -2009,7 +2052,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             };
             setTimeout(clean, 2000);
             setTimeout(clean, 5000);
-            setTimeout(clean, 8000);
+            // setTimeout(clean, 8000);
             setTimeout(clean, 10000);
 
             if (config.PRELOADER) {
@@ -2073,13 +2116,13 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         toggle: function(){
             if(App.isEnabled){  // 退出
                 GM_setValue("auto_enable", false);
-                L_setValue("booklinkme_disable_once", "true");
+                L_setValue("mynoverlreader_disable_once", "true");
 
                 // unsafeWindow.location = App.curPageUrl;
                 unsafeWindow.location = App.activeUrl;
             }else{
                 GM_setValue("auto_enable", true);
-                L_removeValue("booklinkme_disable_once");
+                L_removeValue("mynoverlreader_disable_once");
                 App.isEnabled = true;
                 App.launch();
             }
@@ -2177,7 +2220,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                         }
                         break;
                     case 2:  // middle click
-                        L_setValue("booklinkme_disable_once", true);
+                        L_setValue("mynoverlreader_disable_once", true);
                         App.openUrl($(this).attr("real-href"));
                         break;
                 }
@@ -2256,8 +2299,12 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         },
         openUrl: function(url, errorMsg){
             if (url) {
-                GM_openInTab(url);
-            } else {
+                // ff30 Greasemonkey 会报错：Greasemonkey 访问违规：unsafeWindow 无法调用 GM_openInTab。
+                // 新建脚本采用按键调用也这样。
+                setTimeout(function(){
+                    GM_openInTab(url);
+                }, 0);
+            } else if (errorMsg){
                 UI.notice(errorMsg);
             }
         },
@@ -2825,8 +2872,10 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                         App.toggle();
                     }else if(event.which == 2){
                         event.preventDefault();
-                        L_setValue("booklinkme_disable_once", true);
-                        GM_openInTab(App.activeUrl || App.curPageUrl);
+                        L_setValue("mynoverlreader_disable_once", true);
+
+                        var url = App.activeUrl || App.curPageUrl;
+                        App.openUrl(url);
                     }
                 })
                 .appendTo('body');
@@ -3257,6 +3306,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         App.init()
     }, false);
 
+
     // 再次检查是否运行，用上面的方式在 Chrome 下有时候无法触发事件
     // window.addEventListener("load" 方法在 Chrome 下可能会找不到内容
     // 下面的方法也不行，Chrome 的加载方式特殊，会找不到内容。
@@ -3276,23 +3326,12 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
     //     launch_ready(0);
     // }
 
-    // 为了防止 Error: Scriptish access violation: unsafeWindow cannot call: GM_getValue
-    //     详见 http://wiki.greasespot.net/Greasemonkey_access_violation
+    // 防止 unsafeWindow cannot call: GM_getValue
     unsafeWindow.readx = function(){
-        fakeTimeout(function(){
+        setTimeout(function(){
             App.launch();
         });
     };
-
-    function fakeTimeout(callback) {
-        // Register event listener
-        window.document.body.addEventListener("timeoutEvent", callback, false);
-        // Generate and dispatch synthetic event
-        var ev = document.createEvent("HTMLEvents");
-        ev.initEvent("timeoutEvent", true, false);
-        window.document.body.dispatchEvent(ev);
-    }
-
 
     //------------------- 辅助函数 ----------------------------------------
     var debug = Config.debug ? console.log.bind(console) : function() {};
