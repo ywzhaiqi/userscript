@@ -1,9 +1,8 @@
 // ==UserScript==
-// @id             WeiPhoneDownloader@ywzhaiqi
-// @name           威锋电子书批量下载
-// @version        1.1
+// @name           WeiPhoneDownloadHelper
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
+// @version        1.2
 // @description    批量下载威锋论坛的电子书
 // @homepageURL    https://greasyfork.org/scripts/668/
 // @updateURL      https://greasyfork.org/scripts/668/code.meta.js
@@ -133,9 +132,36 @@ locationHref.match(/read-htm-tid|mod=viewthread/) != -1 && (function(){
 		$batchNotice.html('正在获取中...' + '<b>1/' + links.length + '</b>')
 			.show();
 
+		function handleResult() {
+			if (links.length > 0) {
+				$batchNotice.html('正在获取中...' + '<b>' + downUrls.length + '/' + links.length + '</b>');
+				getDownloadLink();
+			} else {
+				var urls = downUrls.join('\n');
+				// console.log(urls);
+
+				$batchNotice.hide();
+				$('#batchedlink').html(urls);
+				$('#batchPublish').show();
+
+				// 高亮选中文本
+				var selection = unsafeWindow.getSelection();
+				var range = document.createRange();
+				range.selectNodeContents($('#batchedlink')[0]);
+				selection.removeAllRanges();
+				selection.addRange(range);
+			}
+		}
+
 		function getDownloadLink() {
 			var link = links.shift();
-			if (link) {
+			if (!link) return;
+
+			var url = link.href;
+			if (url.indexOf('aid=') > 0) {
+				downUrls.push(url);
+				handleResult();
+			} else {
 				var m = link.getAttribute('onclick').match(/jQuery.get\('(.*?)',/);
 				if (m) {
 					var url = m[1];
@@ -144,29 +170,7 @@ locationHref.match(/read-htm-tid|mod=viewthread/) != -1 && (function(){
 						downUrl = preUrl + downUrl;
 						downUrls.push(downUrl)
 
-						if (links.length == 0) {
-							var urls = downUrls.join('\n');
-
-							// console.log(urls);
-							$batchNotice.hide();
-							$('#batchedlink').html(urls);
-							$('#batchPublish').show();
-
-							// 高亮选中文本
-							var selection = unsafeWindow.getSelection();
-							var range = document.createRange();
-							range.selectNodeContents($('#batchedlink')[0]);
-							selection.removeAllRanges();
-							selection.addRange(range);
-
-							// window.open('data:text/html;charset=utf-8,<pre>' + encodeURIComponent(urls) + '</pre>');
-							// alert('已复制' + downUrls.length + '条下载链接')
-							return;
-						} else {
-							$batchNotice.html('正在获取中...' + '<b>' + downUrls.length + '/' + links.length + '</b>');
-						}
-
-						getDownloadLink();
+						handleResult();
 					});
 				}
 			}
