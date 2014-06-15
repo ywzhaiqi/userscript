@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        4.0.8
+// @version        4.0.9
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @description    小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
@@ -727,7 +727,11 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         {siteName: "手牵手小说网",
             url: "^http://www\\.sqsxs\\.com/\\d+/\\d+/\\d+\\.html",
             titleReg: "(.*?)最新章节_\\S* (.*)_手牵手小说网",
-            contentReplace: "★百度搜索，免费阅读万本★|访问下载txt小说.百度搜.|免费电子书下载|\\(百度搜\\)|『文學吧x吧.』|¤本站网址：¤"
+            contentReplace: [
+                "★百度搜索，免费阅读万本★|访问下载txt小说.百度搜.|免费电子书下载|\\(百度搜\\)|『文學吧x吧.』|¤本站网址：¤",
+                "[\\.]*\\s*(?:阅读)?[\\.]*",
+                { "。\\.": "。" },
+            ]
         },
         {siteName: "六月中文网，盗梦人小说网",
             url: "^http://www\\.(?:6yzw\\.org|daomengren\\.com)/.*\\.html",
@@ -1880,22 +1884,22 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         init: function(){
             if(App.isLaunched) return;
             App.isLaunched = true;
-            
+
             App.site = App.getCurSiteInfo();
             // 百度贴吧不好判断，手动调用 readx 启用
             if (App.site.enable === false) {
                 return;
             }
 
-            if(App.isAutoLaunch()){
-                if(App.site.mutationSelector){  // 特殊的启动：等待js把内容生成完毕
-                   App.addMutationObserve(document, App.launch);
-                }else if(App.site.timeout){  // 延迟启动
+            if (App.isAutoLaunch()) {
+                if (App.site.mutationSelector) { // 特殊的启动：等待js把内容生成完毕
+                    App.addMutationObserve(document, App.launch);
+                } else if (App.site.timeout) { // 延迟启动
                     setTimeout(App.launch, App.site.timeout);
-                }else{  // NoScript 下 setTimeout 没用？
+                } else { // NoScript 下 setTimeout 没用？
                     App.launch();
                 }
-            }else{
+            } else {
                 UI.addButton();
             }
         },
