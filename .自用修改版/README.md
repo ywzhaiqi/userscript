@@ -3,6 +3,11 @@
 
 对他人的脚本进行一些修改。**请使用原版，并不保证更新。**
 
+### nextpage.user.js
+
+改自 [Next Page for Greasemonkey](http://userscripts.org:8080/scripts/show/27251)
+
+
 ### PanLinkCheck.user.js（2014-5-27）
 
 [网盘死链检查 By Jixun](https://greasyfork.org/scripts/1262)
