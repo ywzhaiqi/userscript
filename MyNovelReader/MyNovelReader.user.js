@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        4.1.1
+// @version        4.2.0
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @description    小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
@@ -1305,14 +1305,96 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         "圞|垩|卝|龘":""
     };
 
+    var uiTrans = {
+        "图片章节用夜间模式没法看，这个选项在启动时会自动切换到缺省皮肤": "圖片章節無法以夜間模式觀看，這個選項在啟動時會自動切換到預設佈景",
+        "通过快捷键切换或在 Greasemonkey 用户脚本命令处打开设置窗口": "通過熱鍵切換或在 Greasemonkey 使用者腳本命令處開啟設定視窗",
+        "隐藏后通过快捷键或 Greasemonkey 用户脚本命令处调用": "隱藏後通過熱鍵或 Greasemonkey 使用者腳本命令處調用",
+        "一行一个，每行第一个 = 为分隔符\n需要刷新页面生效": "一行一條規則，每一行第一個 = 為分隔符\n（需重新載入頁面才能生效）",
+        "错误：没有找到下一页的内容，使用右键翻到下一页": "錯誤：沒有找到下一頁的內容，使用右鍵翻到下一頁",
+        "左键滚动，中键打开链接（无阅读模式）": "左鍵捲動畫面至該章節，中鍵開啟連結（無閱讀模式）",
+        "请输入切换左侧章节列表的快捷键：": "請輸入切換左側章節列表的熱鍵：",
+        "详见脚本代码的 Rule.specialSite": "詳見腳本代碼的 Rule.specialSite",
+        "booklink.me 点击的网站强制启用": "booklink.me 點擊的網站強制啟用",
+        "部分选项需要刷新页面才能生效": "部份選項需重新載入頁面才能生效",
+        "取消本次设定，所有选项还原": "取消本次設定，所有選項還原",
+        "不影响 booklink.me 的启用": "不影響 booklink.me 的啟用",
+        "请输入打开设置的快捷键：": "請輸入開啟設定視窗的熱鍵：",
+        "微软雅黑,宋体,黑体,楷体": "Microsoft YaHei,新細明體,PMingLiU,MingLiU,細明體,標楷體",
+        "夜间模式的图片章节检测": "夜間模式的圖片章節檢測",
+        "点击显示隐藏章节列表": "點此以顯示或隱藏章節列表",
+        "添加下一页到历史记录": "加入下一頁到歷史記錄",
+        "booklink 自动启用": "booklink 自動啟用",
+        "Enter 键打开目录": "Enter 鍵開啟目錄",
+        "隐藏左侧章节列表": "隱藏左側章節列表",
+        "已到达最后一页": "已到達最後一頁",
+        "正在载入下一页": "正在載入下一頁",
+        "通过快捷键切换": "通過熱鍵切換",
+        "隐藏底部导航栏": "隱藏底部導航列",
+        "隐藏左侧导航条": "隱藏左側章節列表彈出鈕",
+        "自定义站点规则": "自訂網站規則",
+        "自定义替换规则": "自訂字詞取代規則",
+        "双击暂停翻页": "雙擊暫停翻頁",
+        "隐藏设置按钮": "隱藏設定按鈕",
+        "强制手动启用": "強制手動啟用",
+        "调用阅读器": "調用閱讀器",
+        "自定义样式": "自訂樣式",
+        "界面语言": "介面語言",
+        "打开目录": "開啟本書目錄頁",
+        "自动翻页": "自動翻頁",
+        "缺省皮肤": "預設佈景",
+        "暗色皮肤": "暗色佈景",
+        "夜间模式": "夜間模式",
+        "夜间模式2": "夜間模式2",
+        "橙色背景": "橙色背景",
+        "绿色背景": "綠色背景",
+        "绿色背景2": "綠色背景2",
+        "蓝色背景": "藍色背景",
+        "棕黄背景": "棕黃背景",
+        "经典皮肤": "經典背景",
+        "阅读模式": "閱讀模式",
+        "调试模式": "偵錯模式",
+        "反馈地址": "反饋與討論",
+        "安静模式": "安靜模式",
+        "√ 确认": "√ 確定",
+        "X 取消": "X 取消",
+        "上一页": "上一頁",
+        "下一页": "下一頁",
+        "状态": "狀態",
+        "已经": "已經",
+        "暂停": "暫停",
+        "启用": "啟用",
+        "退出": "離開",
+        "测试": "測試",
+        "距离": "距離",
+        "加载": "載入",
+        "字体": "字型",
+        "行高": "行距",
+        "行宽": "版面寬度"
+    };
+
+    if(!String.prototype.uiTrans){
+        Object.defineProperty(String.prototype, 'uiTrans', {
+            value: function(){
+                var _this = this.valueOf(), key, regexp;
+                if(Config.lang !== 'zh-TW') return _this;
+                if(uiTrans.hasOwnProperty(_this)) return uiTrans[_this];
+                for (key in uiTrans) {
+                    regexp = new RegExp(key, 'g');
+                    _this = _this.replace(regexp, uiTrans[key]);
+                }
+                return _this;
+            },
+            enumerable: false
+        });
+    }
+
+    // 屏蔽字修复、替换函数
     var replaceRules_reg = {},
         isConvented = false;
-
-    // 转换函数
     function contentReplacements(text){
         if(!config.content_replacements) return text;
 
-        var s = new Date().getTime();
+        var s = Date.now();
 
         if (!isConvented) {
             isConvented = true;
@@ -1331,7 +1413,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             text = text.replace(regexp, Rule.replaceRules[key]);
         }
 
-        debug("小说屏蔽字修复耗时：" + (new Date().getTime() - s) + 'ms');
+        debug("小说屏蔽字修复耗时：" + (Date.now() - s) + 'ms');
         return text;
     }
 
@@ -2158,7 +2240,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                         <p id="App-notice"></p>\
                     </div>\
                 </div>\
-            ', parser);
+            '.uiTrans(), parser);
         },
         toggle: function(){
             if(App.isEnabled){  // 退出
@@ -2358,10 +2440,10 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         pauseHandler: function(){
             App.paused = !App.paused;
             if(App.paused){
-                UI.notice('<b>状态</b>:自动翻页<span style="color:red!important;"><b>暂停</b></span>.');
-                App.$loading.html('自动翻页已经<span style="color:red!important;"><b>暂停</b></span>.').show();
+                UI.notice('<b>状态</b>:自动翻页<span style="color:red!important;"><b>暂停</b></span>.'.uiTrans());
+                App.$loading.html('自动翻页已经<span style="color:red!important;"><b>暂停</b></span>.'.uiTrans()).show();
             }else{
-                UI.notice('<b>状态</b>:自动翻页<span style="color:red!important;"><b>启用</b></span>.');
+                UI.notice('<b>状态</b>:自动翻页<span style="color:red!important;"><b>启用</b></span>.'.uiTrans());
                 App.scroll();
             }
         },
@@ -2375,7 +2457,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             }
 
             if(App.isTheEnd){
-                App.$loading.html("已到达最后一页...").show();
+                App.$loading.html("已到达最后一页...".uiTrans()).show();
             }
 
             App.updateCurFocusElement();
@@ -2430,7 +2512,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                     .show()
                     .html("")
                     .append($("<img>").attr("src", "data:image/gif;base64,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"))
-                    .append("正在载入下一页" + (useiframe ? "(iframe)" : "") + "...");
+                    .append("正在载入下一页".uiTrans() + (useiframe ? "(iframe)" : "") + "...");
 
                 if(useiframe){
                     App.iframeRequest(nextUrl);
@@ -2544,7 +2626,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             }else{
                 App.removeListener();
 
-                App.$loading.html("错误：没有找到下一页的内容，使用右键翻到下一页").show();
+                App.$loading.html("错误：没有找到下一页的内容，使用右键翻到下一页".uiTrans()).show();
             }
 
             App.working = false;
@@ -2625,6 +2707,13 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             this._remain_height = val;
         },
 
+        get lang() {
+            return GM_getValue("lang") || ((navigator.language === "zh-TW" || navigator.language === "zh-HK") ? "zh-TW" : "zh-CN");
+        },
+        set lang(val) {
+            GM_setValue("lang", val);
+        },
+
         get font_family() {
             return GM_getValue("font_family") || "微软雅黑,宋体,黑体,楷体";
         },
@@ -2675,7 +2764,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         },
 
         get skin_name() {
-            return GM_getValue("skin_name") || "缺省皮肤";
+            return GM_getValue("skin_name") || "缺省皮肤".uiTrans();
         },
         set skin_name(val) {
             GM_setValue("skin_name", val);
@@ -2773,23 +2862,8 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 <a class="index-page" href="{indexUrl}" title="Enter 键打开目录">目录</a> | \
                 <a class="next-page" style="color:{theEndColor}" href="{nextUrl}">下一页</a>\
             </div>\
-        ',
-        skins: {
-            "缺省皮肤": "",
-            "暗色皮肤": "body { color: #666; background: rgba(0,0,0,.1); }\
-                .title { color: #222; }",
-            "白底黑字": "body { color: black; background: white;}\
-                .title { font-weight: bold; border-bottom: 0.1em solid; margin-bottom: 1.857em; padding-bottom: 0.857em;}",
-            "夜间模式": "body { color: #e3e3e3; background: #2d2d2d; } #preferencesBtn { background: white; }",
-            "夜间模式2": "body { color: #679; background: black; } #preferencesBtn { background: white; }",
-            "橙色背景": "body { color: #24272c; background: #FEF0E1; }",
-            "绿色背景": "body { color: black; background: #d8e2c8; }",
-            "绿色背景2": "body { color: black; background: #CCE8CF; }",
-            "蓝色背景": "body { color: black; background: #E7F4FE; }",
-            "棕黄背景": "body { color: black; background: #C2A886; }",
-            "经典皮肤": "body { color: black; background-color: #EAEAEE; }\
-                .title { background: #f0f0f0; }",
-        },
+        '.uiTrans(),
+        skins: {},
 
         init: function(){
             UI.refreshMainStyle();
@@ -2867,10 +2941,10 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 style = $('<style id="skin_style">').appendTo('head');
             }
 
-            if (isFirst && Config.picNightModeCheck && skin_name.indexOf('夜间') != -1) {  // 图片章节夜间模式有问题
+            if (isFirst && Config.picNightModeCheck && skin_name.indexOf('夜间'.uiTrans()) != -1) {  // 图片章节夜间模式有问题
                 var img = $('#mynovelreader-content img')[0];
                 if (img && img.width > 500 && img.height > 1000) {
-                    style.text(UI.skins['缺省皮肤']);
+                    style.text(UI.skins['缺省皮肤'.uiTrans()]);
                     return;
                 }
             }
@@ -2920,7 +2994,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 
             $("<div>")
                 .addClass("readerbtn")
-                .html(App.isEnabled ? "退出" : "阅读模式")
+                .html(App.isEnabled ? "退出".uiTrans() : "阅读模式".uiTrans())
                 .mousedown(function(event){
                     if(event.which == 1){
                         App.toggle();
@@ -3025,6 +3099,12 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                         <input title="取消本次设定，所有选项还原" id="close_button" value="X 取消" type="button">\
                     </span>\
                     <div class="form-row">\
+                        <label>\
+                            界面语言<select id="lang">\
+                            </select>\
+                        </label>\
+                    </div>\
+                    <div class="form-row">\
                         <label title="不影响 booklink.me 的启用">\
                             <input type="checkbox" id="disable-auto-launch" name="disable-auto-launch"/>强制手动启用\
                         </label>\
@@ -3124,7 +3204,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                         <textarea id="custom_replace_rules" class="prefs_textarea" placeholder="自定义替换规则" />\
                     </div>\
                 </div>\
-            </form>',
+            </form>'.uiTrans(),
         preferencesShow: function(event){
             if(event){
                 try {  // Greasemonkey 从菜单点击会错误
@@ -3188,6 +3268,15 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             $form.find("#extra_css").get(0).value = Config.extra_css;
             $form.find("#custom_siteinfo").get(0).value = Config.customSiteinfo;
             $form.find("#custom_replace_rules").get(0).value = Config.customReplaceRules;
+
+            // 界面语言
+            var $lang = $form.find("#lang");
+            $("<option>").text("zh-CN").appendTo($lang);
+            $("<option>").text("zh-TW").appendTo($lang);
+            $lang.val(Config.lang).change(function(){
+                var key = $(this).find("option:selected").text();
+                Config.lang = key;
+            });
 
             // 皮肤
             var $skin = $form.find("#skin");
@@ -3255,7 +3344,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 case 'hide-preferences-button':
                     UI.hidePreferencesButton(target.checked);
                     if (target.checked) {
-                        alert('隐藏后通过快捷键或 Greasemonkey 用户脚本命令处调用');
+                        alert('隐藏后通过快捷键或 Greasemonkey 用户脚本命令处调用'.uiTrans());
                     }
                     break;
                 case 'hide-menu-bar':
@@ -3264,14 +3353,14 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 case 'hide-footer-nav':
                     break;
                 case 'openPreferences':
-                    var key = prompt('请输入打开设置的快捷键：', Config.openPreferencesKey);
+                    var key = prompt('请输入打开设置的快捷键：'.uiTrans(), Config.openPreferencesKey);
                     if (key) {
                         Config.openPreferencesKey = key;
                         $(target).val(key);
                     }
                     break;
                 case 'setHideMenuListKey':
-                    var key = prompt('请输入切换左侧章节列表的快捷键：', Config.hideMenuListKey);
+                    var key = prompt('请输入切换左侧章节列表的快捷键：'.uiTrans(), Config.hideMenuListKey);
                     if (key) {
                         Config.hideMenuListKey = key;
                         $(target).val(key);
@@ -3341,6 +3430,21 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             return $noticeDiv;
         }
     };
+
+    UI.skins["缺省皮肤".uiTrans()] = "";
+    UI.skins["暗色皮肤".uiTrans()] = "body { color: #666; background: rgba(0;0;0;.1); }\
+                    .title { color: #222; }";
+    UI.skins["白底黑字".uiTrans()] = "body { color: black; background: white;}\
+                    .title { font-weight: bold; border-bottom: 0.1em solid; margin-bottom: 1.857em; padding-bottom: 0.857em;}";
+    UI.skins["夜间模式".uiTrans()] = "body { color: #e3e3e3; background: #2d2d2d; } #preferencesBtn { background: white; }";
+    UI.skins["夜间模式2".uiTrans()] = "body { color: #679; background: black; } #preferencesBtn { background: white; }";
+    UI.skins["橙色背景".uiTrans()] = "body { color: #24272c; background: #FEF0E1; }";
+    UI.skins["绿色背景".uiTrans()] = "body { color: black; background: #d8e2c8; }";
+    UI.skins["绿色背景2".uiTrans()] = "body { color: black; background: #CCE8CF; }";
+    UI.skins["蓝色背景".uiTrans()] = "body { color: black; background: #E7F4FE; }";
+    UI.skins["棕黄背景".uiTrans()] = "body { color: black; background: #C2A886; }";
+    UI.skins["经典皮肤".uiTrans()] = "body { color: black; background-color: #EAEAEE; }\
+                    .title { background: #f0f0f0; }";
 
     var db;
     window.postMessage("fromeMyNovelReader.post", "*");
