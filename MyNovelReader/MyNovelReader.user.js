@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        4.1.0
+// @version        4.1.1
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @description    小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
@@ -26,6 +26,9 @@
 // @require        http://cdn.jsdelivr.net/underscorejs/1.6.0/underscore-min.js
 // @resource fontawesomeWoff http://libs.baidu.com/fontawesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3
 
+// 手动启用列表
+// @include        http://tieba.baidu.com/p/*
+
 // @include        http://read.qidian.com/*,*.aspx
 // @include        http://readbook.qidian.com/bookreader/*,*.html
 // @include        http://free.qidian.com/Free/ReadChapter.aspx?*
@@ -46,8 +49,6 @@
 // @include        http://novel.hongxiu.com/*/*/*.shtml
 // @include        http://www.readnovel.com/novel/*.html
 // http://www.tianyabook.com/*/*.htm
-
-// @include        http://tieba.baidu.com/p/*
 
 // booklink.me
 // @include        http://www.shumilou.com/*/*.html
@@ -421,9 +422,14 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         },
         {siteName: "小说阅读网",
             url: "http://www\\.readnovel\\.com/novel/.*\\.html",
-            titleReg: "(.*)_(.*)免费阅读_小说阅读网",
-            contentSelector: "#article",
-            contentRemove: "div[style]"
+            titleSelector: ".bgtop > h1",
+            bookTitleSelector: ".nownav > a:eq(4)",
+            contentSelector: "#article, .zhangjie",
+            contentRemove: "div[style], .miaoshu, .zhichi, .bottomAdbanner",
+            contentPatch: function(fakeStub) {
+                // 删除标题不需要的部分
+                fakeStub.find(".bgtop > h1 > span").remove();
+            }
         },
 
         {siteName: "百度贴吧（手动启用）",
@@ -433,7 +439,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             bookTitleSelector: ".card_title_fname",
 
             contentSelector: "#j_p_postlist",
-            contentRemove: ".share_btn_wrapper, #sofa_post, .d_author",
+            contentRemove: "#sofa_post, .d_author, .share_btn_wrapper, .core_reply, .j_user_sign",
             style: ".clear { border-top:1px solid #cccccc; margin-bottom: 50px;}",  // 显示楼层的分割线
         },
         // {siteName: "天涯在线书库（部分支持）",
@@ -1234,7 +1240,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         // === 多字替换 ===
         "cao之过急":"操之过急",
         "大公无si":"大公无私",
-        "fu道人家":"妇道人家",
+        "fu道人家":"妇道人家", "放sōng'xià来":"放松下来",
         "奸yin掳掠":"奸淫掳掠",
         "空dangdang":"空荡荡",
         "yin奉阳违":"阴奉阳违", "一yin一阳":"一阴一阳",
