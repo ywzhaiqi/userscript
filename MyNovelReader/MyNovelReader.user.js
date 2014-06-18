@@ -1335,6 +1335,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 		"强制手动启用": "強制手動啟用",
 		"调用阅读器": "調用閱讀器",
 		"自定义样式": "自訂樣式",
+		"界面语言": "介面語言",
 		"打开目录": "開啟本書目錄頁",
 		"自动翻页": "自動翻頁",
 		"缺省皮肤": "預設佈景",
@@ -3094,6 +3095,12 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                         <input title="取消本次设定，所有选项还原" id="close_button" value="X 取消" type="button">\
                     </span>\
                     <div class="form-row">\
+						<label>\
+                            界面语言<select id="lang">\
+                            </select>\
+						</label>\
+					</div>\
+					<div class="form-row">\
                         <label title="不影响 booklink.me 的启用">\
                             <input type="checkbox" id="disable-auto-launch" name="disable-auto-launch"/>强制手动启用\
                         </label>\
@@ -3258,6 +3265,15 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             $form.find("#custom_siteinfo").get(0).value = Config.customSiteinfo;
             $form.find("#custom_replace_rules").get(0).value = Config.customReplaceRules;
 
+			// 界面语言
+			var $lang = $form.find("#lang");
+			$("<option>").text("zh-CN").appendTo($lang);
+			$("<option>").text("zh-TW").appendTo($lang);
+            $lang.val(Config.lang).change(function(){
+                var key = $(this).find("option:selected").text();
+                Config.lang = key;
+            });
+			
             // 皮肤
             var $skin = $form.find("#skin");
             for(var key in UI.skins){
