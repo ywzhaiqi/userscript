@@ -7,8 +7,36 @@ NextPageModY.user.js
  - 增加了设置界面。
  - 修正：在文字输入框或选择框按键会生效的问题。
 
+### 调用代码（FireGestures）
+
+下一页
+
+```js
+	var doc = FireGestures.sourceNode.ownerDocument;
+	function dispatchEvent(eventName) {
+	    var event = doc.createEvent('HTMLEvents');
+	    event.initEvent(eventName, true, false);
+	    doc.dispatchEvent(event);
+	}
+
+	dispatchEvent('nextpage.go');
+```
+
+上一页
+
+```js
+	var doc = FireGestures.sourceNode.ownerDocument;
+	function dispatchEvent(eventName) {
+	    var event = doc.createEvent('HTMLEvents');
+	    event.initEvent(eventName, true, false);
+	    doc.dispatchEvent(event);
+	}
+
+	dispatchEvent('nextpage.back');
+```
 
 ### 发送按键代码
+
 
 原脚本的 Firegestures 调用代码已失效。下面的是通用的发送按键代码。
 
