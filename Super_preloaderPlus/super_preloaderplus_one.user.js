@@ -3,7 +3,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.1.9
+// @version      6.2.0
 // @homepageURL  https://greasyfork.org/scripts/178900/
 // @updateURL    https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js
 // @downloadURL  https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js
@@ -266,10 +266,10 @@ var SITEINFO=[
     {name: 'Bing网页搜索',
         url:/bing\.com\/search\?q=/i,
         siteExample:'bing.com/search?q=',
-        nextLink:'//div[@id="results_container"]/descendant::a[last()][@class="sb_pagN"] | //nav[@aria-label="navigation"]/descendant::a[last()][@class="sb_pagN"]',
+        nextLink:'//nav[@aria-label="navigation"]/descendant::a[last()][@class="sb_pagN"]',
         autopager:{
-            pageElement:'//div[@id="results"] | id("b_results")',
-            replaceE: '//div[@id="results_container"]/div[@class="sb_pag"]'
+            pageElement: '//ol[@id="b_results"]/li[@class="b_algo"]',
+            replaceE: '//nav[@aria-label="navigation"]'
         }
     },
     {name: '有道网页搜索',
