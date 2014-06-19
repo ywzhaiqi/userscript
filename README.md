@@ -119,11 +119,14 @@ GM 脚本
 	- [Google Image Search Context Menu][57]
 - Gerald（寂寞的原子）：暴力猴作者，贴吧相关的脚本
 	- [greasyfork 主页][58]，[个人主页][59]，[github 主页][60]
+- 网络孤独行客
+	- [linusyu/userScripts](https://github.com/linusyu/userScripts)
 - trespassersW
 	- [greasyfork 主页][61]
 	- [google cache comeback][62]
 	- [userstyles.org css highlighter][63]
 	- [uso-mirror][64]
+- [iMyon/gm_scripts](https://github.com/iMyon/gm_scripts)
 - [CL1024 - 草榴社区][67]，[greasyfork.org][68]
 - [cnbeta-comments][69]
 - [Crack Url Wait Code Login][70]
@@ -143,7 +146,7 @@ GM 脚本
 
 ### 其它
 
-- [為什麼你們就是不能加個空格呢？ - ][85]
+- [為什麼你們就是不能加個空格呢？][85]
 
 
 Greasemonkey 和 Scriptish
