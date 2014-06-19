@@ -3,7 +3,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.1.8
+// @version      6.1.9
 // @homepageURL  https://greasyfork.org/scripts/178900/
 // @updateURL    https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js
 // @downloadURL  https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js
@@ -227,13 +227,6 @@ var SITEINFO=[
             }
         }
     },
-    {name: "Google custom",
-        url: /^https?:\/\/74\.125\.128\.147\/custom/i,
-        nextLink: 'id("pnnext") | id("navbar navcnt nav")//td[span]/following-sibling::td[1]/a | id("nn")/parent::a',
-        autopager: {
-            pageElement: '//div[@id="res"]',
-        }
-    },
     {name: '百度搜索',
         // 由于 Super_preloader 默认去掉了 # 后面部分
         // url: "^https?://www\\.baidu\\.com/(s|baidu|#wd=)",
@@ -247,15 +240,15 @@ var SITEINFO=[
             filter:'css; #page',
             HT_insert:['//div[@id="search"]',1],
             stylish: '.autopagerize_page_info { margin-bottom: 10px; }',
-            startFilter: function(win, doc) {
+            startFilter: function(win) {
                 // 设置百度搜索类型为 s?wd=
-                doc.cookie = "ISSW=1";
+                win.document.cookie = "ISSW=1";
             }
         }
     },
     {name: '360搜索',
         url: "http://www\\.so\\.com/s",
-        nextLink:'//div[@id="page"]/a[text()="下一页>"]',
+        nextLink:'//div[@id="page"]/a[text()="下一页>"] | id("snext")',
         autopager:{
             pageElement:'//div[@id="container"]',
         }
@@ -264,7 +257,7 @@ var SITEINFO=[
         url:/^https?:\/\/www\.sogou\.com\/(?:web|sogou)/i,
         siteExample:'http://www.sogou.com',
         enable:true,
-        nextLink:'//div[@id="pagebar_container"]/a[text()="下一页>"]',
+        nextLink:'//div[@id="pagebar_container"]/a[@id="sogou_next"]',
         autopager:{
             pageElement:'//div[@class="results"]',
             replaceE: 'id("pagebar_container")'
@@ -273,9 +266,9 @@ var SITEINFO=[
     {name: 'Bing网页搜索',
         url:/bing\.com\/search\?q=/i,
         siteExample:'bing.com/search?q=',
-        nextLink:'//div[@id="results_container"]/descendant::a[last()][@class="sb_pagN"]',
+        nextLink:'//div[@id="results_container"]/descendant::a[last()][@class="sb_pagN"] | //nav[@aria-label="navigation"]/descendant::a[last()][@class="sb_pagN"]',
         autopager:{
-            pageElement:'//div[@id="results"]',
+            pageElement:'//div[@id="results"] | id("b_results")',
             replaceE: '//div[@id="results_container"]/div[@class="sb_pag"]'
         }
     },
@@ -304,6 +297,13 @@ var SITEINFO=[
         autopager: {
             pageElement: 'id("results")',
             replaceE: '//div[@class="pagination"]',
+        }
+    },
+    {name: "Google custom",
+        url: /^https?:\/\/74\.125\.128\.147\/custom/i,
+        nextLink: 'id("pnnext") | id("navbar navcnt nav")//td[span]/following-sibling::td[1]/a | id("nn")/parent::a',
+        autopager: {
+            pageElement: '//div[@id="res"]',
         }
     },
 
@@ -701,6 +701,15 @@ var SITEINFO=[
         nextLink: '//div[@class="page"]/a[text()="下一页"]',
         autopager: {
             pageElement: '//div[@class="listBox clear"]/div[@class="column picList"]',
+        }
+    },
+    {name: '搜狐视频',
+        url: /^http:\/\/so\.tv\.sohu\.com\/list/i,
+        exampleUrl: 'http://so.tv.sohu.com/list_p1169_p2_u4E16_u754C_u676F_p3_p4_p5_p6_p7_p8_p9_p10_p11.html',
+        nextLink: '//div[@class="page"]/a[@class="next"]',
+        autopager: {
+            pageElement: 'id("contentList")/div[@class="column-bd clear"]/ul[@class="cfix"]',
+            replaceE: 'id("contentList")/div[@class="page"]',
         }
     },
     {name: 'bilibili',
