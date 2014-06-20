@@ -26,7 +26,7 @@
 // @require        http://code.jquery.com/jquery-1.9.1.min.js
 // @require        http://cdn.jsdelivr.net/underscorejs/1.6.0/underscore-min.js
 // @require        https://greasyfork.org/scripts/2666-object-assign-shim/code/Objectassign%20shim.js?version=7344
-// @require        https://greasyfork.org/scripts/2672-meihua-cn2tw/code/Meihua_cn2tw.js?version=7357
+// @require        https://greasyfork.org/scripts/2672-meihua-cn2tw/code/Meihua_cn2tw.js?version=7375
 // @resource fontawesomeWoff http://libs.baidu.com/fontawesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3
 
 // 手动启用列表
