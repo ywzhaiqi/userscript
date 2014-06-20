@@ -1330,11 +1330,13 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         "booklink 自动启用": "booklink 自動啟用",
         "Enter 键打开目录": "Enter 鍵開啟目錄",
         "隐藏左侧章节列表": "隱藏左側章節列表",
+		"小说阅读脚本设置":"小說閱讀腳本設定",
         "已到达最后一页": "已到達最後一頁",
         "正在载入下一页": "正在載入下一頁",
         "通过快捷键切换": "通過熱鍵切換",
         "隐藏底部导航栏": "隱藏底部導航列",
         "隐藏左侧导航条": "隱藏左側章節列表彈出鈕",
+		"主页链接没有找到": "未找到主頁連結",
         "自定义站点规则": "自訂網站規則",
         "自定义替换规则": "自訂字詞取代規則",
 		"网页：转繁体": "網頁：轉繁體",
@@ -1374,7 +1376,8 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         "加载": "載入",
         "字体": "字型",
         "行高": "行距",
-        "行宽": "版面寬度"
+        "行宽": "版面寬度",
+		"目录": "目錄"
     };
 
     if(!String.prototype.uiTrans){
@@ -2366,7 +2369,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 UI.preferencesShow();
             });
 
-            GM_registerMenuCommand("小说阅读脚本设置", UI.preferencesShow.bind(UI));
+            GM_registerMenuCommand("小说阅读脚本设置".uiTrans(), UI.preferencesShow.bind(UI));
         },
         copyCurTitle: function(){
             var title = $(App.curFocusElement).find(".title").text()
@@ -2380,7 +2383,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 
             switch (event.which) {
                 case 13: // Enter
-                    App.openUrl(App.indexUrl, "主页链接没有找到");
+                    App.openUrl(App.indexUrl, "主页链接没有找到".uiTrans());
                     App.copyCurTitle();
                     break;
                 case 37: // left arrow
@@ -2728,7 +2731,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         },
 
         get font_family() {
-            return GM_getValue("font_family") || "微软雅黑,宋体,黑体,楷体";
+            return GM_getValue("font_family") || "微软雅黑,宋体,黑体,楷体".uiTrans();
         },
         set font_family(val) {
             GM_setValue("font_family", val);
