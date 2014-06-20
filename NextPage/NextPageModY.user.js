@@ -494,10 +494,10 @@
             checked = true;
         }
 
-        if (!direction && previous.found) {
-            openLink(previous.link)
-        } else if (next.found){
+        if (direction && next.found) {
             openLink(next.link);
+        } else if (!direction && previous.found) {
+            openLink(previous.link)
         }
     }
 

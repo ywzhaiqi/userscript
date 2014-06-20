@@ -9,18 +9,20 @@ GM 脚本
 
 ### 文件夹
 
-- [小说阅读脚本](MyNovelReader)
-    - [小说阅读脚本 - userscripts.org][2]
 - [BaiduPanDownloadHelper](BaiduPanDownloadHelper)
     - 批量导出百度盘的下载链接
 - [BaiduSearchNoJump](BaiduSearchNoJump)
 	- 百度搜索反跳转。
 - [Mouseover Popup Image Viewer](Mouseover Popup Image Viewer)
     - 在图片上鼠标悬停放大，主要是一些自写的规则。
+- [MyNovelReader](MyNovelReader)
+	- 小说阅读脚本
+- [NextPage](NextPage)
+	- Next Page for Greasemonkey 修改版。
+- [Readability 中文增强版](Readability 中文增强版)
 - [Super_preloaderPlus](Super_preloaderPlus)
 - [verycdShowLink](verycdShowLink)
     - verycd页面无需登入也能显示 ed2k 链接
-- [百度搜索反跳转（修改版）](百度搜索反跳转（修改版）)
 - [威锋电子书批量下载](威锋电子书批量下载)
     - 批量导出 [iPad 电子书资源分享区 - 威锋论坛][] 附件的下载地址。
 - [自用修改版](自用修改版)
@@ -49,25 +51,37 @@ GM 脚本
 
 ### 按类别分类
 
-- Baidu 搜索
-    - [BaiduMonkeyW][5]
-    - [百度搜索反跳转][6]
-- 百度贴吧
-    - [Tieba Preload][7]
-    - [tiebaAllsign][8]
-    - [Tieba Advanced][9]
-    - [Tieba_Markdown][10]：为百度贴吧添加Markdown支持。
-- 百度盘脚本
-    - [BaiduPanDownloadHelper][11]
-    - [百度网盘助手][12]
-    - [网盘工具箱][13]
-    - [百度网盘导出工具][14]，导出 Aria2rpc, Aria2, Wget, IDM 。不支持 Scriptish，Greasemonkey 导出不会弹出对话框（2014-4-24）
-    - [DUChan_Assistant][15]，Yet another ThunderAssistant copy apply to Baidupan。
+- 百度
+	- 百度搜索
+	    - [BaiduMonkeyW][5]
+	    - [百度搜索反跳转][6]
+	- 百度贴吧
+	    - [Tieba Preload][7]
+	    - [tiebaAllsign][8]
+	    - [Tieba Advanced][9]
+	    - [Tieba_Markdown][10]：为百度贴吧添加Markdown支持。
+	    - 更多搜索：['tieba' user scripts on Greasy Fork](https://greasyfork.org/scripts/search?q=tieba)
+	- 百度网盘
+	    - [BaiduPanDownloadHelper][11]
+	    - [百度网盘助手][12]
+	    - [网盘工具箱][13]
+	    - [百度网盘导出工具][14]，导出 Aria2rpc, Aria2, Wget, IDM 。不支持 Scriptish，Greasemonkey 导出不会弹出对话框（2014-4-24）
+	    - [DUChan_Assistant][15]，Yet another ThunderAssistant copy apply to Baidupan。
+	- 更多搜索：['baidu' user scripts on Greasy Fork](https://greasyfork.org/scripts/search?q=baidu)
 - 图片类
     - [nolazyload][16]
     - [Mouseover Popup Image Viewer][17]
     - [MiniblogImgPop - 微博浮图][18]
     - [新浪微博之我要看大图 Weibo Larger Pics][19]
+- 下载辅助类
+	- **[ThunderLixianExporter][78]**
+	- [XuanFengEx](https://greasyfork.org/scripts/354-xuanfengex)，QQ旋风网页版离线下载增强，[github.org](https://github.com/rhyzx/xuanfeng-userscript)。
+	- [LiuLang/monkey-videos][65]，常用视频网站的油㺅脚本，解析得到视频地址。
+	- [Chrome 扩展下载助手][66]
+- 漫画
+	- [Manga OnlineViewer](https://greasyfork.org/scripts/1319-manga-onlineviewer)
+	- [Manga Loader](https://greasyfork.org/scripts/692-manga-loader)
+	- 更多搜索：['manga' user scripts on Greasy Fork](https://greasyfork.org/scripts/search?q=manga)
 - [眼不见心不烦（新浪微博）][20]
 
 ### 按作者分类
@@ -105,13 +119,14 @@ GM 脚本
 	- [Google Image Search Context Menu][57]
 - Gerald（寂寞的原子）：暴力猴作者，贴吧相关的脚本
 	- [greasyfork 主页][58]，[个人主页][59]，[github 主页][60]
+- 网络孤独行客
+	- [linusyu/userScripts](https://github.com/linusyu/userScripts)
 - trespassersW
 	- [greasyfork 主页][61]
 	- [google cache comeback][62]
 	- [userstyles.org css highlighter][63]
 	- [uso-mirror][64]
-- [LiuLang/monkey-videos][65]，常用视频网站的油㺅脚本，解析得到视频地址。
-- [Chrome扩展下载助手][66]
+- [iMyon/gm_scripts](https://github.com/iMyon/gm_scripts)
 - [CL1024 - 草榴社区][67]，[greasyfork.org][68]
 - [cnbeta-comments][69]
 - [Crack Url Wait Code Login][70]
@@ -123,7 +138,6 @@ GM 脚本
 - [searchEngineJump][75]，方便的在各个引擎之间跳转。
 - [Share easy downloads helper ][76]
 - [stopGoogleRedirection ][77]，禁止google的搜索结果重定向。
-- **[ThunderLixianExporter][78]**
 - [tiebaAllsign][79]
 - [YouTube Center ][80]，[greasyfork.org][81]
 - [yyets.com get douban ][82]， 在 yyets.com 影视详情页面显示该电影的豆瓣搜索结果，看评分。如果登录了豆瓣可以看到自己是否“看过”。
@@ -132,7 +146,7 @@ GM 脚本
 
 ### 其它
 
-- [為什麼你們就是不能加個空格呢？ - ][85]
+- [為什麼你們就是不能加個空格呢？][85]
 
 
 Greasemonkey 和 Scriptish
@@ -149,6 +163,12 @@ Greasemonkey 和 Scriptish
 
 - Scriptish 取消勾选 `要求用户脚本使用 HTTPS 更新`，该选项可能会让脚本更新失败
 - [How To: Manually transfer user scripts from Greasemonkey to Scriptish · scriptish/scriptish Wiki][86]
+
+#### 复制用户脚本清单和批量安装 GM 脚本
+
+设置 about:config 中的 chrome.enabled 为 true 后，在代码片段速记器中选择环境 “浏览器” 运行。
+
+详见 [批量导出用户脚本和批量安装 GM 脚本代码 - 卡饭论坛](http://bbs.kafan.cn/thread-1747445-1-1.html)
 
 
 [BookLink.Me:小说搜索引擎]: http://booklink.me/
