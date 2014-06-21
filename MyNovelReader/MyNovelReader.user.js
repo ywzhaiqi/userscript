@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        4.3.1
+// @version        4.3.2
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    shyangs
@@ -1427,7 +1427,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 
     function convert2tw(text) {
         for (var key in cn2tw) {
-            text = text.replace(key, cn2tw[key]);
+            text = text.replace(new RegExp(key, 'ig'), cn2tw[key]);
         }
         return text;
     }
