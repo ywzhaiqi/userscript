@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        4.3.0
+// @version        4.3.1
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    shyangs
@@ -1425,6 +1425,13 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         return text;
     }
 
+    function convert2tw(text) {
+        for (var key in cn2tw) {
+            text = text.replace(key, cn2tw[key]);
+        }
+        return text;
+    }
+
     var Utils = {
         getUrlHost: function(url) {
             var a = document.createElement('a');
@@ -1533,6 +1540,11 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             this.docTitle = this.bookTitle ?
                     this.bookTitle + ' - ' + this.chapterTitle :
                     docTitle;
+
+            if (Config.cn2tw) {
+                this.chapterTitle = convert2tw(this.chapterTitle);
+                this.docTitle = convert2tw(this.docTitle);
+            }
 
             debug("  Book Title: " + this.bookTitle);
             debug("  Chapter Title: " + this.chapterTitle);
@@ -1745,7 +1757,6 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 
             // GM_setClipboard(text);
 
-            // info.contentReplace
             var contentReplace = info.contentReplace;
             if (contentReplace) {
                 var replaceText = function(rep){
@@ -1784,6 +1795,10 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             }
 
             text = text.replace(Rule.contentReplace, '');
+
+            if (Config.cn2tw) {
+                text = convert2tw(text);
+            }
 
             var $div = $("<div>").html(text);
 
@@ -1994,7 +2009,6 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             if(App.isLaunched) return;
             App.isLaunched = true;
 
-			if(Config.cn2tw) Object.assign(Rule.replaceRules, cn2tw);
             App.loadCustomSetting();
             App.site = App.getCurSiteInfo();
             // 百度贴吧不好判断，手动调用 readx 启用
@@ -2157,7 +2171,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                                 "real-href": parser.prevUrl,
                                 "onclick": "return false;"
                             })
-                            .text("上一章")
+                            .text("上一章".uiTrans())
                     )
                     .prependTo(App.$chapterList);
             }
@@ -2622,9 +2636,13 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 
                 if (Config.addToHistory) {
                     document.title = parser.docTitle;
+                    //TODO: 起点无法添加整个网址，只能添加后半部分。
+                    var url = parser.curPageUrl.replace('http://read.qidian.com', '');
                     try {
-                        unsafeWindow.history.pushState(null, parser.docTitle, parser.curPageUrl);
-                    } catch(e) {}
+                        unsafeWindow.history.pushState(null, parser.docTitle, url);
+                    } catch(e) {
+                        console.error('添加下一页到历史记录失败', e);
+                    }
                 }
 
                 App.$loading.hide();
