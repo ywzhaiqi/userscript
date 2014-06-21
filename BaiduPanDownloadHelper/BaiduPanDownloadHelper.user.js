@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.6.6
+// @version        3.6.7
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi@gmail.com
 // @description    批量导出百度盘的下载链接
@@ -107,10 +107,33 @@ var mHome = {
         }
 
         if (path) {
-            document.title = '百度云 网盘-' + path; 
-        }   
+            document.title = '百度云 网盘-' + path;
+        }
     },
     downloadAll: function() {
+        var dataCenter = require("common:widget/data-center/data-center.js"),
+            commonService = require("common:widget/commonService/commonService.js");
+
+        var self = this;
+
+        // 得到选中的条目，过滤文件夹
+        // var fs_ids = dataCenter.get('selectedList'),  // ["812801091852241", "860551491728460"]
+        var nodeList = dataCenter.get('selectedItemList'),
+            fs_ids = [],
+            fileList = [];
+        nodeList.forEach(function($div){
+            if ($div.attr('data-extname') === 'dir') return;
+
+            var fs_id = $div.attr('data-id');
+            fs_ids.push(fs_id);
+            fileList.push({
+                fs_id: fs_id,
+                server_filename: $div.find('.name').attr('title'),
+            })
+        });
+
+        if (fileList.length === 0) return;
+
         var Toast = require("common:widget/toast/toast.js");
         Toast.obtain.useToast({
             toastMode: Toast.obtain.MODE_LOADING,
@@ -118,22 +141,36 @@ var mHome = {
             sticky: true,
         });
 
-        var dataCenter = require("common:widget/data-center/data-center.js"),
-            commonService = require("common:widget/commonService/commonService.js");
-        
-        var self = this;
+        var isSimplePanel = prefs.getIsSimplePanel();
 
-        var fs_ids = dataCenter.get('selectedList'),  // ["812801091852241", "860551491728460"]
-            fidlist = "[" + fs_ids.join(',') + "]",
+        // 获取下载地址
+        var fidlist = "[" + fs_ids.join(',') + "]",
             type = 'dlink',
             callback = function(result) {
                 // console.log(result);
+                // console.log(fileList)
 
-                var dlinks = result.dlink.map(function(i) { return i.dlink; });
-                if (!self.panel) {
-                    self.panel = new SimplePanel('BDH');
+                if (!isSimplePanel) {  // 以前的导出方式
+                    result.dlink.forEach(function(info){
+                        for (var i = fileList.length - 1, file; i >= 0; i--) {
+                            file = fileList[i];
+                            if (file.fs_id == info.fs_id) {
+                                file.dlink = info.dlink;
+                                break;
+                            }
+                        }
+                    });
+
+                    Pan.checkedItems = fileList;
+                    Pan.showPanel(fileList);
+                } else {  // 简易的导出下载链接的方式
+                   var dlinks = result.dlink.map(function(i) { return i.dlink; });
+                   if (!self.panel) {
+                       self.panel = new SimplePanel('BDH');
+                   }
+                   self.panel.show(dlinks.join('\n')); 
                 }
-                self.panel.show(dlinks.join('\n'));
+
                 Toast.obtain.setVisible(false);
             };
 
@@ -204,7 +241,7 @@ var mHome = {
         // diskHome.unZip(["550160357"]);
 
         // dataCenter.get('selectedItemList');  // [s.fn.s.init[1], s.fn.s.init[1]]
-        
+
         /*
             可设置 disk.DEBUG = true
         */
@@ -783,11 +820,20 @@ var Pan = {
         // disk.ui.Toast.MODE_CAUTION    警告
         // disk.ui.Toast.MODE_LOADING    载入
         // disk.ui.Toast.MODE_SUCCESS    正常
-        return Utilities.useToast({
-            toastMode: disk.ui.Toast.MODE_CAUTION,
-            msg: msg,
-            sticky: sticky || false
-        });
+        if (Utilities) {
+            return Utilities.useToast({
+                toastMode: disk.ui.Toast.MODE_CAUTION,
+                msg: msg,
+                sticky: sticky || false
+            });
+        } else if (require) {
+            var Toast = require("common:widget/toast/toast.js");
+            Toast.obtain.useToast({
+                toastMode: Toast.obtain.MODE_CAUTION,
+                msg: msg,
+                sticky: sticky || false,
+            });
+        }
     }
 };
 
@@ -799,6 +845,13 @@ var prefs = {
         GM_setValue('removeYunGuanjiaFix', bool);
     },
 
+    getIsSimplePanel: function() {
+        return this._getBooleanConfig('isSimplePanel', false);
+    },
+    setIsSimplePanel: function(bool) {
+        GM_setValue('isSimplePanel', bool);
+    },
+
     getAria2RPC: function() {
         return GM_getValue('aria2_jsonrpc') || 'http://localhost:6800/jsonrpc';
     },
@@ -807,7 +860,11 @@ var prefs = {
     },
 
     getQuickLinks: function() {
-        return GM_getValue('quickLinks') || 'Books=/Books\n小说=/Books/小说\n网络小说=/Books/网络小说';
+        var quickLinks = GM_getValue('quickLinks');
+        if (typeof quickLinks === 'undefined') {
+            quickLinks = 'Books=/Books\n小说=/Books/小说\n网络小说=/Books/网络小说';
+        }
+        return quickLinks;
     },
     setQuickLinks: function(val) {
         GM_setValue('quickLinks', val);
@@ -847,11 +904,13 @@ var UI = {
         this.$prefs.find('.okay').click(this.preferencesSaveHandler.bind(UI));
 
         this.$prefs.find('#removeYunGuanjia').attr('checked', prefs.getRemoveYunGuanjia());
+        this.$prefs.find('#isSimplePanel').attr('checked', prefs.getIsSimplePanel());
         this.$prefs.find('#aria2RPC').val(prefs.getAria2RPC());
         this.$prefs.find('#quickLinks').val(prefs.getQuickLinks());
     },
     preferencesSaveHandler: function() {
         prefs.setRmoveYunGuanjia(this.$prefs.find('#removeYunGuanjia')[0].checked);
+        prefs.setIsSimplePanel(this.$prefs.find('#isSimplePanel')[0].checked);
         prefs.setAria2RPC(this.$prefs.find('#aria2RPC').val());
         // quick links
         prefs.setQuickLinks(this.$prefs.find('#quickLinks').val());
@@ -912,6 +971,9 @@ var Res = getMStr(function(){
         #mDownload-links b{
           color: red;
         }
+        #mDownload-container button {
+            color: black !important;
+        }
      */
     var panelHTML;
     /*
@@ -938,6 +1000,10 @@ var Res = getMStr(function(){
                         <tr title="会造成主页的上传文件夹功能失效">
                             <td width="150"><label>全局去除云管家</label></td>
                             <td width="320"><input id="removeYunGuanjia" type="checkbox"></input></td>
+                        </tr>
+                        <tr title="">
+                            <td><label>简洁的导出方式</label></td>
+                            <td><input id="isSimplePanel" type="checkbox"></input></td>
                         </tr>
                         <tr>
                             <td><label>ARIA2 RPC：</label></td>
@@ -971,6 +1037,7 @@ var Res = getMStr(function(){
             width: 550px;
             left: 338.5px;
             top: 101.5px;
+            color: #333;
         }
         #bdh-preferences input[type="text"] {
             width: 90%;
@@ -1031,7 +1098,7 @@ SimplePanel.prototype = {
         this.selected();
     },
     hide: function () {
-        this.panel.style.display = 'none'; 
+        this.panel.style.display = 'none';
     },
     selected: function () {  // 高亮选中文本
         var selection = this.win.getSelection();
@@ -1138,7 +1205,6 @@ var ARIA2 = (function() {
         }, 0);
 
         // var xhr = new XMLHttpRequest();
-        
         // xhr.open("POST", , true);
         // xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
         // if (auth) xhr.setRequestHeader("Authorization", "Basic " + btoa(auth));
