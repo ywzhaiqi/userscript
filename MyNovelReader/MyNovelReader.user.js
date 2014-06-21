@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        4.3.2
+// @version        4.3.3
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    shyangs
@@ -25,7 +25,6 @@
 // @downloadURL    https://greasyfork.org/scripts/292-my-novel-reader/code/My%20Novel%20Reader.user.js
 // @require        http://code.jquery.com/jquery-1.9.1.min.js
 // @require        http://cdn.jsdelivr.net/underscorejs/1.6.0/underscore-min.js
-// @require        https://greasyfork.org/scripts/2666-object-assign-shim/code/Objectassign%20shim.js?version=7344
 // @require        https://greasyfork.org/scripts/2672-meihua-cn2tw/code/Meihua_cn2tw.js?version=7375
 // @resource fontawesomeWoff http://libs.baidu.com/fontawesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3
 
@@ -284,9 +283,6 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         // 以下不常改
         replaceBrs: /(<br[^>]*>[ \n\r\t]*){1,}/gi,    // 替换为<p>
     };
-
-    // 自定义的
-    Rule.customRules = [];
 
     // ===================== 自定义站点规则 ======================
     Rule.specialSite = [
@@ -1196,7 +1192,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
     ];
 
     // ================== 小说拼音字、屏蔽字修复 ==================
-    Rule.replaceRules = {
+    Rule.replace = {
         // ===格式整理===
         // "\\(|\\[|\\{|（|【|｛":"（",
         // "\\)|\\]|\\}|）|】|｝":"）",
@@ -1308,6 +1304,16 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         "圞|垩|卝|龘":""
     };
 
+    // 提前转为 regexp
+    Rule.replace_reg = null;
+
+    // 自定义的
+    Rule.customRules = [];
+    Rule.customReplace = {};
+    Rule.customReplace_reg = null;
+
+    var cn2tw_reg = null;
+
     var uiTrans = {
 		"將小說網頁文字轉換為繁體。\n\n注意：內建的繁簡轉換表，只收錄了簡單的單字轉換，啟用本功能後，如有錯誤轉換的情形，請利用腳本的自訂字詞取代規則來修正。\n例如：「千里之外」，會錯誤轉換成「千裡之外」，你可以加入規則「千裡之外=千里之外」來自行修正。":"將小說網頁文字轉換為繁體。\n\n注意：內建的繁簡轉換表，只收錄了簡單的單字轉換，啟用本功能後，如有錯誤轉換的情形，請利用腳本的自訂字詞取代規則來修正。\n例如：「千里之外」，會錯誤轉換成「千裡之外」，你可以加入規則「千裡之外=千里之外」來自行修正。",
         "图片章节用夜间模式没法看，这个选项在启动时会自动切换到缺省皮肤": "圖片章節無法以夜間模式觀看，這個選項在啟動時會自動切換到預設佈景",
@@ -1394,42 +1400,6 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             },
             enumerable: false
         });
-    }
-
-    // 屏蔽字修复、替换函数
-    var replaceRules_reg = {},
-        isConvented = false;
-    function contentReplacements(text){
-        if(!config.content_replacements) return text;
-
-        var s = Date.now();
-
-        if (!isConvented) {
-            isConvented = true;
-
-            for (var key in Rule.replaceRules) {
-                replaceRules_reg[key] = new RegExp(key, "ig");
-            }
-        }
-
-        var key, regexp;
-        for (key in Rule.replaceRules) {
-            regexp = replaceRules_reg[key];
-            if (!regexp) {
-                continue;
-            }
-            text = text.replace(regexp, Rule.replaceRules[key]);
-        }
-
-        debug("小说屏蔽字修复耗时：" + (Date.now() - s) + 'ms');
-        return text;
-    }
-
-    function convert2tw(text) {
-        for (var key in cn2tw) {
-            text = text.replace(new RegExp(key, 'ig'), cn2tw[key]);
-        }
-        return text;
     }
 
     var Utils = {
@@ -1542,8 +1512,9 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                     docTitle;
 
             if (Config.cn2tw) {
-                this.chapterTitle = convert2tw(this.chapterTitle);
-                this.docTitle = convert2tw(this.docTitle);
+                this.bookTitle = this.convert2tw(this.bookTitle);
+                this.chapterTitle = this.convert2tw(this.chapterTitle);
+                this.docTitle = this.convert2tw(this.docTitle);
             }
 
             debug("  Book Title: " + this.bookTitle);
@@ -1733,6 +1704,8 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         handleContentText: function(text, info){
             if(!text) return null;
 
+            var startTime = Date.now();
+
             var contentHandle = info.contentHandle === undefined ? true : info.contentHandle;
 
             // 拼音字、屏蔽字修复
@@ -1745,7 +1718,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                     return "{" + (i++) + "}";
                 });
 
-                text = contentReplacements(text);
+                text = this.contentReplacements(text);
 
                 // 还原图片
                 text = nano(text, imgs);
@@ -1756,7 +1729,6 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             text = text.replace(/<\/p><p>/g, "</p>\n<p>");
 
             // GM_setClipboard(text);
-
             var contentReplace = info.contentReplace;
             if (contentReplace) {
                 var replaceText = function(rep){
@@ -1797,9 +1769,14 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             text = text.replace(Rule.contentReplace, '');
 
             if (Config.cn2tw) {
-                text = convert2tw(text);
+                text = this.convert2tw(text);
             }
 
+            text = this.contentCustomReplace(text);
+
+            debug('内容替换共耗时：' + (Date.now() - startTime) + ' ms');
+
+            // 采用 DOM 方式进行处理
             var $div = $("<div>").html(text);
 
             if(contentHandle){
@@ -1843,6 +1820,47 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 
             // 删除空白的、单个字符的 p
             text = text.replace(Rule.removeLineRegExp, "");
+
+            return text;
+        },
+        contentReplacements: function (text) {
+            if (!Rule.replace_reg) {
+                Rule.replace_reg = {};
+                for (var key in Rule.replace) {
+                    Rule.replace_reg[key] = new RegExp(key, "ig");
+                }
+            }
+
+            for (var key in Rule.replace) {
+                text = text.replace(Rule.replace_reg[key], Rule.replace[key]);
+            }
+
+            return text;
+        },
+        convert2tw: function (text) {
+            if (!cn2tw_reg) {
+                cn2tw_reg = {};
+                for (var key in cn2tw) {
+                    cn2tw_reg[key] = new RegExp(key, 'ig');
+                }
+            }
+
+            for (var key in cn2tw) {
+                text = text.replace(cn2tw_reg[key], cn2tw[key]);
+            }
+            return text;
+        },
+        contentCustomReplace: function (text) {
+            if (!Rule.customReplace_reg) {
+                Rule.customReplace_reg = {};
+                for (var key in Rule.customReplace) {
+                    Rule.customReplace_reg[key] = new RegExp(key, "ig");
+                }
+            }
+
+            for (var key in Rule.customReplace) {
+                text = text.replace(Rule.customReplace_reg[key], Rule.customReplace[key]);
+            }
 
             return text;
         },
@@ -2052,15 +2070,13 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                         value = b.substring(pos + 1, b.length);
                     rules[key] = value;
                 });
+
                 return rules;
             };
 
-            var customReplaceRules = parseCustomReplaceRules(Config.customReplaceRules);
-            _.each(customReplaceRules, function(value, key) {
-                Rule.replaceRules[key] = value;
-            });
+            Rule.customReplace = parseCustomReplaceRules(Config.customReplaceRules);
 
-            debug('载入自定义替换规则成功', customReplaceRules);
+            debug('载入自定义替换规则成功');
         },
         getCurSiteInfo: function (){
             var rules = Rule.customRules.concat(Rule.specialSite);
