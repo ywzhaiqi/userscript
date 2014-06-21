@@ -1,9 +1,10 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        4.2.0
+// @version        4.3.0
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
+// @contributor    shyangs
 // @description    小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
 // @license        GPL version 3
 // @grant          GM_xmlhttpRequest
@@ -24,6 +25,8 @@
 // @downloadURL    https://greasyfork.org/scripts/292-my-novel-reader/code/My%20Novel%20Reader.user.js
 // @require        http://code.jquery.com/jquery-1.9.1.min.js
 // @require        http://cdn.jsdelivr.net/underscorejs/1.6.0/underscore-min.js
+// @require        https://greasyfork.org/scripts/2666-object-assign-shim/code/Objectassign%20shim.js?version=7344
+// @require        https://greasyfork.org/scripts/2672-meihua-cn2tw/code/Meihua_cn2tw.js?version=7375
 // @resource fontawesomeWoff http://libs.baidu.com/fontawesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3
 
 // 手动启用列表
@@ -1306,6 +1309,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
     };
 
     var uiTrans = {
+		"將小說網頁文字轉換為繁體。\n\n注意：內建的繁簡轉換表，只收錄了簡單的單字轉換，啟用本功能後，如有錯誤轉換的情形，請利用腳本的自訂字詞取代規則來修正。\n例如：「千里之外」，會錯誤轉換成「千裡之外」，你可以加入規則「千裡之外=千里之外」來自行修正。":"將小說網頁文字轉換為繁體。\n\n注意：內建的繁簡轉換表，只收錄了簡單的單字轉換，啟用本功能後，如有錯誤轉換的情形，請利用腳本的自訂字詞取代規則來修正。\n例如：「千里之外」，會錯誤轉換成「千裡之外」，你可以加入規則「千裡之外=千里之外」來自行修正。",
         "图片章节用夜间模式没法看，这个选项在启动时会自动切换到缺省皮肤": "圖片章節無法以夜間模式觀看，這個選項在啟動時會自動切換到預設佈景",
         "通过快捷键切换或在 Greasemonkey 用户脚本命令处打开设置窗口": "通過熱鍵切換或在 Greasemonkey 使用者腳本命令處開啟設定視窗",
         "隐藏后通过快捷键或 Greasemonkey 用户脚本命令处调用": "隱藏後通過熱鍵或 Greasemonkey 使用者腳本命令處調用",
@@ -1326,13 +1330,16 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         "booklink 自动启用": "booklink 自動啟用",
         "Enter 键打开目录": "Enter 鍵開啟目錄",
         "隐藏左侧章节列表": "隱藏左側章節列表",
+		"小说阅读脚本设置":"小說閱讀腳本設定",
         "已到达最后一页": "已到達最後一頁",
         "正在载入下一页": "正在載入下一頁",
         "通过快捷键切换": "通過熱鍵切換",
         "隐藏底部导航栏": "隱藏底部導航列",
         "隐藏左侧导航条": "隱藏左側章節列表彈出鈕",
+		"主页链接没有找到": "未找到主頁連結",
         "自定义站点规则": "自訂網站規則",
         "自定义替换规则": "自訂字詞取代規則",
+		"网页：转繁体": "網頁：轉繁體",
         "双击暂停翻页": "雙擊暫停翻頁",
         "隐藏设置按钮": "隱藏設定按鈕",
         "强制手动启用": "強制手動啟用",
@@ -1369,7 +1376,8 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         "加载": "載入",
         "字体": "字型",
         "行高": "行距",
-        "行宽": "版面寬度"
+        "行宽": "版面寬度",
+		"目录": "目錄"
     };
 
     if(!String.prototype.uiTrans){
@@ -1986,6 +1994,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             if(App.isLaunched) return;
             App.isLaunched = true;
 
+			if(Config.cn2tw) Object.assign(Rule.replaceRules, cn2tw);
             App.loadCustomSetting();
             App.site = App.getCurSiteInfo();
             // 百度贴吧不好判断，手动调用 readx 启用
@@ -2360,7 +2369,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                 UI.preferencesShow();
             });
 
-            GM_registerMenuCommand("小说阅读脚本设置", UI.preferencesShow.bind(UI));
+            GM_registerMenuCommand("小说阅读脚本设置".uiTrans(), UI.preferencesShow.bind(UI));
         },
         copyCurTitle: function(){
             var title = $(App.curFocusElement).find(".title").text()
@@ -2374,7 +2383,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 
             switch (event.which) {
                 case 13: // Enter
-                    App.openUrl(App.indexUrl, "主页链接没有找到");
+                    App.openUrl(App.indexUrl, "主页链接没有找到".uiTrans());
                     App.copyCurTitle();
                     break;
                 case 37: // left arrow
@@ -2664,6 +2673,13 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             GM_setValue("disable_auto_launch", bool);
         },
 
+		get cn2tw() {
+            return this._getBooleanConfig('cn2tw', Config.lang==='zh-TW'?true:false);
+        },
+        set cn2tw(bool) {
+            GM_setValue('cn2tw', bool);
+        },
+
         get booklink_enable() {  // booklink.me 跳转的自动启动
             return this._getBooleanConfig("booklink_enable", true);
         },
@@ -2715,7 +2731,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
         },
 
         get font_family() {
-            return GM_getValue("font_family") || "微软雅黑,宋体,黑体,楷体";
+            return GM_getValue("font_family") || "微软雅黑,宋体,黑体,楷体".uiTrans();
         },
         set font_family(val) {
             GM_setValue("font_family", val);
@@ -3103,6 +3119,9 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
                             界面语言<select id="lang">\
                             </select>\
                         </label>\
+                        <label title="將小說網頁文字轉換為繁體。\n\n注意：內建的繁簡轉換表，只收錄了簡單的單字轉換，啟用本功能後，如有錯誤轉換的情形，請利用腳本的自訂字詞取代規則來修正。\n例如：「千里之外」，會錯誤轉換成「千裡之外」，你可以加入規則「千裡之外=千里之外」來自行修正。">\
+                            <input type="checkbox" id="enable-cn2tw" name="enable-cn2tw"/>网页：转繁体\
+                        </label>\
                     </div>\
                     <div class="form-row">\
                         <label title="不影响 booklink.me 的启用">\
@@ -3246,7 +3265,8 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
             var $form = $("#preferences");
 
             // checkbox
-            $form.find("#disable-auto-launch").get(0).checked = Config.getDisableAutoLaunch();
+            $form.find("#enable-cn2tw").get(0).checked = Config.cn2tw;
+			$form.find("#disable-auto-launch").get(0).checked = Config.getDisableAutoLaunch();
             $form.find("#booklink-enable").get(0).checked = Config.booklink_enable;
             $form.find("#debug").get(0).checked = Config.debug;
             $form.find("#quietMode").get(0).checked = Config.isQuietMode;
@@ -3383,7 +3403,8 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 
             Config.setDisableAutoLaunch(form.elements.namedItem("disable-auto-launch").checked)
 
-            Config.booklink_enable = $form.find("#booklink-enable").get(0).checked;
+            Config.cn2tw = $form.find("#enable-cn2tw").get(0).checked;
+			Config.booklink_enable = $form.find("#booklink-enable").get(0).checked;
             Config.isQuietMode = $form.find("#quietMode").get(0).checked;
             Config.debug = $form.find("#debug").get(0).checked;
             Config.picNightModeCheck = $form.find("#pic-nightmode-check").get(0).checked;
