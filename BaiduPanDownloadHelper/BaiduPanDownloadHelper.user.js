@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.6.5
+// @version        3.6.6
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi@gmail.com
 // @description    批量导出百度盘的下载链接
@@ -36,13 +36,6 @@
 // @run-at         document-end
 // ==/UserScript==
 
-// 参考 BaiduPanMD5Button http://userscripts.org/scripts/show/156906
-/**
- * 百度盘代码解析，2013/07/22
- *   文件：yun_home_speed_all.js
- *   函数：performSelectionDownload
- */
-
 
 var isChrome = !!this.chrome;
 
@@ -59,27 +52,190 @@ var Config = {  // 默认的设置
 
 var TPLS = {
     normal: '{dlink}',
-    aria2c: 'aria2c -c -x 10 -s 10 --out "{server_filename}" "{dlink}" --user-agent="netdisk" --header "Referer:http://pan.baidu.com/disk/home"',
+    aria2c: 'aria2c -c -x 10 -s 10 --out "{server_filename}" "{dlink}" --user-agent="netdisk" ' + 
+         '--header "Referer:http://pan.baidu.com/disk/home;"',
+         // '--header "Referer:http://pan.baidu.com/disk/home;' + 'Cookie:' + document.cookie + '"',
 };
 
 var debug = Config.debug ? console.debug.bind(console) : function() {};
 
+// 已失效，改用下面的 require
 var FileUtils = unsafeWindow.FileUtils,
     Utilities = unsafeWindow.Utilities,
     disk = unsafeWindow.disk,
     Page = unsafeWindow.Page;
 
+// 最新的改版，个人主页存在，其它页面可能不存在
+var require = unsafeWindow.require;
+
 var Utils = {
     r1: function(reg, str) {
         var m = str.match(reg);
         return m ? m[1] : null;
-    }
+    },
+    getParam: function(name, url) {
+        var regexp = new RegExp("(?:^|\\?|#|&)" + name + "=([^&#]*)(?:$|&|#)", "i"),
+            matches = regexp.exec(url || location.href);
+        return matches ? decodeURIComponent(matches[1]) : ""
+    },
 };
 
-var App = {
+
+var mHome = {
+    init: function() {
+        this.addButton();
+
+        this.setDocumentTitle();
+        window.addEventListener('hashchange', this.setDocumentTitle.bind(this), false);
+
+        UI.addQuickLinks();
+        // 修正添加后出现滚动条的情况
+        GM_addStyle('.side-options { margin: auto; }');
+    },
+    addButton: function() {
+        $('<a class="bbtn" style="padding-left:10px"><b>批量下载</b></a>')
+            .insertAfter('a.btn.download-btn')
+            .click(this.downloadAll.bind(this));
+    },
+    setDocumentTitle: function() {  // 设置页面标题，根据 hash 变化而变化，方便历史记录检索
+        var path = Utils.getParam('path')
+        if (path === "") {
+            var key = Utils.getParam('key')
+            if (key) {
+                path = "搜索：" + key;
+            }
+        }
+
+        if (path) {
+            document.title = '百度云 网盘-' + path; 
+        }   
+    },
+    downloadAll: function() {
+        var Toast = require("common:widget/toast/toast.js");
+        Toast.obtain.useToast({
+            toastMode: Toast.obtain.MODE_LOADING,
+            msg: "正在获取中，请稍后...",
+            sticky: true,
+        });
+
+        var dataCenter = require("common:widget/data-center/data-center.js"),
+            commonService = require("common:widget/commonService/commonService.js");
+        
+        var self = this;
+
+        var fs_ids = dataCenter.get('selectedList'),  // ["812801091852241", "860551491728460"]
+            fidlist = "[" + fs_ids.join(',') + "]",
+            type = 'dlink',
+            callback = function(result) {
+                // console.log(result);
+
+                var dlinks = result.dlink.map(function(i) { return i.dlink; });
+                if (!self.panel) {
+                    self.panel = new SimplePanel('BDH');
+                }
+                self.panel.show(dlinks.join('\n'));
+                Toast.obtain.setVisible(false);
+            };
+
+        commonService.getDlink(fidlist, type, callback);
+
+        // 获取其它信息？上面的方式只有下载链接
+        // this.getList(null, function(list) {
+        //     var selectedList = list.filter(function(info) { return selectedListID.indexOf(info.fs_id) > 0 });
+
+        //     selectedList.forEach(function(info) {
+
+        //     });
+        //     // end
+        //     // Toast.obtain.setVisible(false);
+        // });
+    },
+    getList: function (dir, callback) {  // Search:  disk-home.js
+        var API_URL = '/api/list?channel=chunlei&clienttype=0&web=1&num=100&order=time&desc=1',
+            restUrl = API_URL + '&dir=' + (dir ? dir : Utils.getParam('path'));
+
+        $.get(restUrl, function(result) {
+            if (result && result.errno == 0 && result.list) {
+                callback(result.list);
+            } else {
+                console.error("获取数据出错, " + restUrl);
+            }
+        });
+    },
+    getDlink: function(fs_ids) {  // not finished
+        if (fs_ids.length === 0) {
+            Toast.obtain.setVisible(false);
+            return;
+        }
+
+        var restUrl = 'http://pan.baidu.com/api/download?channel=chunlei&clienttype=0&web=1&bdstoken=' + FileUtils.bdstoken,
+            data = {
+                sign: FileUtils.base64Encode(FileUtils.sign2(FileUtils.sign3, FileUtils.sign1)), 
+                fidlist: "[" + fs_ids.join(',') + "]",
+                type: 'dlink',
+                timestamp: FileUtils.timestamp
+            };
+
+        $.post(restUrl, data, function(result){
+            if (result.errno == 0) {
+                var dlinkMap = {};
+                result.dlink.forEach(function(i){
+                    dlinkMap[i.fs_id] = i.dlink;
+                });
+
+                debug("全部获取完成, result=", result, ", dlinkMap=", dlinkMap, ", checkedItems=", self.checkedItems);
+                self.showPanel(self.checkedItems, dlinkMap);
+                self.toast.setVisible(false);
+            } else {
+                console.error('POST 方式获取错误', result);
+                Utilities.useToast({
+                    toastMode: disk.ui.Toast.MODE_CAUTION,
+                    msg: disk.util.shareErrorMessage[result.errno],
+                    sticky: false
+                });
+            }
+        });
+    },
+
+    test: function() {
+        // var diskHome = require("clouddisk-ui:widget/list-view/disk-home.js");
+        // diskHome.download(["550160357"]);
+        // diskHome.move(["550160357"], callback);
+        // diskHome.unZip(["550160357"]);
+
+        // dataCenter.get('selectedItemList');  // [s.fn.s.init[1], s.fn.s.init[1]]
+        
+        /*
+            可设置 disk.DEBUG = true
+        */
+
+        /* 最新的改版已失效
+        关键函数
+            移动：FileUtils.sendMoveCopyFileMessage
+            FileUtils.switchToDir(PATH)  主界面切换到某个文件夹
+        */
+    },
+
+    // 脱离百度盘内部的调用
+    // $container: $('#yao-main > div > div.module-list-view > div.list-view-home > div.list'),
+    // getCheckedItems: function() {
+    //     var e = [],
+    //         s = this;
+    //     return this.$container.find(".item").each(function() {
+    //         var t = $(this);
+    //         if (t.find(".chk").hasClass("chked") === !0) {
+    //             e.push(t.attr('data-id'));
+    //         }
+    //     }), e
+    // },
+};
+
+
+var Pan = {
     fetchCount: 0,
     init: function() {
         var pageType = this.determineCurrentPageType();
+        debug('pageType is ', pageType);
         if (pageType !== null) {
             this.pageType = pageType;
             this.processPage(pageType);
@@ -149,38 +305,7 @@ var App = {
         }
     },
     diskHomePageProcessor: function() {  // 个人主页
-        /*
-            设置 disk.DEBUG = true
-        关键函数
-            移动：FileUtils.sendMoveCopyFileMessage
-            FileUtils.switchToDir(PATH)  主界面切换到某个文件夹
-         */
-        var self = this;
-        this.API_URL = '/api/list?channel=chunlei&clienttype=0&web=1&num=100&order=time&desc=1';
-
-        // 添加批量下载按钮
-        $('<a class="bbtn" style="padding-left:10px"><b>批量下载</b></a>')
-            .insertAfter('#barCmdDownload')
-            .click(function(){
-                self.downloadAll();
-            });
-
-        // 设置页面标题，根据 hash 变化而变化，方便历史记录检索
-        var setDocumentTitle = function() {
-            var path = decodeURIComponent(disk.getParam('dir/path'));
-            if (path === "") {
-                var m = location.hash.match(/#s\/key=(.*)/);
-                if (m)
-                    path = "搜索：" + m[1];
-            }
-            document.title = '百度云 网盘-' + path;
-        };
-        setDocumentTitle();
-        window.addEventListener('hashchange', setDocumentTitle, false);
-
-        UI.addQuickLinks();
-        // 修正添加后出现滚动条的情况
-        GM_addStyle('.side-options { margin: auto; }');
+        mHome.init();
     },
     shareDirPageProcessor: function() {
         //  已失效。
@@ -233,9 +358,10 @@ var App = {
         var cacheResult = null;
 
         // 获取链接，文件 viewshare_all.js，函数 _checkDownloadFile，2013-12-2
-        var url = disk.api.RestAPI.SHARE_GET_DLINK + "&uk=" + FileUtils.share_uk + "&shareid=" + FileUtils.share_id + "&timestamp=" + FileUtils.share_timestamp + "&sign=" + FileUtils.share_sign;
+        var url = "/share/download?channel=chunlei&clienttype=0&web=1" + "&uk=" + FileUtils.share_uk + "&shareid=" + FileUtils.share_id + "&timestamp=" + FileUtils.share_timestamp + "&sign=" + FileUtils.share_sign;
         var data = { fid_list: "[" + disk.util.ViewShareUtils.fsId + "]" };
         $.post(url, data, function(result) {
+            console.log(result)
             if (result && result.errno == 0 && result.dlink) {
                 $('#downFileButtom')
                     .attr({
@@ -255,7 +381,7 @@ var App = {
             .html('YAAW')
             .click(function(){
                 if (data) {
-                    App.addToYAAW(data);
+                    Pan.addToYAAW(data);
                 } else {
                     Utilities.useToast({
                         toastMode: disk.ui.Toast.MODE_LOADING,
@@ -283,7 +409,7 @@ var App = {
                     return title + Config.lineBreak + url;
                 });
 
-                App.copy(urls, false);
+                Pan.copy(urls, false);
             }, false);
 
         return;
@@ -354,10 +480,10 @@ var App = {
 
             $.get(restUrl, function(result){
                 if (result && result.errno == 0 && result.list) {
-                    App.showPanel(result.list);
-                    App.toast.setVisible(false);
+                    Pan.showPanel(result.list);
+                    Pan.toast.setVisible(false);
                 } else {
-                    App.useToast("获取数据出错, " + restUrl);
+                    Pan.useToast("获取数据出错, " + restUrl);
                 }
             });
         };
@@ -384,7 +510,7 @@ var App = {
             .html('YAAW')
             .click(function(){
                 if (data) {
-                    App.addToYAAW(data);
+                    Pan.addToYAAW(data);
                 } else {
                     Utilities.useToast({
                         toastMode: disk.ui.Toast.MODE_LOADING,
@@ -460,7 +586,7 @@ var App = {
         var fetchURL,
             self = this;
 
-        if (!FileUtils.getListViewCheckedItems) {
+        if (!FileUtils.getListViewICheckedtems) {
             return;
         }
 
@@ -477,10 +603,10 @@ var App = {
         this.handleResult();
     },
     getList: function(item) {
-        var dir, restUrl,
-            self = this;
+        var self = this;
+        var dir, restUrl;
 
-        dir = item && item.path || disk.getParam('dir/path');
+        dir = item && item.path || disk.getParam('path');
         restUrl = this.API_URL + (dir ? '&dir=' + encodeURIComponent(dir) : '');
 
         debug('获取数据', restUrl);
@@ -495,7 +621,7 @@ var App = {
                 }
                 self.handleResult(result.list);
             } else {
-                App.useToast("获取数据出错, " + restUrl);
+                Pan.useToast("获取数据出错, " + restUrl);
             }
         });
     },
@@ -505,58 +631,6 @@ var App = {
         var self = this;
 
         debug('得到选择的数据', this.checkedItems);
-
-        // 2014-5-11， 百度盘改成 post 方式获取下载链接
-        // 筛选出没有 dlink 的 fs_id
-        var filelist = [];
-        var filter = function(items) {
-            items.forEach(function(item) {
-                if (item.children) {
-                    filter(item.children);
-                } else {
-                    if (!item.dlink && item.isdir != 1) {
-                        filelist.push(item.fs_id);
-                    }
-                }
-            });
-        };
-        filter(this.checkedItems);
-        debug('筛选出需要再次用 POST 获取的', filelist);
-
-        // 不需要再次获取的直接显示
-        if (filelist.length == 0) {
-            self.showPanel(self.checkedItems);
-            self.toast.setVisible(false);
-            return;
-        }
-
-        var restUrl = 'http://pan.baidu.com/api/download?channel=chunlei&clienttype=0&web=1&bdstoken=' + FileUtils.bdstoken,
-            data = {
-                sign: FileUtils.base64Encode(FileUtils.sign2(FileUtils.sign3, FileUtils.sign1)), 
-                fidlist: "[" + filelist.join(',') + "]",
-                type: 'dlink',
-                timestamp: FileUtils.timestamp
-            };
-
-        $.post(restUrl, data, function(result){
-            if (result.errno == 0) {
-                var dlinkMap = {};
-                result.dlink.forEach(function(i){
-                    dlinkMap[i.fs_id] = i.dlink;
-                });
-
-                debug("全部获取完成, result=", result, ", dlinkMap=", dlinkMap, ", checkedItems=", self.checkedItems);
-                self.showPanel(self.checkedItems, dlinkMap);
-                self.toast.setVisible(false);
-            } else {
-                console.error('POST 方式获取错误', result);
-                Utilities.useToast({
-                    toastMode: disk.ui.Toast.MODE_CAUTION,
-                    msg: disk.util.shareErrorMessage[result.errno],
-                    sticky: false
-                });
-            }
-        });
     },
     showPanel: function(checkedItems, dlinkMap) {
         if (!this.panel) {
@@ -683,7 +757,7 @@ var App = {
         if (typeof isDlink == 'undefined') isDlink = true;
 
         GM_setClipboard(arr.join(Config.lineBreak), 'text');
-        App.useToast('已经复制 <b>' + arr.length + '</b> 条' + (isDlink ? '下载' : '') + '链接到剪贴板');
+        Pan.useToast('已经复制 <b>' + arr.length + '</b> 条' + (isDlink ? '下载' : '') + '链接到剪贴板');
     },
     addToYAAW: function(items){
         var aria2 = new ARIA2(prefs.getAria2RPC());
@@ -702,7 +776,7 @@ var App = {
             }
         });
 
-        App.useToast('添加中...到YAAW界面查看是否添加成功');
+        Pan.useToast('添加中...到YAAW界面查看是否添加成功');
     },
     useToast: function(msg, sticky){
         // disk.ui.Toast.MODE_FAILURE    错误
@@ -733,7 +807,7 @@ var prefs = {
     },
 
     getQuickLinks: function() {
-        return GM_getValue('quickLinks') || 'Books=/Books/网络小说\n小说=/Books/小说\n网络小说=/Books/网络小说';
+        return GM_getValue('quickLinks') || 'Books=/Books\n小说=/Books/小说\n网络小说=/Books/网络小说';
     },
     setQuickLinks: function(val) {
         GM_setValue('quickLinks', val);
@@ -789,7 +863,13 @@ var UI = {
     addQuickLinks: function() {
         if (location.pathname != '/disk/home') return;
 
-        $('#aside-menu > .quickLink').remove();
+        var $after = $('.b-list-3');
+        if ($after.length === 0) {
+            console.error('没有找到自定义快捷目录的插入位置');
+            return;
+        }
+
+        $after.find('> .quickLink').remove();
 
         var html = '';
         var lines = prefs.getQuickLinks().split('\n');
@@ -802,7 +882,8 @@ var UI = {
                     '<span class="text1 drop-list-trigger">' + name + '</span></a></li>';
             }
         });
-        $('#aside-menu > li:first').after(html);
+
+        $after.find('> li:first').after(html);
     },
 };
 
@@ -905,6 +986,127 @@ var Res = getMStr(function(){
 });
 
 
+function SimplePanel() {
+    this.init.apply(this, arguments);
+}
+SimplePanel.prototype = {
+    init: function (namespace, doc) {
+        this.doc = doc || document;
+        this.win = this.doc.defaultView;
+        this.namespace = namespace || 'GM_';
+
+        this.html = this.html.replace(/\{namespace\}/g, this.namespace);
+        this.css = this.css.replace(/\{namespace\}/g, this.namespace);
+
+        var div = this.doc.createElement('div');
+        div.setAttribute('id', this.namespace + '_panel');
+        div.innerHTML = this.html;
+        div.style.display = 'none';
+        this.doc.body.appendChild(div);
+        this.panel = div;
+
+        var style = this.doc.createElement('style');
+        style.textContent = this.css;
+        this.doc.head.appendChild(style);
+
+        var self = this;
+        var getId = function (id) {
+            return self.panel.querySelector('#' + self.namespace + '_' + id);
+        };
+
+        this.closeButton = getId('closeButton');
+        this.batchedlink = getId('batchedlink');
+
+        this.closeButton.addEventListener('click', function () {
+            self.hide();
+        }, false);
+    },
+    destory: function() {
+        this.panel.parentNode.reomveChild(this.panel);
+    },
+    show: function (text) {
+        this.batchedlink.innerHTML = text;
+        this.panel.style.display = 'block';
+
+        this.selected();
+    },
+    hide: function () {
+        this.panel.style.display = 'none'; 
+    },
+    selected: function () {  // 高亮选中文本
+        var selection = this.win.getSelection();
+        var range = this.doc.createRange();
+        range.selectNodeContents(this.batchedlink);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    },
+    html: function () {
+        /*
+         <div id="{namespace}_batchedPublish">
+             <div id="{namespace}_batchHeader">
+                 <a id="{namespace}_closeButton" class="aui_close" href="javascript:;">×</a>
+             </div>
+             <div id="{namespace}_batchedContent">
+                 <pre id="{namespace}_batchedlink"></pre>
+             </div>
+         </div>
+         */
+        }.toString().match(/\/\*([\s\S]+)\*\//)[1],
+    css: function () {
+        /*
+         #{namespace}_batchedPublish {
+             position: fixed;
+             z-index: 1001;
+             top: 30%;
+             left: 30%;
+             width: 530px;
+             background: white;
+             border: 3px solid #AAA;
+         }
+         #{namespace}_batchedlink {
+             height: 250px;
+             overflow: scroll;
+         }
+         .aui_close {
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            right: -10px;
+            top: -10px;
+            border-radius: 20px;
+            background: none repeat scroll 0% 0% #778B9D;
+            color: #FFF;
+            box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
+            transition: all 0.06s linear 0s;
+        }
+        .aui_close {
+            display: block;
+            position: absolute;
+            padding: 0px;
+            text-align: center;
+            font-family: Helvetica,STHeiti;
+            font-size: 18px;
+            text-decoration: none;
+        }
+        .aui_close:hover{
+            width:24px;
+            height:24px;
+            line-height:24px;
+            right:-12px;
+            top:-12px;
+            color:#FFF;
+            box-shadow:0 1px 3px rgba(209,40,42,.5);
+            background:#d1282a;
+            border-radius:24px;
+        }
+        .aui_close:hover,.aui_close:active{
+            text-decoration:none;
+            color:#900;
+         }
+         */
+        }.toString().match(/\/\*([\s\S]+)\*\//)[1],
+};
+
 var ARIA2 = (function() {
     var jsonrpc_version = '2.0';
 
@@ -983,4 +1185,4 @@ function getMStr(fn) {
 }
 
 
-App.init();
+Pan.init();
