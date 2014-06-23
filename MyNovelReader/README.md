@@ -3,14 +3,23 @@
 
 ### 文件说明
 
-- [MyNovelReader.user.js](MyNovelReader.user.js)，GM 脚本，[greasyfork 地址](https://greasyfork.org/scripts/292-my-novel-reader)
-- [MyNovelReader.mobile.js](MyNovelReader.mobile.js)，自用于 Opera Mobile 12，去除jQuery版。
-- old
-	- [mynovelreader.3.0.4.user.js](old/mynovelreader.3.0.4.user.js)，由网友 Roger Au 设计的 3.0.4 版。
-	- [novelreaderdb@gmailcom.user.js](old/novelreaderdb@gmailcom.user.js)，自定义配置文件，旧版。
-	- [mynovelreader2.user.js](old/mynovelreader2.user.js)，2系列最后一个版本。
-	- [MyNovelReader3.user.coffee](old/MyNovelReader3.user.coffee)，2转3时用 coffee 写的，已弃用。
-	- [mynovelreader-iframe方式-有问题.user.js](mynovelreader-iframe方式-有问题.user.js)，采用 iframe 方式加载而不需要刷新页面。有问题，旧版。
+ - [MyNovelReader.user.js](MyNovelReader.user.js)，GM 脚本，[greasyfork 地址](https://greasyfork.org/scripts/292-my-novel-reader)
+ - [MyNovelReader.mobile.js](MyNovelReader.mobile.js)，自用于 Opera Mobile 12，去除jQuery版。
+ - old
+    - [mynovelreader.3.0.4.user.js](old/mynovelreader.3.0.4.user.js)，由网友 Roger Au 设计的 3.0.4 版。
+ 	- [novelreaderdb@gmailcom.user.js](old/novelreaderdb@gmailcom.user.js)，自定义配置文件，旧版。
+ 	- [mynovelreader2.user.js](old/mynovelreader2.user.js)，2系列最后一个版本。
+ 	- [MyNovelReader3.user.coffee](old/MyNovelReader3.user.coffee)，2转3时用 coffee 写的，已弃用。
+ 	- [mynovelreader-iframe方式-有问题.user.js](mynovelreader-iframe方式-有问题.user.js)，采用 iframe 方式加载而不需要刷新页面。有问题，旧版。
+
+### grunt 说明
+
+[新手上路 - Grunt 中文社区](http://www.gruntjs.org/docs/getting-started.html)
+
+ - 通过 `grunt` 命令合并生成 MyNovelReader.user.js 文件。
+ - 通过 `grunt watch` 命令监视文件变化并自动生成。
+ - 通过 `grunt getincludes` 命令提取 meta.js 中的 include 域名
+ - windows 可通过 `mklink MyNovelReader.user.js FILEPATH` 命令创建符号链接，实现修改后 Greasemonkey 自动生效。
 
 ### 说明
 
@@ -65,6 +74,22 @@ Opera 12 的暴力猴旧版本有个问题，请更新至新版。
 - 章节列表左键点击滚动，中键打开链接（无阅读模式）
 
 ### 自定义规则说明
+
+已 [http://www.mossiella.com/html/255.html](http://www.mossiella.com/html/255.html) 为例
+
+ 1. 打开 Greasemonkey 管理脚本页面
+ 2. 找到 My Novel Reader 脚本，打开选项，添加包含网址：http://www.mossiella.com/html/*.html
+ 3. 在本脚本设置界面的 **自定义站点规则** 加入下面的规则，刷新页面即可
+
+```js
+[{
+    url: "^http://www\\.mossiella\\.com/html/\\d+\\.html",
+    bookTitleSelector: "a[rel='category tag']",
+    contentRemove: ".navi, > strong, #commentform",
+}, ]
+```
+
+#### 旧版（将弃用）
 
 安装 https://userscripts.org/scripts/show/169728 后在里面添加，说明在其中。
 

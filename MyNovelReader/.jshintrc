@@ -1,0 +1,17 @@
+{
+  "globals": {
+	"pd": true
+  },
+
+  "browser" : true,
+  "node" : true,
+
+	"newcap": true,
+	"eqeqeq": true,
+	"noarg": true,
+	"undef": true,
+
+  "asi": true,
+	"sub": true,
+	"esnext": true
+}
