@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           userscripts 只显示中文
 // @namespace      https://github.com/ywzhaiqi
-// @version        1.7
+// @version        1.7.1
 // @author         ywzhaiqi@gmail.com
 // @description    在 userscripts、greasyfork 脚本页面只显示中文脚本，支持 AutoPager 和其它翻页脚本。
 // @homepageURL    https://greasyfork.org/scripts/305
@@ -20,7 +20,8 @@
 
 var Config = {
     debug: false,
-    buttonID: 'gm-userscript-show-chinese',
+    buttonID: 'gm-userscript-show-chinese-button',
+    hiddenStyleID: 'gm-userscript-show-chinese-style',
     // 需要？稍微减少 MutationObserver 的触发？
     igoreAddedNodeName: ['script', 'hr', 'p', 'button'],
 
@@ -52,8 +53,7 @@ Sites['userscripts-mirror.org'] = Sites['userscripts'];
 var debug = Config.debug ? console.log.bind(console) : function() {};
 
 var onlyChinese,
-    info,
-    style;
+    info;
 
 function init() {
     var hostname = location.hostname;
@@ -84,21 +84,26 @@ function init() {
 }
 
 function addHiddenStyle() {
+    if (document.getElementById(Config.hiddenStyleID)) {
+        return;
+    }
+
     var cssArr = info.line.split(',').map(function(selector) {
         return selector + ':not([gm-script-lan="zh"]) {display:none !important}';
     });
 
-    style = document.createElement('style');
+    var style = document.createElement('style');
+    style.id = Config.hiddenStyleID;
     style.textContent = cssArr.join('\n');
     document.head.appendChild(style);
 }
 
 function removeHiddenStyle() {
+    var style = document.getElementById(Config.hiddenStyleID);
     if (style) {
         document.head.removeChild(style);
     }
 }
-
 
 function checkScriptNode() {
     var scripts = document.querySelectorAll(info.line);
@@ -112,9 +117,10 @@ function checkScriptNode() {
         }
 
         nodes = script.querySelectorAll(info.test);
-        if (nodes) {
-            script.setAttribute('gm-script-lan', getScriptLan(nodes));
+        if (nodes.length === 0) {
+            nodes = [script];
         }
+        script.setAttribute('gm-script-lan', getScriptLan(nodes));
     }
 }
 
@@ -131,7 +137,7 @@ function getScriptLan(nodes) {
         }
     }
 
-    return 'other';
+    return '';
 }
 
 function addButton(parent) {
@@ -152,7 +158,7 @@ function addButton(parent) {
         GM_setValue('onlyChinese', onlyChinese);
     };
 
-    parent.appendChild(button);
+    return parent.appendChild(button);
 }
 
 function addMutationObserver(selector, callback) {

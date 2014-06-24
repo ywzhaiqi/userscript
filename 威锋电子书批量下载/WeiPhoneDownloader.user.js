@@ -2,7 +2,7 @@
 // @name           WeiPhoneDownloadHelper
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
-// @version        1.2
+// @version        1.2.1
 // @description    批量下载威锋论坛的电子书
 // @homepageURL    https://greasyfork.org/scripts/668/
 // @updateURL      https://greasyfork.org/scripts/668/code.meta.js
@@ -51,7 +51,6 @@ var RES = getMStr(function(){
 			border: 3px solid #AAA;
 		}
 		#batchedlink {
-			width: 500px;
 			height: 250px;
 			overflow: scroll;
 		}

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.6.7
+// @version        3.6.8
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi@gmail.com
 // @description    批量导出百度盘的下载链接
@@ -98,7 +98,7 @@ var mHome = {
             .click(this.downloadAll.bind(this));
     },
     setDocumentTitle: function() {  // 设置页面标题，根据 hash 变化而变化，方便历史记录检索
-        var path = Utils.getParam('path')
+        var path = Utils.getParam('dir/path') || Utils.getParam('path');
         if (path === "") {
             var key = Utils.getParam('key')
             if (key) {
@@ -125,6 +125,7 @@ var mHome = {
             if ($div.attr('data-extname') === 'dir') return;
 
             var fs_id = $div.attr('data-id');
+
             fs_ids.push(fs_id);
             fileList.push({
                 fs_id: fs_id,
@@ -168,7 +169,7 @@ var mHome = {
                    if (!self.panel) {
                        self.panel = new SimplePanel('BDH');
                    }
-                   self.panel.show(dlinks.join('\n')); 
+                   self.panel.show(dlinks.join('\n'));
                 }
 
                 Toast.obtain.setVisible(false);
@@ -569,7 +570,7 @@ var Pan = {
         setTimeout(function() {
             $('#accessCode').val(sCode);
             $('#submitBtn').click();
-        }, 10);
+        }, 100);
     },
 
     // -------------------------
@@ -802,6 +803,7 @@ var Pan = {
         if (!Array.isArray(items)) {
             items = [items];
         }
+
 
         items.forEach(function(item){
             if (!item.dlink && Array.isArray(item.children)) {
