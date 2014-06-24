@@ -306,7 +306,7 @@ Parser.prototype = {
         var 
             startTime = Date.now(),
             contentHandle = info.contentHandle === undefined ? true : info.contentHandle,
-            contentReplace = info.contentReplace,
+            contentReplace = info.contentReplace
         ;
 
         // 拼音字、屏蔽字修复

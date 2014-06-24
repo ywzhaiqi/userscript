@@ -29,17 +29,17 @@ module.exports = function(grunt) {
                 dest: '<%= pkg.name %>.user.js'
             }
         },
-        // concat_sourcemap: {
-        //     options: {
-        //         sourcesContent: true
-        //     },
-        //     target: {
-        //         files: {
-        //             '<%= pkg.name %>.user.js': ['tmp/meta.js', 'tmp/header.js', 'tmp/rule.js', 'tmp/config.js', 'tmp/lang.js',
-        //             'tmp/lib.js', 'tmp/parser.js', 'tmp/UI.js', 'tmp/main.js'],
-        //         }
-        //     }
-        // },
+        concat_sourcemap: {
+            // options: {
+            //     sourcesContent: true
+            // },
+            target: {
+                files: {
+                    '<%= pkg.name %>.user.js': ['tmp/meta.js', 'tmp/header.js', 'tmp/rule.js', 'tmp/config.js', 'tmp/lang.js',
+                    'tmp/lib.js', 'tmp/parser.js', 'tmp/UI.js', 'tmp/main.js'],
+                }
+            }
+        },
         watch: {
             files: ['src/**/*.js'],
             tasks: ['default']
@@ -75,6 +75,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat')
     grunt.loadNpmTasks('grunt-contrib-watch')
     grunt.loadNpmTasks('grunt-contrib-copy')
-    // grunt.loadNpmTasks('grunt-concat-sourcemap')
+    grunt.loadNpmTasks('grunt-concat-sourcemap')
 
 }

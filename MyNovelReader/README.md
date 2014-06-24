@@ -14,12 +14,19 @@
 
 ### grunt 说明
 
-[新手上路 - Grunt 中文社区](http://www.gruntjs.org/docs/getting-started.html)
+安装 [Node.js](http://nodejs.org/) 和 [npm](https://npmjs.org/)，然后运行
+
+    npm install -g grunt-cli
+    npm install
+    grunt
+
+这时就会合并生成 MyNovelReader.user.js 文件。
 
  - 通过 `grunt` 命令合并生成 MyNovelReader.user.js 文件。
  - 通过 `grunt watch` 命令监视文件变化并自动生成。
  - 通过 `grunt getincludes` 命令提取 meta.js 中的 include 域名
  - windows 可通过 `mklink MyNovelReader.user.js FILEPATH` 命令创建符号链接，实现修改后 Greasemonkey 自动生效。
+ - [新手上路 - Grunt 中文社区](http://www.gruntjs.org/docs/getting-started.html)
 
 ### 说明
 
@@ -42,7 +49,7 @@ Opera 12 的暴力猴旧版本有个问题，请更新至新版。
 ### 支持站点
 
 - [起点中文网](http://www.qidian.com/Default.aspx)、[纵横中文网]( http://book.zongheng.com/)、[创世中文网](http://chuangshi.qq.com/)、晋江文学网、潇湘书院、逐浪等
-- [燃文](http://www.ranwen.cc/)、[百晓生](http://www.bxs.cc/)、[无错](http://www.wcxiaoshuo.com/)、[书迷楼](http://www.shumilou.com/)、[冰火中文](http://www.binhuo.com/)、[浩奇](http://www.haoqi99.com/)、[书河](http://www.shuhe.cc/)、[热点书库](http://www.hotsk.com/)、[哈哈文学](http://www.hahawx.com/)、[读零零](http://www.du00.com/)、[手牵手](http://www.sqsxs.com/)、[万书吧](http://www.wanshuba.com/)等（[bookline.me](http://booklink.me/)点击的网站）
+- [燃文](http://www.ranwen.cc/)、[百晓生](http://www.bxs.cc/)、[无错](http://www.wcxiaoshuo.com/)、[书迷楼](http://www.shumilou.com/)、[冰火中文](http://www.binhuo.com/)、[浩奇](http://www.haoqi99.com/)、[书河](http://www.shuhe.cc/)、[热点书库](http://www.hotsk.com/)、[哈哈文学](http://www.hahawx.com/)、[读零零](http://www.du00.com/)、[手牵手](http://www.sqsxs.com/)、[万书吧](http://www.wanshuba.com/)等（[bookline.me](http://booklink.me/) 点击的网站）
 - 角度吧、飞库、6小说、笔趣阁、强兵、摩卡、极速等（SoDu.so点击的网站）
 - 手打吧、泡书吧、17k、[16K](http://www.16kbook.org/)、看下、青帝、侠客等
 - [落秋中文](http://www.luoqiu.net/)、[吾读小说网](http://www.5du5.com/)、[平凡文学网](http://www.wtcxs.com/)
@@ -67,11 +74,16 @@ Opera 12 的暴力猴旧版本有个问题，请更新至新版。
 - **辅助脚本：[booklime.me 辅助](http://userscripts.org/scripts/show/165572)**：一键打开未读章节。
 - 鼠标双击内容暂停翻页。
 - 鼠标中键点击 "退出" 按钮则为临时退出模式。
-- Enter 键打开目录页，并已复制当前的章节标题到剪贴板，可用查找
-- Left 键滚到上一页，到顶部则打开上一章
-- Right 键滚到下一页，到底部则打开下一章
 - 章节列表的标题为目录链接
 - 章节列表左键点击滚动，中键打开链接（无阅读模式）
+
+快捷键
+
+ - `Enter` 键打开目录页，并已复制当前的章节标题到剪贴板，可用于查找
+ - `Left` 键滚到上一页，到顶部则打开上一章
+ - `Right` 键滚到下一页，到底部则打开下一章
+ - `c` 键切换左侧的章节列表
+ - `s` 键打开设置界面
 
 ### 自定义规则说明
 
@@ -89,13 +101,13 @@ Opera 12 的暴力猴旧版本有个问题，请更新至新版。
 }, ]
 ```
 
-#### 旧版（将弃用）
+#### 旧版（会被弃用）
 
 安装 https://userscripts.org/scripts/show/169728 后在里面添加，说明在其中。
 
 ### 更新
 
-- 详见 [History for MyNovelReader - github](https://github.com/ywzhaiqi/userscript/commits/master/MyNovelReader)
+- 详见 [History for MyNovelReader - github.com](https://github.com/ywzhaiqi/userscript/commits/master/MyNovelReader)
 - .....
 - 2013年12月07日
     - [版本 3.7.9](http://userscripts.org/scripts/diff/165951/689214)。修正几个规则。
