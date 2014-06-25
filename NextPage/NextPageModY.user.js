@@ -2,10 +2,9 @@
 // @name               Next Page ModY
 // @author             Sunwan
 // @modified           ywzhaiqi
-// @version            0.1.7.3
-// namespace           http://www.zjcnnj.cn/mozilla/greasemonkey/
-// @namespace          https://github.com/ywzhaiqi
-// @description        使用左右方向键来翻页 [Ver 0.1.7.3]
+// @version            1.0
+// @namespace          http://www.zjcnnj.cn/mozilla/greasemonkey/
+// @description        使用左右方向键来翻页
 // @include            http://*
 // @include            https://*
 // @include            file://*
@@ -132,11 +131,10 @@
 
     // 取得并设置自定义关键词
     function getCustom(aObj, key) {
-        var site, re;
         var cKeyWords = Config["custom_" + key];
         var words = cKeyWords.split(/,|，/);
-        for each(var w in words) {
-            site = null;
+        words.forEach(function(w) {
+            var site = null;
             if (/^\s*{\s*(\S*?)\s*}(.*)$/.test(w)) {
                 site = RegExp.$1;
                 w = RegExp.$2;
@@ -145,14 +143,13 @@
             w = w.replace(/\\/g, "\\").replace(/^\s+|\s+$/g, "");
             if (w) {
                 if (site) {
-                    // re = eval('/' + site + '/i');
-                    re = new RegExp(site, 'i');
+                    var re = new RegExp(site, 'i');
                     if (re.test(location.href))
                         aObj.texts.push(w);
                 } else
                     aObj.texts.push(w);
             }
-        }
+        });
     }
 
     // 注册菜单
