@@ -3,6 +3,13 @@
 
 对他人的脚本进行一些修改。**请使用原版，并不保证更新。**
 
+### Video_wipe_ADs.user.js
+
+原版：[Video wipe ADs](https://greasyfork.org/scripts/358-video-wipe-ads)
+
+ - 修正 firefox 下的一个问题
+ - 
+
 ### TxtReader.user.js
 
 [txt小说阅读器 ](http://userscripts.org:8080/scripts/show/185278)
@@ -30,4 +37,4 @@
 
  - [七星庐 - 基于黑名单的内容屏蔽脚本](http://qixinglu.com/post/blacklist_blocker_greasemonkey_script.html)
  - 添加2个例子站点规则
- - 改进原 自动翻页 的监视
+ - 改进原自动翻页的监视方式
