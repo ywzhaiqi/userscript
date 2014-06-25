@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.6.8
+// @version        3.6.9
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi@gmail.com
 // @description    批量导出百度盘的下载链接
@@ -54,18 +54,18 @@ var TPLS = {
     normal: '{dlink}',
     aria2c: 'aria2c -c -x 10 -s 10 --out "{server_filename}" "{dlink}" --user-agent="netdisk" ' + 
          '--header "Referer:http://pan.baidu.com/disk/home;"',
-         // '--header "Referer:http://pan.baidu.com/disk/home;' + 'Cookie:' + document.cookie + '"',
+         // + 'Cookie:' + document.cookie + '"',
 };
 
 var debug = Config.debug ? console.debug.bind(console) : function() {};
 
-// 已失效，改用下面的 require
+// 最新的改版，在个人主页页面已失效，改用下面的 require
 var FileUtils = unsafeWindow.FileUtils,
     Utilities = unsafeWindow.Utilities,
     disk = unsafeWindow.disk,
     Page = unsafeWindow.Page;
 
-// 最新的改版，个人主页存在，其它页面可能不存在
+// 个人主页存在，其它页面可能不存在
 var require = unsafeWindow.require;
 
 var Utils = {
@@ -85,6 +85,7 @@ var mHome = {
     init: function() {
         this.addButton();
 
+        this.setMaxSize();
         this.setDocumentTitle();
         window.addEventListener('hashchange', this.setDocumentTitle.bind(this), false);
 
@@ -96,6 +97,11 @@ var mHome = {
         $('<a class="bbtn" style="padding-left:10px"><b>批量下载</b></a>')
             .insertAfter('a.btn.download-btn')
             .click(this.downloadAll.bind(this));
+    },
+    setMaxSize: function() {
+        // FDM 会出现密码错误的问题，而 IDM 正常。
+        var downloadManager = require("common:widget/downloadManager/downloadManager.js");
+        downloadManager.SIZE_THRESHOLD =  Number.MAX_VALUE;
     },
     setDocumentTitle: function() {  // 设置页面标题，根据 hash 变化而变化，方便历史记录检索
         var path = Utils.getParam('dir/path') || Utils.getParam('path');
@@ -340,6 +346,10 @@ var Pan = {
         // 去掉云管家提示，来自 Crack Url Wait Code Login For Chrome
         if (prefs.getRemoveYunGuanjia()) {
             unsafeWindow.navigator.__defineGetter__('platform', function(){ return ''; });
+        }
+        // 去除大文件云管家限制，来自 http://userscripts.org:8080/scripts/show/159911
+        if (disk && disk.util && disk.util.DownloadManager && disk.util.DownloadManager.SIZE_THRESHOLD) {
+            disk.util.DownloadManager.SIZE_THRESHOLD = Number.MAX_VALUE;
         }
     },
     diskHomePageProcessor: function() {  // 个人主页
