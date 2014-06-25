@@ -43,8 +43,6 @@ GM 脚本
 - [userscripts.user.js](userscripts.user.js)
     - userscripts.org 搜索页面只显示中文脚本。
 - *[smzdm.user.js](smzdm.user.js)，已失效*
-- [youku_调整显示列数.user.js](youku_调整显示列数.user.js)
-
 
 一些脚本的链接
 -------------
