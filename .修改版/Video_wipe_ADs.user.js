@@ -1,25 +1,28 @@
 // ==UserScript==
 // @name           Video wipe ADs
-// @version        20140419
+// @version        20140412
 // @namespace      Shuangya
 // @author         Shuangya
 // @modified       ywzhaiqi
 // @description    去除国内视频网站的广告
-// @match          http://v.youku.com/v_show/id*
-// @match          http://www.letv.com/ptv/vplay*
-// @match          http://www.iqiyi.com/v_*
-// @match          http://v.ku6.com/show/*
-// @match          http://v.qq.com/cover/*
-// @match          http://tv.sohu.com/20*
+// @include        http://v.youku.com/v_show/id*
+// @include        http://www.letv.com/ptv/vplay*
+// @include        http://www.iqiyi.com/v_*
+// @include        http://v.ku6.com/show/*
+// @include        http://v.qq.com/cover/*
+// @include        http://tv.sohu.com/20*
 // @grant          GM_xmlhttpRequest
 // @icon           http://tb.himg.baidu.com/sys/portrait/item/0b43e3f1d1c4501a
+// updateURL      http://firefox.sylingd.com/script/source/8.meta.js
+// downloadURL    http://firefox.sylingd.com/script/source/8.user.js
 // ==/UserScript==
+
 (function(){
 
 console.log('Video wipe ADs started!');
 
 var sites = [
-	//[名称,地址,选择方式,选择]
+	// [名称,地址,选择方式,选择]
 	['youku', 'http://v.youku.com/v_show', 'id', 'player'],
 	['letv', 'http://www.letv.com/ptv/vplay', 'id', 'fla_box'],
 	['iqiyi', 'http://www.iqiyi.com/v', 'id', 'flashbox'],
@@ -28,45 +31,60 @@ var sites = [
 	['sohu', 'http://tv.sohu.com/20', 'id', 'sohuplayer']
 ]
 
-var url = window.location.href;
-var ele = null;
-var videoboxid;
+
+var locationHref = window.location.href;
+var playerElem,
+	playerID,
+	oPlayerHTML;  // 原始播放器的 innerHTML
+
 for (var i = 0, len = sites.length, site; i < len; i++) {
 	site = sites[i];
-	if (url.indexOf(site[1]) >= 0) {
+	if (locationHref.indexOf(site[1]) >= 0) {
 		if (site[2] == 'id') {
-			ele = document.getElementById(site[3]);
-			videoboxid = site[3];
+			playerElem = document.getElementById(site[3]);
+			playerID = site[3];
 			break;
 		}
-		//if (site[2]=='class') ele=document.getElementById(site[3]);
+		//if (site[2]=='class') playerElem=document.getElementById(site[3]);
 	}
 }
 
-if (ele === null) {
+if (!playerElem) {
 	return;
 }
-
-var yuanhtml;
 
 
 var VIDEO_FORMAT = {
 	normal: '标清',
-	hight: '高清',
+	high: '高清',
 	super: '超清',
-	super2: '原画'
+	// super2: '原画'
 };
 
-var hasFormat = {
-	normal: true,
-	high: false,
-	super: false,
-	super2: false  // 原画，非全部支持
-};
+var CSS = function() {/*
+	.gm-video-selected {
+		color: red;
+	}
+	#gm-video-format-container {
+		position: fixed;
+		zIndex: 6000;
+		top: 40%;
+		right: 0;
+		backgroundColor: white;
+		border: 1px solid rgb(221,221,221);
+		padding: 2px;
+		borderRadius: 5px;
+	}
+*/}.toString().match(/\/\*([\s\S]+)\*\//)[1];
 
-var parseHTML = function (html) {
-	// firefox and chrome 30+
-	var doc = new DOMParser().parseFromString(html, 'text/html');
+
+var parseHTML = function(html) {
+	var doc;
+	try {
+		// firefox and chrome 30+，Opera 12 会报错
+		doc = new DOMParser().parseFromString(html, 'text/html');
+	} catch (ex) {}
+
 	if (!doc) {
 		doc = document.implementation.createHTMLDocument("");
 		doc.querySelector('html').innerHTML = html;
@@ -74,11 +92,83 @@ var parseHTML = function (html) {
 	return doc;
 };
 
+var addScript = function(src, text) {
+	var script = document.createElement('script');
+	script.type = 'text/javascript';
+	if (src) {
+		script.src = src;
+	} else if (text) {
+		script.textContent = text;
+	}
+
+	document.body.appendChild(script);
+};
+
+var addStyle = function(text) {
+	var style = document.createElement('style');
+	style.textContent = text;
+	document.head.appendChild(style);
+};
+
+var addPlayer = function (urls) {
+	GM_xmlhttpRequest({
+		method:"GET",
+		url:'http://git.oschina.net/sy/shuangya/raw/master/userjs/wipeads/ckplayer.js',
+		onload:function(jdata){
+			addScript(null, jdata.responseText);
+
+			var scriptText = "var flashvars={f:'" + urls.replace(/\|$/gi, '') + "',c:0,v:100};" +
+				"var params={bgcolor:'#FFF',allowFullScreen:true,allowScriptAccess:'always'};" + 
+				"CKobject.embedSWF('http://www.ckplayer.com/ckplayer6.3/ckplayer.swf','" +
+				playerID + "','syplayer','100%','100%',flashvars,params);";
+
+			addScript(null, scriptText);
+		}
+	});
+};
+
+var clean = function() {
+	playerElem.style.background = 'url(https://code.csdn.net/u014469252/shuangya/blob/master/userjs/wipeads/loading.png) no-repeat center center rgb(0,0,0)';
+	oPlayerHTML = playerElem.innerHTML;
+	playerElem.innerHTML = '';
+};
+
+var createFormatButton = function(urls, format, isSelected) {
+	var button = document.createElement('a');
+	button.setAttribute('style', 'display:block;border:none;background:none;');
+	button.innerHTML = VIDEO_FORMAT[format];
+
+	if (isSelected) {
+		button.classList.add('gm-video-selected');
+	}
+
+	var address = '{f->' + urls.replace(/\|$/gi, '') + '}';
+	button.setAttribute('onclick',
+		'CKobject.getObjectById("syplayer").ckplayer_newaddress("' + address + '");' +
+		'jQuery(".gm-video-selected").removeClass("gm-video-selected");' +
+		'jQuery(this).addClass("gm-video-selected");'
+		);
+	return button;
+};
+
+var addFormatContainer = function () {
+	var qxdiv = document.createElement('div');
+	qxdiv.id = 'gm-video-format-container';
+
+	if (location.host.match(/youku/)) {
+		qxdiv.style.right = '50px';
+	}
+
+	document.body.appendChild(qxdiv);
+
+	return qxdiv;
+};
+
 var getFlvcd = function(format, callback) {
 	GM_xmlhttpRequest({
 		method:"GET",
 		overrideMimeType: 'text/html; charset=gb2312',
-		url:'http://www.flvcd.com/parse.php?format=' + format + '&kw=' + encodeURIComponent(url),
+		url:'http://www.flvcd.com/parse.php?format=' + format + '&kw=' + encodeURIComponent(locationHref),
 		onload: function (res) {
 			var doc = parseHTML(res.responseText);
 			var input = doc.querySelector('input[name="inf"]');
@@ -89,134 +179,48 @@ var getFlvcd = function(format, callback) {
 
 			var urls = input.getAttribute('value');
 
-			var format = 'normal';
+			var newFormat = 'normal';
 			var name = doc.querySelector('input[name="name"]').getAttribute('value');
-			if (name.match(/超清/)) {
-				format = 'super';
-			} else if (name.match(/高清/)) {
-				format = 'high';
-			} else if (name.match(/原画/)) {
-				format = 'super2';
+			for (var f in VIDEO_FORMAT) {
+				if (name.indexOf(VIDEO_FORMAT[f]) > 0) {
+					newFormat = f;
+					break;
+				}
 			}
 
-			callback(urls, format);
+			callback(urls, newFormat);
 		}
 	});
-};
-
-var addFormatButton = function (urls, format) {
-	var qxdiv = document.createElement('div');
-	document.getElementsByTagName('body')[0].appendChild(qxdiv);
-	qxdiv.style.position = 'fixed';
-	qxdiv.style.zIndex = '6000';
-	qxdiv.style.top = '50%';
-	qxdiv.style.right = '0';
-	qxdiv.style.backgroundColor = 'white';
-	qxdiv.style.border = '1px solid rgb(221,221,221)';
-	qxdiv.style.padding = '2px';
-	qxdiv.style.borderRadius = '5px';
-	qxdiv.innerHTML = '<input type="button"  onclick="CKobject.getObjectById(\'syplayer\').ckplayer_newaddress(\'{f->' +
-		urls.replace(/\|$/gi, '') + '}\');" value="' + VIDEO_FORMAT[format]  + '" style="display:block;border:none;background:none;">';
-	
-	if (location.host.match(/youku/)) {
-		qxdiv.style.paddingRight = '50px';
-	}
-};
-
-var addPlayer = function (urls) {
-	GM_xmlhttpRequest({
-		method:"GET",
-		url:'http://git.oschina.net/sy/shuangya/raw/master/userjs/wipeads/ckplayer.js',
-		onload:function(jdata){
-			addScript(null, jdata.responseText);
-
-			addScript(null,
-				"var flashvars={f:'" + urls.replace(/\|$/gi, '') +
-				"',c:0,v:100};var params={bgcolor:'#FFF',allowFullScreen:true,allowScriptAccess:'always'};" + 
-				"CKobject.embedSWF('http://www.ckplayer.com/ckplayer6.3/ckplayer.swf','" + videoboxid +
-				"','syplayer','100%','100%',flashvars,params);");
-		}
-	});
-};
-
-var addScript = function(src, innerHTML) {
-	var script = document.createElement('script');
-	script.type = 'text/javascript';
-	if (src) {
-		script.src = src;
-	} else {
-		script.innerHTML = innerHTML;
-	}
-	
-	document.body.appendChild(script);
-};
-
-var remove = function() {
-	ele.style.background = 'url(https://code.csdn.net/u014469252/shuangya/blob/master/userjs/wipeads/loading.png) no-repeat center center rgb(0,0,0)';
-	yuanhtml = ele.innerHTML;
-	ele.innerHTML = '';
 };
 
 var init = function() {
-	getFlvcd('super', function(urls, format) {
-		addFormatButton(urls, format);
 
-		remove();
+	addStyle(CSS);
+
+	getFlvcd('super', function(urls, format) {
+		var container = addFormatContainer();
+		
+		container.appendChild(createFormatButton(urls, format, true));
+
+		clean();
 
 		addPlayer(urls);
 
 		addScript('http://www.ckplayer.com/js6.2/offlights.js');
+
+		// 添加其他清晰度
+		var formats = Object.keys(VIDEO_FORMAT);
+		formats.reverse();
+		var others = formats.slice(formats.indexOf(format) + 1, formats.length);
+		others.forEach(function(fom){
+			getFlvcd(fom, function(u, f){
+				container.appendChild(createFormatButton(u, f));
+			});
+		});
 	});
 }
 
 init();
-
-
-	// onload:function(vdata){
-	// 	vdata=;
-	// 	if (vdata.match(/<input type="hidden" name="inf"/i)==null) { //解析失败
-	// 		ele.innerHTML=yuanhtml;
-	// 		return false;
-	// 	}
-	// 	var burls=vdata.match(/<input type="hidden" name="inf" value="(.*?)"\/>/)[1];
-		
-
-	// 	if (vdata.match(/<b>高清版解析/i)!=null) {
-	// 		hasgq=true;
-	// 		console.log('Video Wipe ADs Log:has gaoqing');
-	// 		GM_xmlhttpRequest({
-	// 			method:"GET",
-	// 			url:'http://www.flvcd.com/parse.php?format=high&kw='+encodeURIComponent(url),
-	// 			onload:function(gvdata){
-	// 				gvdata=gvdata.responseText;
-	// 				var gurls=gvdata.match(/<input type="hidden" name="inf" value="(.*?)"\/>/)[1];
-	// 				qxdiv.innerHTML+='<input type="button"  onclick="CKobject.getObjectById(\'syplayer\').ckplayer_newaddress(\'{f->'+gurls.replace(/\|$/gi,'')+'}\');" value="高清" style="display:block;border:none;background:none;">';
-					
-	// 				if (!hascq) {
-	// 					addPlayer(gurls);
-	// 				}
-	// 			}
-	// 		});
-	// 	}
-	// 	if (vdata.match(/<b>超清版解析/i)!=null) {
-	// 		hascq=true;
-	// 		console.log('Video wipe ADs Log:has chaoqing');
-	// 		GM_xmlhttpRequest({
-	// 			method:"GET",
-	// 			url:'http://www.flvcd.com/parse.php?format=super&kw='+encodeURIComponent(url),
-	// 			onload:function(cvdata){
-	// 				cvdata=cvdata.responseText;
-	// 				var curls=cvdata.match(/<input type="hidden" name="inf" value="(.*?)"\/>/)[1];
-	// 				qxdiv.innerHTML+='<input type="button"  onclick="CKobject.getObjectById(\'syplayer\').ckplayer_newaddress(\'{f->'+curls.replace(/\|$/gi,'')+'}\');" value="超清" style="display:block;border:none;background:none;">';
-					
-	// 				addPlayer(curls);
-	// 			}
-	// 		});
-	// 	}
-
-	// 	if (!hasgq && !hascq) {
-	// 		addPlayer(burls);
-	// 	}
 
 
 })();
