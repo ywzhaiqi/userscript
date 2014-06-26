@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        4.5.0
+// @version        4.5.1
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    shyangs
@@ -526,6 +526,7 @@ Rule.specialSite = [
             /（文&nbsp;學馆w&nbsp;ww.w&nbsp;xguan.c&nbsp;om）/ig,
             /\((?:&nbsp;)*(?:无弹窗)?全文阅读\)/ig,
             /\[<a.*?首发\[百晓生\] \S+/ig,
+            /高速首发.*本章节是地址为/ig,
             /\/\/(?:&nbsp;|访问下载txt小说|高速更新)+\/\//ig,
             /(www\.)?bxs\.cc/ig,
             /百晓生.不跳字|不跳字。/ig,
@@ -1185,7 +1186,10 @@ Rule.replace = {
     // ===格式整理===
     // "\\(|\\[|\\{|（|【|｛":"（",
     // "\\)|\\]|\\}|）|】|｝":"）",
-    ",": "，",
+
+    // 需要？
+    ",": "，", ":": "：", "\\?":"？",
+
     "\\*|＊":"*",
     "[wWｗＷ]{3}":"www",
     "w{3}(\u3001|\u3002)":"www.",
@@ -1248,8 +1252,8 @@ Rule.replace = {
     "nàme":"那么", "n[ée]ngg[oò]u":"能够", "nán\\s{0,2}hǎi": "那会", "内jian":"内奸", "內yī":"内衣",
     "pi[áa]o客":"嫖客", "p[áa]ngbi[āa]n":"旁边",
     "q[íi]gu[àa]i":"奇怪", "qing　ren":"情人", "qin兽":"禽兽", "q[iī]ngch[uǔ]":"清楚", "球mi":"球迷", "青chun":"青春", "青lou":"青楼",
-    "r[úu]gu[oǒ]":"如果", "r[oó]ngy[ìi]":"容易", "ru白色": "乳白色", "rén员":"人员", "rén形":"人形", "人chao":"人潮", 
-    "she(门|术|手|程|击)":"射$1", "sh[iì]ji[eè]":"世界", "sh[ií]ji[aā]n":"时间", "sh[ií]h[oò]u": "时候", "sh[ií]me":"什么", "si人":"私人", "shi女":"侍女", "shi身": "失身", "sh[ūu]j[ìi]":"书记", "shu女": "熟女", "(?:上|shang)chuang": "上床", "呻y[íi]n": "呻吟", "sh[ēe]ngzh[íi]": "生殖", "深gu": "深谷", "双xiu": "双修", "生r[ìi]": "生日", "si盐":"私盐", "shi卫":"侍卫", "si下":"私下", "sao扰":"骚扰", "ｓｈｕａｎｇ　ｆｅｎｇ":"双峰", 
+    "r[úu]gu[oǒ]":"如果", "r[oó]ngy[ìi]":"容易", "ru(房|白色)": "乳$1", "rén员":"人员", "rén形":"人形", "人chao":"人潮", 
+    "she(门|术|手|程|击)":"射$1", "sh[iì]ji[eè]":"世界", "sh[ií]ji[aā]n":"时间", "sh[ií]h[oò]u": "时候", "sh[ií]me":"什么", "si人":"私人", "shi女":"侍女", "shi身": "失身", "sh[ūu]j[ìi]":"书记", "shu女": "熟女", "shu[　\\s]?xiong":"酥胸", "(?:上|shang)chuang": "上床", "呻y[íi]n": "呻吟", "sh[ēe]ngzh[íi]": "生殖", "深gu": "深谷", "双xiu": "双修", "生r[ìi]": "生日", "si盐":"私盐", "shi卫":"侍卫", "si下":"私下", "sao扰":"骚扰", "ｓｈｕａｎｇ　ｆｅｎｇ":"双峰", 
     "t[uū]r[áa]n":"突然", "tiaojiao": "调教", "偷qing":"偷情", "推dao": "推倒", "脱guang": "脱光", "t[èe]bi[ée]":"特别", "t[ōo]nggu[òo]":"通过", "tian来tian去":"舔来舔去",
     "w[ēe]ixi[ée]":"威胁", "wèizh[ìi]":"位置", "wei员":"委员",
     "xiu长": "修长", "亵du": "亵渎", "xing福": "幸福", "小bo":"小波", "xiong([^a-z])":"胸$1", "小tui":"小腿", "xiàn\\'zhì":"限制",
@@ -1356,10 +1360,13 @@ var Config = {
     },
 
     get lang() {
-        return GM_getValue("lang") || ((navigator.language === "zh-TW" || navigator.language === "zh-HK") ? "zh-TW" : "zh-CN");
+        if (_.isUndefined(this._lang)) {
+            this._lang = GM_getValue("lang") || ((navigator.language === "zh-TW" || navigator.language === "zh-HK") ? "zh-TW" : "zh-CN");
+        }
+        return this._lang;
     },
     set lang(val) {
-        GM_setValue("lang", val);
+        GM_setValue("lang", this._lang = val);
     },
 
     get font_family() {
@@ -1391,21 +1398,23 @@ var Config = {
     },
 
     get extra_css() {
-        return GM_getValue("extra_css") || "";
+        return GM_getValue("extra_css", "");
     },
     set extra_css(val) {
         GM_setValue("extra_css", val);
     },
 
     get customSiteinfo() {
-        return GM_getValue('custom_siteinfo') || '[]';
+        return GM_getValue('custom_siteinfo', '[]');
     },
     set customSiteinfo(val) {
         GM_setValue('custom_siteinfo', val);
     },
 
     get customReplaceRules() {
-        return GM_getValue('custom_replace_rules') || 'b[āà]ng=棒\n『(.)』=$1';
+        var rules = GM_getValue('custom_replace_rules', 'b[āà]ng=棒\n『(.)』=$1');
+
+        return rules;
     },
     set customReplaceRules(val) {
         GM_setValue('custom_replace_rules', val);
@@ -1505,7 +1514,7 @@ var Config = {
 };
 
 var uiTrans = {
-    "將小說網頁文字轉換為繁體。\n\n注意：內建的繁簡轉換表，只收錄了簡單的單字轉換，啟用本功能後，如有錯誤轉換的情形，請利用腳本的自訂字詞取代規則來修正。\n例如：「千里之外」，會錯誤轉換成「千裡之外」，你可以加入規則「千裡之外=千里之外」來自行修正。":"將小說網頁文字轉換為繁體。\n\n注意：內建的繁簡轉換表，只收錄了簡單的單字轉換，啟用本功能後，如有錯誤轉換的情形，請利用腳本的自訂字詞取代規則來修正。\n例如：「千里之外」，會錯誤轉換成「千裡之外」，你可以加入規則「千裡之外=千里之外」來自行修正。",
+    "将小说网页文本转换为繁体。\n\n注意：内置的繁简转换表，只收录了简单的单字转换，启用本功能后，如有错误转换的情形，请利用脚本的自订字词取代规则来修正。\n例如：「千里之外」，会错误转换成「千里之外」，你可以加入规则「千里之外=千里之外」来自行修正。": "將小說網頁文字轉換為繁體。\n\n注意：內建的繁簡轉換表，只收錄了簡單的單字轉換，啟用本功能後，如有錯誤轉換的情形，請利用腳本的自訂字詞取代規則來修正。\n例如：「千里之外」，會錯誤轉換成「千裡之外」，你可以加入規則「千裡之外=千里之外」來自行修正。",
     "图片章节用夜间模式没法看，这个选项在启动时会自动切换到缺省皮肤": "圖片章節無法以夜間模式觀看，這個選項在啟動時會自動切換到預設佈景",
     "通过快捷键切换或在 Greasemonkey 用户脚本命令处打开设置窗口": "通過熱鍵切換或在 Greasemonkey 使用者腳本命令處開啟設定視窗",
     "隐藏后通过快捷键或 Greasemonkey 用户脚本命令处调用": "隱藏後通過熱鍵或 Greasemonkey 使用者腳本命令處調用",
@@ -1614,20 +1623,11 @@ function L_removeValue(key) {
 }
 
 
-function nano(template, data) {
-    return template.replace(/\{([\w\.]*)\}/g, function(str, key) {
-        var keys = key.split("."),
-            v = data[keys.shift()];
-        for (var i = 0, l = keys.length; i < l; i++) v = v[keys[i]];
-        return (typeof v !== "undefined" && v !== null) ? v : "";
-    });
-}
-
 function createDocumentByString(str) {
-    var doc
+    var doc;
     try {
-         doc = new DOMParser().parseFromString(str, "text/html");  // chrome 30+ 已支持
-    }catch(ex){}
+        doc = new DOMParser().parseFromString(str, "text/html"); // chrome 30+ 已支持
+    } catch (ex) {}
 
     if (!doc) {
         doc = document.implementation.createHTMLDocument("");
@@ -1644,17 +1644,27 @@ function toRE(obj, flags) {
     }
 }
 
-function getMStr(func) {
-    var lines = func.toString();
-    lines = lines.substring(lines.indexOf("/*") + 3, lines.lastIndexOf("*/"));
-    return lines;
-}
-
 function getUrlHost(url) {
     var a = document.createElement('a');
     a.href = url;
     return a.host;
 }
+
+
+Function.prototype.getMStr = function() {  // 多行String
+    var lines = new String(this);
+    lines = lines.substring(lines.indexOf("/*") + 3, lines.lastIndexOf("*/"));
+    return lines;
+}
+
+$.nano = function(template, data) {
+    return template.replace(/\{([\w\.]*)\}/g, function(str, key) {
+        var keys = key.split("."),
+            v = data[keys.shift()];
+        for (var i = 0, l = keys.length; i < l; i++) v = v[keys[i]];
+        return (typeof v !== "undefined" && v !== null) ? v : "";
+    });
+};
 
 // jQuery text 完全匹配. e.g. a:econtains('最新章节')
 $.expr[":"].econtains = function(obj, index, meta, stack) {
@@ -1665,6 +1675,843 @@ $.expr[":"].econtains = function(obj, index, meta, stack) {
  * jQuery Easing v1.3 - http://gsgd.co.uk/sandbox/jquery/easing/
  */
 jQuery.easing.jswing=jQuery.easing.swing,jQuery.extend(jQuery.easing,{def:"easeOutQuad",swing:function(a,b,c,d,e){return jQuery.easing[jQuery.easing.def](a,b,c,d,e)},easeInQuad:function(a,b,c,d,e){return d*(b/=e)*b+c},easeOutQuad:function(a,b,c,d,e){return-d*(b/=e)*(b-2)+c},easeInOutQuad:function(a,b,c,d,e){return(b/=e/2)<1?d/2*b*b+c:-d/2*(--b*(b-2)-1)+c},easeInCubic:function(a,b,c,d,e){return d*(b/=e)*b*b+c},easeOutCubic:function(a,b,c,d,e){return d*((b=b/e-1)*b*b+1)+c},easeInOutCubic:function(a,b,c,d,e){return(b/=e/2)<1?d/2*b*b*b+c:d/2*((b-=2)*b*b+2)+c},easeInQuart:function(a,b,c,d,e){return d*(b/=e)*b*b*b+c},easeOutQuart:function(a,b,c,d,e){return-d*((b=b/e-1)*b*b*b-1)+c},easeInOutQuart:function(a,b,c,d,e){return(b/=e/2)<1?d/2*b*b*b*b+c:-d/2*((b-=2)*b*b*b-2)+c},easeInQuint:function(a,b,c,d,e){return d*(b/=e)*b*b*b*b+c},easeOutQuint:function(a,b,c,d,e){return d*((b=b/e-1)*b*b*b*b+1)+c},easeInOutQuint:function(a,b,c,d,e){return(b/=e/2)<1?d/2*b*b*b*b*b+c:d/2*((b-=2)*b*b*b*b+2)+c},easeInSine:function(a,b,c,d,e){return-d*Math.cos(b/e*(Math.PI/2))+d+c},easeOutSine:function(a,b,c,d,e){return d*Math.sin(b/e*(Math.PI/2))+c},easeInOutSine:function(a,b,c,d,e){return-d/2*(Math.cos(Math.PI*b/e)-1)+c},easeInExpo:function(a,b,c,d,e){return 0==b?c:d*Math.pow(2,10*(b/e-1))+c},easeOutExpo:function(a,b,c,d,e){return b==e?c+d:d*(-Math.pow(2,-10*b/e)+1)+c},easeInOutExpo:function(a,b,c,d,e){return 0==b?c:b==e?c+d:(b/=e/2)<1?d/2*Math.pow(2,10*(b-1))+c:d/2*(-Math.pow(2,-10*--b)+2)+c},easeInCirc:function(a,b,c,d,e){return-d*(Math.sqrt(1-(b/=e)*b)-1)+c},easeOutCirc:function(a,b,c,d,e){return d*Math.sqrt(1-(b=b/e-1)*b)+c},easeInOutCirc:function(a,b,c,d,e){return(b/=e/2)<1?-d/2*(Math.sqrt(1-b*b)-1)+c:d/2*(Math.sqrt(1-(b-=2)*b)+1)+c},easeInElastic:function(a,b,c,d,e){var f=1.70158,g=0,h=d;return 0==b?c:1==(b/=e)?c+d:(g||(g=.3*e),h<Math.abs(d)?(h=d,f=g/4):f=g/(2*Math.PI)*Math.asin(d/h),-(h*Math.pow(2,10*(b-=1))*Math.sin((b*e-f)*2*Math.PI/g))+c)},easeOutElastic:function(a,b,c,d,e){var f=1.70158,g=0,h=d;return 0==b?c:1==(b/=e)?c+d:(g||(g=.3*e),h<Math.abs(d)?(h=d,f=g/4):f=g/(2*Math.PI)*Math.asin(d/h),h*Math.pow(2,-10*b)*Math.sin((b*e-f)*2*Math.PI/g)+d+c)},easeInOutElastic:function(a,b,c,d,e){var f=1.70158,g=0,h=d;return 0==b?c:2==(b/=e/2)?c+d:(g||(g=e*.3*1.5),h<Math.abs(d)?(h=d,f=g/4):f=g/(2*Math.PI)*Math.asin(d/h),1>b?-.5*h*Math.pow(2,10*(b-=1))*Math.sin((b*e-f)*2*Math.PI/g)+c:.5*h*Math.pow(2,-10*(b-=1))*Math.sin((b*e-f)*2*Math.PI/g)+d+c)},easeInBack:function(a,b,c,d,e,f){return void 0==f&&(f=1.70158),d*(b/=e)*b*((f+1)*b-f)+c},easeOutBack:function(a,b,c,d,e,f){return void 0==f&&(f=1.70158),d*((b=b/e-1)*b*((f+1)*b+f)+1)+c},easeInOutBack:function(a,b,c,d,e,f){return void 0==f&&(f=1.70158),(b/=e/2)<1?d/2*b*b*(((f*=1.525)+1)*b-f)+c:d/2*((b-=2)*b*(((f*=1.525)+1)*b+f)+2)+c},easeInBounce:function(a,b,c,d,e){return d-jQuery.easing.easeOutBounce(a,e-b,0,d,e)+c},easeOutBounce:function(a,b,c,d,e){return(b/=e)<1/2.75?d*7.5625*b*b+c:2/2.75>b?d*(7.5625*(b-=1.5/2.75)*b+.75)+c:2.5/2.75>b?d*(7.5625*(b-=2.25/2.75)*b+.9375)+c:d*(7.5625*(b-=2.625/2.75)*b+.984375)+c},easeInOutBounce:function(a,b,c,d,e){return e/2>b?.5*jQuery.easing.easeInBounce(a,2*b,0,d,e)+c:.5*jQuery.easing.easeOutBounce(a,2*b-e,0,d,e)+.5*d+c}});
+
+
+var UI = {
+    tpl_footer_nav: '\
+        <div class="chapter-footer-nav">\
+            <a class="prev-page" href="{prevUrl}">上一页</a> | \
+            <a class="index-page" href="{indexUrl}" title="Enter 键打开目录">目录</a> | \
+            <a class="next-page" style="color:{theEndColor}" href="{nextUrl}">下一页</a>\
+        </div>\
+        '.uiTrans(),
+    skins: {},
+
+    init: function(){
+        UI.refreshMainStyle();
+
+        UI.refreshSkinStyle(Config.skin_name, true);
+
+        UI.refreshExtraStyle(Config.extra_css);
+
+        UI.fixMobile();
+
+        // 初始化是否隐藏
+        if(Config.hide_footer_nav){
+            UI.hideFooterNavStyle(true);
+        }
+
+        // UI.toggleQuietMode();  // 初始化安静模式
+        UI.hideMenuList(Config.menu_list_hiddden);  // 初始化章节列表是否隐藏
+        UI.hidePreferencesButton(Config.hide_preferences_button);  // 初始化设置按钮是否隐藏
+    },
+    refreshMainStyle: function(){
+        if(UI.mainStyle){
+            $(UI.mainStyle).remove();
+        }
+
+        UI.mainStyle = GM_addStyle(
+            Res.CSS_MAIN
+                .replace("{font_family}", Config.font_family)
+                .replace("{font_size}", Config.font_size)
+                .replace("{title_font_size}", UI.calcTitleFontSize(Config.font_size))
+                .replace("{content_width}", Config.content_width)
+                .replace("{text_line_height}", Config.text_line_height)
+                .replace("{menu-bar-hidden}", Config.menu_bar_hidden ? "display:none;" : "")
+        );
+    },
+    hideFooterNavStyle: function(hidden){
+        var navStyle = $("#footer_nav_css");
+        if(hidden) {
+            if(navStyle.length === 0) {
+                $('<style>')
+                    .attr("id", "footer_nav_css")
+                    .text(".chapter-footer-nav { display: none; }")
+                    .appendTo('head');
+            }
+        } else {
+            navStyle.remove();
+        }
+    },
+    hideMenuList: function(hidden){
+        if(typeof(hidden) === "undefined"){
+            hidden = !UI.menu_list_hiddden;
+        }
+
+        if(hidden){
+            App.$menu.addClass('hidden');
+            App.$content.css("margin-left", "");
+        }else{
+            App.$menu.removeClass('hidden');
+            App.$content.css("margin-left", "320px");
+        }
+        UI.menu_list_hiddden = hidden;
+    },
+    hidePreferencesButton: function(hidden) {
+        hidden = _.isUndefined(hidden) ? Config.hide_preferences_button : hidden;
+        
+        App.$preferencesBtn.toggle(!hidden);
+    },
+    hideMenuBar: function(hidden) {
+        hidden = _.isUndefined(hidden) ? Config.menu_bar_hidden : hidden;
+        
+        App.$menuBar.toggle(!hidden);
+    },
+    refreshSkinStyle: function(skin_name, isFirst){
+        var style = $("#skin_style");
+        if(style.length === 0){
+            style = $('<style id="skin_style">').appendTo('head');
+        }
+
+
+        // 图片章节夜间模式会变的无法看
+        if (isFirst && skin_name.indexOf('夜间'.uiTrans()) != -1 && Config.picNightModeCheck) {
+            setTimeout(function(){
+                var img = $('#mynovelreader-content img')[0];
+                // console.log(img.width, img.height)
+                if (img && img.width > 500 && img.height > 1000) {
+                    style.text(UI.skins['缺省皮肤'.uiTrans()]);
+                    return;
+                }
+            }, 200);
+        }
+
+        style.text(UI.skins[skin_name]);
+    },
+    refreshExtraStyle: function(css){
+        var style = $("#extra_style");
+        if(style.length === 0){
+            style = $('<style id="extra_style">').appendTo('head');
+        }
+
+        style.text(css);
+    },
+    toggleQuietMode: function(isQuietMode) {
+        if (_.isUndefined(isQuietMode)){
+            isQuietMode = Config.isQuietMode;
+        }
+        
+        if (isQuietMode) {
+            $('#menu-bar, #menu').addClass("quiet-mode");
+        } else {
+            $('#menu-bar, #menu').removeClass("quiet-mode");
+        }
+    },
+    addButton: function(){
+        GM_addStyle('\
+            .readerbtn {\
+                position: fixed;\
+                right: 10px;\
+                bottom: 10px;\
+                z-index: 1597;\
+                padding: 20px 5px;\
+                width: 50px;\
+                height: 20px;\
+                line-height: 20px;\
+                text-align: center;\
+                border: 1px solid;\
+                border-color: #888;\
+                border-radius: 50%;\
+                background: rgba(0,0,0,.5);\
+                color: #FFF;\
+                font: 12px/1.5 "微软雅黑","宋体",Arial;\
+                cursor: pointer;\
+            }\
+        ');
+
+        $("<div>")
+            .addClass("readerbtn")
+            .html(App.isEnabled ? "退出".uiTrans() : "阅读模式".uiTrans())
+            .mousedown(function(event){
+                if(event.which == 1){
+                    App.toggle();
+                }else if(event.which == 2){
+                    event.preventDefault();
+                    L_setValue("mynoverlreader_disable_once", true);
+
+                    var url = App.activeUrl || App.curPageUrl;
+                    App.openUrl(url);
+                }
+            })
+            .appendTo('body');
+    },
+    calcTitleFontSize: function(contentFontSizeStr){
+        var m = contentFontSizeStr.match(/([\d\.]+)(px|em|pt)/);
+        if(m) {
+            var size = m[1],
+                type = m[2];
+            return parseInt(size, 10) * 1.88 + type;
+        }
+
+        return "";
+    },
+    fixMobile: function(){  // 自适应网页设计
+        var meta = document.createElement("meta");
+        meta.setAttribute("name", "viewport");
+        meta.setAttribute("content", "width=device-width, initial-scale=1");
+        document.head.appendChild(meta);
+    },
+    preferencesShow: function(event){
+        if($("#reader_preferences").length){
+            return;
+        }
+
+        this._loadBlocker();
+
+        UI.$prefs = $('<div id="reader_preferences">')
+            .css('cssText', 'position:fixed; top:12%; left:30%; width:500px; z-index:30000;')
+            .append(
+                $('<style>').text(Res.preferencesCSS))
+            .append(
+                $('<div class="body">').html(Res.preferencesHTML))
+            .appendTo("body");
+
+        UI.preferencesLoadHandler();
+    },
+    _loadBlocker: function() {
+        if (UI.$blocker == null) {
+            UI.$blocker = $('<div>').attr({
+                id: 'uil_blocker',
+                style: 'position:fixed;top:0px;left:0px;right:0px;bottom:0px;background-color:#000;opacity:0.5;z-index:10000;'
+            }).appendTo($('body'));
+        }
+    },
+    hide: function(){
+        if(UI.$prefs) UI.$prefs.remove();
+        if(UI.$blocker) UI.$blocker.remove();
+        UI.$prefs = null;
+        UI.$blocker = null;
+    },
+    preferencesLoadHandler: function(){
+        var $form = $("#preferences");
+
+        // checkbox
+        $form.find("#enable-cn2tw").get(0).checked = Config.cn2tw;
+        $form.find("#disable-auto-launch").get(0).checked = Config.getDisableAutoLaunch();
+        $form.find("#booklink-enable").get(0).checked = Config.booklink_enable;
+        $form.find("#debug").get(0).checked = Config.debug;
+        $form.find("#quietMode").get(0).checked = Config.isQuietMode;
+        $form.find("#pic-nightmode-check").get(0).checked = Config.picNightModeCheck;
+
+        $form.find("#hide-menu-list").get(0).checked = Config.menu_list_hiddden;
+        $form.find("#hide-menu-bar").get(0).checked = Config.menu_bar_hidden;
+        $form.find("#hide-footer-nav").get(0).checked = Config.hide_footer_nav;
+        $form.find("#hide-preferences-button").get(0).checked = Config.hide_preferences_button;
+        $form.find("#add-nextpage-to-history").get(0).checked = Config.addToHistory;
+        $form.find("#enable-dblclick-pause").get(0).checked = Config.dblclickPause;
+
+        $form.find("#font-family").get(0).value = Config.font_family;
+        $form.find("#font-size").get(0).value = Config.font_size;
+        $form.find("#content_width").get(0).value = Config.content_width;
+        $form.find("#text_line_height").get(0).value = Config.text_line_height;
+
+        $form.find("#remain-height").get(0).value = Config.remain_height;
+        $form.find("#extra_css").get(0).value = Config.extra_css;
+        $form.find("#custom_siteinfo").get(0).value = Config.customSiteinfo;
+        $form.find("#custom_replace_rules").get(0).value = Config.customReplaceRules;
+
+        // 界面语言
+        var $lang = $form.find("#lang");
+        $("<option>").text("zh-CN").appendTo($lang);
+        $("<option>").text("zh-TW").appendTo($lang);
+        $lang.val(Config.lang).change(function(){
+            var key = $(this).find("option:selected").text();
+            Config.lang = key;
+        });
+
+        // 皮肤
+        var $skin = $form.find("#skin");
+        for(var key in UI.skins){
+            $("<option>").text(key).appendTo($skin);
+        }
+        $skin.val(Config.skin_name).change(function(){
+            var key = $(this).find("option:selected").text();
+            UI.refreshSkinStyle(key);
+            Config.skin_name = key;
+        });
+
+        // 字体大小等预览
+        var preview = _.debounce(function(){
+            switch(this.id){
+                case "font-size":
+                    var titleFontSize = UI.calcTitleFontSize(this.value);
+                    if(titleFontSize) {
+                        App.$content.css("font-size", this.value);
+                        App.$content.find("h1").css("font-size", titleFontSize);
+                    }
+                    break;
+                case "font-family":
+                    App.$content.css("font-family", this.value);
+                    break;
+                case "content_width":
+                    App.$content.css("width", this.value);
+                    break;
+                case "text_line_height":
+                    App.$content.css("line-height", this.value);
+                    break;
+                default:
+                    break;
+            }
+            // UI.refreshMainStyle();
+        }, 300);
+        $form.on("input", "input", preview);
+
+        // 初始化设置按键
+        $form.find("#openPreferences").get(0).value = Config.openPreferencesKey;
+        $form.find("#setHideMenuListKey").get(0).value = Config.hideMenuListKey;
+
+        // 点击事件
+        $form.on('click', 'input:checkbox, input:button', function(event){
+            UI.preferencesClickHandler(event.target);
+        });
+    },
+    preferencesClickHandler: function(target){
+        switch (target.id) {
+            case 'close_button':
+                UI.preferencesCloseHandler();
+                break;
+            case 'save_button':
+                UI.preferencesSaveHandler();
+                break;
+            case 'debug':
+                debug = target.checked ? console.log.bind(console) : function() {};
+                break;
+            case 'quietMode':
+                UI.toggleQuietMode(target.checked);
+                break;
+            case 'hide-menu-list':
+                UI.hideMenuList(target.checked);
+                break;
+            case 'hide-preferences-button':
+                UI.hidePreferencesButton(target.checked);
+                if (target.checked) {
+                    alert('隐藏后通过快捷键或 Greasemonkey 用户脚本命令处调用'.uiTrans());
+                }
+                break;
+            case 'hide-menu-bar':
+                UI.hideMenuBar(target.checked);
+                break;
+            case 'hide-footer-nav':
+                break;
+            case 'openPreferences':
+                var key = prompt('请输入打开设置的快捷键：'.uiTrans(), Config.openPreferencesKey);
+                if (key) {
+                    Config.openPreferencesKey = key;
+                    $(target).val(key);
+                }
+                break;
+            case 'setHideMenuListKey':
+                var key = prompt('请输入切换左侧章节列表的快捷键：'.uiTrans(), Config.hideMenuListKey);
+                if (key) {
+                    Config.hideMenuListKey = key;
+                    $(target).val(key);
+                }
+                break;
+            default:
+                break;
+        }
+    },
+    preferencesCloseHandler: function(){
+        // App.$content.removeAttr("style");
+        App.$content.find("h1").css("font-size", "");
+
+        UI.hide();
+    },
+    preferencesSaveHandler: function(){
+        var $form = $("#preferences");
+
+        var form = document.getElementById('preferences');
+
+        Config.setDisableAutoLaunch(form.elements.namedItem("disable-auto-launch").checked)
+
+        Config.cn2tw = $form.find("#enable-cn2tw").get(0).checked;
+        Config.booklink_enable = $form.find("#booklink-enable").get(0).checked;
+        Config.isQuietMode = $form.find("#quietMode").get(0).checked;
+        Config.debug = $form.find("#debug").get(0).checked;
+        Config.picNightModeCheck = $form.find("#pic-nightmode-check").get(0).checked;
+
+        Config.addToHistory = $form.find("#add-nextpage-to-history").get(0).checked;
+        Config.dblclickPause = $form.find("#enable-dblclick-pause").get(0).checked;
+
+        var skinName = $form.find("#skin").find("option:selected").text();
+        Config.skin_name = skinName;
+        UI.refreshSkinStyle(skinName);
+
+        Config.font_family = $form.find("#font-family").get(0).value;
+        App.$content.css("font-family", Config.font_family);
+
+        Config.font_size = $form.find("#font-size").get(0).value;
+        Config.text_line_height = $form.find("#text_line_height").get(0).value;
+        Config.content_width = $form.find("#content_width").get(0).value;
+        Config.remain_height = $form.find("#remain-height").get(0).value;
+
+        Config.menu_list_hiddden = $form.find("#hide-menu-list").get(0).checked;
+        UI.hideMenuList(Config.menu_list_hiddden);
+
+        Config.menu_bar_hidden = $form.find("#hide-menu-bar").get(0).checked;
+        Config.hide_footer_nav = $form.find("#hide-footer-nav").get(0).checked;
+        Config.hide_preferences_button = $form.find("#hide-preferences-button").get(0).checked;
+
+        var css = $form.find("#extra_css").get(0).value;
+        UI.refreshExtraStyle(css);
+        Config.extra_css = css;
+
+        Config.customSiteinfo = $form.find("#custom_siteinfo").get(0).value;
+        Config.customReplaceRules = $form.find("#custom_replace_rules").get(0).value;
+
+        UI.hide();
+    },
+    notice: function (htmlText){
+        var $noticeDiv = $("#alert");
+
+        clearTimeout(UI.noticeDivto);
+        $noticeDiv.find("p").html(htmlText);
+        $noticeDiv.fadeIn("fast");
+
+        UI.noticeDivto = setTimeout(function(){
+            $noticeDiv.fadeOut(500);
+        },1666);
+
+        return $noticeDiv;
+    }
+};
+
+UI.skins["缺省皮肤".uiTrans()] = "";
+UI.skins["暗色皮肤".uiTrans()] = "body { color: #666; background: rgba(0;0;0;.1); }\
+                .title { color: #222; }";
+UI.skins["白底黑字".uiTrans()] = "body { color: black; background: white;}\
+                .title { font-weight: bold; border-bottom: 0.1em solid; margin-bottom: 1.857em; padding-bottom: 0.857em;}";
+UI.skins["夜间模式".uiTrans()] = "body { color: #e3e3e3; background: #2d2d2d; } #preferencesBtn { background: white; }";
+UI.skins["夜间模式2".uiTrans()] = "body { color: #679; background: black; } #preferencesBtn { background: white; }";
+UI.skins["橙色背景".uiTrans()] = "body { color: #24272c; background: #FEF0E1; }";
+UI.skins["绿色背景".uiTrans()] = "body { color: black; background: #d8e2c8; }";
+UI.skins["绿色背景2".uiTrans()] = "body { color: black; background: #CCE8CF; }";
+UI.skins["蓝色背景".uiTrans()] = "body { color: black; background: #E7F4FE; }";
+UI.skins["棕黄背景".uiTrans()] = "body { color: black; background: #C2A886; }";
+UI.skins["经典皮肤".uiTrans()] = "body { color: black; background-color: #EAEAEE; } .title { background: #f0f0f0; }";
+
+
+var fontawesomeWoff = GM_getResourceURL('fontawesomeWoff');
+if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
+    fontawesomeWoff = "http://libs.baidu.com/fontawesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3";
+} else if (isChrome) {
+    fontawesomeWoff = "data:font/woff;charset=utf-8;base64," + fontawesomeWoff;
+}
+
+
+var Res = {
+    CSS_MAIN: function() {
+        /*
+        @font-face {
+            font-family: "FontAwesome";
+            src: url({fontawesomeWoff});
+            font-weight: normal;
+            font-style: normal;
+        }
+        body > a { display:none !important; }
+        .hidden {
+            display: none;
+        }
+        .quiet-mode {
+            display: none;
+        }
+        body {
+            background: #F3F2EE;
+            color: #1F0909;
+            padding: 0px;
+            margin: 0px;
+            font-family: "Microsoft YaHei UI", 微软雅黑, 新宋体, 宋体, arial;
+        }
+        a { color: #065488; }
+        a:link { text-decoration: none; }
+        #mynovelreader-content {
+            width: {content_width};
+            font-size: {font_size};
+            font-family: {font_family};
+            line-height: {text_line_height};
+            margin-left:auto;
+            margin-right:auto;
+            padding-bottom: 15px;
+        }
+        article {
+            margin-top: 55px;
+            word-wrap: break-word;
+        }
+        article h1 {
+            clear: both;
+            line-height: 50px;
+            font-size: {title_font_size};
+            font-weight: normal;
+            margin: 25px -20px;
+            padding: 0 20px 10px;
+            border-bottom: 1px solid rgba(0,0,0,.25);
+            font-weight: normal;
+            text-transform: none;
+        }
+        .chapter-footer-nav {
+            text-align:center;
+            font-size:0.9em;
+            margin:-10px 0px 30px 0px;
+        }
+        #loading {
+            color: white;
+            text-align: center;
+            font: 12px "微软雅黑", "宋体", "Times New Roman", "Verdana";
+            margin-top: 20px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 376px;
+            height: 32px;
+            line-height: 32px;
+            border-radius: 20px;
+            border: 1px solid #666;
+            background-color: #333;
+        }
+        #loading img {
+            vertical-align: middle;
+        }
+        #loading a {
+            color: white;
+        }
+        #preferencesBtn{
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1597;
+        }
+        #alert {
+            position: fixed;
+            z-index: 100;
+            float: auto;
+            width: auto;
+            height: auto;
+            top: 10px;
+            left: 500px;
+            background: rgba(215, 240, 253, 0.65);
+            color: #2d7091;
+            border: 1px solid rgba(45,112,145,0.3);
+            border-radius: 4px;
+            text-shadow: 0 1px 0 #fff;
+        }
+        #alert p {
+            font-size: 13px;
+            margin: 6px;
+        }
+        img.blockImage {clear: both;float: none;display: block;margin-left: auto;margin-right: auto;}
+        #menu-bar {
+            border: solid rgba(0, 100, 255, .9);
+            border-width: 3px 2px 3px 0px;
+            position: fixed;
+            left: 0px;
+            top: 40%;
+            height: 100px;
+            width: 2px;
+            z-index: 199;
+            {menu-bar-hidden}
+        }
+        #menu {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            width: 270px;
+            max-width: 100%;
+            background: #333;
+            overflow-y: auto;
+        }
+        #menu:after {
+            content: "";
+            display: block;
+            position: absolute;
+            top: 46px;
+            bottom: 0;
+            right: 0;
+            width: 1px;
+            background: rgba(0,0,0,0.6);
+            box-shadow: 0 0 5px 2px rgba(0,0,0,0.6);
+        }
+        #header{
+            color: #777;
+            margin-top: 0;
+            border-top: 1px solid rgba(0,0,0,0.3);
+            background: #404040;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+            text-shadow: 0 1px 0 rgba(0,0,0,0.5);
+            padding: 10px 12px;
+            text-transform: uppercase;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        #header a {
+            color: #777777;
+        }
+        #divider {
+            position: relative;
+            z-index: 300;
+            border-top: 1px solid rgba(255,255,255,0.01);
+            border-bottom: 1px solid rgba(0,0,0,0.3);
+            margin: 0;
+            height: 4px;
+            background: rgba(0,0,0,0.2);
+            box-shadow: 0 1px 0 rgba(255,255,255,0.05), inset 0 1px 3px rgba(0,0,0,0.3);
+        }
+        #chapter-list {
+            position: relative;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 200;
+            margin: 0;
+            padding: 0;
+            cursor: pointer;
+            list-style: none;
+            overflow-y: auto;
+        }
+        .chapter {
+            list-style: none;
+        }
+        .chapter:last-child {
+            border-bottom: 1px solid rgba(0,0,0,0.3);
+            box-shadow: 0 1px 0 rgba(255,255,255,0.05);
+        }
+        .chapter div {
+            color: #ccc;
+            font-size: 15px;
+            padding: 8px 20px;
+            border-top: 1px solid rgba(0,0,0,0.3);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+            text-shadow: 0 1px 0 rgba(0,0,0,0.5);
+            display: block;
+            text-decoration: none;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+        .chapter div:before {
+            content: "\f105";
+            width: 20px;
+            margin-left: -10px;
+            float: left;
+            font-family: "FontAwesome";
+            text-align: center;
+        }
+        .chapter div:hover {
+            background: #404040;
+            color: #fff;
+            outline: 0;
+        }
+        .chapter.active div {
+            background: #1a1a1a;
+            color: #fff;
+            font-size: 16px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+        }
+        ::-webkit-scrollbar {
+            height: 9px !important;
+            width: 9px !important;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #7D7D7D !important;
+            border-radius: 3px !important;
+        }
+        ::-webkit-scrollbar-track-piece {
+            background-color: rgba(0,0,0,.25) !important;
+        }
+         */
+    }.getMStr().replace('{fontawesomeWoff}', fontawesomeWoff),
+    preferencesHTML: function(){
+        /*
+        <form id="preferences" name="preferences">
+            <div id="setting_table1">
+                <span id="top-buttons">
+                    <input title="部分选项需要刷新页面才能生效" id="save_button" value="√ 确认" type="button">
+                    <input title="取消本次设定，所有选项还原" id="close_button" value="X 取消" type="button">
+                </span>
+                <div class="form-row">
+                    <label>
+                        界面语言<select id="lang">
+                        </select>
+                    </label>
+                    <label title="将小说网页文本转换为繁体。\n\n注意：内置的繁简转换表，只收录了简单的单字转换，启用本功能后，如有错误转换的情形，请利用脚本的自订字词取代规则来修正。\n例如：「千里之外」，会错误转换成「千里之外」，你可以加入规则「千里之外=千里之外」来自行修正。">
+                        <input type="checkbox" id="enable-cn2tw" name="enable-cn2tw"/>网页：转繁体
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label title="不影响 booklink.me 的启用">
+                        <input type="checkbox" id="disable-auto-launch" name="disable-auto-launch"/>强制手动启用
+                    </label>
+                    <label title="booklink.me 点击的网站强制启用">
+                        <input type="checkbox" id="booklink-enable" name="booklink-enable"/>booklink 自动启用
+                    </label>
+                    <label>
+                        <input type="checkbox" id="debug" name="debug"/>调试模式
+                    </label>
+                    <a href="https://greasyfork.org/scripts/292-my-novel-reader/feedback" target="_blank">反馈地址</a>
+                </div>
+                <div class="form-row">
+                    <label title="图片章节用夜间模式没法看，这个选项在启动时会自动切换到缺省皮肤">
+                        <input type="checkbox" id="pic-nightmode-check" name="pic-nightmode-check"/>
+                        夜间模式的图片章节检测
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label title="通过快捷键切换">
+                        <input type="checkbox" id="hide-menu-list"/>隐藏左侧章节列表
+                    </label>
+                    <label>
+                        <input type="checkbox" id="hide-footer-nav"/>隐藏底部导航栏
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label>
+                        <input type="checkbox" id="hide-menu-bar"/>隐藏左侧导航条
+                    </label>
+                    <label>
+                        <input type="button" id="setHideMenuListKey" style="color:red" />
+                    </label>
+                    <label title="通过快捷键切换或在 Greasemonkey 用户脚本命令处打开设置窗口">
+                        <input type="checkbox" id="hide-preferences-button"/>隐藏设置按钮
+                    </label>
+                    <label>
+                        <input type="button" id="openPreferences" style="color:red" />
+                    </label>
+                </div>
+                <div class="form-row" style="display:none">
+                    <label>
+                        <input type="checkbox" id="quietMode"/>安静模式
+                    </label>
+                    <label>
+                        调用阅读器
+                        <input type="button" id="launchReader" style="color:red" />
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label>
+                        距离底部
+                        <input type="textbox" id="remain-height" name="remain-height" size="5"/>
+                        px 加载下一页
+                    </label>
+                    <label>
+                        <input type="checkbox" id="add-nextpage-to-history"/>添加下一页到历史记录
+                    </label>
+                    <label>
+                        <input type="checkbox" id="enable-dblclick-pause"/>双击暂停翻页
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label>
+                        <select id="skin">
+                        </select>
+                    </label>
+                    <label>
+                        字体
+                        <input type="textbox" id="font-family" style="width:250px;"/>
+                    </label>
+                    <br/><br/>
+                    <label>
+                        字体大小
+                        <input type="textbox" id="font-size" name="font-size" size="6"/>
+                    </label>
+                    <label>
+                        行高
+                        <input type="textbox" id="text_line_height" size="6"/>
+                    </label>
+                    <label>
+                        行宽
+                        <input type="textbox" id="content_width" size="6"/>
+                    </label>
+                </div>
+                <div class="form-row">
+                    <div class="prefs_title">自定义样式</div>
+                    <textarea id="extra_css" class="prefs_textarea" placeholder="自定义样式"></textarea>
+                </div>
+            </div>
+            <div id="setting_table2">
+                <div class="form-row" title="详见脚本代码的 Rule.specialSite">
+                    <div class="prefs_title">自定义站点规则</div>
+                    <textarea id="custom_siteinfo" class="prefs_textarea" placeholder="自定义站点规则" />
+                </div>
+                <div class="form-row" title="一行一个，每行的第一个 = 为分隔符。\n需要刷新页面生效">
+                    <div class="prefs_title">自定义替换规则</div>
+                    <textarea id="custom_replace_rules" class="prefs_textarea" placeholder="b[āà]ng=棒" />
+                </div>
+            </div>
+        </form>
+         */
+    }.getMStr().uiTrans().replace(/\\n/g, '\n'),
+    preferencesCSS: function(){
+        /*
+        .body {
+             color:#333;
+             margin: 0 auto;
+             background: white;
+             padding: 10px;
+             height: 420px;
+             overflow-y: auto;
+         }
+         #top-buttons {
+             background: none repeat scroll 0% 0% rgb(255, 255, 255);
+             display: block;
+             position: absolute;
+             top: -35px;
+             border-right: 12px solid rgb(224, 224, 224);
+             border-top: 12px solid rgb(224, 224, 224);
+             border-left: 12px solid rgb(224, 224, 224);
+             text-align: center;
+         }
+         input {
+             font-size: 12px;
+             margin-right: 3px;
+             vertical-align: middle;
+         }
+         .form-row {
+             overflow: hidden;
+             padding: 8px 12px;
+             margin-top: 3px;
+             font-size: 11px;
+         }
+         .form-row label {
+             padding-right: 10px;
+         }
+         .form-row input {
+             vertical-align: middle;
+             margin-top: 0px;
+         }
+         textarea, .form-row input {
+             padding: 2px 4px;
+             border: 1px solid #e5e5e5;
+             background: #fff;
+             border-radius: 4px;
+             color: #666;
+             -webkit-transition: all linear .2s;
+             transition: all linear .2s;
+         }
+         textarea {
+             width: 100%;
+             overflow: auto;
+             vertical-align: top;
+         }
+         textarea:focus, input:focus {
+             border-color: #99baca;
+             outline: 0;
+             background: #f5fbfe;
+             color: #666;
+         }
+         .prefs_title {
+             font-size: 12px;
+             font-weight: bold;
+         }
+         .prefs_textarea {
+             font-size: 12px;
+             margin-top: 5px;
+             height: 100px;
+         }
+         */
+    }.getMStr(),
+};
+
 
 
 function Parser(){
@@ -1751,7 +2598,7 @@ Parser.prototype = {
 
            bookTitle = this.getTitleFromInfo(info.bookTitleSelector);
         }
-         
+
         if(!chapterTitle){
             chapterTitle = this.autoGetChapterTitle(this.doc);
         }
@@ -1765,7 +2612,7 @@ Parser.prototype = {
                 .replace(Rule.titleReplace, "")
                 .trim()
                 // .replace(/(第?\S+?[章节卷回])(.*)/, "$1 $2");
-        
+
         if (info.trimBookTitle !== false) {
             chapterTitle = chapterTitle.replace(bookTitle, '').trim();
         }
@@ -1990,7 +2837,7 @@ Parser.prototype = {
             text = this.contentReplacements(text);
 
             // 还原图片
-            text = nano(text, imgs);
+            text = $.nano(text, imgs);
         }
 
         /* Turn all double br's into p's */
@@ -2264,843 +3111,6 @@ Parser.prototype = {
         return a.href;
     },
 };
-
-var UI = {
-    tpl_footer_nav: '\
-        <div class="chapter-footer-nav">\
-            <a class="prev-page" href="{prevUrl}">上一页</a> | \
-            <a class="index-page" href="{indexUrl}" title="Enter 键打开目录">目录</a> | \
-            <a class="next-page" style="color:{theEndColor}" href="{nextUrl}">下一页</a>\
-        </div>\
-        '.uiTrans(),
-    skins: {},
-
-    init: function(){
-        UI.refreshMainStyle();
-
-        UI.refreshSkinStyle(Config.skin_name, true);
-
-        UI.refreshExtraStyle(Config.extra_css);
-
-        UI.fixMobile();
-
-        // 初始化是否隐藏
-        if(Config.hide_footer_nav){
-            UI.hideFooterNavStyle(true);
-        }
-
-        // UI.toggleQuietMode();  // 初始化安静模式
-        UI.hideMenuList(Config.menu_list_hiddden);  // 初始化章节列表是否隐藏
-        UI.hidePreferencesButton(Config.hide_preferences_button);  // 初始化设置按钮是否隐藏
-    },
-    refreshMainStyle: function(){
-        if(UI.mainStyle){
-            $(UI.mainStyle).remove();
-        }
-
-        UI.mainStyle = GM_addStyle(
-            Res.CSS_MAIN
-                .replace("{font_family}", Config.font_family)
-                .replace("{font_size}", Config.font_size)
-                .replace("{title_font_size}", UI.calcTitleFontSize(Config.font_size))
-                .replace("{content_width}", Config.content_width)
-                .replace("{text_line_height}", Config.text_line_height)
-                .replace("{menu-bar-hidden}", Config.menu_bar_hidden ? "display:none;" : "")
-        );
-    },
-    hideFooterNavStyle: function(hidden){
-        var navStyle = $("#footer_nav_css");
-        if(hidden) {
-            if(navStyle.length === 0) {
-                $('<style>')
-                    .attr("id", "footer_nav_css")
-                    .text(".chapter-footer-nav { display: none; }")
-                    .appendTo('head');
-            }
-        } else {
-            navStyle.remove();
-        }
-    },
-    hideMenuList: function(hidden){
-        if(typeof(hidden) === "undefined"){
-            hidden = !UI.menu_list_hiddden;
-        }
-
-        if(hidden){
-            App.$menu.addClass('hidden');
-            App.$content.css("margin-left", "");
-        }else{
-            App.$menu.removeClass('hidden');
-            App.$content.css("margin-left", "320px");
-        }
-        UI.menu_list_hiddden = hidden;
-    },
-    hidePreferencesButton: function(hidden) {
-        hidden = _.isUndefined(hidden) ? Config.hide_preferences_button : hidden;
-        
-        App.$preferencesBtn.toggle(!hidden);
-    },
-    hideMenuBar: function(hidden) {
-        hidden = _.isUndefined(hidden) ? Config.menu_bar_hidden : hidden;
-        
-        App.$menuBar.toggle(!hidden);
-    },
-    refreshSkinStyle: function(skin_name, isFirst){
-        var style = $("#skin_style");
-        if(style.length === 0){
-            style = $('<style id="skin_style">').appendTo('head');
-        }
-
-        if (isFirst && Config.picNightModeCheck && skin_name.indexOf('夜间'.uiTrans()) != -1) {  // 图片章节夜间模式有问题
-            var img = $('#mynovelreader-content img')[0];
-            if (img && img.width > 500 && img.height > 1000) {
-                style.text(UI.skins['缺省皮肤'.uiTrans()]);
-                return;
-            }
-        }
-
-        style.text(UI.skins[skin_name]);
-    },
-    refreshExtraStyle: function(css){
-        var style = $("#extra_style");
-        if(style.length === 0){
-            style = $('<style id="extra_style">').appendTo('head');
-        }
-
-        style.text(css);
-    },
-    toggleQuietMode: function(isQuietMode) {
-        if (_.isUndefined(isQuietMode)){
-            isQuietMode = Config.isQuietMode;
-        }
-        
-        if (isQuietMode) {
-            $('#menu-bar, #menu').addClass("quiet-mode");
-        } else {
-            $('#menu-bar, #menu').removeClass("quiet-mode");
-        }
-    },
-    addButton: function(){
-        GM_addStyle('\
-            .readerbtn {\
-                position: fixed;\
-                right: 10px;\
-                bottom: 10px;\
-                z-index: 1597;\
-                padding: 20px 5px;\
-                width: 50px;\
-                height: 20px;\
-                line-height: 20px;\
-                text-align: center;\
-                border: 1px solid;\
-                border-color: #888;\
-                border-radius: 50%;\
-                background: rgba(0,0,0,.5);\
-                color: #FFF;\
-                font: 12px/1.5 "微软雅黑","宋体",Arial;\
-                cursor: pointer;\
-            }\
-        ');
-
-        $("<div>")
-            .addClass("readerbtn")
-            .html(App.isEnabled ? "退出".uiTrans() : "阅读模式".uiTrans())
-            .mousedown(function(event){
-                if(event.which == 1){
-                    App.toggle();
-                }else if(event.which == 2){
-                    event.preventDefault();
-                    L_setValue("mynoverlreader_disable_once", true);
-
-                    var url = App.activeUrl || App.curPageUrl;
-                    App.openUrl(url);
-                }
-            })
-            .appendTo('body');
-    },
-    calcTitleFontSize: function(contentFontSizeStr){
-        var m = contentFontSizeStr.match(/([\d\.]+)(px|em|pt)/);
-        if(m) {
-            var size = m[1],
-                type = m[2];
-            return parseInt(size, 10) * 1.88 + type;
-        }
-
-        return "";
-    },
-    fixMobile: function(){  // 自适应网页设计
-        var meta = document.createElement("meta");
-        meta.setAttribute("name", "viewport");
-        meta.setAttribute("content", "width=device-width, initial-scale=1");
-        document.head.appendChild(meta);
-    },
-    preferencesCSS: getMStr(function(){
-        /*
-        .body {
-             color:#333;
-             margin: 0 auto;
-             background: white;
-             padding: 10px;
-             height: 420px;
-             overflow-y: auto;
-         }
-         #top-buttons {
-             background: none repeat scroll 0% 0% rgb(255, 255, 255);
-             display: block;
-             position: absolute;
-             top: -35px;
-             border-right: 12px solid rgb(224, 224, 224);
-             border-top: 12px solid rgb(224, 224, 224);
-             border-left: 12px solid rgb(224, 224, 224);
-             text-align: center;
-         }
-         input {
-             font-size: 12px;
-             margin-right: 3px;
-             vertical-align: middle;
-         }
-         .form-row {
-             overflow: hidden;
-             padding: 8px 12px;
-             margin-top: 3px;
-             font-size: 11px;
-         }
-         .form-row label {
-             padding-right: 10px;
-         }
-         .form-row input {
-             vertical-align: middle;
-             margin-top: 0px;
-         }
-         textarea, .form-row input {
-             padding: 2px 4px;
-             border: 1px solid #e5e5e5;
-             background: #fff;
-             border-radius: 4px;
-             color: #666;
-             -webkit-transition: all linear .2s;
-             transition: all linear .2s;
-         }
-         textarea {
-             width: 100%;
-             overflow: auto;
-             vertical-align: top;
-         }
-         textarea:focus, input:focus {
-             border-color: #99baca;
-             outline: 0;
-             background: #f5fbfe;
-             color: #666;
-         }
-         .prefs_title {
-             font-size: 12px;
-             font-weight: bold;
-         }
-         .prefs_textarea {
-             font-size: 12px;
-             margin-top: 5px;
-             height: 100px;
-         }
-         */
-    }),
-    preferencesHTML: getMStr(function(){
-        /*
-        <form id="preferences" name="preferences">
-            <div id="setting_table1">
-                <span id="top-buttons">
-                    <input title="部分选项需要刷新页面才能生效" id="save_button" value="√ 确认" type="button">
-                    <input title="取消本次设定，所有选项还原" id="close_button" value="X 取消" type="button">
-                </span>
-                <div class="form-row">
-                    <label>
-                        界面语言<select id="lang">
-                        </select>
-                    </label>
-                    <label title="將小說網頁文字轉換為繁體。\n\n注意：內建的繁簡轉換表，只收錄了簡單的單字轉換，啟用本功能後，如有錯誤轉換的情形，請利用腳本的自訂字詞取代規則來修正。\n例如：「千里之外」，會錯誤轉換成「千裡之外」，你可以加入規則「千裡之外=千里之外」來自行修正。">
-                        <input type="checkbox" id="enable-cn2tw" name="enable-cn2tw"/>网页：转繁体
-                    </label>
-                </div>
-                <div class="form-row">
-                    <label title="不影响 booklink.me 的启用">
-                        <input type="checkbox" id="disable-auto-launch" name="disable-auto-launch"/>强制手动启用
-                    </label>
-                    <label title="booklink.me 点击的网站强制启用">
-                        <input type="checkbox" id="booklink-enable" name="booklink-enable"/>booklink 自动启用
-                    </label>
-                    <label>
-                        <input type="checkbox" id="debug" name="debug"/>调试模式
-                    </label>
-                    <a href="https://greasyfork.org/scripts/292-my-novel-reader/feedback" target="_blank">反馈地址</a>
-                </div>
-                <div class="form-row">
-                    <label title="图片章节用夜间模式没法看，这个选项在启动时会自动切换到缺省皮肤">
-                        <input type="checkbox" id="pic-nightmode-check" name="pic-nightmode-check"/>
-                        <b>（测试）</b>夜间模式的图片章节检测
-                    </label>
-                </div>
-                <div class="form-row">
-                    <label title="通过快捷键切换">
-                        <input type="checkbox" id="hide-menu-list"/>隐藏左侧章节列表
-                    </label>
-                    <label>
-                        <input type="checkbox" id="hide-footer-nav"/>隐藏底部导航栏
-                    </label>
-                </div>
-                <div class="form-row">
-                    <label>
-                        <input type="checkbox" id="hide-menu-bar"/>隐藏左侧导航条
-                    </label>
-                    <label>
-                        <input type="button" id="setHideMenuListKey" style="color:red" />
-                    </label>
-                    <label title="通过快捷键切换或在 Greasemonkey 用户脚本命令处打开设置窗口">
-                        <input type="checkbox" id="hide-preferences-button"/>隐藏设置按钮
-                    </label>
-                    <label>
-                        <input type="button" id="openPreferences" style="color:red" />
-                    </label>
-                </div>
-                <div class="form-row" style="display:none">
-                    <label>
-                        <input type="checkbox" id="quietMode"/>安静模式
-                    </label>
-                    <label>
-                        调用阅读器
-                        <input type="button" id="launchReader" style="color:red" />
-                    </label>
-                </div>
-                <div class="form-row">
-                    <label>
-                        距离底部
-                        <input type="textbox" id="remain-height" name="remain-height" size="5"/>
-                        px 加载下一页
-                    </label>
-                    <label>
-                        <input type="checkbox" id="add-nextpage-to-history"/>添加下一页到历史记录
-                    </label>
-                    <label>
-                        <input type="checkbox" id="enable-dblclick-pause"/>双击暂停翻页
-                    </label>
-                </div>
-                <div class="form-row">
-                    <label>
-                        <select id="skin">
-                        </select>
-                    </label>
-                    <label>
-                        字体
-                        <input type="textbox" id="font-family" style="width:250px;"/>
-                    </label>
-                    <br/><br/>
-                    <label>
-                        字体大小
-                        <input type="textbox" id="font-size" name="font-size" size="6"/>
-                    </label>
-                    <label>
-                        行高
-                        <input type="textbox" id="text_line_height" size="6"/>
-                    </label>
-                    <label>
-                        行宽
-                        <input type="textbox" id="content_width" size="6"/>
-                    </label>
-                </div>
-                <div class="form-row">
-                    <div class="prefs_title">自定义样式</div>
-                    <textarea id="extra_css" class="prefs_textarea" placeholder="自定义样式"></textarea>
-                </div>
-            </div>
-            <div id="setting_table2">
-                <div class="form-row" title="详见脚本代码的 Rule.specialSite">
-                    <div class="prefs_title">自定义站点规则</div>
-                    <textarea id="custom_siteinfo" class="prefs_textarea" placeholder="自定义站点规则" />
-                </div>
-                <div class="form-row" title="一行一个，每行第一个 = 为分隔符\n需要刷新页面生效">
-                    <div class="prefs_title">自定义替换规则</div>
-                    <textarea id="custom_replace_rules" class="prefs_textarea" placeholder="自定义替换规则" />
-                </div>
-            </div>
-        </form>
-         */
-    }).uiTrans(),
-    preferencesShow: function(event){
-        if(event){
-            try {  // Greasemonkey 从菜单点击会错误
-                event.preventDefault();
-                event.stopPropagation();
-            }catch(ex) {}
-        }
-
-        if($("#reader_preferences").length){
-            return;
-        }
-
-        this._loadBlocker();
-
-        UI.$prefs = $('<div id="reader_preferences">')
-            .css('cssText', 'position:fixed; top:12%; left:30%; width:500px; z-index:30000;')
-            .append(
-                $('<style>').text(this.preferencesCSS))
-            .append(
-                $('<div class="body">').html(this.preferencesHTML))
-            .appendTo("body");
-
-        UI.preferencesLoadHandler();
-    },
-    _loadBlocker: function() {
-        if (UI.$blocker == null) {
-            UI.$blocker = $('<div>').attr({
-                id: 'uil_blocker',
-                style: 'position:fixed;top:0px;left:0px;right:0px;bottom:0px;background-color:#000;opacity:0.5;z-index:10000;'
-            }).appendTo($('body'));
-        }
-    },
-    hide: function(){
-        if(UI.$prefs) UI.$prefs.remove();
-        if(UI.$blocker) UI.$blocker.remove();
-        UI.$prefs = null;
-        UI.$blocker = null;
-    },
-    preferencesLoadHandler: function(){
-        var $form = $("#preferences");
-
-        // checkbox
-        $form.find("#enable-cn2tw").get(0).checked = Config.cn2tw;
-        $form.find("#disable-auto-launch").get(0).checked = Config.getDisableAutoLaunch();
-        $form.find("#booklink-enable").get(0).checked = Config.booklink_enable;
-        $form.find("#debug").get(0).checked = Config.debug;
-        $form.find("#quietMode").get(0).checked = Config.isQuietMode;
-        $form.find("#pic-nightmode-check").get(0).checked = Config.picNightModeCheck;
-
-        $form.find("#hide-menu-list").get(0).checked = Config.menu_list_hiddden;
-        $form.find("#hide-menu-bar").get(0).checked = Config.menu_bar_hidden;
-        $form.find("#hide-footer-nav").get(0).checked = Config.hide_footer_nav;
-        $form.find("#hide-preferences-button").get(0).checked = Config.hide_preferences_button;
-        $form.find("#add-nextpage-to-history").get(0).checked = Config.addToHistory;
-        $form.find("#enable-dblclick-pause").get(0).checked = Config.dblclickPause;
-
-        $form.find("#font-family").get(0).value = Config.font_family;
-        $form.find("#font-size").get(0).value = Config.font_size;
-        $form.find("#content_width").get(0).value = Config.content_width;
-        $form.find("#text_line_height").get(0).value = Config.text_line_height;
-
-        $form.find("#remain-height").get(0).value = Config.remain_height;
-        $form.find("#extra_css").get(0).value = Config.extra_css;
-        $form.find("#custom_siteinfo").get(0).value = Config.customSiteinfo;
-        $form.find("#custom_replace_rules").get(0).value = Config.customReplaceRules;
-
-        // 界面语言
-        var $lang = $form.find("#lang");
-        $("<option>").text("zh-CN").appendTo($lang);
-        $("<option>").text("zh-TW").appendTo($lang);
-        $lang.val(Config.lang).change(function(){
-            var key = $(this).find("option:selected").text();
-            Config.lang = key;
-        });
-
-        // 皮肤
-        var $skin = $form.find("#skin");
-        for(var key in UI.skins){
-            $("<option>").text(key).appendTo($skin);
-        }
-        $skin.val(Config.skin_name).change(function(){
-            var key = $(this).find("option:selected").text();
-            UI.refreshSkinStyle(key);
-            Config.skin_name = key;
-        });
-
-        // 字体大小等预览
-        var preview = _.debounce(function(){
-            switch(this.id){
-                case "font-size":
-                    var titleFontSize = UI.calcTitleFontSize(this.value);
-                    if(titleFontSize) {
-                        App.$content.css("font-size", this.value);
-                        App.$content.find("h1").css("font-size", titleFontSize);
-                    }
-                    break;
-                case "font-family":
-                    App.$content.css("font-family", this.value);
-                    break;
-                case "content_width":
-                    App.$content.css("width", this.value);
-                    break;
-                case "text_line_height":
-                    App.$content.css("line-height", this.value);
-                    break;
-                default:
-                    break;
-            }
-            // UI.refreshMainStyle();
-        }, 300);
-        $form.on("input", "input", preview);
-
-        // 初始化设置按键
-        $form.find("#openPreferences").get(0).value = Config.openPreferencesKey;
-        $form.find("#setHideMenuListKey").get(0).value = Config.hideMenuListKey;
-
-        // 点击事件
-        $form.on('click', 'input:checkbox, input:button', function(event){
-            UI.preferencesClickHandler(event.target);
-        });
-    },
-    preferencesClickHandler: function(target){
-        switch (target.id) {
-            case 'close_button':
-                UI.preferencesCloseHandler();
-                break;
-            case 'save_button':
-                UI.preferencesSaveHandler();
-                break;
-            case 'debug':
-                debug = target.checked ? console.log.bind(console) : function() {};
-                break;
-            case 'quietMode':
-                UI.toggleQuietMode(target.checked);
-                break;
-            case 'hide-menu-list':
-                UI.hideMenuList(target.checked);
-                break;
-            case 'hide-preferences-button':
-                UI.hidePreferencesButton(target.checked);
-                if (target.checked) {
-                    alert('隐藏后通过快捷键或 Greasemonkey 用户脚本命令处调用'.uiTrans());
-                }
-                break;
-            case 'hide-menu-bar':
-                UI.hideMenuBar(target.checked);
-                break;
-            case 'hide-footer-nav':
-                break;
-            case 'openPreferences':
-                var key = prompt('请输入打开设置的快捷键：'.uiTrans(), Config.openPreferencesKey);
-                if (key) {
-                    Config.openPreferencesKey = key;
-                    $(target).val(key);
-                }
-                break;
-            case 'setHideMenuListKey':
-                var key = prompt('请输入切换左侧章节列表的快捷键：'.uiTrans(), Config.hideMenuListKey);
-                if (key) {
-                    Config.hideMenuListKey = key;
-                    $(target).val(key);
-                }
-                break;
-            default:
-                break;
-        }
-    },
-    preferencesCloseHandler: function(){
-        // App.$content.removeAttr("style");
-        App.$content.find("h1").css("font-size", "");
-
-        UI.hide();
-    },
-    preferencesSaveHandler: function(){
-        var $form = $("#preferences");
-
-        var form = document.getElementById('preferences');
-
-        Config.setDisableAutoLaunch(form.elements.namedItem("disable-auto-launch").checked)
-
-        Config.cn2tw = $form.find("#enable-cn2tw").get(0).checked;
-        Config.booklink_enable = $form.find("#booklink-enable").get(0).checked;
-        Config.isQuietMode = $form.find("#quietMode").get(0).checked;
-        Config.debug = $form.find("#debug").get(0).checked;
-        Config.picNightModeCheck = $form.find("#pic-nightmode-check").get(0).checked;
-
-        Config.addToHistory = $form.find("#add-nextpage-to-history").get(0).checked;
-        Config.dblclickPause = $form.find("#enable-dblclick-pause").get(0).checked;
-
-        Config.skin_name = $form.find("#skin").find("option:selected").text();
-        Config.font_family = $form.find("#font-family").get(0).value;
-        App.$content.css("font-family", Config.font_family);
-
-        Config.font_size = $form.find("#font-size").get(0).value;
-        Config.text_line_height = $form.find("#text_line_height").get(0).value;
-        Config.content_width = $form.find("#content_width").get(0).value;
-        Config.remain_height = $form.find("#remain-height").get(0).value;
-
-        Config.menu_list_hiddden = $form.find("#hide-menu-list").get(0).checked;
-        UI.hideMenuList(Config.menu_list_hiddden);
-
-        Config.menu_bar_hidden = $form.find("#hide-menu-bar").get(0).checked;
-        Config.hide_footer_nav = $form.find("#hide-footer-nav").get(0).checked;
-        Config.hide_preferences_button = $form.find("#hide-preferences-button").get(0).checked;
-
-        var css = $form.find("#extra_css").get(0).value;
-        UI.refreshExtraStyle(css);
-        Config.extra_css = css;
-
-        Config.customSiteinfo = $form.find("#custom_siteinfo").get(0).value;
-        Config.customReplaceRules = $form.find("#custom_replace_rules").get(0).value;
-
-        UI.hide();
-    },
-    notice: function (htmlText){
-        var $noticeDiv = $("#alert");
-
-        clearTimeout(UI.noticeDivto);
-        $noticeDiv.find("p").html(htmlText);
-        $noticeDiv.fadeIn("fast");
-
-        UI.noticeDivto = setTimeout(function(){
-            $noticeDiv.fadeOut(500);
-        },1666);
-
-        return $noticeDiv;
-    }
-};
-
-UI.skins["缺省皮肤".uiTrans()] = "";
-UI.skins["暗色皮肤".uiTrans()] = "body { color: #666; background: rgba(0;0;0;.1); }\
-                .title { color: #222; }";
-UI.skins["白底黑字".uiTrans()] = "body { color: black; background: white;}\
-                .title { font-weight: bold; border-bottom: 0.1em solid; margin-bottom: 1.857em; padding-bottom: 0.857em;}";
-UI.skins["夜间模式".uiTrans()] = "body { color: #e3e3e3; background: #2d2d2d; } #preferencesBtn { background: white; }";
-UI.skins["夜间模式2".uiTrans()] = "body { color: #679; background: black; } #preferencesBtn { background: white; }";
-UI.skins["橙色背景".uiTrans()] = "body { color: #24272c; background: #FEF0E1; }";
-UI.skins["绿色背景".uiTrans()] = "body { color: black; background: #d8e2c8; }";
-UI.skins["绿色背景2".uiTrans()] = "body { color: black; background: #CCE8CF; }";
-UI.skins["蓝色背景".uiTrans()] = "body { color: black; background: #E7F4FE; }";
-UI.skins["棕黄背景".uiTrans()] = "body { color: black; background: #C2A886; }";
-UI.skins["经典皮肤".uiTrans()] = "body { color: black; background-color: #EAEAEE; } .title { background: #f0f0f0; }";
-
-
-var fontawesomeWoff = GM_getResourceURL('fontawesomeWoff');
-if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
-    fontawesomeWoff = "http://libs.baidu.com/fontawesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3";
-} else if (isChrome) {
-    fontawesomeWoff = "data:font/woff;charset=utf-8;base64," + fontawesomeWoff;
-}
-
-
-var Res = {
-    CSS_MAIN: getMStr(function() {
-        /*
-        @font-face {
-            font-family: "FontAwesome";
-            src: url({fontawesomeWoff});
-            font-weight: normal;
-            font-style: normal;
-        }
-        body > a { display:none !important; }
-        .hidden {
-            display: none;
-        }
-        .quiet-mode {
-            display: none;
-        }
-        body {
-            background: #F3F2EE;
-            color: #1F0909;
-            padding: 0px;
-            margin: 0px;
-            font-family: "Microsoft YaHei UI", 微软雅黑, 新宋体, 宋体, arial;
-        }
-        a { color: #065488; }
-        a:link { text-decoration: none; }
-        #mynovelreader-content {
-            width: {content_width};
-            font-size: {font_size};
-            font-family: {font_family};
-            line-height: {text_line_height};
-            margin-left:auto;
-            margin-right:auto;
-            padding-bottom: 15px;
-        }
-        article {
-            margin-top: 55px;
-            word-wrap: break-word;
-        }
-        article h1 {
-            clear: both;
-            line-height: 50px;
-            font-size: {title_font_size};
-            font-weight: normal;
-            margin: 25px -20px;
-            padding: 0 20px 10px;
-            border-bottom: 1px solid rgba(0,0,0,.25);
-            font-weight: normal;
-            text-transform: none;
-        }
-        .chapter-footer-nav {
-            text-align:center;
-            font-size:0.9em;
-            margin:-10px 0px 30px 0px;
-        }
-        #loading {
-            color: white;
-            text-align: center;
-            font: 12px "微软雅黑", "宋体", "Times New Roman", "Verdana";
-            margin-top: 20px;
-            margin-left: auto;
-            margin-right: auto;
-            width: 376px;
-            height: 32px;
-            line-height: 32px;
-            border-radius: 20px;
-            border: 1px solid #666;
-            background-color: #333;
-        }
-        #loading img {
-            vertical-align: middle;
-        }
-        #loading a {
-            color: white;
-        }
-        #preferencesBtn{
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            z-index: 1597;
-        }
-        #alert {
-            position: fixed;
-            z-index: 100;
-            float: auto;
-            width: auto;
-            height: auto;
-            top: 10px;
-            left: 500px;
-            background: rgba(215, 240, 253, 0.65);
-            color: #2d7091;
-            border: 1px solid rgba(45,112,145,0.3);
-            border-radius: 4px;
-            text-shadow: 0 1px 0 #fff;
-        }
-        #alert p {
-            font-size: 13px;
-            margin: 6px;
-        }
-        img.blockImage {clear: both;float: none;display: block;margin-left: auto;margin-right: auto;}
-        #menu-bar {
-            border: solid rgba(0, 100, 255, .9);
-            border-width: 3px 2px 3px 0px;
-            position: fixed;
-            left: 0px;
-            top: 40%;
-            height: 100px;
-            width: 2px;
-            z-index: 199;
-            {menu-bar-hidden}
-        }
-        #menu {
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            z-index: 100;
-            width: 270px;
-            max-width: 100%;
-            background: #333;
-            overflow-y: auto;
-        }
-        #menu:after {
-            content: "";
-            display: block;
-            position: absolute;
-            top: 46px;
-            bottom: 0;
-            right: 0;
-            width: 1px;
-            background: rgba(0,0,0,0.6);
-            box-shadow: 0 0 5px 2px rgba(0,0,0,0.6);
-        }
-        #header{
-            color: #777;
-            margin-top: 0;
-            border-top: 1px solid rgba(0,0,0,0.3);
-            background: #404040;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
-            text-shadow: 0 1px 0 rgba(0,0,0,0.5);
-            padding: 10px 12px;
-            text-transform: uppercase;
-            font-weight: bold;
-            font-size: 20px;
-        }
-        #header a {
-            color: #777777;
-        }
-        #divider {
-            position: relative;
-            z-index: 300;
-            border-top: 1px solid rgba(255,255,255,0.01);
-            border-bottom: 1px solid rgba(0,0,0,0.3);
-            margin: 0;
-            height: 4px;
-            background: rgba(0,0,0,0.2);
-            box-shadow: 0 1px 0 rgba(255,255,255,0.05), inset 0 1px 3px rgba(0,0,0,0.3);
-        }
-        #chapter-list {
-            position: relative;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            z-index: 200;
-            margin: 0;
-            padding: 0;
-            cursor: pointer;
-            list-style: none;
-            overflow-y: auto;
-        }
-        .chapter {
-            list-style: none;
-        }
-        .chapter:last-child {
-            border-bottom: 1px solid rgba(0,0,0,0.3);
-            box-shadow: 0 1px 0 rgba(255,255,255,0.05);
-        }
-        .chapter div {
-            color: #ccc;
-            font-size: 15px;
-            padding: 8px 20px;
-            border-top: 1px solid rgba(0,0,0,0.3);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
-            text-shadow: 0 1px 0 rgba(0,0,0,0.5);
-            display: block;
-            text-decoration: none;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
-            cursor: pointer;
-        }
-        .chapter div:before {
-            content: "\f105";
-            width: 20px;
-            margin-left: -10px;
-            float: left;
-            font-family: "FontAwesome";
-            text-align: center;
-        }
-        .chapter div:hover {
-            background: #404040;
-            color: #fff;
-            outline: 0;
-        }
-        .chapter.active div {
-            background: #1a1a1a;
-            color: #fff;
-            font-size: 16px;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
-        }
-        ::-webkit-scrollbar {
-            height: 9px !important;
-            width: 9px !important;
-        }
-        ::-webkit-scrollbar-thumb {
-            background-color: #7D7D7D !important;
-            border-radius: 3px !important;
-        }
-        ::-webkit-scrollbar-track-piece {
-            background-color: rgba(0,0,0,.25) !important;
-        }
-         */
-    }).replace('{fontawesomeWoff}', fontawesomeWoff),
-};
-
-
-
 var App = {
     isEnabled: false,
     parsedPages: {},
@@ -3111,8 +3121,12 @@ var App = {
     iframe: null,
     remove: [],
 
-    init: function(){
-        if(App.isLaunched) return;
+    init: function() {
+        if (["mynovelreader-iframe", "superpreloader-iframe"].indexOf(window.name) != -1) { // 用于加载下一页的 iframe
+            return;
+        }
+
+        if (App.isLaunched) return;
         App.isLaunched = true;
 
         App.loadCustomSetting();
@@ -3138,7 +3152,7 @@ var App = {
         var customRules;
         try {
             customRules = eval(Config.customSiteinfo);
-        } catch(e) {
+        } catch (e) {
             console.error('载入自定义站点配置错误', e)
         }
         if (_.isArray(customRules)) {
@@ -3150,7 +3164,7 @@ var App = {
         var parseCustomReplaceRules = function(str) {
             var arr = str.split(/\n/);
             var rules = {};
-            _.each(arr, function(b){
+            _.each(arr, function(b) {
                 var pos = b.indexOf('=');
                 if (pos === -1) return;
 
@@ -3165,12 +3179,14 @@ var App = {
 
         debug('载入自定义替换规则成功', Rule.customReplace);
     },
-    getCurSiteInfo: function (){
+    getCurSiteInfo: function() {
         var rules = Rule.customRules.concat(Rule.specialSite);
         var locationHref = location.href;
 
-        var info = _.find(rules, function(x){ return toRE(x.url).test(locationHref); });
-        if(!info){
+        var info = _.find(rules, function(x) {
+            return toRE(x.url).test(locationHref);
+        });
+        if (!info) {
             info = {};
             debug("没有找到规则，尝试自动模式。");
         } else {
@@ -3178,15 +3194,15 @@ var App = {
         }
         return info;
     },
-    isAutoLaunch: function (){
+    isAutoLaunch: function() {
         var locationHref = window.location.href,
             referrer = document.referrer;
-        switch(true){
+        switch (true) {
             case L_getValue("mynoverlreader_disable_once") == 'true':
                 L_removeValue("mynoverlreader_disable_once");
                 return false;
-            // case location.hostname == 'www.fkzww.net' && !document.title.match(/网文快讯/):  // 啃书只自动启用一个地方
-            //     return false;
+                // case location.hostname == 'www.fkzww.net' && !document.title.match(/网文快讯/):  // 啃书只自动启用一个地方
+                //     return false;
             case Config.booklink_enable && /booklink\.me/.test(referrer):
                 return true;
             case Config.getDisableAutoLaunch():
@@ -3198,38 +3214,42 @@ var App = {
                 return false;
         }
     },
-    addMutationObserve: function(doc, callback){
+    addMutationObserve: function(doc, callback) {
         var shouldAdd = false;
         var selector = App.site.mutationSelector;
         var target = $(doc).find(selector)[0];
         if (target) {
             var childCount = App.site.mutationChildCount;
-            if(childCount == undefined || target.children.length <= childCount){
+            if (childCount == undefined || target.children.length <= childCount) {
                 shouldAdd = true;
             }
         }
 
         if (shouldAdd) {
-            var observer = new MutationObserver(function(mutations){
-                var nodeAdded = mutations.some(function(x){ return x.addedNodes.length > 0; });
+            var observer = new MutationObserver(function(mutations) {
+                var nodeAdded = mutations.some(function(x) {
+                    return x.addedNodes.length > 0;
+                });
                 if (nodeAdded) {
                     observer.disconnect();
                     callback();
                 }
             });
-            observer.observe(target, {childList: true});
+            observer.observe(target, {
+                childList: true
+            });
             debug("添加 MutationObserve 成功：", selector);
         } else {
             callback();
         }
     },
-    launch: function(){
+    launch: function() {
         // 只解析一次，防止多次重复解析一个页面
-        if(document.body && document.body.getAttribute("name") == "MyNovelReader"){
+        if (document.body && document.body.getAttribute("name") == "MyNovelReader") {
             return App.toggle();
         }
 
-       if(!App.site){
+        if (!App.site) {
             App.site = App.getCurSiteInfo();
         }
 
@@ -3238,14 +3258,14 @@ var App = {
         if (hasContent) {
             document.body.setAttribute("name", "MyNovelReader");
             App.parsedPages[window.location.href.replace(/\/$/, '')] = true;
-            parser.getAll(function(parser){
+            parser.getAll(function(parser) {
                 App.processPage(parser);
             });
         } else {
             console.error("当前页面没有找到内容");
         }
     },
-    processPage: function(parser){
+    processPage: function(parser) {
         App.prepDocument();
 
         App.initDocument(parser);
@@ -3262,19 +3282,19 @@ var App = {
         App.$chapterList = App.$menu.find("#chapter-list");
 
         App.indexUrl = parser.indexUrl;
-        App.prevUrl = parser.prevUrl;  // 第一个上一页
+        App.prevUrl = parser.prevUrl; // 第一个上一页
 
         // 加入上一章的链接
-        if(parser.prevUrl){
+        if (parser.prevUrl) {
             $("<li>")
                 .addClass('chapter')
                 .append(
                     $("<div>")
-                        .attr({
-                            "real-href": parser.prevUrl,
-                            "onclick": "return false;"
-                        })
-                        .text("上一章".uiTrans())
+                    .attr({
+                        "realHref": parser.prevUrl,
+                        "onclick": "return false;"
+                    })
+                    .text("上一章".uiTrans())
                 )
                 .prependTo(App.$chapterList);
         }
@@ -3287,11 +3307,11 @@ var App = {
         App.appendPage(parser, true);
 
         App.registerControls();
-        
+
         // UI 的初始化
         UI.init();
 
-        App.curFocusElement = $("article:first").get(0);  // 初始化当前关注的 element
+        App.curFocusElement = $("article:first").get(0); // 初始化当前关注的 element
         App.requestUrl = parser.nextUrl;
         App.isTheEnd = parser.isTheEnd;
 
@@ -3302,10 +3322,10 @@ var App = {
         setTimeout(App.scroll, 1000);
 
         // 再次移除其它不相关的，起点，纵横中文有时候有问题
-        var clean = function(){
+        var clean = function() {
             $('body > *:not("#container, .readerbtn, #reader_preferences, #uil_blocker,iframe[name=\'mynovelreader-iframe\']")').remove();
         };
-        
+
         setTimeout(clean, 2000);
         setTimeout(clean, 5000);
 
@@ -3328,7 +3348,7 @@ var App = {
         doc.onclick = doc.ondblclick = doc.onselectstart = doc.oncontextmenu = doc.onmousedown = doc.onkeydown = function() {
             return true;
         };
-        with(document.wrappedJSObject || document) {
+        with (document.wrappedJSObject || document) {
             onmouseup = null;
             onmousedown = null;
             oncontextmenu = null;
@@ -3347,10 +3367,10 @@ var App = {
         $('*').removeAttr('style');
         $('body').removeAttr('bgcolor');
     },
-    initDocument: function(parser){
+    initDocument: function(parser) {
         document.title = parser.docTitle;
         window.name = "MyNovelReader";
-        document.body.innerHTML = nano('\
+        document.body.innerHTML = $.nano('\
             <div id="container">\
                 <div id="menu-bar" title="点击显示隐藏章节列表"></div>\
                 <div id="menu">\
@@ -3372,29 +3392,29 @@ var App = {
             </div>\
         '.uiTrans(), parser);
     },
-    toggle: function(){
-        if(App.isEnabled){  // 退出
+    toggle: function() {
+        if (App.isEnabled) { // 退出
             GM_setValue("auto_enable", false);
             L_setValue("mynoverlreader_disable_once", "true");
 
             // unsafeWindow.location = App.curPageUrl;
             unsafeWindow.location = App.activeUrl;
-        }else{
+        } else {
             GM_setValue("auto_enable", true);
             L_removeValue("mynoverlreader_disable_once");
             App.isEnabled = true;
             App.launch();
         }
     },
-    removeListener: function(){
+    removeListener: function() {
         debug("移除各种事件监听");
-        App.remove.forEach(function(_remove){
+        App.remove.forEach(function(_remove) {
             _remove();
         });
     },
-    appendPage: function(parser, isFirst){
+    appendPage: function(parser, isFirst) {
         var chapter = $("article:last");
-        if(chapter.length && parser.isSection) {  // 每次获取的不是一章，而是一节
+        if (chapter.length && parser.isSection) { // 每次获取的不是一章，而是一节
             var lastText = chapter.find("p:last").remove().text().trim();
             var newPage = parser.content.replace(/<p>\s+/, "<p>" + lastText);
 
@@ -3403,8 +3423,8 @@ var App = {
                 .end()
                 .append(newPage);
 
-            if(!Config.hide_footer_nav){
-                chapter.append(nano(UI.tpl_footer_nav, parser))
+            if (!Config.hide_footer_nav) {
+                chapter.append($.nano(UI.tpl_footer_nav, parser))
             }
 
         } else {
@@ -3416,8 +3436,8 @@ var App = {
                 .append(parser.content)
                 .appendTo(App.$content);
 
-            if(!Config.hide_footer_nav){
-                chapter.append(nano(UI.tpl_footer_nav, parser))
+            if (!Config.hide_footer_nav) {
+                chapter.append($.nano(UI.tpl_footer_nav, parser))
             }
 
             // App.fixImageFloats(chapter.get(0));
@@ -3427,16 +3447,17 @@ var App = {
                 .addClass('chapter')
                 .append(
                     $("<div>")
-                        .attr({
-                            "href": "#page-" + App.pageNum,
-                            "real-href": parser.curPageUrl,
-                            "onclick": "return false;"
-                        })
-                        .text(parser.chapterTitle)
+                    .attr({
+                        href: "#page-" + App.pageNum,
+                        "realHref": parser.curPageUrl,
+                        onclick: "return false;",
+                        title: parser.chapterTitle
+                    })
+                    .text(parser.chapterTitle)
                 )
                 .prependTo(App.$chapterList);
 
-            if(isFirst){
+            if (isFirst) {
                 chapterItem.addClass('active');
             }
 
@@ -3446,61 +3467,61 @@ var App = {
             App.scrollItems = $("article");
         }
     },
-    registerControls: function(){
+    registerControls: function() {
         // 内容滚动
         var throttled = _.throttle(App.scroll, 100);
-        $(unsafeWindow).scroll(throttled);  // 奶牛和 TM 冲突，需要 unsafeWindow
+        $(unsafeWindow).scroll(throttled); // 奶牛和 TM 冲突，需要 unsafeWindow
 
         App.$doc.on("keydown", App.keydown);
 
         if (Config.dblclickPause) {
-            App.$content.on("dblclick", function(){
+            App.$content.on("dblclick", function() {
                 App.pauseHandler();
             });
         }
-        
+
         // 左侧章节列表
-        App.$menuHeader.click(function(){
+        App.$menuHeader.click(function() {
             App.copyCurTitle();
         });
 
-        App.$menuBar.click(function(){
+        App.$menuBar.click(function() {
             UI.hideMenuList();
         });
 
-        App.$doc.on("mousedown", "#chapter-list div", function(event){
-            switch(event.which){
+        App.$doc.on("mousedown", "#chapter-list div", function(event) {
+            switch (event.which) {
                 case 1:
                     var href = $(this).attr("href");
                     if (href) {
                         App.scrollToArticle($(href));
                     } else {
-                        location.href = $(this).attr("real-href");
+                        location.href = $(this).attr("realHref");
                     }
                     break;
-                case 2:  // middle click
+                case 2: // middle click
                     L_setValue("mynoverlreader_disable_once", true);
-                    App.openUrl($(this).attr("real-href"));
+                    App.openUrl($(this).attr("realHref"));
                     break;
             }
         });
 
-        $("#preferencesBtn").click(function(event){
+        $("#preferencesBtn").click(function(event) {
             event.preventDefault();
             UI.preferencesShow();
         });
 
         GM_registerMenuCommand("小说阅读脚本设置".uiTrans(), UI.preferencesShow.bind(UI));
     },
-    copyCurTitle: function(){
+    copyCurTitle: function() {
         var title = $(App.curFocusElement).find(".title").text()
-                .replace(/第?\S+章/, "").trim();
+            .replace(/第?\S+章/, "").trim();
         GM_setClipboard(title, "text");
     },
-    keydown: function(event){
+    keydown: function(event) {
         var tarNN = event.target.nodeName;
         if (tarNN != 'BODY' && tarNN != 'HTML') return;
-        if(event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
 
         switch (event.which) {
             case 13: // Enter
@@ -3509,12 +3530,12 @@ var App = {
                 break;
             case 37: // left arrow
                 var scrollTop = $(window).scrollTop();
-                if(scrollTop === 0){
+                if (scrollTop === 0) {
                     location.href = App.prevUrl;
                 } else {
                     var offsetTop = $(App.curFocusElement).offset().top;
                     // 在视野窗口内
-                    if( offsetTop > scrollTop && offsetTop < (scrollTop + $(window).height())){
+                    if (offsetTop > scrollTop && offsetTop < (scrollTop + $(window).height())) {
                         App.scrollToArticle(App.curFocusElement.previousSibling || 0);
                     } else {
                         App.scrollToArticle(App.curFocusElement);
@@ -3522,7 +3543,7 @@ var App = {
                 }
                 break;
             case 39: // right arrow
-                if(App.getRemain() === 0){
+                if (App.getRemain() === 0) {
                     location.href = App.lastRequestUrl || App.requestUrl;
                 } else {
                     App.scrollToArticle(App.curFocusElement.nextSibling || App.$doc.height());
@@ -3546,37 +3567,39 @@ var App = {
 
         return false
     },
-    scrollToArticle: function(elem){
+    scrollToArticle: function(elem) {
         var offsetTop;
-        if(typeof elem == "number"){
+        if (typeof elem == "number") {
             offsetTop = elem;
         } else {
             offsetTop = $(elem).offset().top - parseInt($(elem).css("margin-top"), 10);
         }
 
-        $("html, body").stop().animate({ scrollTop: offsetTop }, 750, "easeOutExpo");
+        $("html, body").stop().animate({
+            scrollTop: offsetTop
+        }, 750, "easeOutExpo");
     },
-    openUrl: function(url, errorMsg){
+    openUrl: function(url, errorMsg) {
         if (url) {
             // ff30 Greasemonkey 会报错：Greasemonkey 访问违规：unsafeWindow 无法调用 GM_openInTab。新建脚本采用按键调用也这样。
-            setTimeout(function(){
+            setTimeout(function() {
                 GM_openInTab(url);
             }, 0);
-        } else if (errorMsg){
+        } else if (errorMsg) {
             UI.notice(errorMsg);
         }
     },
-    pauseHandler: function(){
+    pauseHandler: function() {
         App.paused = !App.paused;
-        if(App.paused){
+        if (App.paused) {
             UI.notice('<b>状态</b>:自动翻页<span style="color:red!important;"><b>暂停</b></span>.'.uiTrans());
             App.$loading.html('自动翻页已经<span style="color:red!important;"><b>暂停</b></span>.'.uiTrans()).show();
-        }else{
+        } else {
             UI.notice('<b>状态</b>:自动翻页<span style="color:red!important;"><b>启用</b></span>.'.uiTrans());
             App.scroll();
         }
     },
-    scroll: function(){
+    scroll: function() {
         if (!App.paused && !App.working && App.getRemain() < Config.remain_height) {
             if (App.tmpDoc) {
                 App.loaded(App.tmpDoc);
@@ -3585,13 +3608,13 @@ var App = {
             }
         }
 
-        if(App.isTheEnd){
+        if (App.isTheEnd) {
             App.$loading.html("已到达最后一页...".uiTrans()).show();
         }
 
         App.updateCurFocusElement();
     },
-    updateCurFocusElement: function() {  // 滚动激活章节列表
+    updateCurFocusElement: function() { // 滚动激活章节列表
         // Get container scroll position
         var fromTop = $(window).scrollTop() + $(window).height() / 2;
 
@@ -3609,7 +3632,7 @@ var App = {
 
             var activeItem = App.menuItems.filter("[href=#" + id + "]"),
                 activeTitle = activeItem.text(),
-                activeUrl = activeItem.attr("real-href");
+                activeUrl = activeItem.attr("realHref");
 
             // Set/remove active class
             App.menuItems.parent().removeClass("active");
@@ -3619,18 +3642,18 @@ var App = {
             App.activeUrl = activeUrl;
         }
     },
-    getRemain: function(){
+    getRemain: function() {
         var scrollHeight = Math.max(document.documentElement.scrollHeight,
-                                    document.body.scrollHeight);
+            document.body.scrollHeight);
         var remain = scrollHeight - window.innerHeight - window.scrollY;
         return remain;
     },
-    doRequest: function(){
+    doRequest: function() {
         App.working = true;
         var nextUrl = App.requestUrl;
         App.lastRequestUrl = App.requestUrl;
 
-        if(nextUrl && !App.isTheEnd && !(nextUrl in App.parsedPages)){
+        if (nextUrl && !App.isTheEnd && !(nextUrl in App.parsedPages)) {
             App.parsedPages[nextUrl] = true;
             App.curPageUrl = App.requestUrl;
             App.requestUrl = null;
@@ -3643,28 +3666,28 @@ var App = {
                 .append($("<img>").attr("src", "data:image/gif;base64,R0lGODlhEAAQAMQAAPf39+/v7+bm5t7e3tbW1s7OzsXFxb29vbW1ta2traWlpZycnJSUlIyMjISEhHt7e3Nzc2tra2NjY1paWlJSUkpKSkJCQjo6OjExMSkpKSEhIRkZGRAQEAgICAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQJBQAeACwAAAEADwAOAAAFdaAnet20GAUCceN4LQlyFMRATC3GLEqM1gIc6dFgPDCii6I2YF0eDkinxUkMBBAPBfLItESW2sEjiWS/ItqALJGgRZrNRtvWoDlxFqZdmbY0cVMdbRMWcx54eSMZExQVFhcYGBmBfxWPkZQbfi0dGpIYGiwjIQAh+QQJBQAeACwAAAEADwAOAAAFeKAnep0FLQojceOYQU6DIsdhtVoEywptEBRRZyKBQDKii+JHYGEkxE6LkyAMIB6KRKJpJQuDg2cr8Y7AgjHULCoQ0pUJZWO+uBGeDIVikbYyDgRYHRUVFhcsHhwaGhsYfhuHFxgZGYwbHH4iHBiUlhuYmlMbjZktIQAh+QQFBQAeACwAAAEADwAOAAAFe6Aneh1GQU9UdeOoTVIEOQ2zWG0mSVP0ODYF4iLq7HgaEaaRQCA4HsyOwhp1FgdDxFOZTDYt0cVQSHgo6PCIPOBWKmpRgdDGWCzQ8KUwOHg2FxcYYRwJdBAiGRgZGXkcC3MEjhkalZYTfBMtHRudnhsKcGodHKUcHVUeIQAh+QQJBQAeACwAAAEADwAOAAAFbKAnjp4kURiplmYEQemoTZMpuY/TkBVFVRtRJtJgMDoejaViWT0WiokHc2muMIoEY0pdiRCIgyeDia0OhoJnk8l4PemEh6OprxQFQkS02WiCIhd4HmoiHRx9ImkEA14ciISMBFJeSAQIEBwjIQAh+QQJBQAeACwAAAEADwAOAAAFd6Anel1WTRKFdeO4WRWFStKktdwFU3JNZ6MM5nLZiDQTCCTC4ghXrU7k4bB4NpoMpyXKNBqQa5Y7YiwWHg6WLFK4SWoW95JAMOAbI05xOEhEHWoaFyJ0BgYHWyIcHA4Fj48EBFYtGJKSAwMFFGQdEAgCAgcQih4hACH5BAkFAB4ALAAAAQAPAA4AAAV0oCeKG2ZVFtaNY6dh10lNU8Z2WwbLkyRpI85Gk+GQKr7JqiME3mYSjIe5WbE8GkhkMhVeR48HpLv5ihoOB9l4xTAYYw9nomCLOgzFoiJSEAoIFiIXCwkJC1YVAwMEfwUGBgeBLBMEAouOBxdfHA8HlwgRdiEAIfkECQUAHgAsAAABAA8ADgAABXOgJ4rdpmWZ1o0sZ2YYdlka63XuKVsVVZOuzcrDufQoQxzH1rFMJJiba8jaPCnSjW30lHgGhMJWBIl4D2DLNvOATDwPwSCxHHUgjseFOJAn1B4YDgwND0MTAWAFBgcICgsMUVwDigYICQt7NhwQCGELE1QhACH5BAkFAB4ALAAAAQAPAA4AAAV4oCeOHWdyY+p1JbdpWoam7fZmGYZtYoeZm46Ik7kYhZBBQ6PyWSoZj0FAuKg8mwrF4glQryIKZdL9gicTiVQw4Ko2aYrnwUbMehGJBOPhDAYECVYeGA8PEBNCHhOABgcJCgwNh0wjFQaOCAoLk1EqHBILmg8Vih4hACH5BAkFAB4ALAAAAQAPAA4AAAV6oCd6Hdmd5ThWCee+XCpOwTBteL6lnCAMLVFHQ9SIHgHBgaPyZDKYjcfwszQ9HMwl40kOriKLuDsggD2VtOcwKFibGwrFCiEUEjJSZTLhcgwGBwsYIhkUEhITKRYGCAkKDA0PiBJcKwoKCwwODxETRk0dFA8NDhIYMiEAIfkECQUAHgAsAAABAA8ADgAABXmgJ3rcYwhcN66eJATCsHEpOwXwQGw8rZKDGMIi6vBmokcswWFtNBvVQUdkcTJQj67AGmEyGU+hYOiKMGiP4oC4dDmXS1iCSDR+xYvFovF0FAoLDxgiGxYUFRY/FwsMDQ4PEhOTFH0jFw6QEBKcE5YrHRcTERIUGHghACH5BAkFAB4ALAAAAQAPAA4AAAV4oCd63GMAgfF04zgNQixjrVcJQz4QRLNxI06Bh7CILpkf0CMpGBLL0ebHWhwOl5qno/l5EGCtqAtUmMWeTNfzWCxoNU4maWs0Vq0OBpMBdh4ODxEaIhsXhxkjGRAQEhITExQVFhdRHhoTjo8UFBYbWnoUjhUZLCIhACH5BAkFAB4ALAAAAQAPAA4AAAV5oCd6HIQIgfFw42gZBDEMgjBMbXUYRlHINEFF1FEgEIqLyHKQJToeikLBgI44iskG+mAsMC0RR7NhNRqM8IjMejgcahHbM4E8Mupx2YOJSCZWIxlkUB0TEhIUG2IYg4tyiH8UFRaNGoEeGYgTkxYXGZhEGBWTGI8iIQA7"))
                 .append("正在载入下一页".uiTrans() + (useiframe ? "(iframe)" : "") + "...");
 
-            if(useiframe){
+            if (useiframe) {
                 App.iframeRequest(nextUrl);
-            }else{
+            } else {
                 App.httpRequest(nextUrl);
             }
-        }else{
+        } else {
             // App.$loading.html("<a href='" + App.curPageUrl  + "'>无法使用阅读模式，请手动点击下一页</a>").show();
         }
     },
-    httpRequest: function(nextUrl){
+    httpRequest: function(nextUrl) {
         debug("获取下一页: " + nextUrl);
         GM_xmlhttpRequest({
             url: nextUrl,
             method: "GET",
             overrideMimeType: "text/html;charset=" + document.characterSet,
-            onload: function(res){
+            onload: function(res) {
                 var doc = createDocumentByString(res.responseText);
                 App.beforeLoad(doc);
             }
         });
     },
-    iframeRequest: function(nextUrl){
+    iframeRequest: function(nextUrl) {
         debug("iframeRequest: " + nextUrl);
         if (!App.iframe) {
             var i = document.createElement('iframe');
@@ -3688,36 +3711,36 @@ var App = {
             App.iframe.contentDocument.location.replace(nextUrl);
         }
     },
-    iframeLoaded: function(){
+    iframeLoaded: function() {
         var iframe = this;
         var body = iframe.contentDocument.body;
 
-        if(body && body.firstChild){
+        if (body && body.firstChild) {
             doc = iframe.contentDocument;
 
             var mutationSelector = App.site.mutationSelector;
-            if(mutationSelector){
-                App.addMutationObserve(doc, function(){
+            if (mutationSelector) {
+                App.addMutationObserve(doc, function() {
                     App.beforeLoad(doc);
                 });
-            }else{
+            } else {
                 var timeout = App.site.timeout || 0;
 
-                setTimeout(function(){
+                setTimeout(function() {
                     App.beforeLoad(doc);
                 }, timeout);
             }
         }
     },
     beforeLoad: function(htmlDoc) {
-        if(config.PRELOADER ){
+        if (config.PRELOADER) {
             App.tmpDoc = htmlDoc;
             App.working = false;
             App.scroll();
 
             // 预读图片
             var existSRC = {}
-            $(App.tmpDoc).find('img').each(function(){
+            $(App.tmpDoc).find('img').each(function() {
                 var isrc = $(this).attr('src');
                 if (!isrc || existSRC[isrc]) {
                     return;
@@ -3727,17 +3750,17 @@ var App = {
                 var img = document.createElement('img');
                 img.src = isrc;
             });
-        }else{
+        } else {
             App.loaded(htmlDoc);
         }
     },
-    loaded: function(doc){
+    loaded: function(doc) {
         var parser = new Parser(App.site, doc, App.curPageUrl);
         parser.getAll(App.addNextPage);
         App.tmpDoc = null;
     },
-    addNextPage: function(parser){
-        if(parser.content){
+    addNextPage: function(parser) {
+        if (parser.content) {
             App.appendPage(parser);
 
             if (Config.addToHistory) {
@@ -3746,7 +3769,7 @@ var App = {
                 var url = parser.curPageUrl.replace('http://read.qidian.com', '');
                 try {
                     unsafeWindow.history.pushState(null, parser.docTitle, url);
-                } catch(e) {
+                } catch (e) {
                     console.error('添加下一页到历史记录失败', e);
                 }
             }
@@ -3756,7 +3779,7 @@ var App = {
             App.isTheEnd = parser.isTheEnd;
 
             App.afterLoad();
-        }else{
+        } else {
             App.removeListener();
 
             App.$loading.html("错误：没有找到下一页的内容，使用右键翻到下一页".uiTrans()).show();
@@ -3764,25 +3787,25 @@ var App = {
 
         App.working = false;
     },
-    afterLoad: function(){
+    afterLoad: function() {
         App.tmpDoc = null;
 
-        if(config.PRELOADER){
+        if (config.PRELOADER) {
             App.doRequest();
         }
     },
-    fixImageFloats: function (articleContent) {
-        if(!config.fixImageFloats) return;
+    fixImageFloats: function(articleContent) {
+        if (!config.fixImageFloats) return;
 
         articleContent = articleContent || document;
 
         var imageWidthThreshold = Math.min(articleContent.offsetWidth, 800) * 0.55,
             images = articleContent.querySelectorAll('img:not(.blockImage)');
 
-        for(var i=0, il = images.length; i < il; i+=1) {
+        for (var i = 0, il = images.length; i < il; i += 1) {
             var image = images[i];
 
-            if(image.offsetWidth > imageWidthThreshold) {
+            if (image.offsetWidth > imageWidthThreshold) {
                 image.className += " blockImage";
             }
         }
@@ -3791,11 +3814,10 @@ var App = {
 
 
 // 防止 unsafeWindow cannot call: GM_getValue
-unsafeWindow.readx = function(){
-    setTimeout(function(){
+unsafeWindow.readx = function() {
+    setTimeout(function() {
         App.launch();
     }, 0);
 };
 
 App.init()
-//# sourceMappingURL=MyNovelReader.user.js.map

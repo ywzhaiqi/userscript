@@ -83,7 +83,7 @@ Parser.prototype = {
 
            bookTitle = this.getTitleFromInfo(info.bookTitleSelector);
         }
-         
+
         if(!chapterTitle){
             chapterTitle = this.autoGetChapterTitle(this.doc);
         }
@@ -97,7 +97,7 @@ Parser.prototype = {
                 .replace(Rule.titleReplace, "")
                 .trim()
                 // .replace(/(第?\S+?[章节卷回])(.*)/, "$1 $2");
-        
+
         if (info.trimBookTitle !== false) {
             chapterTitle = chapterTitle.replace(bookTitle, '').trim();
         }
@@ -322,7 +322,7 @@ Parser.prototype = {
             text = this.contentReplacements(text);
 
             // 还原图片
-            text = nano(text, imgs);
+            text = $.nano(text, imgs);
         }
 
         /* Turn all double br's into p's */

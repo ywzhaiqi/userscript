@@ -85,12 +85,17 @@ var UI = {
             style = $('<style id="skin_style">').appendTo('head');
         }
 
-        if (isFirst && Config.picNightModeCheck && skin_name.indexOf('夜间'.uiTrans()) != -1) {  // 图片章节夜间模式有问题
-            var img = $('#mynovelreader-content img')[0];
-            if (img && img.width > 500 && img.height > 1000) {
-                style.text(UI.skins['缺省皮肤'.uiTrans()]);
-                return;
-            }
+
+        // 图片章节夜间模式会变的无法看
+        if (isFirst && skin_name.indexOf('夜间'.uiTrans()) != -1 && Config.picNightModeCheck) {
+            setTimeout(function(){
+                var img = $('#mynovelreader-content img')[0];
+                // console.log(img.width, img.height)
+                if (img && img.width > 500 && img.height > 1000) {
+                    style.text(UI.skins['缺省皮肤'.uiTrans()]);
+                    return;
+                }
+            }, 200);
         }
 
         style.text(UI.skins[skin_name]);
@@ -168,203 +173,7 @@ var UI = {
         meta.setAttribute("content", "width=device-width, initial-scale=1");
         document.head.appendChild(meta);
     },
-    preferencesCSS: getMStr(function(){
-        /*
-        .body {
-             color:#333;
-             margin: 0 auto;
-             background: white;
-             padding: 10px;
-             height: 420px;
-             overflow-y: auto;
-         }
-         #top-buttons {
-             background: none repeat scroll 0% 0% rgb(255, 255, 255);
-             display: block;
-             position: absolute;
-             top: -35px;
-             border-right: 12px solid rgb(224, 224, 224);
-             border-top: 12px solid rgb(224, 224, 224);
-             border-left: 12px solid rgb(224, 224, 224);
-             text-align: center;
-         }
-         input {
-             font-size: 12px;
-             margin-right: 3px;
-             vertical-align: middle;
-         }
-         .form-row {
-             overflow: hidden;
-             padding: 8px 12px;
-             margin-top: 3px;
-             font-size: 11px;
-         }
-         .form-row label {
-             padding-right: 10px;
-         }
-         .form-row input {
-             vertical-align: middle;
-             margin-top: 0px;
-         }
-         textarea, .form-row input {
-             padding: 2px 4px;
-             border: 1px solid #e5e5e5;
-             background: #fff;
-             border-radius: 4px;
-             color: #666;
-             -webkit-transition: all linear .2s;
-             transition: all linear .2s;
-         }
-         textarea {
-             width: 100%;
-             overflow: auto;
-             vertical-align: top;
-         }
-         textarea:focus, input:focus {
-             border-color: #99baca;
-             outline: 0;
-             background: #f5fbfe;
-             color: #666;
-         }
-         .prefs_title {
-             font-size: 12px;
-             font-weight: bold;
-         }
-         .prefs_textarea {
-             font-size: 12px;
-             margin-top: 5px;
-             height: 100px;
-         }
-         */
-    }),
-    preferencesHTML: getMStr(function(){
-        /*
-        <form id="preferences" name="preferences">
-            <div id="setting_table1">
-                <span id="top-buttons">
-                    <input title="部分选项需要刷新页面才能生效" id="save_button" value="√ 确认" type="button">
-                    <input title="取消本次设定，所有选项还原" id="close_button" value="X 取消" type="button">
-                </span>
-                <div class="form-row">
-                    <label>
-                        界面语言<select id="lang">
-                        </select>
-                    </label>
-                    <label title="將小說網頁文字轉換為繁體。\n\n注意：內建的繁簡轉換表，只收錄了簡單的單字轉換，啟用本功能後，如有錯誤轉換的情形，請利用腳本的自訂字詞取代規則來修正。\n例如：「千里之外」，會錯誤轉換成「千裡之外」，你可以加入規則「千裡之外=千里之外」來自行修正。">
-                        <input type="checkbox" id="enable-cn2tw" name="enable-cn2tw"/>网页：转繁体
-                    </label>
-                </div>
-                <div class="form-row">
-                    <label title="不影响 booklink.me 的启用">
-                        <input type="checkbox" id="disable-auto-launch" name="disable-auto-launch"/>强制手动启用
-                    </label>
-                    <label title="booklink.me 点击的网站强制启用">
-                        <input type="checkbox" id="booklink-enable" name="booklink-enable"/>booklink 自动启用
-                    </label>
-                    <label>
-                        <input type="checkbox" id="debug" name="debug"/>调试模式
-                    </label>
-                    <a href="https://greasyfork.org/scripts/292-my-novel-reader/feedback" target="_blank">反馈地址</a>
-                </div>
-                <div class="form-row">
-                    <label title="图片章节用夜间模式没法看，这个选项在启动时会自动切换到缺省皮肤">
-                        <input type="checkbox" id="pic-nightmode-check" name="pic-nightmode-check"/>
-                        <b>（测试）</b>夜间模式的图片章节检测
-                    </label>
-                </div>
-                <div class="form-row">
-                    <label title="通过快捷键切换">
-                        <input type="checkbox" id="hide-menu-list"/>隐藏左侧章节列表
-                    </label>
-                    <label>
-                        <input type="checkbox" id="hide-footer-nav"/>隐藏底部导航栏
-                    </label>
-                </div>
-                <div class="form-row">
-                    <label>
-                        <input type="checkbox" id="hide-menu-bar"/>隐藏左侧导航条
-                    </label>
-                    <label>
-                        <input type="button" id="setHideMenuListKey" style="color:red" />
-                    </label>
-                    <label title="通过快捷键切换或在 Greasemonkey 用户脚本命令处打开设置窗口">
-                        <input type="checkbox" id="hide-preferences-button"/>隐藏设置按钮
-                    </label>
-                    <label>
-                        <input type="button" id="openPreferences" style="color:red" />
-                    </label>
-                </div>
-                <div class="form-row" style="display:none">
-                    <label>
-                        <input type="checkbox" id="quietMode"/>安静模式
-                    </label>
-                    <label>
-                        调用阅读器
-                        <input type="button" id="launchReader" style="color:red" />
-                    </label>
-                </div>
-                <div class="form-row">
-                    <label>
-                        距离底部
-                        <input type="textbox" id="remain-height" name="remain-height" size="5"/>
-                        px 加载下一页
-                    </label>
-                    <label>
-                        <input type="checkbox" id="add-nextpage-to-history"/>添加下一页到历史记录
-                    </label>
-                    <label>
-                        <input type="checkbox" id="enable-dblclick-pause"/>双击暂停翻页
-                    </label>
-                </div>
-                <div class="form-row">
-                    <label>
-                        <select id="skin">
-                        </select>
-                    </label>
-                    <label>
-                        字体
-                        <input type="textbox" id="font-family" style="width:250px;"/>
-                    </label>
-                    <br/><br/>
-                    <label>
-                        字体大小
-                        <input type="textbox" id="font-size" name="font-size" size="6"/>
-                    </label>
-                    <label>
-                        行高
-                        <input type="textbox" id="text_line_height" size="6"/>
-                    </label>
-                    <label>
-                        行宽
-                        <input type="textbox" id="content_width" size="6"/>
-                    </label>
-                </div>
-                <div class="form-row">
-                    <div class="prefs_title">自定义样式</div>
-                    <textarea id="extra_css" class="prefs_textarea" placeholder="自定义样式"></textarea>
-                </div>
-            </div>
-            <div id="setting_table2">
-                <div class="form-row" title="详见脚本代码的 Rule.specialSite">
-                    <div class="prefs_title">自定义站点规则</div>
-                    <textarea id="custom_siteinfo" class="prefs_textarea" placeholder="自定义站点规则" />
-                </div>
-                <div class="form-row" title="一行一个，每行第一个 = 为分隔符\n需要刷新页面生效">
-                    <div class="prefs_title">自定义替换规则</div>
-                    <textarea id="custom_replace_rules" class="prefs_textarea" placeholder="自定义替换规则" />
-                </div>
-            </div>
-        </form>
-         */
-    }).uiTrans(),
     preferencesShow: function(event){
-        if(event){
-            try {  // Greasemonkey 从菜单点击会错误
-                event.preventDefault();
-                event.stopPropagation();
-            }catch(ex) {}
-        }
-
         if($("#reader_preferences").length){
             return;
         }
@@ -374,9 +183,9 @@ var UI = {
         UI.$prefs = $('<div id="reader_preferences">')
             .css('cssText', 'position:fixed; top:12%; left:30%; width:500px; z-index:30000;')
             .append(
-                $('<style>').text(this.preferencesCSS))
+                $('<style>').text(Res.preferencesCSS))
             .append(
-                $('<div class="body">').html(this.preferencesHTML))
+                $('<div class="body">').html(Res.preferencesHTML))
             .appendTo("body");
 
         UI.preferencesLoadHandler();
@@ -546,7 +355,10 @@ var UI = {
         Config.addToHistory = $form.find("#add-nextpage-to-history").get(0).checked;
         Config.dblclickPause = $form.find("#enable-dblclick-pause").get(0).checked;
 
-        Config.skin_name = $form.find("#skin").find("option:selected").text();
+        var skinName = $form.find("#skin").find("option:selected").text();
+        Config.skin_name = skinName;
+        UI.refreshSkinStyle(skinName);
+
         Config.font_family = $form.find("#font-family").get(0).value;
         App.$content.css("font-family", Config.font_family);
 
@@ -610,7 +422,7 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 
 
 var Res = {
-    CSS_MAIN: getMStr(function() {
+    CSS_MAIN: function() {
         /*
         @font-face {
             font-family: "FontAwesome";
@@ -830,6 +642,195 @@ var Res = {
             background-color: rgba(0,0,0,.25) !important;
         }
          */
-    }).replace('{fontawesomeWoff}', fontawesomeWoff),
+    }.getMStr().replace('{fontawesomeWoff}', fontawesomeWoff),
+    preferencesHTML: function(){
+        /*
+        <form id="preferences" name="preferences">
+            <div id="setting_table1">
+                <span id="top-buttons">
+                    <input title="部分选项需要刷新页面才能生效" id="save_button" value="√ 确认" type="button">
+                    <input title="取消本次设定，所有选项还原" id="close_button" value="X 取消" type="button">
+                </span>
+                <div class="form-row">
+                    <label>
+                        界面语言<select id="lang">
+                        </select>
+                    </label>
+                    <label title="将小说网页文本转换为繁体。\n\n注意：内置的繁简转换表，只收录了简单的单字转换，启用本功能后，如有错误转换的情形，请利用脚本的自订字词取代规则来修正。\n例如：「千里之外」，会错误转换成「千里之外」，你可以加入规则「千里之外=千里之外」来自行修正。">
+                        <input type="checkbox" id="enable-cn2tw" name="enable-cn2tw"/>网页：转繁体
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label title="不影响 booklink.me 的启用">
+                        <input type="checkbox" id="disable-auto-launch" name="disable-auto-launch"/>强制手动启用
+                    </label>
+                    <label title="booklink.me 点击的网站强制启用">
+                        <input type="checkbox" id="booklink-enable" name="booklink-enable"/>booklink 自动启用
+                    </label>
+                    <label>
+                        <input type="checkbox" id="debug" name="debug"/>调试模式
+                    </label>
+                    <a href="https://greasyfork.org/scripts/292-my-novel-reader/feedback" target="_blank">反馈地址</a>
+                </div>
+                <div class="form-row">
+                    <label title="图片章节用夜间模式没法看，这个选项在启动时会自动切换到缺省皮肤">
+                        <input type="checkbox" id="pic-nightmode-check" name="pic-nightmode-check"/>
+                        夜间模式的图片章节检测
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label title="通过快捷键切换">
+                        <input type="checkbox" id="hide-menu-list"/>隐藏左侧章节列表
+                    </label>
+                    <label>
+                        <input type="checkbox" id="hide-footer-nav"/>隐藏底部导航栏
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label>
+                        <input type="checkbox" id="hide-menu-bar"/>隐藏左侧导航条
+                    </label>
+                    <label>
+                        <input type="button" id="setHideMenuListKey" style="color:red" />
+                    </label>
+                    <label title="通过快捷键切换或在 Greasemonkey 用户脚本命令处打开设置窗口">
+                        <input type="checkbox" id="hide-preferences-button"/>隐藏设置按钮
+                    </label>
+                    <label>
+                        <input type="button" id="openPreferences" style="color:red" />
+                    </label>
+                </div>
+                <div class="form-row" style="display:none">
+                    <label>
+                        <input type="checkbox" id="quietMode"/>安静模式
+                    </label>
+                    <label>
+                        调用阅读器
+                        <input type="button" id="launchReader" style="color:red" />
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label>
+                        距离底部
+                        <input type="textbox" id="remain-height" name="remain-height" size="5"/>
+                        px 加载下一页
+                    </label>
+                    <label>
+                        <input type="checkbox" id="add-nextpage-to-history"/>添加下一页到历史记录
+                    </label>
+                    <label>
+                        <input type="checkbox" id="enable-dblclick-pause"/>双击暂停翻页
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label>
+                        <select id="skin">
+                        </select>
+                    </label>
+                    <label>
+                        字体
+                        <input type="textbox" id="font-family" style="width:250px;"/>
+                    </label>
+                    <br/><br/>
+                    <label>
+                        字体大小
+                        <input type="textbox" id="font-size" name="font-size" size="6"/>
+                    </label>
+                    <label>
+                        行高
+                        <input type="textbox" id="text_line_height" size="6"/>
+                    </label>
+                    <label>
+                        行宽
+                        <input type="textbox" id="content_width" size="6"/>
+                    </label>
+                </div>
+                <div class="form-row">
+                    <div class="prefs_title">自定义样式</div>
+                    <textarea id="extra_css" class="prefs_textarea" placeholder="自定义样式"></textarea>
+                </div>
+            </div>
+            <div id="setting_table2">
+                <div class="form-row" title="详见脚本代码的 Rule.specialSite">
+                    <div class="prefs_title">自定义站点规则</div>
+                    <textarea id="custom_siteinfo" class="prefs_textarea" placeholder="自定义站点规则" />
+                </div>
+                <div class="form-row" title="一行一个，每行的第一个 = 为分隔符。\n需要刷新页面生效">
+                    <div class="prefs_title">自定义替换规则</div>
+                    <textarea id="custom_replace_rules" class="prefs_textarea" placeholder="b[āà]ng=棒" />
+                </div>
+            </div>
+        </form>
+         */
+    }.getMStr().uiTrans().replace(/\\n/g, '\n'),
+    preferencesCSS: function(){
+        /*
+        .body {
+             color:#333;
+             margin: 0 auto;
+             background: white;
+             padding: 10px;
+             height: 420px;
+             overflow-y: auto;
+         }
+         #top-buttons {
+             background: none repeat scroll 0% 0% rgb(255, 255, 255);
+             display: block;
+             position: absolute;
+             top: -35px;
+             border-right: 12px solid rgb(224, 224, 224);
+             border-top: 12px solid rgb(224, 224, 224);
+             border-left: 12px solid rgb(224, 224, 224);
+             text-align: center;
+         }
+         input {
+             font-size: 12px;
+             margin-right: 3px;
+             vertical-align: middle;
+         }
+         .form-row {
+             overflow: hidden;
+             padding: 8px 12px;
+             margin-top: 3px;
+             font-size: 11px;
+         }
+         .form-row label {
+             padding-right: 10px;
+         }
+         .form-row input {
+             vertical-align: middle;
+             margin-top: 0px;
+         }
+         textarea, .form-row input {
+             padding: 2px 4px;
+             border: 1px solid #e5e5e5;
+             background: #fff;
+             border-radius: 4px;
+             color: #666;
+             -webkit-transition: all linear .2s;
+             transition: all linear .2s;
+         }
+         textarea {
+             width: 100%;
+             overflow: auto;
+             vertical-align: top;
+         }
+         textarea:focus, input:focus {
+             border-color: #99baca;
+             outline: 0;
+             background: #f5fbfe;
+             color: #666;
+         }
+         .prefs_title {
+             font-size: 12px;
+             font-weight: bold;
+         }
+         .prefs_textarea {
+             font-size: 12px;
+             margin-top: 5px;
+             height: 100px;
+         }
+         */
+    }.getMStr(),
 };
 

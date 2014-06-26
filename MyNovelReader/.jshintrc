@@ -13,5 +13,7 @@
 
   "asi": true,
 	"sub": true,
-	"esnext": true
+	"esnext": true,
+
+  "multistr": true
 }

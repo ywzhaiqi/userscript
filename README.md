@@ -80,12 +80,13 @@ GM 脚本
 	- **[ThunderLixianExporter][25]**
 	- [XuanFengEx][26]，QQ旋风网页版离线下载增强，[github.org][27]。
 	- [LiuLang/monkey-videos][28]，常用视频网站的油㺅脚本，解析得到视频地址。
-	- [Chrome 扩展下载助手][29]
+	- [Chrome 扩展下载助手][29]：[greasyfork 地址](https://greasyfork.org/scripts/778-chrome%E6%89%A9%E5%B1%95%E4%B8%8B%E8%BD%BD%E5%8A%A9%E6%89%8B)
 - 漫画
 	- [Manga OnlineViewer][30]
 	- [Manga Loader][31]
 	- 更多搜索：['manga' user scripts on Greasy Fork][32]
 - [眼不见心不烦（新浪微博）][33]
+- [Xiami Scrobbler(GM)](https://greasyfork.org/scripts/2626-xiami-scrobbler-gm)
 
 ### 按作者分类
 

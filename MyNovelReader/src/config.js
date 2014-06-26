@@ -58,10 +58,13 @@ var Config = {
     },
 
     get lang() {
-        return GM_getValue("lang") || ((navigator.language === "zh-TW" || navigator.language === "zh-HK") ? "zh-TW" : "zh-CN");
+        if (_.isUndefined(this._lang)) {
+            this._lang = GM_getValue("lang") || ((navigator.language === "zh-TW" || navigator.language === "zh-HK") ? "zh-TW" : "zh-CN");
+        }
+        return this._lang;
     },
     set lang(val) {
-        GM_setValue("lang", val);
+        GM_setValue("lang", this._lang = val);
     },
 
     get font_family() {
@@ -93,21 +96,23 @@ var Config = {
     },
 
     get extra_css() {
-        return GM_getValue("extra_css") || "";
+        return GM_getValue("extra_css", "");
     },
     set extra_css(val) {
         GM_setValue("extra_css", val);
     },
 
     get customSiteinfo() {
-        return GM_getValue('custom_siteinfo') || '[]';
+        return GM_getValue('custom_siteinfo', '[]');
     },
     set customSiteinfo(val) {
         GM_setValue('custom_siteinfo', val);
     },
 
     get customReplaceRules() {
-        return GM_getValue('custom_replace_rules') || 'b[āà]ng=棒\n『(.)』=$1';
+        var rules = GM_getValue('custom_replace_rules', 'b[āà]ng=棒\n『(.)』=$1');
+
+        return rules;
     },
     set customReplaceRules(val) {
         GM_setValue('custom_replace_rules', val);

@@ -1,4 +1,3 @@
-
 var App = {
     isEnabled: false,
     parsedPages: {},
@@ -9,8 +8,12 @@ var App = {
     iframe: null,
     remove: [],
 
-    init: function(){
-        if(App.isLaunched) return;
+    init: function() {
+        if (["mynovelreader-iframe", "superpreloader-iframe"].indexOf(window.name) != -1) { // 用于加载下一页的 iframe
+            return;
+        }
+
+        if (App.isLaunched) return;
         App.isLaunched = true;
 
         App.loadCustomSetting();
@@ -36,7 +39,7 @@ var App = {
         var customRules;
         try {
             customRules = eval(Config.customSiteinfo);
-        } catch(e) {
+        } catch (e) {
             console.error('载入自定义站点配置错误', e)
         }
         if (_.isArray(customRules)) {
@@ -48,7 +51,7 @@ var App = {
         var parseCustomReplaceRules = function(str) {
             var arr = str.split(/\n/);
             var rules = {};
-            _.each(arr, function(b){
+            _.each(arr, function(b) {
                 var pos = b.indexOf('=');
                 if (pos === -1) return;
 
@@ -63,12 +66,14 @@ var App = {
 
         debug('载入自定义替换规则成功', Rule.customReplace);
     },
-    getCurSiteInfo: function (){
+    getCurSiteInfo: function() {
         var rules = Rule.customRules.concat(Rule.specialSite);
         var locationHref = location.href;
 
-        var info = _.find(rules, function(x){ return toRE(x.url).test(locationHref); });
-        if(!info){
+        var info = _.find(rules, function(x) {
+            return toRE(x.url).test(locationHref);
+        });
+        if (!info) {
             info = {};
             debug("没有找到规则，尝试自动模式。");
         } else {
@@ -76,15 +81,15 @@ var App = {
         }
         return info;
     },
-    isAutoLaunch: function (){
+    isAutoLaunch: function() {
         var locationHref = window.location.href,
             referrer = document.referrer;
-        switch(true){
+        switch (true) {
             case L_getValue("mynoverlreader_disable_once") == 'true':
                 L_removeValue("mynoverlreader_disable_once");
                 return false;
-            // case location.hostname == 'www.fkzww.net' && !document.title.match(/网文快讯/):  // 啃书只自动启用一个地方
-            //     return false;
+                // case location.hostname == 'www.fkzww.net' && !document.title.match(/网文快讯/):  // 啃书只自动启用一个地方
+                //     return false;
             case Config.booklink_enable && /booklink\.me/.test(referrer):
                 return true;
             case Config.getDisableAutoLaunch():
@@ -96,38 +101,42 @@ var App = {
                 return false;
         }
     },
-    addMutationObserve: function(doc, callback){
+    addMutationObserve: function(doc, callback) {
         var shouldAdd = false;
         var selector = App.site.mutationSelector;
         var target = $(doc).find(selector)[0];
         if (target) {
             var childCount = App.site.mutationChildCount;
-            if(childCount == undefined || target.children.length <= childCount){
+            if (childCount == undefined || target.children.length <= childCount) {
                 shouldAdd = true;
             }
         }
 
         if (shouldAdd) {
-            var observer = new MutationObserver(function(mutations){
-                var nodeAdded = mutations.some(function(x){ return x.addedNodes.length > 0; });
+            var observer = new MutationObserver(function(mutations) {
+                var nodeAdded = mutations.some(function(x) {
+                    return x.addedNodes.length > 0;
+                });
                 if (nodeAdded) {
                     observer.disconnect();
                     callback();
                 }
             });
-            observer.observe(target, {childList: true});
+            observer.observe(target, {
+                childList: true
+            });
             debug("添加 MutationObserve 成功：", selector);
         } else {
             callback();
         }
     },
-    launch: function(){
+    launch: function() {
         // 只解析一次，防止多次重复解析一个页面
-        if(document.body && document.body.getAttribute("name") == "MyNovelReader"){
+        if (document.body && document.body.getAttribute("name") == "MyNovelReader") {
             return App.toggle();
         }
 
-       if(!App.site){
+        if (!App.site) {
             App.site = App.getCurSiteInfo();
         }
 
@@ -136,14 +145,14 @@ var App = {
         if (hasContent) {
             document.body.setAttribute("name", "MyNovelReader");
             App.parsedPages[window.location.href.replace(/\/$/, '')] = true;
-            parser.getAll(function(parser){
+            parser.getAll(function(parser) {
                 App.processPage(parser);
             });
         } else {
             console.error("当前页面没有找到内容");
         }
     },
-    processPage: function(parser){
+    processPage: function(parser) {
         App.prepDocument();
 
         App.initDocument(parser);
@@ -160,19 +169,19 @@ var App = {
         App.$chapterList = App.$menu.find("#chapter-list");
 
         App.indexUrl = parser.indexUrl;
-        App.prevUrl = parser.prevUrl;  // 第一个上一页
+        App.prevUrl = parser.prevUrl; // 第一个上一页
 
         // 加入上一章的链接
-        if(parser.prevUrl){
+        if (parser.prevUrl) {
             $("<li>")
                 .addClass('chapter')
                 .append(
                     $("<div>")
-                        .attr({
-                            "real-href": parser.prevUrl,
-                            "onclick": "return false;"
-                        })
-                        .text("上一章".uiTrans())
+                    .attr({
+                        "realHref": parser.prevUrl,
+                        "onclick": "return false;"
+                    })
+                    .text("上一章".uiTrans())
                 )
                 .prependTo(App.$chapterList);
         }
@@ -185,11 +194,11 @@ var App = {
         App.appendPage(parser, true);
 
         App.registerControls();
-        
+
         // UI 的初始化
         UI.init();
 
-        App.curFocusElement = $("article:first").get(0);  // 初始化当前关注的 element
+        App.curFocusElement = $("article:first").get(0); // 初始化当前关注的 element
         App.requestUrl = parser.nextUrl;
         App.isTheEnd = parser.isTheEnd;
 
@@ -200,10 +209,10 @@ var App = {
         setTimeout(App.scroll, 1000);
 
         // 再次移除其它不相关的，起点，纵横中文有时候有问题
-        var clean = function(){
+        var clean = function() {
             $('body > *:not("#container, .readerbtn, #reader_preferences, #uil_blocker,iframe[name=\'mynovelreader-iframe\']")').remove();
         };
-        
+
         setTimeout(clean, 2000);
         setTimeout(clean, 5000);
 
@@ -226,7 +235,7 @@ var App = {
         doc.onclick = doc.ondblclick = doc.onselectstart = doc.oncontextmenu = doc.onmousedown = doc.onkeydown = function() {
             return true;
         };
-        with(document.wrappedJSObject || document) {
+        with (document.wrappedJSObject || document) {
             onmouseup = null;
             onmousedown = null;
             oncontextmenu = null;
@@ -245,10 +254,10 @@ var App = {
         $('*').removeAttr('style');
         $('body').removeAttr('bgcolor');
     },
-    initDocument: function(parser){
+    initDocument: function(parser) {
         document.title = parser.docTitle;
         window.name = "MyNovelReader";
-        document.body.innerHTML = nano('\
+        document.body.innerHTML = $.nano('\
             <div id="container">\
                 <div id="menu-bar" title="点击显示隐藏章节列表"></div>\
                 <div id="menu">\
@@ -270,29 +279,29 @@ var App = {
             </div>\
         '.uiTrans(), parser);
     },
-    toggle: function(){
-        if(App.isEnabled){  // 退出
+    toggle: function() {
+        if (App.isEnabled) { // 退出
             GM_setValue("auto_enable", false);
             L_setValue("mynoverlreader_disable_once", "true");
 
             // unsafeWindow.location = App.curPageUrl;
             unsafeWindow.location = App.activeUrl;
-        }else{
+        } else {
             GM_setValue("auto_enable", true);
             L_removeValue("mynoverlreader_disable_once");
             App.isEnabled = true;
             App.launch();
         }
     },
-    removeListener: function(){
+    removeListener: function() {
         debug("移除各种事件监听");
-        App.remove.forEach(function(_remove){
+        App.remove.forEach(function(_remove) {
             _remove();
         });
     },
-    appendPage: function(parser, isFirst){
+    appendPage: function(parser, isFirst) {
         var chapter = $("article:last");
-        if(chapter.length && parser.isSection) {  // 每次获取的不是一章，而是一节
+        if (chapter.length && parser.isSection) { // 每次获取的不是一章，而是一节
             var lastText = chapter.find("p:last").remove().text().trim();
             var newPage = parser.content.replace(/<p>\s+/, "<p>" + lastText);
 
@@ -301,8 +310,8 @@ var App = {
                 .end()
                 .append(newPage);
 
-            if(!Config.hide_footer_nav){
-                chapter.append(nano(UI.tpl_footer_nav, parser))
+            if (!Config.hide_footer_nav) {
+                chapter.append($.nano(UI.tpl_footer_nav, parser))
             }
 
         } else {
@@ -314,8 +323,8 @@ var App = {
                 .append(parser.content)
                 .appendTo(App.$content);
 
-            if(!Config.hide_footer_nav){
-                chapter.append(nano(UI.tpl_footer_nav, parser))
+            if (!Config.hide_footer_nav) {
+                chapter.append($.nano(UI.tpl_footer_nav, parser))
             }
 
             // App.fixImageFloats(chapter.get(0));
@@ -325,16 +334,17 @@ var App = {
                 .addClass('chapter')
                 .append(
                     $("<div>")
-                        .attr({
-                            "href": "#page-" + App.pageNum,
-                            "real-href": parser.curPageUrl,
-                            "onclick": "return false;"
-                        })
-                        .text(parser.chapterTitle)
+                    .attr({
+                        href: "#page-" + App.pageNum,
+                        "realHref": parser.curPageUrl,
+                        onclick: "return false;",
+                        title: parser.chapterTitle
+                    })
+                    .text(parser.chapterTitle)
                 )
                 .prependTo(App.$chapterList);
 
-            if(isFirst){
+            if (isFirst) {
                 chapterItem.addClass('active');
             }
 
@@ -344,61 +354,61 @@ var App = {
             App.scrollItems = $("article");
         }
     },
-    registerControls: function(){
+    registerControls: function() {
         // 内容滚动
         var throttled = _.throttle(App.scroll, 100);
-        $(unsafeWindow).scroll(throttled);  // 奶牛和 TM 冲突，需要 unsafeWindow
+        $(unsafeWindow).scroll(throttled); // 奶牛和 TM 冲突，需要 unsafeWindow
 
         App.$doc.on("keydown", App.keydown);
 
         if (Config.dblclickPause) {
-            App.$content.on("dblclick", function(){
+            App.$content.on("dblclick", function() {
                 App.pauseHandler();
             });
         }
-        
+
         // 左侧章节列表
-        App.$menuHeader.click(function(){
+        App.$menuHeader.click(function() {
             App.copyCurTitle();
         });
 
-        App.$menuBar.click(function(){
+        App.$menuBar.click(function() {
             UI.hideMenuList();
         });
 
-        App.$doc.on("mousedown", "#chapter-list div", function(event){
-            switch(event.which){
+        App.$doc.on("mousedown", "#chapter-list div", function(event) {
+            switch (event.which) {
                 case 1:
                     var href = $(this).attr("href");
                     if (href) {
                         App.scrollToArticle($(href));
                     } else {
-                        location.href = $(this).attr("real-href");
+                        location.href = $(this).attr("realHref");
                     }
                     break;
-                case 2:  // middle click
+                case 2: // middle click
                     L_setValue("mynoverlreader_disable_once", true);
-                    App.openUrl($(this).attr("real-href"));
+                    App.openUrl($(this).attr("realHref"));
                     break;
             }
         });
 
-        $("#preferencesBtn").click(function(event){
+        $("#preferencesBtn").click(function(event) {
             event.preventDefault();
             UI.preferencesShow();
         });
 
         GM_registerMenuCommand("小说阅读脚本设置".uiTrans(), UI.preferencesShow.bind(UI));
     },
-    copyCurTitle: function(){
+    copyCurTitle: function() {
         var title = $(App.curFocusElement).find(".title").text()
-                .replace(/第?\S+章/, "").trim();
+            .replace(/第?\S+章/, "").trim();
         GM_setClipboard(title, "text");
     },
-    keydown: function(event){
+    keydown: function(event) {
         var tarNN = event.target.nodeName;
         if (tarNN != 'BODY' && tarNN != 'HTML') return;
-        if(event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
 
         switch (event.which) {
             case 13: // Enter
@@ -407,12 +417,12 @@ var App = {
                 break;
             case 37: // left arrow
                 var scrollTop = $(window).scrollTop();
-                if(scrollTop === 0){
+                if (scrollTop === 0) {
                     location.href = App.prevUrl;
                 } else {
                     var offsetTop = $(App.curFocusElement).offset().top;
                     // 在视野窗口内
-                    if( offsetTop > scrollTop && offsetTop < (scrollTop + $(window).height())){
+                    if (offsetTop > scrollTop && offsetTop < (scrollTop + $(window).height())) {
                         App.scrollToArticle(App.curFocusElement.previousSibling || 0);
                     } else {
                         App.scrollToArticle(App.curFocusElement);
@@ -420,7 +430,7 @@ var App = {
                 }
                 break;
             case 39: // right arrow
-                if(App.getRemain() === 0){
+                if (App.getRemain() === 0) {
                     location.href = App.lastRequestUrl || App.requestUrl;
                 } else {
                     App.scrollToArticle(App.curFocusElement.nextSibling || App.$doc.height());
@@ -444,37 +454,39 @@ var App = {
 
         return false
     },
-    scrollToArticle: function(elem){
+    scrollToArticle: function(elem) {
         var offsetTop;
-        if(typeof elem == "number"){
+        if (typeof elem == "number") {
             offsetTop = elem;
         } else {
             offsetTop = $(elem).offset().top - parseInt($(elem).css("margin-top"), 10);
         }
 
-        $("html, body").stop().animate({ scrollTop: offsetTop }, 750, "easeOutExpo");
+        $("html, body").stop().animate({
+            scrollTop: offsetTop
+        }, 750, "easeOutExpo");
     },
-    openUrl: function(url, errorMsg){
+    openUrl: function(url, errorMsg) {
         if (url) {
             // ff30 Greasemonkey 会报错：Greasemonkey 访问违规：unsafeWindow 无法调用 GM_openInTab。新建脚本采用按键调用也这样。
-            setTimeout(function(){
+            setTimeout(function() {
                 GM_openInTab(url);
             }, 0);
-        } else if (errorMsg){
+        } else if (errorMsg) {
             UI.notice(errorMsg);
         }
     },
-    pauseHandler: function(){
+    pauseHandler: function() {
         App.paused = !App.paused;
-        if(App.paused){
+        if (App.paused) {
             UI.notice('<b>状态</b>:自动翻页<span style="color:red!important;"><b>暂停</b></span>.'.uiTrans());
             App.$loading.html('自动翻页已经<span style="color:red!important;"><b>暂停</b></span>.'.uiTrans()).show();
-        }else{
+        } else {
             UI.notice('<b>状态</b>:自动翻页<span style="color:red!important;"><b>启用</b></span>.'.uiTrans());
             App.scroll();
         }
     },
-    scroll: function(){
+    scroll: function() {
         if (!App.paused && !App.working && App.getRemain() < Config.remain_height) {
             if (App.tmpDoc) {
                 App.loaded(App.tmpDoc);
@@ -483,13 +495,13 @@ var App = {
             }
         }
 
-        if(App.isTheEnd){
+        if (App.isTheEnd) {
             App.$loading.html("已到达最后一页...".uiTrans()).show();
         }
 
         App.updateCurFocusElement();
     },
-    updateCurFocusElement: function() {  // 滚动激活章节列表
+    updateCurFocusElement: function() { // 滚动激活章节列表
         // Get container scroll position
         var fromTop = $(window).scrollTop() + $(window).height() / 2;
 
@@ -507,7 +519,7 @@ var App = {
 
             var activeItem = App.menuItems.filter("[href=#" + id + "]"),
                 activeTitle = activeItem.text(),
-                activeUrl = activeItem.attr("real-href");
+                activeUrl = activeItem.attr("realHref");
 
             // Set/remove active class
             App.menuItems.parent().removeClass("active");
@@ -517,18 +529,18 @@ var App = {
             App.activeUrl = activeUrl;
         }
     },
-    getRemain: function(){
+    getRemain: function() {
         var scrollHeight = Math.max(document.documentElement.scrollHeight,
-                                    document.body.scrollHeight);
+            document.body.scrollHeight);
         var remain = scrollHeight - window.innerHeight - window.scrollY;
         return remain;
     },
-    doRequest: function(){
+    doRequest: function() {
         App.working = true;
         var nextUrl = App.requestUrl;
         App.lastRequestUrl = App.requestUrl;
 
-        if(nextUrl && !App.isTheEnd && !(nextUrl in App.parsedPages)){
+        if (nextUrl && !App.isTheEnd && !(nextUrl in App.parsedPages)) {
             App.parsedPages[nextUrl] = true;
             App.curPageUrl = App.requestUrl;
             App.requestUrl = null;
@@ -541,28 +553,28 @@ var App = {
                 .append($("<img>").attr("src", "data:image/gif;base64,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"))
                 .append("正在载入下一页".uiTrans() + (useiframe ? "(iframe)" : "") + "...");
 
-            if(useiframe){
+            if (useiframe) {
                 App.iframeRequest(nextUrl);
-            }else{
+            } else {
                 App.httpRequest(nextUrl);
             }
-        }else{
+        } else {
             // App.$loading.html("<a href='" + App.curPageUrl  + "'>无法使用阅读模式，请手动点击下一页</a>").show();
         }
     },
-    httpRequest: function(nextUrl){
+    httpRequest: function(nextUrl) {
         debug("获取下一页: " + nextUrl);
         GM_xmlhttpRequest({
             url: nextUrl,
             method: "GET",
             overrideMimeType: "text/html;charset=" + document.characterSet,
-            onload: function(res){
+            onload: function(res) {
                 var doc = createDocumentByString(res.responseText);
                 App.beforeLoad(doc);
             }
         });
     },
-    iframeRequest: function(nextUrl){
+    iframeRequest: function(nextUrl) {
         debug("iframeRequest: " + nextUrl);
         if (!App.iframe) {
             var i = document.createElement('iframe');
@@ -586,36 +598,36 @@ var App = {
             App.iframe.contentDocument.location.replace(nextUrl);
         }
     },
-    iframeLoaded: function(){
+    iframeLoaded: function() {
         var iframe = this;
         var body = iframe.contentDocument.body;
 
-        if(body && body.firstChild){
+        if (body && body.firstChild) {
             doc = iframe.contentDocument;
 
             var mutationSelector = App.site.mutationSelector;
-            if(mutationSelector){
-                App.addMutationObserve(doc, function(){
+            if (mutationSelector) {
+                App.addMutationObserve(doc, function() {
                     App.beforeLoad(doc);
                 });
-            }else{
+            } else {
                 var timeout = App.site.timeout || 0;
 
-                setTimeout(function(){
+                setTimeout(function() {
                     App.beforeLoad(doc);
                 }, timeout);
             }
         }
     },
     beforeLoad: function(htmlDoc) {
-        if(config.PRELOADER ){
+        if (config.PRELOADER) {
             App.tmpDoc = htmlDoc;
             App.working = false;
             App.scroll();
 
             // 预读图片
             var existSRC = {}
-            $(App.tmpDoc).find('img').each(function(){
+            $(App.tmpDoc).find('img').each(function() {
                 var isrc = $(this).attr('src');
                 if (!isrc || existSRC[isrc]) {
                     return;
@@ -625,17 +637,17 @@ var App = {
                 var img = document.createElement('img');
                 img.src = isrc;
             });
-        }else{
+        } else {
             App.loaded(htmlDoc);
         }
     },
-    loaded: function(doc){
+    loaded: function(doc) {
         var parser = new Parser(App.site, doc, App.curPageUrl);
         parser.getAll(App.addNextPage);
         App.tmpDoc = null;
     },
-    addNextPage: function(parser){
-        if(parser.content){
+    addNextPage: function(parser) {
+        if (parser.content) {
             App.appendPage(parser);
 
             if (Config.addToHistory) {
@@ -644,7 +656,7 @@ var App = {
                 var url = parser.curPageUrl.replace('http://read.qidian.com', '');
                 try {
                     unsafeWindow.history.pushState(null, parser.docTitle, url);
-                } catch(e) {
+                } catch (e) {
                     console.error('添加下一页到历史记录失败', e);
                 }
             }
@@ -654,7 +666,7 @@ var App = {
             App.isTheEnd = parser.isTheEnd;
 
             App.afterLoad();
-        }else{
+        } else {
             App.removeListener();
 
             App.$loading.html("错误：没有找到下一页的内容，使用右键翻到下一页".uiTrans()).show();
@@ -662,25 +674,25 @@ var App = {
 
         App.working = false;
     },
-    afterLoad: function(){
+    afterLoad: function() {
         App.tmpDoc = null;
 
-        if(config.PRELOADER){
+        if (config.PRELOADER) {
             App.doRequest();
         }
     },
-    fixImageFloats: function (articleContent) {
-        if(!config.fixImageFloats) return;
+    fixImageFloats: function(articleContent) {
+        if (!config.fixImageFloats) return;
 
         articleContent = articleContent || document;
 
         var imageWidthThreshold = Math.min(articleContent.offsetWidth, 800) * 0.55,
             images = articleContent.querySelectorAll('img:not(.blockImage)');
 
-        for(var i=0, il = images.length; i < il; i+=1) {
+        for (var i = 0, il = images.length; i < il; i += 1) {
             var image = images[i];
 
-            if(image.offsetWidth > imageWidthThreshold) {
+            if (image.offsetWidth > imageWidthThreshold) {
                 image.className += " blockImage";
             }
         }
@@ -689,8 +701,8 @@ var App = {
 
 
 // 防止 unsafeWindow cannot call: GM_getValue
-unsafeWindow.readx = function(){
-    setTimeout(function(){
+unsafeWindow.readx = function() {
+    setTimeout(function() {
         App.launch();
     }, 0);
 };

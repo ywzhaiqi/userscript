@@ -20,20 +20,11 @@ function L_removeValue(key) {
 }
 
 
-function nano(template, data) {
-    return template.replace(/\{([\w\.]*)\}/g, function(str, key) {
-        var keys = key.split("."),
-            v = data[keys.shift()];
-        for (var i = 0, l = keys.length; i < l; i++) v = v[keys[i]];
-        return (typeof v !== "undefined" && v !== null) ? v : "";
-    });
-}
-
 function createDocumentByString(str) {
-    var doc
+    var doc;
     try {
-         doc = new DOMParser().parseFromString(str, "text/html");  // chrome 30+ 已支持
-    }catch(ex){}
+        doc = new DOMParser().parseFromString(str, "text/html"); // chrome 30+ 已支持
+    } catch (ex) {}
 
     if (!doc) {
         doc = document.implementation.createHTMLDocument("");
@@ -50,17 +41,27 @@ function toRE(obj, flags) {
     }
 }
 
-function getMStr(func) {
-    var lines = func.toString();
-    lines = lines.substring(lines.indexOf("/*") + 3, lines.lastIndexOf("*/"));
-    return lines;
-}
-
 function getUrlHost(url) {
     var a = document.createElement('a');
     a.href = url;
     return a.host;
 }
+
+
+Function.prototype.getMStr = function() {  // 多行String
+    var lines = new String(this);
+    lines = lines.substring(lines.indexOf("/*") + 3, lines.lastIndexOf("*/"));
+    return lines;
+}
+
+$.nano = function(template, data) {
+    return template.replace(/\{([\w\.]*)\}/g, function(str, key) {
+        var keys = key.split("."),
+            v = data[keys.shift()];
+        for (var i = 0, l = keys.length; i < l; i++) v = v[keys[i]];
+        return (typeof v !== "undefined" && v !== null) ? v : "";
+    });
+};
 
 // jQuery text 完全匹配. e.g. a:econtains('最新章节')
 $.expr[":"].econtains = function(obj, index, meta, stack) {
