@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.7.0
+// @version        3.7.1
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi@gmail.com
 // @description    批量导出百度盘的下载链接
@@ -82,6 +82,8 @@ var Utils = {
 
 
 var mHome = (function(){  // 个人主页
+    if (!require) return;
+
     var
         dataCenter = require("common:widget/data-center/data-center.js"),
         commonService = require("common:widget/commonService/commonService.js"),
