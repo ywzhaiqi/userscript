@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.6.9
+// @version        3.7.0
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi@gmail.com
 // @description    批量导出百度盘的下载链接
@@ -81,52 +81,115 @@ var Utils = {
 };
 
 
-var mHome = {
-    init: function() {
-        this.addButton();
+var mHome = (function(){  // 个人主页
+    var
+        dataCenter = require("common:widget/data-center/data-center.js"),
+        commonService = require("common:widget/commonService/commonService.js"),
+        Toast = require("common:widget/toast/toast.js"),
+        panel
+    ;
 
-        this.setMaxSize();
-        this.setDocumentTitle();
-        window.addEventListener('hashchange', this.setDocumentTitle.bind(this), false);
+    var Test = {
+        getList: function (dir, callback) {  // Search:  disk-home.js
+            var API_URL = '/api/list?channel=chunlei&clienttype=0&web=1&num=100&order=time&desc=1',
+                restUrl = API_URL + '&dir=' + (dir ? dir : Utils.getParam('path'));
 
-        UI.addQuickLinks();
-        // 修正添加后出现滚动条的情况
-        GM_addStyle('.side-options { margin: auto; }');
-    },
-    addButton: function() {
-        $('<a class="bbtn" style="padding-left:10px"><b>批量下载</b></a>')
-            .insertAfter('a.btn.download-btn')
-            .click(this.downloadAll.bind(this));
-    },
-    setMaxSize: function() {
-        // FDM 会出现密码错误的问题，而 IDM 正常。
-        var downloadManager = require("common:widget/downloadManager/downloadManager.js");
-        downloadManager.SIZE_THRESHOLD =  Number.MAX_VALUE;
-    },
-    setDocumentTitle: function() {  // 设置页面标题，根据 hash 变化而变化，方便历史记录检索
-        var path = Utils.getParam('dir/path') || Utils.getParam('path');
-        if (path === "") {
-            var key = Utils.getParam('key')
-            if (key) {
-                path = "搜索：" + key;
+            $.get(restUrl, function(result) {
+                if (result && result.errno == 0 && result.list) {
+                    callback(result.list);
+                } else {
+                    console.error("获取数据出错, " + restUrl);
+                }
+            });
+        },
+        getDlink: function(fs_ids) {  // not finished
+            if (fs_ids.length === 0) {
+                Toast.obtain.setVisible(false);
+                return;
             }
-        }
 
-        if (path) {
-            document.title = '百度云 网盘-' + path;
-        }
-    },
-    downloadAll: function() {
-        var dataCenter = require("common:widget/data-center/data-center.js"),
-            commonService = require("common:widget/commonService/commonService.js");
+            var restUrl = 'http://pan.baidu.com/api/download?channel=chunlei&clienttype=0&web=1&bdstoken=' + FileUtils.bdstoken,
+                data = {
+                    sign: FileUtils.base64Encode(FileUtils.sign2(FileUtils.sign3, FileUtils.sign1)), 
+                    fidlist: "[" + fs_ids.join(',') + "]",
+                    type: 'dlink',
+                    timestamp: FileUtils.timestamp
+                };
 
-        var self = this;
+            $.post(restUrl, data, function(result){
+                if (result.errno == 0) {
+                    var dlinkMap = {};
+                    result.dlink.forEach(function(i){
+                        dlinkMap[i.fs_id] = i.dlink;
+                    });
 
+                    debug("全部获取完成, result=", result, ", dlinkMap=", dlinkMap, ", checkedItems=", self.checkedItems);
+                    self.showPanel(self.checkedItems, dlinkMap);
+                    self.toast.setVisible(false);
+                } else {
+                    console.error('POST 方式获取错误', result);
+                    Utilities.useToast({
+                        toastMode: disk.ui.Toast.MODE_CAUTION,
+                        msg: disk.util.shareErrorMessage[result.errno],
+                        sticky: false
+                    });
+                }
+            });
+        },
+
+        test: function() {
+            // var diskHome = require("clouddisk-ui:widget/list-view/disk-home.js");
+            // diskHome.download(["550160357"]);
+            // diskHome.move(["550160357"], callback);
+            // diskHome.unZip(["550160357"]);
+
+            // dataCenter.get('selectedItemList');  // [s.fn.s.init[1], s.fn.s.init[1]]
+
+            /*
+                可设置 disk.DEBUG = true
+            */
+
+            /* 最新的改版已失效
+            关键函数
+                移动：FileUtils.sendMoveCopyFileMessage
+                FileUtils.switchToDir(PATH)  主界面切换到某个文件夹
+            */
+        },
+
+        // 脱离百度盘内部的调用
+        // $container: $('#yao-main > div > div.module-list-view > div.list-view-home > div.list'),
+        // getCheckedItems: function() {
+        //     var e = [],
+        //         s = this;
+        //     return this.$container.find(".item").each(function() {
+        //         var t = $(this);
+        //         if (t.find(".chk").hasClass("chked") === !0) {
+        //             e.push(t.attr('data-id'));
+        //         }
+        //     }), e
+        // },
+    };
+
+    var setMaxSize = function() {
+        // firefox 自带开发工具搜索 @download
+        // FDM 会出现密码错误的问题，而 IDM 正常。
+        // 可恶的百度，刚写好第二天就变了。
+        // 需要加载 downloadProxyPcs 后生效。
+        commonService.getWidgets('common:widget/downloadProxyPcs/downloadProxyPcs.js', function () {
+            var downloadManager = require("common:widget/downloadManager/downloadManager.js");
+            downloadManager.SIZE_THRESHOLD =  Number.MAX_VALUE; 
+        });
+    };
+
+    var downloadAll = function() {
         // 得到选中的条目，过滤文件夹
         // var fs_ids = dataCenter.get('selectedList'),  // ["812801091852241", "860551491728460"]
-        var nodeList = dataCenter.get('selectedItemList'),
+        var 
+            nodeList = dataCenter.get('selectedItemList'),
             fs_ids = [],
-            fileList = [];
+            fileList = []
+        ;
+
         nodeList.forEach(function($div){
             if ($div.attr('data-extname') === 'dir') return;
 
@@ -141,7 +204,6 @@ var mHome = {
 
         if (fileList.length === 0) return;
 
-        var Toast = require("common:widget/toast/toast.js");
         Toast.obtain.useToast({
             toastMode: Toast.obtain.MODE_LOADING,
             msg: "正在获取中，请稍后...",
@@ -151,7 +213,8 @@ var mHome = {
         var isSimplePanel = prefs.getIsSimplePanel();
 
         // 获取下载地址
-        var fidlist = "[" + fs_ids.join(',') + "]",
+        var
+            fidlist = "[" + fs_ids.join(',') + "]",
             type = 'dlink',
             callback = function(result) {
                 // console.log(result);
@@ -172,14 +235,15 @@ var mHome = {
                     Pan.showPanel(fileList);
                 } else {  // 简易的导出下载链接的方式
                    var dlinks = result.dlink.map(function(i) { return i.dlink; });
-                   if (!self.panel) {
-                       self.panel = new SimplePanel('BDH');
+                   if (!panel) {
+                       panel = new SimplePanel('BDH');
                    }
-                   self.panel.show(dlinks.join('\n'));
+                   panel.show(dlinks.join('\n'));
                 }
 
                 Toast.obtain.setVisible(false);
-            };
+            }
+        ;
 
         commonService.getDlink(fidlist, type, callback);
 
@@ -193,86 +257,47 @@ var mHome = {
         //     // end
         //     // Toast.obtain.setVisible(false);
         // });
-    },
-    getList: function (dir, callback) {  // Search:  disk-home.js
-        var API_URL = '/api/list?channel=chunlei&clienttype=0&web=1&num=100&order=time&desc=1',
-            restUrl = API_URL + '&dir=' + (dir ? dir : Utils.getParam('path'));
+    };
 
-        $.get(restUrl, function(result) {
-            if (result && result.errno == 0 && result.list) {
-                callback(result.list);
-            } else {
-                console.error("获取数据出错, " + restUrl);
+    var setDocumentTitle = function() {  // 设置页面标题，根据 hash 变化而变化，方便历史记录检索
+        var path = Utils.getParam('dir/path') || Utils.getParam('path');
+        if (path === "") {
+            var key = Utils.getParam('key')
+            if (key) {
+                path = "搜索：" + key;
             }
-        });
-    },
-    getDlink: function(fs_ids) {  // not finished
-        if (fs_ids.length === 0) {
-            Toast.obtain.setVisible(false);
-            return;
         }
 
-        var restUrl = 'http://pan.baidu.com/api/download?channel=chunlei&clienttype=0&web=1&bdstoken=' + FileUtils.bdstoken,
-            data = {
-                sign: FileUtils.base64Encode(FileUtils.sign2(FileUtils.sign3, FileUtils.sign1)), 
-                fidlist: "[" + fs_ids.join(',') + "]",
-                type: 'dlink',
-                timestamp: FileUtils.timestamp
-            };
+        if (path) {
+            document.title = '百度云 网盘-' + path;
+        }
+    };
 
-        $.post(restUrl, data, function(result){
-            if (result.errno == 0) {
-                var dlinkMap = {};
-                result.dlink.forEach(function(i){
-                    dlinkMap[i.fs_id] = i.dlink;
-                });
+    var addButton = function() {
+        $('<a class="bbtn" style="padding-left:10px"><b>批量下载</b></a>')
+            .insertAfter('a.btn.download-btn')
+            .click(downloadAll);
+    };
 
-                debug("全部获取完成, result=", result, ", dlinkMap=", dlinkMap, ", checkedItems=", self.checkedItems);
-                self.showPanel(self.checkedItems, dlinkMap);
-                self.toast.setVisible(false);
-            } else {
-                console.error('POST 方式获取错误', result);
-                Utilities.useToast({
-                    toastMode: disk.ui.Toast.MODE_CAUTION,
-                    msg: disk.util.shareErrorMessage[result.errno],
-                    sticky: false
-                });
-            }
-        });
-    },
+    var init = function() {
+        addButton();
 
-    test: function() {
-        // var diskHome = require("clouddisk-ui:widget/list-view/disk-home.js");
-        // diskHome.download(["550160357"]);
-        // diskHome.move(["550160357"], callback);
-        // diskHome.unZip(["550160357"]);
+        setDocumentTitle();
+        window.addEventListener('hashchange', setDocumentTitle, false);
 
-        // dataCenter.get('selectedItemList');  // [s.fn.s.init[1], s.fn.s.init[1]]
+        UI.addQuickLinks();
+        // 修正添加后出现滚动条的情况
+        GM_addStyle('.side-options { margin: auto; }');
 
-        /*
-            可设置 disk.DEBUG = true
-        */
+        setMaxSize();
+    };
 
-        /* 最新的改版已失效
-        关键函数
-            移动：FileUtils.sendMoveCopyFileMessage
-            FileUtils.switchToDir(PATH)  主界面切换到某个文件夹
-        */
-    },
+    return {
+        init: init
+    }
 
-    // 脱离百度盘内部的调用
-    // $container: $('#yao-main > div > div.module-list-view > div.list-view-home > div.list'),
-    // getCheckedItems: function() {
-    //     var e = [],
-    //         s = this;
-    //     return this.$container.find(".item").each(function() {
-    //         var t = $(this);
-    //         if (t.find(".chk").hasClass("chked") === !0) {
-    //             e.push(t.attr('data-id'));
-    //         }
-    //     }), e
-    // },
-};
+})();
+
 
 
 var Pan = {
@@ -1261,6 +1286,5 @@ function getMStr(fn) {
     
     return ret;
 }
-
 
 Pan.init();
