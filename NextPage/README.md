@@ -7,32 +7,38 @@ NextPageModY.user.js
  - 增加了设置界面。
  - 修正：在文字输入框或选择框按键会生效的问题。
 
-### 调用代码（FireGestures）
+### 调用代码（FireGestures/MouseGestures2.uc.js）
 
 下一页
 
 ```js
-	var doc = FireGestures.sourceNode.ownerDocument;
-	function dispatchEvent(eventName) {
-	    var event = doc.createEvent('HTMLEvents');
-	    event.initEvent(eventName, true, false);
-	    doc.dispatchEvent(event);
-	}
+    var
+        srcNode = window.FireGestures ? FireGestures.sourceNode : event.target,
+        doc = srcNode.ownerDocument
+    ;
+    var dispatchEvent = function (eventName) {
+        var evt = doc.createEvent('HTMLEvents');
+        evt.initEvent(eventName, true, false);
+        doc.dispatchEvent(evt);
+    };
 
-	dispatchEvent('nextpage.go');
+    dispatchEvent('nextpage.go');
 ```
 
 上一页
 
 ```js
-	var doc = FireGestures.sourceNode.ownerDocument;
-	function dispatchEvent(eventName) {
-	    var event = doc.createEvent('HTMLEvents');
-	    event.initEvent(eventName, true, false);
-	    doc.dispatchEvent(event);
-	}
+    var
+        srcNode = window.FireGestures ? FireGestures.sourceNode : event.target,
+        doc = srcNode.ownerDocument
+    ;
+    var dispatchEvent = function (eventName) {
+        var evt = doc.createEvent('HTMLEvents');
+        evt.initEvent(eventName, true, false);
+        doc.dispatchEvent(evt);
+    };
 
-	dispatchEvent('nextpage.back');
+    dispatchEvent('nextpage.back');
 ```
 
 ### 发送按键代码
@@ -43,14 +49,15 @@ NextPageModY.user.js
 下一页（发送 →键）
 
 ```js
-	var srcNode = FireGestures.sourceNode;
-	var doc = srcNode.ownerDocument,
-	    win = doc.defaultView;
-
+	var
+        srcNode = window.FireGestures ? FireGestures.sourceNode : event.target,
+        doc = srcNode.ownerDocument,
+        win = doc.defaultView
+    ;
 	var run = function () {
-	    var e = document.createEvent("KeyboardEvent");
-	    e.initKeyEvent("keydown", true, true, window, false, false, false, false, 39, 0);
-	    document.body.dispatchEvent(e);
+	    var ev = document.createEvent("KeyboardEvent");
+	    ev.initKeyEvent("keydown", true, true, window, false, false, false, false, 39, 0);
+	    document.body.dispatchEvent(ev);
 	};
 
 	let sandbox = new Cu.Sandbox(win, {sandboxPrototype: win});
@@ -62,18 +69,32 @@ NextPageModY.user.js
 上一页（发送←键）
 
 ```js
-	var srcNode = FireGestures.sourceNode;
-	var doc = srcNode.ownerDocument,
-	    win = doc.defaultView;
-
+	var
+        srcNode = window.FireGestures ? FireGestures.sourceNode : event.target,
+        doc = srcNode.ownerDocument,
+        win = doc.defaultView
+    ;
 	var run = function () {
-	    var e = document.createEvent("KeyboardEvent");
-	    e.initKeyEvent("keydown", true, true, window, false, false, false, false, 37, 0);
-	    document.body.dispatchEvent(e);
+	    var ev = document.createEvent("KeyboardEvent");
+	    ev.initKeyEvent("keydown", true, true, window, false, false, false, false, 37, 0);
+	    document.body.dispatchEvent(ev);
 	};
 
 	let sandbox = new Cu.Sandbox(win, {sandboxPrototype: win});
 	sandbox.window       = win;
 	sandbox.document     = win.document;
 	Cu.evalInSandbox('(' + run.toString() + ')()', sandbox);
+```
+
+### MouseGestures2.uc.js
+
+如果用了 MouseGestures2.uc.js，应该为下面的格式，然后用上面的代码替换里面的 ...
+
+```js
+	"L": {
+		name : "上一页",
+		cmd : function (gestures, event) {
+			...
+		}
+	},
 ```
