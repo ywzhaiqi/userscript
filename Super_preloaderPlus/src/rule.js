@@ -1486,6 +1486,14 @@ var SITEINFO=[
         pageElement: 'id("threadlist")/div[@class="bm_c"]',
         exampleUrl: 'http://www.znds.com/bbs-172-3.html',
     },
+    {name: 'Mobile01',
+        url: /^http:\/\/www\.mobile01\.com\/topicdetail\.php.*$/i,
+        exampleUrl: 'http://www.mobile01.com/topicdetail.php?f=254&t=3966939',
+        nextLink: '//a[contains(text(), "下一頁")]',
+        autopager: {
+            pageElement: 'id("section")/div[@class="main"]/div[@class="forum-content"]',
+        }
+    },
 
     // ========================= picture ================================================
     {name: 'Flickr搜索',

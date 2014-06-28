@@ -4,7 +4,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.2.1
+// @version      6.2.2
 // @homepageURL  https://greasyfork.org/scripts/178900/
 // @updateURL    https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js
 // @downloadURL  https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js
@@ -1530,6 +1530,14 @@ var SITEINFO=[
         nextLink: '//a[contains(text(), "下一页")]',
         pageElement: 'id("threadlist")/div[@class="bm_c"]',
         exampleUrl: 'http://www.znds.com/bbs-172-3.html',
+    },
+    {name: 'Mobile01',
+        url: /^http:\/\/www\.mobile01\.com\/topicdetail\.php.*$/i,
+        exampleUrl: 'http://www.mobile01.com/topicdetail.php?f=254&t=3966939',
+        nextLink: '//a[contains(text(), "下一頁")]',
+        autopager: {
+            pageElement: 'id("section")/div[@class="main"]/div[@class="forum-content"]',
+        }
     },
 
     // ========================= picture ================================================
