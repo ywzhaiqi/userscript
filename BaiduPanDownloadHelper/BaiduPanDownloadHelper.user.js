@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.7.1
+// @version        3.7.2
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi@gmail.com
 // @description    批量导出百度盘的下载链接
@@ -174,9 +174,7 @@ var mHome = (function(){  // 个人主页
 
     var setMaxSize = function() {
         // firefox 自带开发工具搜索 @download
-        // FDM 会出现密码错误的问题，而 IDM 正常。
-        // 可恶的百度，刚写好第二天就变了。
-        // 需要加载 downloadProxyPcs 后生效。
+        // 可恶的百度，刚写好第二天就变了。需要提前加载 downloadProxyPcs。
         commonService.getWidgets('common:widget/downloadProxyPcs/downloadProxyPcs.js', function () {
             var downloadManager = require("common:widget/downloadManager/downloadManager.js");
             downloadManager.SIZE_THRESHOLD =  Number.MAX_VALUE; 
@@ -198,6 +196,7 @@ var mHome = (function(){  // 个人主页
             var fs_id = $div.attr('data-id');
 
             fs_ids.push(fs_id);
+
             fileList.push({
                 fs_id: fs_id,
                 server_filename: $div.find('.name').attr('title'),
@@ -276,7 +275,7 @@ var mHome = (function(){  // 个人主页
     };
 
     var addButton = function() {
-        $('<a class="bbtn" style="padding-left:10px"><b>批量下载</b></a>')
+        $('<a class="btn" style="padding-left:10px"><span class="btn-val">批量下载</span></a>')
             .insertAfter('a.btn.download-btn')
             .click(downloadAll);
     };

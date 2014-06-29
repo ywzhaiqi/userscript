@@ -9,6 +9,7 @@ BaiduPanDownloadHelper
 
 ![setting](setting.jpg)
 
+![history.png](history.png)
 
 安装说明
 --------
