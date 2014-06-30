@@ -1,8 +1,7 @@
 // ==UserScript==
 // @name               Next Page ModY
-// @author             Sunwan
-// @modified           ywzhaiqi
-// @version            1.0
+// @author             ywzhaiqi && Sunwan（原作者）
+// @version            1.1
 // @namespace          http://www.zjcnnj.cn/mozilla/greasemonkey/
 // @description        使用左右方向键来翻页
 // @include            http://*
@@ -21,6 +20,7 @@
 (function() {
     var Config = {
         addkeydown: true,
+        checkDomainPort: true,  // 是否跳过跨域的链接
         custom_next: "",
         custom_previous: "",
     };
@@ -116,7 +116,8 @@
 
     // 翻页文字的前面和后面可能包含的字符（正则表达式）
     var preRegexp = '(^\\s*(?:[<‹«]*|[>›»]*|[\\(\\[『「［【]?)\\s*)';
-    var nextRegexp = '(\\s*(?:[>›»]*|[\\)\\]』」］】]?)\\s*$)';
+    // var nextRegexp = '(\\s*(?:[>›»]*|[\\)\\]』」］】]?)\\s*$)';
+    var nextRegexp = '(?:\\s*([＞>›»]*)|(?:[\\)\\]』」］】→]?)\\s*$)';
 
     function loadConfig() {
         Config.addkeydown = !!GM_getValue('addkeydown', Config.addkeydown);
@@ -173,16 +174,26 @@
         if (result != null) GM_setValue("custom_" + k, result);
     }
 
-    function checkLinks() {
+
+    function checkLinks(doc) {
+        if (!doc) doc = document;
+
+        var _domain_port = doc.location.host;
+
         var link, text, ldnc, lnc, ldpc, lpc, num, digCurFound, linkNumber, found, tmpNode;
         var regexp = new RegExp();
         // 查找相应的链接
-        var links = document.getElementsByTagName('A');
-        for (var i = 0; i < links.length; i++) {
+        var links = doc.getElementsByTagName('A');
+        for (var i = 0, l = links.length; i < l; i++) {
             link = links[i];
 
+            // 如果不是当前域,跳过
+            if (Config.checkDomainPort && /^https?:/i.test(link.href) && link.hostname.indexOf(doc.domain) === -1) {
+                continue;
+            }
+
             // 跳过不起作用的链接
-            if (!link.offsetParent || link.offsetWidth == 0 || link.offsetHeight == 0 || !link.hasAttribute("href") && !link.hasAttribute("onclick"))
+            if (!link.offsetParent || link.offsetWidth == 0 || link.offsetHeight == 0 || (!link.hasAttribute("href") && !link.hasAttribute("onclick")))
                 continue;
             // 跳过日历
             if (/(?:^|\s)(?:monthlink|weekday|day|day[\-_]\S+)(?:\s|$)/i.test(link.className))
@@ -198,12 +209,14 @@
             text = link.textContent;
             if (!text) {
                 // 若链接中没有文字，则检查图片的alt属性、链接或图片的title
-                for each(var img in link.childNodes) {
+                [].some.call(link.childNodes, function(img){
                     if (img.localName == "IMG") {
                         text = img.alt || link.title || img.title;
-                        if (text) break;
+                        if (text)
+                            return;
                     }
-                }
+                });
+
                 if (!text) continue;
             }
             text = text.toLowerCase().replace(/^\s+|\s+$/g, "");
@@ -285,8 +298,10 @@
             // 找到“上一页”和“下一页”的链接或找到其中一个而另一个超过规定范围没找到，将不再查找。
             if (next.found && previous.found ||
                 next.found && i > next.pos + 30 ||
-                previous.found && i > previous.pos + 30)
+                previous.found && i > previous.pos + 30) {
+
                 break;
+            }
         }
         // 通过以上方法没有找到“下一页”的，把第一次检测出来的数字1的链接作为当前页，2作为“下一页”。
         if (!next.found /*&& !next.link*/ && next.digital)
@@ -544,6 +559,9 @@
             <div>Next Page 设置</div>\
                 <ul>\
                     <li><input type="checkbox" id="nextpage-prefs-addkeydown" /> 注册左右键翻页？</li>\
+                    <li title="跨域的链接会被跳过">\
+                        <input type="checkbox" id="nextpage-prefs-checkDomainPort"/>\
+                         是否跳过跨域的链接？<i>注：需要更多的测试</i></li>\
                     <li>下一页关键字：\
                         <div><textarea id="nextpage-prefs-custom_next" placeholder="自定义下一页关键字，以“,”号分隔开。"></textarea></div>\
                     </li>\
@@ -564,6 +582,7 @@
 
         on($('ok'), 'click', function(){
             GM_setValue('addkeydown', Config.addkeydown = !!$('addkeydown').checked);
+            GM_setValue('checkDomainPort', Config.checkDomainPort = !!$('checkDomainPort').checked);
             GM_setValue("custom_next", Config.custom_next = $('custom_next').value);
             GM_setValue("custom_previous", Config.custom_previous = $('custom_previous').value);
 
@@ -580,6 +599,7 @@
         on($('cancel'), 'click', close);
 
         $('addkeydown').checked = Config.addkeydown;
+        $('checkDomainPort').checked = Config.checkDomainPort;
         $('custom_next').value = Config.custom_next;
         $('custom_previous').value = Config.custom_previous;    
     }
