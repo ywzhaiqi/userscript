@@ -4,7 +4,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.2.2
+// @version      6.2.3
 // @homepageURL  https://greasyfork.org/scripts/178900/
 // @updateURL    https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js
 // @downloadURL  https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js
@@ -237,13 +237,14 @@ var SITEINFO=[
         nextLink:'//p[@id="page"]/a[contains(text(),"下一页")][@href]',
         preLink:'//p[@id="page"]/a[contains(text(),"上一页")][@href]',
         autopager: {
-            pageElement: 'css;div#content_left > *',
+            pageElement: 'css;div#content_left',
             replaceE: 'css;#page',
+            stylish: '.autopagerize_page_info { margin-bottom: 10px; }',
             startFilter: function(win) {
                 // 设置百度搜索类型为 s?wd=
                 try {
                     win.document.cookie = "ISSW=1";
-                } catch (e) {}
+                } catch (ex) {}
             }
         }
     },
