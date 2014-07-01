@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        4.5.2
+// @version        4.5.3
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    shyangs
@@ -313,9 +313,9 @@ Rule.specialSite = [
             "www.cmfu.com发布|起点中文网www.qidian.com欢迎广大书友光临阅读.*": "",
             '(<p>\\s+)?<a href="?http://www.(?:qidian|cmfu).com"?>起点中文网.*': ''
         },
-        // contentHandle: false,
+        contentRemove: "span[id^='ad_']",
         contentPatch: function(fakeStub){
-            fakeStub.find('div#content script:first').addClass('reader-ajax');
+            fakeStub.find('div#content > script[src]:first').addClass('reader-ajax');
         },
     },
     {siteName: "起点中文网免费频道",
@@ -529,7 +529,7 @@ Rule.specialSite = [
             /高速首发.*本章节是地址为/ig,
             /\/\/(?:&nbsp;|访问下载txt小说|高速更新)+\/\//ig,
             /(www\.)?bxs\.cc/ig,
-            /百晓生.不跳字|不跳字。/ig,
+            /百晓生.不跳字|不跳字。|更新快纯文字/ig,
             /\.\[，！\]/ig,
             /（未完待续&nbsp;http:\/\/www.Bxs.cc&nbsp;89免费小说阅《百晓生文学网》）/g,
             /〖百晓生∷.*〗|《?百晓生文学网》?|最快阅读小说大主宰，尽在百晓生文学网.*|ww.x.om|欢迎大家来到.*?bxs\.cc|百晓生阅读最新最全的小说.*|百晓生网不少字|站长推荐.*|文字首发|百.晓.生.|关闭.*广告.*|飘天文学|本站域名就是.*|\(.{0,5}小说更快更好.{0,5}\)|(请在)?百度搜索.*|一秒记住.*为您提供精彩小说阅读.|百晓生|¤本站网址：¤|\/\/&nbsp;访问下载txt小说\/\/◎◎|纯站点\\".*值得收藏的/ig,
@@ -1215,7 +1215,7 @@ Rule.replace = {
     "\\[搜索最新更新尽在[a-z\\.]+\\]": "",
     "<a>手机用户请到m.qidian.com阅读。</a>": "",
     ".{2,4}中文网欢迎广大书友": "",
-    "访问下载txt小说":"",
+    "访问下载txt小说|◎雲來閣免费万本m.yunlaige.com◎":"",
     "fqXSw\\.com":"", "\\.5ｄｕ|\\.５du５\\.":"",
     "\\[\\]":"",
     "如果您觉得网不错就多多分享本站谢谢各位读者的支持": "",
@@ -1240,11 +1240,11 @@ Rule.replace = {
 
     // === 双字替换 ===
     "暧m[eè][iì]":"暧昧",
-    "b[ěe]i(\\s|&nbsp;)*j[īi]ng":"北京","半shen": "半身", "b[ìi]j[ìi]ng":"毕竟", "报(了?)jing":"报$1警", "bèi'pò":"被迫", "包yǎng":"包养",
+    "不liáng":"不良", "b[ěe]i(\\s|&nbsp;)*j[īi]ng":"北京","半shen": "半身", "b[ìi]j[ìi]ng":"毕竟", "报(了?)jing":"报$1警", "bèi'pò":"被迫", "包yǎng":"包养",
     "ch[oō]ngd[oò]ng":"冲动", "chong物":"宠物", "cao(练|作)":"操$1", "缠mian": "缠绵", "成shu": "成熟", "(?:赤|chi)\\s*lu[oǒ]": "赤裸", "春guang": "春光", "chun风":"春风", "chuang伴":"床伴", "沉mi":"沉迷", "沉lun":"沉沦", "刺ji":"刺激", "chao红":"潮红", "初chun":"初春", "＂ｃｈｉ　ｌｕｏ＂":"赤裸",
     "dang校": "党校", "da子": "鞑子", "大tui":"大腿", "diao丝": "屌丝", "d[úu](?:\\s|&nbsp;|<br/>)*l[ìi]": "独立", "d[uú]\\s{0,2}c[áa]i":"独裁", "d?[iì]f[āa]ng":"地方", "d[ìi]\\s*d[ūu]":"帝都", "di国":"帝国", "duo落":"堕落",
     "f[ǎa]ngf[óo]":"仿佛", "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "f[èe]nn[ùu]":"愤怒",
-    "gao潮": "高潮", "高氵朝":"高潮", "干chai": "干柴", "gu[oò]ch[ée]ng":"过程", "gu[āa]nx[iì]":"关系", "g[ǎa]nji[àa]o":"感觉", "国wu院":"国务院",
+    "gao潮": "高潮", "高氵朝":"高潮", "干chai": "干柴", "勾yin":"勾引", "gu[oò]ch[ée]ng":"过程", "gu[āa]nx[iì]":"关系", "g[ǎa]nji[àa]o":"感觉", "国wu院":"国务院",
     "hù士":"护士", "há'guó":"韩国", "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "h[ǎa]oxi[àa]ng":"好像", "hu[áa]ngs[èe]":"黄色", "皇d[ìi]":"皇帝", "昏昏yu睡":"昏昏欲睡", "回dang":"回荡",
     "jian(臣|细)":"奸$1", "jian货":"贱货", "jing察":"警察", "j[ìi]nháng":"进行", "ji烈":"激烈", "j[iì](nv|女)": "妓女", "jirou": "鸡肉", "ji者":"记者", "ju花":"菊花","j[īi]动":"激动", "jili[èe]":"激烈", "肌r[òo]u":"肌肉","ji射":"激射", "ji[ēe]ch[uù]":"接触", "j[ùu]li[èe]": "剧烈", "jǐng惕": "警惕", "节cao":"节操", "浸yin":"浸淫",
     "k[ěe]n[ée]ng": "可能", "开bao": "开苞",  "k[àa]o近": "靠近", "口wen":"口吻",
@@ -1252,7 +1252,7 @@ Rule.replace = {
     "m[ǎa]ny[ìi]":"满意", "m[ǎa]sh[àa]ng":"马上", "m[ée]iy[oǒ]u":"没有", "mei国": "美国", "m[íi]ngb[áa]i":"明白", "迷huan": "迷幻", "mi茫":"迷茫", "m[íi]n\\s{0,2}zh[ǔu]": "民主", "迷jian": "迷奸", "mimi糊糊":"迷迷糊糊", "末(?:\\s|<br/?>)*ì":"末日", "面se":"面色", "mengmeng":"蒙蒙", 
     "nàme":"那么", "n[ée]ngg[oò]u":"能够", "nán\\s{0,2}hǎi": "那会", "内jian":"内奸", "內yī":"内衣",
     "pi[áa]o客":"嫖客", "p[áa]ngbi[āa]n":"旁边",
-    "q[íi]gu[àa]i":"奇怪", "qing　ren":"情人", "qin兽":"禽兽", "q[iī]ngch[uǔ]":"清楚", "球mi":"球迷", "青chun":"青春", "青lou":"青楼",
+    "q[íi]gu[àa]i":"奇怪", "qing(　ren|人)":"情人", "qin兽":"禽兽", "q[iī]ngch[uǔ]":"清楚", "球mi":"球迷", "青chun":"青春", "青lou":"青楼",
     "r[úu]gu[oǒ]":"如果", "r[oó]ngy[ìi]":"容易", "ru(房|白色)": "乳$1", "rén员":"人员", "rén形":"人形", "人chao":"人潮", 
     "she(门|术|手|程|击)":"射$1", "sh[iì]ji[eè]":"世界", "sh[ií]ji[aā]n":"时间", "sh[ií]h[oò]u": "时候", "sh[ií]me":"什么", "si人":"私人", "shi女":"侍女", "shi身": "失身", "sh[ūu]j[ìi]":"书记", "shu女": "熟女", "shu[　\\s]?xiong":"酥胸", "(?:上|shang)chuang": "上床", "呻y[íi]n": "呻吟", "sh[ēe]ngzh[íi]": "生殖", "深gu": "深谷", "双xiu": "双修", "生r[ìi]": "生日", "si盐":"私盐", "shi卫":"侍卫", "si下":"私下", "sao扰":"骚扰", "ｓｈｕａｎｇ　ｆｅｎｇ":"双峰", 
     "t[uū]r[áa]n":"突然", "tiaojiao": "调教", "偷qing":"偷情", "推dao": "推倒", "脱guang": "脱光", "t[èe]bi[ée]":"特别", "t[ōo]nggu[òo]":"通过", "tian来tian去":"舔来舔去",
@@ -1311,10 +1311,14 @@ var Config = {
     },
 
     get cn2tw() {
-        return this._getBooleanConfig('cn2tw', Config.lang === 'zh-TW' ? true : false);
+        if (_.isUndefined(this._cn2tw)) {
+            this._cn2tw = this._getBooleanConfig('cn2tw', Config.lang === 'zh-TW' ? true : false);
+        }
+        return this._cn2tw;
     },
     set cn2tw(bool) {
         GM_setValue('cn2tw', bool);
+        this._cn2tw = bool;
     },
 
     get booklink_enable() {  // booklink.me 跳转的自动启动
@@ -2951,10 +2955,16 @@ Parser.prototype = {
     convert2tw: function (text) {
         if (!text) return text;
 
-        for (var key in cn2tw) {
-            text = text.replace(new RegExp(key, 'ig'), cn2tw[key]);
+        var ii, len, str;
+        str = text.split("");
+        len = str.length;
+        for (ii = 0; ii < len; ii++) {
+            str[ii] = cn2tw[str[ii]] || str[ii];
         }
-        return text;
+
+        str = str.join("");
+
+        return str;
     },
     contentCustomReplace: function (text) {
         if (!text) return text;
@@ -3322,18 +3332,7 @@ var App = {
         // 有些图片网站高度随着图片加载而变长
         setTimeout(App.scroll, 1000);
 
-        // 再次移除其它不相关的，起点，纵横中文有时候有问题
-        var clean = function() {
-            $('body > *:not("#container, .readerbtn, #reader_preferences, #uil_blocker,iframe[name=\'mynovelreader-iframe\']")').remove();
-        };
-
-        setTimeout(clean, 2000);
-        setTimeout(clean, 5000);
-
-        // TM 用 addEventListener('load') 有问题
-        window.onload = function() {
-            clean();
-        };
+        App.cleanAgain();
 
         if (config.PRELOADER) {
             App.doRequest();
@@ -3392,6 +3391,20 @@ var App = {
                 </div>\
             </div>\
         '.uiTrans(), parser);
+    },
+    cleanAgain: function() {
+        // 再次移除其它不相关的，起点，纵横中文有时候有问题
+        var clean = function() {
+            $('body > *:not("#container, .readerbtn, #reader_preferences, #uil_blocker,iframe[name=\'mynovelreader-iframe\']")').remove();
+        };
+
+        setTimeout(clean, 2000);
+        setTimeout(clean, 5000);
+        // TM 用 addEventListener('load') 有问题
+        window.onload = function() {
+            clean();
+            setTimeout(clean, 500);
+        };
     },
     toggle: function() {
         if (App.isEnabled) { // 退出
@@ -3584,7 +3597,7 @@ var App = {
         if (url) {
             // ff30 Greasemonkey 会报错：Greasemonkey 访问违规：unsafeWindow 无法调用 GM_openInTab。新建脚本采用按键调用也这样。
             setTimeout(function() {
-                GM_openInTab(url);
+                GM_openInTab(url, false);
             }, 0);
         } else if (errorMsg) {
             UI.notice(errorMsg);

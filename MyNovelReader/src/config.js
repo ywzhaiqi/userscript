@@ -8,10 +8,14 @@ var Config = {
     },
 
     get cn2tw() {
-        return this._getBooleanConfig('cn2tw', Config.lang === 'zh-TW' ? true : false);
+        if (_.isUndefined(this._cn2tw)) {
+            this._cn2tw = this._getBooleanConfig('cn2tw', Config.lang === 'zh-TW' ? true : false);
+        }
+        return this._cn2tw;
     },
     set cn2tw(bool) {
         GM_setValue('cn2tw', bool);
+        this._cn2tw = bool;
     },
 
     get booklink_enable() {  // booklink.me 跳转的自动启动

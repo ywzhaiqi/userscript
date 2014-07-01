@@ -208,18 +208,7 @@ var App = {
         // 有些图片网站高度随着图片加载而变长
         setTimeout(App.scroll, 1000);
 
-        // 再次移除其它不相关的，起点，纵横中文有时候有问题
-        var clean = function() {
-            $('body > *:not("#container, .readerbtn, #reader_preferences, #uil_blocker,iframe[name=\'mynovelreader-iframe\']")').remove();
-        };
-
-        setTimeout(clean, 2000);
-        setTimeout(clean, 5000);
-
-        // TM 用 addEventListener('load') 有问题
-        window.onload = function() {
-            clean();
-        };
+        App.cleanAgain();
 
         if (config.PRELOADER) {
             App.doRequest();
@@ -278,6 +267,20 @@ var App = {
                 </div>\
             </div>\
         '.uiTrans(), parser);
+    },
+    cleanAgain: function() {
+        // 再次移除其它不相关的，起点，纵横中文有时候有问题
+        var clean = function() {
+            $('body > *:not("#container, .readerbtn, #reader_preferences, #uil_blocker,iframe[name=\'mynovelreader-iframe\']")').remove();
+        };
+
+        setTimeout(clean, 2000);
+        setTimeout(clean, 5000);
+        // TM 用 addEventListener('load') 有问题
+        window.onload = function() {
+            clean();
+            setTimeout(clean, 500);
+        };
     },
     toggle: function() {
         if (App.isEnabled) { // 退出
@@ -470,7 +473,7 @@ var App = {
         if (url) {
             // ff30 Greasemonkey 会报错：Greasemonkey 访问违规：unsafeWindow 无法调用 GM_openInTab。新建脚本采用按键调用也这样。
             setTimeout(function() {
-                GM_openInTab(url);
+                GM_openInTab(url, false);
             }, 0);
         } else if (errorMsg) {
             UI.notice(errorMsg);

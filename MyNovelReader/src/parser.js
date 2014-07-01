@@ -435,10 +435,16 @@ Parser.prototype = {
     convert2tw: function (text) {
         if (!text) return text;
 
-        for (var key in cn2tw) {
-            text = text.replace(new RegExp(key, 'ig'), cn2tw[key]);
+        var ii, len, str;
+        str = text.split("");
+        len = str.length;
+        for (ii = 0; ii < len; ii++) {
+            str[ii] = cn2tw[str[ii]] || str[ii];
         }
-        return text;
+
+        str = str.join("");
+
+        return str;
     },
     contentCustomReplace: function (text) {
         if (!text) return text;
