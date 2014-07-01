@@ -4,8 +4,8 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.2.3
-// @homepageURL  https://greasyfork.org/scripts/178900/
+// @version      6.2.4
+// @homepageURL  https://greasyfork.org/scripts/293-super-preloaderplus-one
 // @updateURL    https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js
 // @downloadURL  https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js
 
@@ -69,13 +69,13 @@ if (window.name === 'superpreloader-iframe') { // 搜狗,iframe里面怎么不�
 
 
 // GM 兼容
-var GM_log = window.GM_log,
-    GM_getValue = window.GM_getValue,
-    GM_setValue = window.GM_setValue,
-    GM_registerMenuCommand = window.GM_registerMenuCommand,
-    GM_xmlhttpRequest = window.GM_xmlhttpRequest,
-    GM_openInTab = window.GM_openInTab,
-    GM_addStyle;
+var GM_log = this.GM_log,
+    GM_getValue = this.GM_getValue,
+    GM_setValue = this.GM_setValue,
+    GM_registerMenuCommand = this.GM_registerMenuCommand,
+    GM_xmlhttpRequest = this.GM_xmlhttpRequest,
+    GM_openInTab = this.GM_openInTab,
+    GM_addStyle = this.GM_addStyle;
 
 gmCompatible();
 

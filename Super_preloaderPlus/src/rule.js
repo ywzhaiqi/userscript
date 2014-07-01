@@ -24,13 +24,13 @@ if (window.name === 'superpreloader-iframe') { // 搜狗,iframe里面怎么不�
 
 
 // GM 兼容
-var GM_log = window.GM_log,
-    GM_getValue = window.GM_getValue,
-    GM_setValue = window.GM_setValue,
-    GM_registerMenuCommand = window.GM_registerMenuCommand,
-    GM_xmlhttpRequest = window.GM_xmlhttpRequest,
-    GM_openInTab = window.GM_openInTab,
-    GM_addStyle;
+var GM_log = this.GM_log,
+    GM_getValue = this.GM_getValue,
+    GM_setValue = this.GM_setValue,
+    GM_registerMenuCommand = this.GM_registerMenuCommand,
+    GM_xmlhttpRequest = this.GM_xmlhttpRequest,
+    GM_openInTab = this.GM_openInTab,
+    GM_addStyle = this.GM_addStyle;
 
 gmCompatible();
 
