@@ -164,7 +164,7 @@ var SITEINFO=[
             documentFilter: function(doc){
                 var x = doc.evaluate('//script/text()[contains(self::text(), "data:image/")]', doc, null, 9, null).singleNodeValue;
                 if (x) {
-                    new Function('document', x.nodeValue)(doc);
+                    new Function('document, window, google', x.nodeValue)(doc, unsafeWindow, unsafeWindow.google);
                 }
             },
             startFilter: function(win, doc) {  // 只作用一次

@@ -4,7 +4,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.2.4
+// @version      6.2.5
 // @homepageURL  https://greasyfork.org/scripts/293-super-preloaderplus-one
 // @updateURL    https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js
 // @downloadURL  https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js
@@ -209,7 +209,7 @@ var SITEINFO=[
             documentFilter: function(doc){
                 var x = doc.evaluate('//script/text()[contains(self::text(), "data:image/")]', doc, null, 9, null).singleNodeValue;
                 if (x) {
-                    new Function('document', x.nodeValue)(doc);
+                    new Function('document, window, google', x.nodeValue)(doc, unsafeWindow, unsafeWindow.google);
                 }
             },
             startFilter: function(win, doc) {  // 只作用一次
