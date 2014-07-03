@@ -248,8 +248,7 @@ if (imgTable) { // for basic version
     for (var i = 0; i < similars.length; i++) {
       var a = similars[i];
       var href = getNewImageLinks(a.href);
-
-      console.log(a.href,href);
+      //console.log(a.href,href);
       if (href.toImgHref === false) {
         continue;
       }

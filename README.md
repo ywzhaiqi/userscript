@@ -163,6 +163,9 @@ Greasemonkey 和 Scriptish
 	- 安装脚本时没有进度条，如果 require 数量较多，需要等待安装窗口的出现。
 	- 不支持 GM_info、@grant。
 	- **严重bug**，存在于 0.1.11 版本，同一个作者的2个中文文件名脚本，会被安装在同一个目录，同一时间只能安装一个脚本。最新 nightly 版（0.1.13pre）已修复。
+- Greasemonkey 缺点
+	- 修改脚本后，并不会更新 @version、@grant 等值。@version 还是以前的 versiton。如果新增了一个 @require，Greasemonkey 并不会更新并自动下载。只能删除后重新安装。
+
 
 ### 设置及转换
 

@@ -23,7 +23,7 @@
 //     0 对 Super_preloaderPlus_one、AutoPagerize、uAutoPagerize、 BaiduMonkeyW 脚本的支，准确、资源消耗相对更小
 //     1 对所有脚本都适用，但不准确、消耗相对较大。如果非上面的几个脚本，建议用这个。
 
-var checkNextPageMethod = 0;
+// var checkNextPageMethod = 0;
 
 var locationHref = location.href;
 
