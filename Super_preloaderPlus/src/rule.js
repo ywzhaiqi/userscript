@@ -160,7 +160,8 @@ var SITEINFO=[
             //HT_insert:['css;div#res',2], 
             lazyImgSrc: 'imgsrc',
             // 新增的自定义样式。下面这个是调整 Google 下一页可能出现的图片排列问题。 
-            stylish: '.rg_meta{display:none}.bili{display:inline-block;margin:0 6px 6px 0;overflow:hidden;position:relative;vertical-align:top}._HG{margin-bottom:2px;margin-right:2px}',
+            stylish: 'hr.rgsep{display:none;}' +
+                '.rg_meta{display:none}.bili{display:inline-block;margin:0 6px 6px 0;overflow:hidden;position:relative;vertical-align:top}._HG{margin-bottom:2px;margin-right:2px}',
             documentFilter: function(doc){
                 var x = doc.evaluate('//script/text()[contains(self::text(), "data:image/")]', doc, null, 9, null).singleNodeValue;
                 if (x) {
@@ -180,6 +181,13 @@ var SITEINFO=[
                     script.type = 'text/javascript';
                     script.textContent = 'window.rwt = function(){}';
                     doc.documentElement.appendChild(script);
+                }
+
+                // 移动相关搜索到第一页
+                var brs = doc.getElementById('brs'),
+                    ins = doc.getElementById('ires');
+                if (brs && ins) {
+                    ins.appendChild(brs);
                 }
             }
         }
@@ -826,10 +834,29 @@ var SITEINFO=[
                 newIframe: true
         }
     },
-    {name: '译言网',
-        url: '^http://article\\.yeeyan\\.org/.*$',
+    {name: '译言网 | 译文库和原文库',
+        url: /^http:\/\/(?:article|source)\.yeeyan\.org\//i,
         nextLink: '//ul[contains(concat(" ",normalize-space(@class)," "), " y_page") ]/li/a[text()="下一页"]',
-        pageElement: '//div[contains(concat(" ",normalize-space(@class)," "), "content_box")]',
+        autopager: {
+            pageElement: '//div[contains(concat(" ",normalize-space(@class)," "), "content_box")] | //div[@class="y_l"]/div[@class="y_s_list"]',
+            replaceE: '//ul[contains(concat(" ",normalize-space(@class)," "), " y_page") ]'
+        }
+    },
+    {name: '译言精选',
+        url: /^http:\/\/select\.yeeyan\.org\//i,
+        nextLink: '//ul[contains(@class, "s_page_n")]/li/a[text()="下一页"]',
+        autopager: {
+            pageElement: 'id("article_list")',
+            replaceE: '//ul[contains(@class, "s_page_n")]'
+        }
+    },
+    {name: ' 译言小组',
+        url: /^http:\/\/group\.yeeyan\.org\//i,
+        nextLink: '//div[@class="paginator"]/a[@class="next"]',
+        autopager: {
+            pageElement: '//div[contains(@class, "column-main")]/div[contains(@class, "stream")]',
+            replaceE: '//div[@class="paginator"]',
+        }
     },
     {name: '主题站 | 果壳网 ',
         url: '^http://www\\.guokr\\.com/(?:site|group|ask|event)/',
