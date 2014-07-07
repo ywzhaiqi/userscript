@@ -23,8 +23,9 @@
 // @homepageURL    https://greasyfork.org/scripts/292/
 // @updateURL      https://greasyfork.org/scripts/292-my-novel-reader/code/My%20Novel%20Reader.meta.js
 // @downloadURL    https://greasyfork.org/scripts/292-my-novel-reader/code/My%20Novel%20Reader.user.js
-// @require        http://code.jquery.com/jquery-1.9.1.min.js
+// @require        http://cdn.jsdelivr.net/jquery/1.9.1/jquery-1.9.1.min.js
 // @require        http://cdn.jsdelivr.net/underscorejs/1.6.0/underscore-min.js
+// @require        https://greasyfork.org/scripts/3053-keymaster-js/code/keymasterjs.js?version=8815
 // @require        https://greasyfork.org/scripts/2672-meihua-cn2tw/code/Meihua_cn2tw.js?version=7375
 // @resource fontawesomeWoff http://libs.baidu.com/fontawesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3
 
@@ -102,6 +103,7 @@
 // @include        http://www.ziyuge.com/*/*/*/*/*.html
 
 // 其它网站
+// @include        http://www.bookgew.com/Html/Book/*/*/*.htm
 // @include        http://read.shuhaha.com/Html/Book/*/*/*.html
 // @include        http://www.biqi.me/files/article/html/*/*/*.html
 // @include        http://www.ttzw.com/book/*/*.html

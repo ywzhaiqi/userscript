@@ -98,9 +98,9 @@ Parser.prototype = {
                 .trim()
                 // .replace(/(第?\S+?[章节卷回])(.*)/, "$1 $2");
 
-        if (info.trimBookTitle !== false) {
-            chapterTitle = chapterTitle.replace(bookTitle, '').trim();
-        }
+        // if (info.trimBookTitle !== false) {
+        //     chapterTitle = chapterTitle.replace(bookTitle, '').trim();
+        // }
 
         docTitle = bookTitle ?
                 bookTitle + ' - ' + chapterTitle :

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        4.5.3
+// @version        4.5.4
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    shyangs
@@ -23,8 +23,9 @@
 // @homepageURL    https://greasyfork.org/scripts/292/
 // @updateURL      https://greasyfork.org/scripts/292-my-novel-reader/code/My%20Novel%20Reader.meta.js
 // @downloadURL    https://greasyfork.org/scripts/292-my-novel-reader/code/My%20Novel%20Reader.user.js
-// @require        http://code.jquery.com/jquery-1.9.1.min.js
+// @require        http://cdn.jsdelivr.net/jquery/1.9.1/jquery-1.9.1.min.js
 // @require        http://cdn.jsdelivr.net/underscorejs/1.6.0/underscore-min.js
+// @require        https://greasyfork.org/scripts/3053-keymaster-js/code/keymasterjs.js?version=8815
 // @require        https://greasyfork.org/scripts/2672-meihua-cn2tw/code/Meihua_cn2tw.js?version=7375
 // @resource fontawesomeWoff http://libs.baidu.com/fontawesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3
 
@@ -102,6 +103,7 @@
 // @include        http://www.ziyuge.com/*/*/*/*/*.html
 
 // 其它网站
+// @include        http://www.bookgew.com/Html/Book/*/*/*.htm
 // @include        http://read.shuhaha.com/Html/Book/*/*/*.html
 // @include        http://www.biqi.me/files/article/html/*/*/*.html
 // @include        http://www.ttzw.com/book/*/*.html
@@ -568,6 +570,7 @@ Rule.specialSite = [
         contentReplace: {
             "<a[^>]*>(.*?)</a>": "$1",
             "看更新最快的小说就搜索—— 木鱼哥——无弹窗，全文字": "",
+            "【看最新小说就搜索.*全文字首发】": "",
             "<p>.*?无弹窗</p>":"",
             "bb\\.king|【木&nbsp;鱼&nbsp;哥&nbsp;.*?】|【一秒钟记住本站：muyuge.com&nbsp;木鱼哥】":"",
             "——推荐阅读——[\\s\\S]+": "",
@@ -1124,7 +1127,7 @@ Rule.specialSite = [
             /(?:{|\\|\/|\()*豌.?豆.?文.?学.?网.*?(?:高速更新|\\\/|})+/ig,
             /更新最快最稳定|看小说“”/ig,
             /&lt;strng&gt;.*?&lt;\/strng&gt;/ig,
-            /\(凤舞文学网\)|\( *\)|「启航文字」/ig,
+            /\(凤舞文学网\)|\( *\)|「启航文字」|79阅.读.网/ig,
             /高速首发.*?本章节是.*/ig,
             /百度搜索自从知道用百度搜索，妈妈再也不用担心我追不到最快更新了/ig,
         ]
@@ -1151,6 +1154,16 @@ Rule.specialSite = [
             /收藏【.*?疯狂中文网\)/ig,
         ]
     },
+    {siteName: "吾读小说网",
+        url: "http://www\\.5du5\\.com/book/.*\\.html",
+        contentReplace: '\\(吾读小说网 <a.*无弹窗全文阅读\\)'
+    },
+    {siteName: "UU看书",
+        url: "http://www\\.uukanshu\\.com/.*/\\d+/\\d+.html",
+        contentReplace: "[UＵ]*看书[（\\(].*?[）\\)]文字首发。"
+    },
+
+    // ===== 特殊的获取下一页链接
     {siteName: "看书啦",
         url: "^http://www.kanshu.la/book/\\w+/\\d+\\.shtml",
         titleReg: "(.*)-(.*)-看书啦",
@@ -1166,14 +1179,22 @@ Rule.specialSite = [
             if (m) return m[1];
         }
     },
-    {siteName: "吾读小说网",
-        url: "http://www\\.5du5\\.com/book/.*\\.html",
-        contentReplace: '\\(吾读小说网 <a.*无弹窗全文阅读\\)'
+    {siteName: "书阁网",
+        url: "^http://www\\.bookgew\\.com/Html/Book/\\d+/\\d+/\\d+\\.htm",
+        titleReg: "(.*)-(.*?)-书阁网",
+        titlePos: 1,
+        // titleSelector: ".newstitle",
+        nextUrl: function($doc){
+            var html = $doc.find('script:contains(nextpage=)').html();
+            var m = html.match(/nextpage="(.*?)";/);
+            if (m) return m[1];
+        },
+        nextUrl: function($doc) {
+            var html = $doc.find('script:contains(prevpage=)').html();
+            var m = html.match(/prevpage="(.*?)";/);
+            if (m) return m[1];
+        }
     },
-    {siteName: "UU看书",
-        url: "http://www\\.uukanshu\\.com/.*/\\d+/\\d+.html",
-        contentReplace: "[UＵ]*看书[（\\(].*?[）\\)]文字首发。"
-    }
     
     // {siteName: "雅文言情小说吧",  // 一章分段
     //     url: "http://www\\.yawen8\\.com/\\w+/\\d+/\\d+\\.html",
@@ -1241,7 +1262,7 @@ Rule.replace = {
     // === 双字替换 ===
     "暧m[eè][iì]":"暧昧",
     "不liáng":"不良", "b[ěe]i(\\s|&nbsp;)*j[īi]ng":"北京","半shen": "半身", "b[ìi]j[ìi]ng":"毕竟", "报(了?)jing":"报$1警", "bèi'pò":"被迫", "包yǎng":"包养",
-    "ch[oō]ngd[oò]ng":"冲动", "chong物":"宠物", "cao(练|作)":"操$1", "缠mian": "缠绵", "成shu": "成熟", "(?:赤|chi)\\s*lu[oǒ]": "赤裸", "春guang": "春光", "chun风":"春风", "chuang伴":"床伴", "沉mi":"沉迷", "沉lun":"沉沦", "刺ji":"刺激", "chao红":"潮红", "初chun":"初春", "＂ｃｈｉ　ｌｕｏ＂":"赤裸",
+    "ch[oō]ngd[oò]ng":"冲动", "chong物":"宠物", "cao(练|作)":"操$1", "出gui":"出轨", "缠mian": "缠绵", "成shu": "成熟", "(?:赤|chi)\\s*lu[oǒ]": "赤裸", "春guang": "春光", "chun风":"春风", "chuang伴":"床伴", "沉mi":"沉迷", "沉lun":"沉沦", "刺ji":"刺激", "chao红":"潮红", "初chun":"初春", "＂ｃｈｉ　ｌｕｏ＂":"赤裸",
     "dang校": "党校", "da子": "鞑子", "大tui":"大腿", "diao丝": "屌丝", "d[úu](?:\\s|&nbsp;|<br/>)*l[ìi]": "独立", "d[uú]\\s{0,2}c[áa]i":"独裁", "d?[iì]f[āa]ng":"地方", "d[ìi]\\s*d[ūu]":"帝都", "di国":"帝国", "duo落":"堕落",
     "f[ǎa]ngf[óo]":"仿佛", "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "f[èe]nn[ùu]":"愤怒",
     "gao潮": "高潮", "高氵朝":"高潮", "干chai": "干柴", "勾yin":"勾引", "gu[oò]ch[ée]ng":"过程", "gu[āa]nx[iì]":"关系", "g[ǎa]nji[àa]o":"感觉", "国wu院":"国务院",
@@ -1250,7 +1271,7 @@ Rule.replace = {
     "k[ěe]n[ée]ng": "可能", "开bao": "开苞",  "k[àa]o近": "靠近", "口wen":"口吻",
     "ling辱": "凌辱", "luan蛋": "卵蛋", "脸sè": "脸色", "lu出":"露出", "流máng":"流氓", "lun理":"伦理",
     "m[ǎa]ny[ìi]":"满意", "m[ǎa]sh[àa]ng":"马上", "m[ée]iy[oǒ]u":"没有", "mei国": "美国", "m[íi]ngb[áa]i":"明白", "迷huan": "迷幻", "mi茫":"迷茫", "m[íi]n\\s{0,2}zh[ǔu]": "民主", "迷jian": "迷奸", "mimi糊糊":"迷迷糊糊", "末(?:\\s|<br/?>)*ì":"末日", "面se":"面色", "mengmeng":"蒙蒙", 
-    "nàme":"那么", "n[ée]ngg[oò]u":"能够", "nán\\s{0,2}hǎi": "那会", "内jian":"内奸", "內yī":"内衣",
+    "nàme":"那么", "n[ée]ngg[oò]u":"能够", "nán\\s{0,2}hǎi": "那会", "内jian":"内奸", "[内內]y[iī]":"内衣", "内ku":"内裤",
     "pi[áa]o客":"嫖客", "p[áa]ngbi[āa]n":"旁边",
     "q[íi]gu[àa]i":"奇怪", "qing(　ren|人)":"情人", "qin兽":"禽兽", "q[iī]ngch[uǔ]":"清楚", "球mi":"球迷", "青chun":"青春", "青lou":"青楼",
     "r[úu]gu[oǒ]":"如果", "r[oó]ngy[ìi]":"容易", "ru(房|白色)": "乳$1", "rén员":"人员", "rén形":"人形", "人chao":"人潮", 
@@ -1461,15 +1482,20 @@ var Config = {
         GM_setValue('hide_preferences_button', bool);
     },
 
-    // 安静模式
-    get isQuietMode() {
-        return this._getBooleanConfig("is_quiet_mode", false);
+    // === 快捷键
+
+    // 安静模式切换快捷键
+    get quietModeKey() {
+        if (this._quietModeKey) {
+            return this._quietModeKey;
+        }
+        return this._quietModeKey = GM_getValue('quietModeKey', 'q');
     },
-    set isQuietMode(bool) {
-        GM_setValue("is_quiet_mode", bool);
+    set quietModeKey(keyCode) {
+        this._quietModeKey = keyCode;
+        GM_setValue('quietModeKey', keyCode);
     },
 
-    // 快捷键
     // 打开设置窗口的快捷键
     get openPreferencesKey() {
         if (this._openPreferencesKey) {
@@ -1480,9 +1506,6 @@ var Config = {
     set openPreferencesKey(keyCode) {
         this._openPreferencesKey = keyCode;
         GM_setValue('open_preferences_key', keyCode);
-    },
-    get openPreferencesKeyCode() {
-        return this.openPreferencesKey.toUpperCase().charCodeAt(0);
     },
 
     // 隐藏左侧章节列表的快捷键
@@ -1496,9 +1519,6 @@ var Config = {
     set hideMenuListKey(key) {
         this._hideMenuListKey = key;
         GM_setValue("hide_menulist_key", key);
-    },
-    get hideMenuListKeyCode() {
-        return this.hideMenuListKey.toUpperCase().charCodeAt(0);
     },
 
     get picNightModeCheck() {
@@ -1655,7 +1675,6 @@ function getUrlHost(url) {
     return a.host;
 }
 
-
 Function.prototype.getMStr = function() {  // 多行String
     var lines = new String(this);
     lines = lines.substring(lines.indexOf("/*") + 3, lines.lastIndexOf("*/"));
@@ -1791,16 +1810,25 @@ var UI = {
 
         style.text(css);
     },
-    toggleQuietMode: function(isQuietMode) {
-        if (_.isUndefined(isQuietMode)){
-            isQuietMode = Config.isQuietMode;
+    toggleQuietMode: function() {
+        this._isQuietMode = !this._isQuietMode;
+        var selector = '#menu-bar, #menu, #preferencesBtn, .readerbtn';
+
+        if (this.$_quietStyle) {
+            this.$_quietStyle.remove();
         }
-        
-        if (isQuietMode) {
-            $('#menu-bar, #menu').addClass("quiet-mode");
+
+        if (this._isQuietMode) {
+            $(selector).addClass("quiet-mode");
+
+            // 隐藏滚动条
+            this.$_quietStyle = $('<style>')
+                .text('scrollbar {visibility:collapse !important; } body {overflow: hidden !important; overflow-x: hidden !important;}')
+                .appendTo('head');
         } else {
-            $('#menu-bar, #menu').removeClass("quiet-mode");
+            $(selector).removeClass("quiet-mode");
         }
+
     },
     addButton: function(){
         GM_addStyle('\
@@ -1962,7 +1990,8 @@ var UI = {
         $form.on("input", "input", preview);
 
         // 初始化设置按键
-        $form.find("#openPreferences").get(0).value = Config.openPreferencesKey;
+        $form.find("#quietModeKey").get(0).value = Config.quietModeKey;
+        $form.find("#openPreferencesKey").get(0).value = Config.openPreferencesKey;
         $form.find("#setHideMenuListKey").get(0).value = Config.hideMenuListKey;
 
         // 点击事件
@@ -1998,7 +2027,14 @@ var UI = {
                 break;
             case 'hide-footer-nav':
                 break;
-            case 'openPreferences':
+            case 'quietModeKey':
+                var key = prompt('请输入打开设置的快捷键：'.uiTrans(), Config.quietModeKey);
+                if (key) {
+                    Config.quietModeKey = key;
+                    $(target).val(key);
+                }
+                break;
+            case 'openPreferencesKey':
                 var key = prompt('请输入打开设置的快捷键：'.uiTrans(), Config.openPreferencesKey);
                 if (key) {
                     Config.openPreferencesKey = key;
@@ -2065,6 +2101,9 @@ var UI = {
         Config.customReplaceRules = $form.find("#custom_replace_rules").get(0).value;
 
         UI.hide();
+    },
+    openHelp: function() {
+
     },
     notice: function (htmlText){
         var $noticeDiv = $("#alert");
@@ -2342,6 +2381,9 @@ var Res = {
                     <label title="将小说网页文本转换为繁体。\n\n注意：内置的繁简转换表，只收录了简单的单字转换，启用本功能后，如有错误转换的情形，请利用脚本的自订字词取代规则来修正。\n例如：「千里之外」，会错误转换成「千里之外」，你可以加入规则「千里之外=千里之外」来自行修正。">
                         <input type="checkbox" id="enable-cn2tw" name="enable-cn2tw"/>网页：转繁体
                     </label>
+                    <label id="quietMode" class="right" title="隐藏其他，只保留正文，适用于全屏状态下">
+                        <input class="key" type="button" id="quietModeKey"/>安静模式
+                    </label>
                 </div>
                 <div class="form-row">
                     <label title="不影响 booklink.me 的启用">
@@ -2373,24 +2415,11 @@ var Res = {
                     <label>
                         <input type="checkbox" id="hide-menu-bar"/>隐藏左侧导航条
                     </label>
-                    <label>
-                        <input type="button" id="setHideMenuListKey" style="color:red" />
-                    </label>
+                    <input class="key" type="button" id="setHideMenuListKey" />
                     <label title="通过快捷键切换或在 Greasemonkey 用户脚本命令处打开设置窗口">
                         <input type="checkbox" id="hide-preferences-button"/>隐藏设置按钮
                     </label>
-                    <label>
-                        <input type="button" id="openPreferences" style="color:red" />
-                    </label>
-                </div>
-                <div class="form-row" style="display:none">
-                    <label>
-                        <input type="checkbox" id="quietMode"/>安静模式
-                    </label>
-                    <label>
-                        调用阅读器
-                        <input type="button" id="launchReader" style="color:red" />
-                    </label>
+                    <input class="key" type="button" id="openPreferencesKey"/>
                 </div>
                 <div class="form-row">
                     <label>
@@ -2513,6 +2542,9 @@ var Res = {
              margin-top: 5px;
              height: 100px;
          }
+         .right {
+            float: right;
+         }
          */
     }.getMStr(),
 };
@@ -2618,9 +2650,9 @@ Parser.prototype = {
                 .trim()
                 // .replace(/(第?\S+?[章节卷回])(.*)/, "$1 $2");
 
-        if (info.trimBookTitle !== false) {
-            chapterTitle = chapterTitle.replace(bookTitle, '').trim();
-        }
+        // if (info.trimBookTitle !== false) {
+        //     chapterTitle = chapterTitle.replace(bookTitle, '').trim();
+        // }
 
         docTitle = bookTitle ?
                 bookTitle + ' - ' + chapterTitle :
@@ -3411,8 +3443,8 @@ var App = {
             GM_setValue("auto_enable", false);
             L_setValue("mynoverlreader_disable_once", "true");
 
-            // unsafeWindow.location = App.curPageUrl;
-            unsafeWindow.location = App.activeUrl;
+            // unsafeWindow.location = App.activeUrl;
+            window.location = App.activeUrl;
         } else {
             GM_setValue("auto_enable", true);
             L_removeValue("mynoverlreader_disable_once");
@@ -3484,9 +3516,10 @@ var App = {
     registerControls: function() {
         // 内容滚动
         var throttled = _.throttle(App.scroll, 100);
-        $(unsafeWindow).scroll(throttled); // 奶牛和 TM 冲突，需要 unsafeWindow
-
-        App.$doc.on("keydown", App.keydown);
+        // $(unsafeWindow).scroll(throttled); // 奶牛和 TM 冲突，需要 unsafeWindow
+        $(window).scroll(throttled); // 奶牛和 TM 冲突，需要 unsafeWindow
+ 
+        App.registerKeys();
 
         if (Config.dblclickPause) {
             App.$content.on("dblclick", function() {
@@ -3527,59 +3560,69 @@ var App = {
 
         GM_registerMenuCommand("小说阅读脚本设置".uiTrans(), UI.preferencesShow.bind(UI));
     },
+    registerKeys: function() {
+        key('enter', function() {
+            App.openUrl(App.indexUrl, "主页链接没有找到".uiTrans());
+            App.copyCurTitle();
+            return false;
+        });
+
+        key('left', function() {
+            var scrollTop = $(window).scrollTop();
+            if (scrollTop === 0) {
+                location.href = App.prevUrl;
+            } else {
+                var offsetTop = $(App.curFocusElement).offset().top;
+                // 在视野窗口内
+                if (offsetTop > scrollTop && offsetTop < (scrollTop + $(window).height())) {
+                    App.scrollToArticle(App.curFocusElement.previousSibling || 0);
+                } else {
+                    App.scrollToArticle(App.curFocusElement);
+                }
+            }
+            return false;
+        });
+
+        key('right', function() {
+            if (App.getRemain() === 0) {
+                location.href = App.lastRequestUrl || App.requestUrl;
+            } else {
+                App.scrollToArticle(App.curFocusElement.nextSibling || App.$doc.height());
+            }
+            return false;
+        });
+
+        key('esc', function(){
+            if (UI.$prefs) {
+                UI.hide();
+                return false;
+            }
+        });
+
+        key('shift+/', function() {
+            UI.openHelp();
+            return false;
+        });
+
+        key(Config.quietModeKey, function(){
+            UI.toggleQuietMode();
+            return false;
+        });
+
+        key(Config.hideMenuListKey, function(){
+            UI.hideMenuList();
+            return false;
+        });
+
+        key(Config.openPreferencesKey, function(){
+            UI.preferencesShow();
+            return false;
+        });
+    },
     copyCurTitle: function() {
         var title = $(App.curFocusElement).find(".title").text()
             .replace(/第?\S+章/, "").trim();
         GM_setClipboard(title, "text");
-    },
-    keydown: function(event) {
-        var tarNN = event.target.nodeName;
-        if (tarNN != 'BODY' && tarNN != 'HTML') return;
-        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-
-        switch (event.which) {
-            case 13: // Enter
-                App.openUrl(App.indexUrl, "主页链接没有找到".uiTrans());
-                App.copyCurTitle();
-                break;
-            case 37: // left arrow
-                var scrollTop = $(window).scrollTop();
-                if (scrollTop === 0) {
-                    location.href = App.prevUrl;
-                } else {
-                    var offsetTop = $(App.curFocusElement).offset().top;
-                    // 在视野窗口内
-                    if (offsetTop > scrollTop && offsetTop < (scrollTop + $(window).height())) {
-                        App.scrollToArticle(App.curFocusElement.previousSibling || 0);
-                    } else {
-                        App.scrollToArticle(App.curFocusElement);
-                    }
-                }
-                break;
-            case 39: // right arrow
-                if (App.getRemain() === 0) {
-                    location.href = App.lastRequestUrl || App.requestUrl;
-                } else {
-                    App.scrollToArticle(App.curFocusElement.nextSibling || App.$doc.height());
-                }
-                break;
-            case 192:
-                UI.hideMenuList();
-                break;
-            case Config.hideMenuListKeyCode:
-                UI.hideMenuList();
-                break;
-            case Config.openPreferencesKeyCode:
-                UI.preferencesShow();
-                break;
-            default:
-                if (UI.$prefs && event.which == 27) {
-                    UI.hide();
-                }
-                return;
-        }
-
-        return false
     },
     scrollToArticle: function(elem) {
         var offsetTop;
@@ -3805,7 +3848,9 @@ var App = {
         App.tmpDoc = null;
 
         if (config.PRELOADER) {
-            App.doRequest();
+            setTimeout(function(){
+                App.doRequest();
+            }, 200);
         }
     },
     fixImageFloats: function(articleContent) {

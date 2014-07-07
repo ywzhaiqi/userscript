@@ -108,16 +108,25 @@ var UI = {
 
         style.text(css);
     },
-    toggleQuietMode: function(isQuietMode) {
-        if (_.isUndefined(isQuietMode)){
-            isQuietMode = Config.isQuietMode;
+    toggleQuietMode: function() {
+        this._isQuietMode = !this._isQuietMode;
+        var selector = '#menu-bar, #menu, #preferencesBtn, .readerbtn';
+
+        if (this.$_quietStyle) {
+            this.$_quietStyle.remove();
         }
-        
-        if (isQuietMode) {
-            $('#menu-bar, #menu').addClass("quiet-mode");
+
+        if (this._isQuietMode) {
+            $(selector).addClass("quiet-mode");
+
+            // 隐藏滚动条
+            this.$_quietStyle = $('<style>')
+                .text('scrollbar {visibility:collapse !important; } body {overflow: hidden !important; overflow-x: hidden !important;}')
+                .appendTo('head');
         } else {
-            $('#menu-bar, #menu').removeClass("quiet-mode");
+            $(selector).removeClass("quiet-mode");
         }
+
     },
     addButton: function(){
         GM_addStyle('\
@@ -279,7 +288,8 @@ var UI = {
         $form.on("input", "input", preview);
 
         // 初始化设置按键
-        $form.find("#openPreferences").get(0).value = Config.openPreferencesKey;
+        $form.find("#quietModeKey").get(0).value = Config.quietModeKey;
+        $form.find("#openPreferencesKey").get(0).value = Config.openPreferencesKey;
         $form.find("#setHideMenuListKey").get(0).value = Config.hideMenuListKey;
 
         // 点击事件
@@ -315,7 +325,14 @@ var UI = {
                 break;
             case 'hide-footer-nav':
                 break;
-            case 'openPreferences':
+            case 'quietModeKey':
+                var key = prompt('请输入打开设置的快捷键：'.uiTrans(), Config.quietModeKey);
+                if (key) {
+                    Config.quietModeKey = key;
+                    $(target).val(key);
+                }
+                break;
+            case 'openPreferencesKey':
                 var key = prompt('请输入打开设置的快捷键：'.uiTrans(), Config.openPreferencesKey);
                 if (key) {
                     Config.openPreferencesKey = key;
@@ -382,6 +399,9 @@ var UI = {
         Config.customReplaceRules = $form.find("#custom_replace_rules").get(0).value;
 
         UI.hide();
+    },
+    openHelp: function() {
+
     },
     notice: function (htmlText){
         var $noticeDiv = $("#alert");
@@ -659,6 +679,9 @@ var Res = {
                     <label title="将小说网页文本转换为繁体。\n\n注意：内置的繁简转换表，只收录了简单的单字转换，启用本功能后，如有错误转换的情形，请利用脚本的自订字词取代规则来修正。\n例如：「千里之外」，会错误转换成「千里之外」，你可以加入规则「千里之外=千里之外」来自行修正。">
                         <input type="checkbox" id="enable-cn2tw" name="enable-cn2tw"/>网页：转繁体
                     </label>
+                    <label id="quietMode" class="right" title="隐藏其他，只保留正文，适用于全屏状态下">
+                        <input class="key" type="button" id="quietModeKey"/>安静模式
+                    </label>
                 </div>
                 <div class="form-row">
                     <label title="不影响 booklink.me 的启用">
@@ -690,24 +713,11 @@ var Res = {
                     <label>
                         <input type="checkbox" id="hide-menu-bar"/>隐藏左侧导航条
                     </label>
-                    <label>
-                        <input type="button" id="setHideMenuListKey" style="color:red" />
-                    </label>
+                    <input class="key" type="button" id="setHideMenuListKey" />
                     <label title="通过快捷键切换或在 Greasemonkey 用户脚本命令处打开设置窗口">
                         <input type="checkbox" id="hide-preferences-button"/>隐藏设置按钮
                     </label>
-                    <label>
-                        <input type="button" id="openPreferences" style="color:red" />
-                    </label>
-                </div>
-                <div class="form-row" style="display:none">
-                    <label>
-                        <input type="checkbox" id="quietMode"/>安静模式
-                    </label>
-                    <label>
-                        调用阅读器
-                        <input type="button" id="launchReader" style="color:red" />
-                    </label>
+                    <input class="key" type="button" id="openPreferencesKey"/>
                 </div>
                 <div class="form-row">
                     <label>
@@ -829,6 +839,9 @@ var Res = {
              font-size: 12px;
              margin-top: 5px;
              height: 100px;
+         }
+         .right {
+            float: right;
          }
          */
     }.getMStr(),

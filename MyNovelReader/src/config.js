@@ -158,15 +158,20 @@ var Config = {
         GM_setValue('hide_preferences_button', bool);
     },
 
-    // 安静模式
-    get isQuietMode() {
-        return this._getBooleanConfig("is_quiet_mode", false);
+    // === 快捷键
+
+    // 安静模式切换快捷键
+    get quietModeKey() {
+        if (this._quietModeKey) {
+            return this._quietModeKey;
+        }
+        return this._quietModeKey = GM_getValue('quietModeKey', 'q');
     },
-    set isQuietMode(bool) {
-        GM_setValue("is_quiet_mode", bool);
+    set quietModeKey(keyCode) {
+        this._quietModeKey = keyCode;
+        GM_setValue('quietModeKey', keyCode);
     },
 
-    // 快捷键
     // 打开设置窗口的快捷键
     get openPreferencesKey() {
         if (this._openPreferencesKey) {
@@ -177,9 +182,6 @@ var Config = {
     set openPreferencesKey(keyCode) {
         this._openPreferencesKey = keyCode;
         GM_setValue('open_preferences_key', keyCode);
-    },
-    get openPreferencesKeyCode() {
-        return this.openPreferencesKey.toUpperCase().charCodeAt(0);
     },
 
     // 隐藏左侧章节列表的快捷键
@@ -193,9 +195,6 @@ var Config = {
     set hideMenuListKey(key) {
         this._hideMenuListKey = key;
         GM_setValue("hide_menulist_key", key);
-    },
-    get hideMenuListKeyCode() {
-        return this.hideMenuListKey.toUpperCase().charCodeAt(0);
     },
 
     get picNightModeCheck() {

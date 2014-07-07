@@ -326,6 +326,7 @@ Rule.specialSite = [
         contentReplace: {
             "<a[^>]*>(.*?)</a>": "$1",
             "看更新最快的小说就搜索—— 木鱼哥——无弹窗，全文字": "",
+            "【看最新小说就搜索.*全文字首发】": "",
             "<p>.*?无弹窗</p>":"",
             "bb\\.king|【木&nbsp;鱼&nbsp;哥&nbsp;.*?】|【一秒钟记住本站：muyuge.com&nbsp;木鱼哥】":"",
             "——推荐阅读——[\\s\\S]+": "",
@@ -882,7 +883,7 @@ Rule.specialSite = [
             /(?:{|\\|\/|\()*豌.?豆.?文.?学.?网.*?(?:高速更新|\\\/|})+/ig,
             /更新最快最稳定|看小说“”/ig,
             /&lt;strng&gt;.*?&lt;\/strng&gt;/ig,
-            /\(凤舞文学网\)|\( *\)|「启航文字」/ig,
+            /\(凤舞文学网\)|\( *\)|「启航文字」|79阅.读.网/ig,
             /高速首发.*?本章节是.*/ig,
             /百度搜索自从知道用百度搜索，妈妈再也不用担心我追不到最快更新了/ig,
         ]
@@ -909,6 +910,16 @@ Rule.specialSite = [
             /收藏【.*?疯狂中文网\)/ig,
         ]
     },
+    {siteName: "吾读小说网",
+        url: "http://www\\.5du5\\.com/book/.*\\.html",
+        contentReplace: '\\(吾读小说网 <a.*无弹窗全文阅读\\)'
+    },
+    {siteName: "UU看书",
+        url: "http://www\\.uukanshu\\.com/.*/\\d+/\\d+.html",
+        contentReplace: "[UＵ]*看书[（\\(].*?[）\\)]文字首发。"
+    },
+
+    // ===== 特殊的获取下一页链接
     {siteName: "看书啦",
         url: "^http://www.kanshu.la/book/\\w+/\\d+\\.shtml",
         titleReg: "(.*)-(.*)-看书啦",
@@ -924,14 +935,22 @@ Rule.specialSite = [
             if (m) return m[1];
         }
     },
-    {siteName: "吾读小说网",
-        url: "http://www\\.5du5\\.com/book/.*\\.html",
-        contentReplace: '\\(吾读小说网 <a.*无弹窗全文阅读\\)'
+    {siteName: "书阁网",
+        url: "^http://www\\.bookgew\\.com/Html/Book/\\d+/\\d+/\\d+\\.htm",
+        titleReg: "(.*)-(.*?)-书阁网",
+        titlePos: 1,
+        // titleSelector: ".newstitle",
+        nextUrl: function($doc){
+            var html = $doc.find('script:contains(nextpage=)').html();
+            var m = html.match(/nextpage="(.*?)";/);
+            if (m) return m[1];
+        },
+        nextUrl: function($doc) {
+            var html = $doc.find('script:contains(prevpage=)').html();
+            var m = html.match(/prevpage="(.*?)";/);
+            if (m) return m[1];
+        }
     },
-    {siteName: "UU看书",
-        url: "http://www\\.uukanshu\\.com/.*/\\d+/\\d+.html",
-        contentReplace: "[UＵ]*看书[（\\(].*?[）\\)]文字首发。"
-    }
     
     // {siteName: "雅文言情小说吧",  // 一章分段
     //     url: "http://www\\.yawen8\\.com/\\w+/\\d+/\\d+\\.html",
@@ -999,7 +1018,7 @@ Rule.replace = {
     // === 双字替换 ===
     "暧m[eè][iì]":"暧昧",
     "不liáng":"不良", "b[ěe]i(\\s|&nbsp;)*j[īi]ng":"北京","半shen": "半身", "b[ìi]j[ìi]ng":"毕竟", "报(了?)jing":"报$1警", "bèi'pò":"被迫", "包yǎng":"包养",
-    "ch[oō]ngd[oò]ng":"冲动", "chong物":"宠物", "cao(练|作)":"操$1", "缠mian": "缠绵", "成shu": "成熟", "(?:赤|chi)\\s*lu[oǒ]": "赤裸", "春guang": "春光", "chun风":"春风", "chuang伴":"床伴", "沉mi":"沉迷", "沉lun":"沉沦", "刺ji":"刺激", "chao红":"潮红", "初chun":"初春", "＂ｃｈｉ　ｌｕｏ＂":"赤裸",
+    "ch[oō]ngd[oò]ng":"冲动", "chong物":"宠物", "cao(练|作)":"操$1", "出gui":"出轨", "缠mian": "缠绵", "成shu": "成熟", "(?:赤|chi)\\s*lu[oǒ]": "赤裸", "春guang": "春光", "chun风":"春风", "chuang伴":"床伴", "沉mi":"沉迷", "沉lun":"沉沦", "刺ji":"刺激", "chao红":"潮红", "初chun":"初春", "＂ｃｈｉ　ｌｕｏ＂":"赤裸",
     "dang校": "党校", "da子": "鞑子", "大tui":"大腿", "diao丝": "屌丝", "d[úu](?:\\s|&nbsp;|<br/>)*l[ìi]": "独立", "d[uú]\\s{0,2}c[áa]i":"独裁", "d?[iì]f[āa]ng":"地方", "d[ìi]\\s*d[ūu]":"帝都", "di国":"帝国", "duo落":"堕落",
     "f[ǎa]ngf[óo]":"仿佛", "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "f[èe]nn[ùu]":"愤怒",
     "gao潮": "高潮", "高氵朝":"高潮", "干chai": "干柴", "勾yin":"勾引", "gu[oò]ch[ée]ng":"过程", "gu[āa]nx[iì]":"关系", "g[ǎa]nji[àa]o":"感觉", "国wu院":"国务院",
@@ -1008,7 +1027,7 @@ Rule.replace = {
     "k[ěe]n[ée]ng": "可能", "开bao": "开苞",  "k[àa]o近": "靠近", "口wen":"口吻",
     "ling辱": "凌辱", "luan蛋": "卵蛋", "脸sè": "脸色", "lu出":"露出", "流máng":"流氓", "lun理":"伦理",
     "m[ǎa]ny[ìi]":"满意", "m[ǎa]sh[àa]ng":"马上", "m[ée]iy[oǒ]u":"没有", "mei国": "美国", "m[íi]ngb[áa]i":"明白", "迷huan": "迷幻", "mi茫":"迷茫", "m[íi]n\\s{0,2}zh[ǔu]": "民主", "迷jian": "迷奸", "mimi糊糊":"迷迷糊糊", "末(?:\\s|<br/?>)*ì":"末日", "面se":"面色", "mengmeng":"蒙蒙", 
-    "nàme":"那么", "n[ée]ngg[oò]u":"能够", "nán\\s{0,2}hǎi": "那会", "内jian":"内奸", "內yī":"内衣",
+    "nàme":"那么", "n[ée]ngg[oò]u":"能够", "nán\\s{0,2}hǎi": "那会", "内jian":"内奸", "[内內]y[iī]":"内衣", "内ku":"内裤",
     "pi[áa]o客":"嫖客", "p[áa]ngbi[āa]n":"旁边",
     "q[íi]gu[àa]i":"奇怪", "qing(　ren|人)":"情人", "qin兽":"禽兽", "q[iī]ngch[uǔ]":"清楚", "球mi":"球迷", "青chun":"青春", "青lou":"青楼",
     "r[úu]gu[oǒ]":"如果", "r[oó]ngy[ìi]":"容易", "ru(房|白色)": "乳$1", "rén员":"人员", "rén形":"人形", "人chao":"人潮", 

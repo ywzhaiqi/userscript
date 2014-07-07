@@ -287,8 +287,8 @@ var App = {
             GM_setValue("auto_enable", false);
             L_setValue("mynoverlreader_disable_once", "true");
 
-            // unsafeWindow.location = App.curPageUrl;
-            unsafeWindow.location = App.activeUrl;
+            // unsafeWindow.location = App.activeUrl;
+            window.location = App.activeUrl;
         } else {
             GM_setValue("auto_enable", true);
             L_removeValue("mynoverlreader_disable_once");
@@ -360,9 +360,10 @@ var App = {
     registerControls: function() {
         // 内容滚动
         var throttled = _.throttle(App.scroll, 100);
-        $(unsafeWindow).scroll(throttled); // 奶牛和 TM 冲突，需要 unsafeWindow
-
-        App.$doc.on("keydown", App.keydown);
+        // $(unsafeWindow).scroll(throttled); // 奶牛和 TM 冲突，需要 unsafeWindow
+        $(window).scroll(throttled); // 奶牛和 TM 冲突，需要 unsafeWindow
+ 
+        App.registerKeys();
 
         if (Config.dblclickPause) {
             App.$content.on("dblclick", function() {
@@ -403,59 +404,69 @@ var App = {
 
         GM_registerMenuCommand("小说阅读脚本设置".uiTrans(), UI.preferencesShow.bind(UI));
     },
+    registerKeys: function() {
+        key('enter', function() {
+            App.openUrl(App.indexUrl, "主页链接没有找到".uiTrans());
+            App.copyCurTitle();
+            return false;
+        });
+
+        key('left', function() {
+            var scrollTop = $(window).scrollTop();
+            if (scrollTop === 0) {
+                location.href = App.prevUrl;
+            } else {
+                var offsetTop = $(App.curFocusElement).offset().top;
+                // 在视野窗口内
+                if (offsetTop > scrollTop && offsetTop < (scrollTop + $(window).height())) {
+                    App.scrollToArticle(App.curFocusElement.previousSibling || 0);
+                } else {
+                    App.scrollToArticle(App.curFocusElement);
+                }
+            }
+            return false;
+        });
+
+        key('right', function() {
+            if (App.getRemain() === 0) {
+                location.href = App.lastRequestUrl || App.requestUrl;
+            } else {
+                App.scrollToArticle(App.curFocusElement.nextSibling || App.$doc.height());
+            }
+            return false;
+        });
+
+        key('esc', function(){
+            if (UI.$prefs) {
+                UI.hide();
+                return false;
+            }
+        });
+
+        key('shift+/', function() {
+            UI.openHelp();
+            return false;
+        });
+
+        key(Config.quietModeKey, function(){
+            UI.toggleQuietMode();
+            return false;
+        });
+
+        key(Config.hideMenuListKey, function(){
+            UI.hideMenuList();
+            return false;
+        });
+
+        key(Config.openPreferencesKey, function(){
+            UI.preferencesShow();
+            return false;
+        });
+    },
     copyCurTitle: function() {
         var title = $(App.curFocusElement).find(".title").text()
             .replace(/第?\S+章/, "").trim();
         GM_setClipboard(title, "text");
-    },
-    keydown: function(event) {
-        var tarNN = event.target.nodeName;
-        if (tarNN != 'BODY' && tarNN != 'HTML') return;
-        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-
-        switch (event.which) {
-            case 13: // Enter
-                App.openUrl(App.indexUrl, "主页链接没有找到".uiTrans());
-                App.copyCurTitle();
-                break;
-            case 37: // left arrow
-                var scrollTop = $(window).scrollTop();
-                if (scrollTop === 0) {
-                    location.href = App.prevUrl;
-                } else {
-                    var offsetTop = $(App.curFocusElement).offset().top;
-                    // 在视野窗口内
-                    if (offsetTop > scrollTop && offsetTop < (scrollTop + $(window).height())) {
-                        App.scrollToArticle(App.curFocusElement.previousSibling || 0);
-                    } else {
-                        App.scrollToArticle(App.curFocusElement);
-                    }
-                }
-                break;
-            case 39: // right arrow
-                if (App.getRemain() === 0) {
-                    location.href = App.lastRequestUrl || App.requestUrl;
-                } else {
-                    App.scrollToArticle(App.curFocusElement.nextSibling || App.$doc.height());
-                }
-                break;
-            case 192:
-                UI.hideMenuList();
-                break;
-            case Config.hideMenuListKeyCode:
-                UI.hideMenuList();
-                break;
-            case Config.openPreferencesKeyCode:
-                UI.preferencesShow();
-                break;
-            default:
-                if (UI.$prefs && event.which == 27) {
-                    UI.hide();
-                }
-                return;
-        }
-
-        return false
     },
     scrollToArticle: function(elem) {
         var offsetTop;
@@ -681,7 +692,9 @@ var App = {
         App.tmpDoc = null;
 
         if (config.PRELOADER) {
-            App.doRequest();
+            setTimeout(function(){
+                App.doRequest();
+            }, 200);
         }
     },
     fixImageFloats: function(articleContent) {
