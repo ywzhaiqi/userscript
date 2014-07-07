@@ -80,7 +80,8 @@ Rule.specialSite = [
         url: "^http://free\\.qidian\\.com/Free/ReadChapter\\.aspx",
         titleSelector: ".title > h3",
         bookTitleSelector: ".site_rect > a:last",
-        contentSelector: "#chapter_cont",
+        contentSelector: "#chapter_cont, #content",
+        contentRemove: ".nice_books",
         contentReplace: {
             "\\[img=(.*)\\]": "<p><img src='$1'></p><p>",
             "\\[+CP.*(http://file.*\\.jpg)\\]+": "<p><img src='$1'></p><p>",
@@ -89,7 +90,7 @@ Rule.specialSite = [
             '(<p>\\s+)?<a href="?http://www.(?:qidian|cmfu).com"?>起点中文网.*': ''
         },
         contentPatch: function(fakeStub) {
-            fakeStub.find('#chapter_cont > script:first').addClass('reader-ajax');
+            fakeStub.find('#chapter_cont, #content > script:first').addClass('reader-ajax');
         } 
     },
     {siteName: "纵横中文网",
