@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name               Next Page ModY
 // @author             ywzhaiqi && Sunwan（原作者）
-// @version            1.1
+// @version            1.2
 // @namespace          http://www.zjcnnj.cn/mozilla/greasemonkey/
 // @description        使用左右方向键来翻页
 // @include            http://*
@@ -17,7 +17,9 @@
     如需在本地文件生效，需要在 about:config 中设置 extensions.greasemonkey.fileIsGreaseable 为 true
  */
 
+
 (function() {
+
     var Config = {
         addkeydown: true,
         checkDomainPort: true,  // 是否跳过跨域的链接
@@ -25,8 +27,99 @@
         custom_previous: "",
     };
 
+    var Rule = {};
+
+    // 支持 css、xpath、函数
+
+    Rule.specialSite = [
+        {name: '图灵社区 : 图书 tupubarticle',
+            /**
+                url 支持正则、字符串、数组，默认去掉了 http 头
+                url: /www\.ituring\.com.cn\/tupubarticle/i,
+                url: 'www.ituring.com.cn/tupubarticle',
+                url: ['www.ituring.com.cn/tupubarticle'],
+
+                nextLink: 'css;.current-article + li > a',
+            */
+            nextLink: '//li[@class="current-article"]/following-sibling::li[1]/a',
+            prevLink: '//li[@class="current-article"]/preceding-sibling::li[1]/a'
+        },
+        {name: 'Google code',
+            url: /code\.google\.com\//i,
+            nextLink: '//a[@title="Next"]',
+            prevLink: '//a[@title="Previous"]'
+        },
+        {name: 'ZEALER',
+            url: /www\.zealer\.com\//i,
+            nextLink: '//li[@class="next"]/a',
+            prevLink: '//li[@class="previous"]/a'
+        },
+    ];
+
+    // 来自 nextpage.uc.xul
+    Rule.specialCommon = [
+        {name: 'Discuz论坛帖子列表页面',
+            url: /[^\/]+\/(?:(?:forum)|(?:showforum)|(?:viewforum))/i,
+            preLink: '//div[@class="pages" or @class="pg"]/descendant::a[@class="prev"][@href]',
+            nextLink: '//div[@class="pages" or @class="pg"]/descendant::a[@class="next" or @class="nxt"][@href]'
+        },
+        {name: 'Discuz论坛帖子内容页面',
+            url: /[^\/]+\/(?:(?:thread)|(?:viewthread)|(?:showtopic)|(?:viewtopic))/i,
+            preLink: '//div[@class="pages" or @class="pg"]/descendant::a[@class="prev"][@href]',
+            nextLink: '//div[@class="pages" or @class="pg"]/descendant::a[@class="next" or @class="nxt"][@href]'
+        },
+        {name: 'phpWind论坛帖子列表页面',
+            url: /[^\/]+\/(?:bbs\/)?thread/i,
+            preLink: '//div[starts-with(@class,"pages")]/b[1]/preceding-sibling::a[1][not(@class)][@href] | //div[starts-with(@class,"pages")]/ul[1]/li[b]/preceding-sibling::li/a[1][not(@class)][@href]',
+            nextLink: '//div[starts-with(@class,"pages")]/b[1]/following-sibling::a[1][not(@class)][@href] | //div[starts-with(@class,"pages")]/ul[1]/li[b]/following-sibling::li/a[1][not(@class)][@href]'
+        },
+        {name: 'phpWind论坛帖子内容页面',
+            url: /[^\/]+\/(?:bbs\/)?read/i,
+            preLink: '//div[starts-with(@class,"pages")]/b[1]/preceding-sibling::a[1][not(@class)][@href] | //div[starts-with(@class,"pages")]/ul[1]/li[b]/preceding-sibling::li/a[1][not(@class)][@href]',
+            nextLink: '//div[starts-with(@class,"pages")]/b[1]/following-sibling::a[1][not(@class)][@href] | //div[starts-with(@class,"pages")]/ul[1]/li[b]/following-sibling::li/a[1][not(@class)][@href]'
+        }
+    ];
+
+
+    // ==== tools
+    var forEach = function (array, action) {
+        for (var i = 0; i < array.length; i++) {
+            action(array[i], i);
+        }
+    };
+
+    var some = function (array, action) {
+        for (var i = 0; i < array.length; i++) {
+            if (action(array[i], i)) return true;
+        }
+        return false;
+    };
+
+    var toRE = function (obj) {
+        if (obj instanceof RegExp) {
+            return obj;
+        } else if (typeof(obj) === 'string'){
+            obj = '^' + obj;
+        }
+
+        return new RegExp(obj);
+    };
+
+    // ==== main
+    var locationHref = location.href,
+        matchUrl = locationHref.replace(/^https?:\/\//i, '');
+
+    var isMatchUrls = function(urls) {
+        if (!Array.isArray(urls)) urls = [urls];
+
+        return some(urls, function(url){ return toRE(url).test(matchUrl); });
+    };
+
+
+
     var checked = false;
     var delay = false;
+    var emptyRegexp = /^\s$/;
     var next = {};
     var previous = {};
     // 下一页链接里的文字
@@ -115,65 +208,53 @@
     previous.texts.push("‹");
 
     // 翻页文字的前面和后面可能包含的字符（正则表达式）
-    var preRegexp = '(^\\s*(?:[<‹«]*|[>›»]*|[\\(\\[『「［【]?)\\s*)';
+    // var preRegexp = '(^\\s*(?:[<‹«]*|[>›»]*|[\\(\\[『「［【]?)\\s*)';
     // var nextRegexp = '(\\s*(?:[>›»]*|[\\)\\]』」］】]?)\\s*$)';
+    // 调整如下
+    var preRegexp = '(^\\s*(?:[<‹«]*|[>›»]*|[\\(\\[『「［【]?)\\s*)';
     var nextRegexp = '(?:\\s*([＞>›»]*)|(?:[\\)\\]』」］】→]?)\\s*$)';
 
-    function loadConfig() {
-        Config.addkeydown = !!GM_getValue('addkeydown', Config.addkeydown);
+    // 检查定义过的规则
+    function checkDefinedNext(win, direction, searchSub) {
+        win = win || window;
+        var doc = win.document;
 
-        Config.custom_next = GM_getValue('custom_next', Config.custom_next);
-        Config.custom_previous = GM_getValue('custom_previous', Config.custom_previous);
+        var search = function(array) {
+            var i, nextLink, prevLink, xpath, link;
+            for (i = 0; i < array.length; i++) {
+                if (isMatchUrls(array[i].url)) {
+                    nextLink = array[i].nextLink;
+                    prevLink = array[i].prevLink;
 
-        // 取得自定义关键词
-        getCustom(next, "next");
-        getCustom(previous, "previous");
-    }
+                    if (direction && nextLink) {
+                        link = doc.evaluate(nextLink, doc, null, 9, null).singleNodeValue;
+                        if (!link) continue;
 
-    // 取得并设置自定义关键词
-    function getCustom(aObj, key) {
-        var cKeyWords = Config["custom_" + key];
-        var words = cKeyWords.split(/,|，/);
-        words.forEach(function(w) {
-            var site = null;
-            if (/^\s*{\s*(\S*?)\s*}(.*)$/.test(w)) {
-                site = RegExp.$1;
-                w = RegExp.$2;
-                site = site.replace(/[\/\?\.\(\)\+\-\[\]\$]/g, "\\$&").replace(/\*/g, "\.*");
+                        next.found = true;
+                        next.link = link;
+                        return 1
+                    } else if (prevLink) {
+                        link = doc.evaluate(prevLink, doc, null, 9, null).singleNodeValue;
+                        if (!link) continue;
+
+                        previous.found = true;
+                        previous.link = link;
+                        return 1;
+                    }
+                }
             }
-            w = w.replace(/\\/g, "\\").replace(/^\s+|\s+$/g, "");
-            if (w) {
-                if (site) {
-                    var re = new RegExp(site, 'i');
-                    if (re.test(location.href))
-                        aObj.texts.push(w);
-                } else
-                    aObj.texts.push(w);
-            }
-        });
-    }
+        };
 
-    // 注册菜单
-    function registerMenu(key) {
-        if (navigator.language == "zh-CN") {
-            var word = key == "next" ? "下一页" : "上一页";
-            GM_registerMenuCommand("Next Page " + word + "关键词", function() {
-                setCustom(key, word)
-            });
-        } else {
-            GM_registerMenuCommand("Next Page custom_" + key, function() {
-                setCustom(key, key)
-            });
+        if (search(Rule.specialSite) || search(Rule.specialCommon)) return 1;
+        //对子窗口应用特殊规则
+        if (searchSub) {
+            var f = win.frames;
+            for (var i = 0, c; i < f.length; i++) {
+                c = checkDefinedNext(f[i]);
+                if (c == 1 || c == -1) return c;
+            }
         }
     }
-
-    // 设置新的关键词
-    function setCustom(k, w) {
-        var text = navigator.language == "zh-CN" ? "请输入“" + w + "”的关键词，以“,”号分隔开。" : "Please enter the " + w + " page key-words, split with ','.";
-        var result = prompt(text, GM_getValue("custom_" + k, ""));
-        if (result != null) GM_setValue("custom_" + k, result);
-    }
-
 
     function checkLinks(doc) {
         if (!doc) doc = document;
@@ -212,8 +293,7 @@
                 [].some.call(link.childNodes, function(img){
                     if (img.localName == "IMG") {
                         text = img.alt || link.title || img.title;
-                        if (text)
-                            return;
+                        if (text) return;
                     }
                 });
 
@@ -501,9 +581,14 @@
         if (checked && !next.found && !previous.found)
             return;
 
-        if (!checked) {
-            checkLinks();
-            checked = true;
+        var c = checkDefinedNext(window, direction);
+        if (c == -1) {
+            return;
+        } else if (!c) {
+            if (!checked) {
+                checkLinks();
+                checked = true;
+            }
         }
 
         if (direction && next.found) {
@@ -515,12 +600,19 @@
 
     function onKeyDown(event) {
         // 不是左右方向建被按下或不到延迟时间则退出
-        if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey || event.keyCode != 37 && event.keyCode != 39 || delay)
+        if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey || 
+            event.keyCode != 37 && event.keyCode != 39 || delay)
             return
 
+        var target = event.target,
+            localName = target.localName;
+
         // 确保光标不是定位在文字输入框或选择框
-        var localName = event.target.localName;
         if (localName == 'textarea' || localName == 'input' || localName == 'select')
+            return;
+
+        // 百度贴吧回复输入的问题
+        if (target.getAttribute('contenteditable') == 'true')
             return;
 
         if (event.keyCode == 37) {  // 左方向键，跳到“上一页”
@@ -528,6 +620,61 @@
         } else if (event.keyCode == 39) {  // 右方向键，跳到“下一页”
             goNext(true);
         }
+    }
+
+    function loadConfig() {
+        Config.addkeydown = !!GM_getValue('addkeydown', Config.addkeydown);
+
+        Config.custom_next = GM_getValue('custom_next', Config.custom_next);
+        Config.custom_previous = GM_getValue('custom_previous', Config.custom_previous);
+
+        // 取得自定义关键词
+        getCustom(next, "next");
+        getCustom(previous, "previous");
+    }
+
+    // 取得并设置自定义关键词
+    function getCustom(aObj, key) {
+        var cKeyWords = Config["custom_" + key];
+        var words = cKeyWords.split(/,|，/);
+        words.forEach(function(w) {
+            var site = null;
+            if (/^\s*{\s*(\S*?)\s*}(.*)$/.test(w)) {
+                site = RegExp.$1;
+                w = RegExp.$2;
+                site = site.replace(/[\/\?\.\(\)\+\-\[\]\$]/g, "\\$&").replace(/\*/g, "\.*");
+            }
+            w = w.replace(/\\/g, "\\").replace(/^\s+|\s+$/g, "");
+            if (w) {
+                if (site) {
+                    var re = new RegExp(site, 'i');
+                    if (re.test(location.href))
+                        aObj.texts.push(w);
+                } else
+                    aObj.texts.push(w);
+            }
+        });
+    }
+
+    // 注册菜单
+    function registerMenu(key) {
+        if (navigator.language == "zh-CN") {
+            var word = key == "next" ? "下一页" : "上一页";
+            GM_registerMenuCommand("Next Page " + word + "关键词", function() {
+                setCustom(key, word)
+            });
+        } else {
+            GM_registerMenuCommand("Next Page custom_" + key, function() {
+                setCustom(key, key)
+            });
+        }
+    }
+
+    // 设置新的关键词
+    function setCustom(k, w) {
+        var text = navigator.language == "zh-CN" ? "请输入“" + w + "”的关键词，以“,”号分隔开。" : "Please enter the " + w + " page key-words, split with ','.";
+        var result = prompt(text, GM_getValue("custom_" + k, ""));
+        if (result != null) GM_setValue("custom_" + k, result);
     }
 
     function setup(){
