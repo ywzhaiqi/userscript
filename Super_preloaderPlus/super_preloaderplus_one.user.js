@@ -4,7 +4,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.2.6
+// @version      6.2.7
 // @homepageURL  https://greasyfork.org/scripts/293-super-preloaderplus-one
 // @updateURL    https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js
 // @downloadURL  https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js
@@ -208,6 +208,7 @@ var SITEINFO=[
             stylish: 'hr.rgsep{display:none;}' +
                 '.rg_meta{display:none}.bili{display:inline-block;margin:0 6px 6px 0;overflow:hidden;position:relative;vertical-align:top}._HG{margin-bottom:2px;margin-right:2px}',
             documentFilter: function(doc){
+                // 修正下一页的图片
                 var x = doc.evaluate('//script/text()[contains(self::text(), "data:image/")]', doc, null, 9, null).singleNodeValue;
                 if (x) {
                     new Function('document, window, google', x.nodeValue)(doc, unsafeWindow, unsafeWindow.google);
@@ -215,18 +216,10 @@ var SITEINFO=[
             },
             startFilter: function(win, doc) {  // 只作用一次
                 // 移除 Google 重定向
-                if (unsafeWindow.rwt) {
-                    try {
-                        Object.defineProperty(unsafeWindow, 'rwt', {
-                            value: function() { return ''; },
-                        });
-                    } catch (e) {}
-                } else {  // Chrome 原生的情况
-                    var script = doc.createElement('script');
-                    script.type = 'text/javascript';
-                    script.textContent = 'window.rwt = function(){}';
-                    doc.documentElement.appendChild(script);
-                }
+                var script = doc.createElement('script');
+                script.type = 'text/javascript';
+                script.textContent = 'window.rwt = function(){}';
+                doc.documentElement.appendChild(script);
 
                 // 移动相关搜索到第一页
                 var brs = doc.getElementById('brs'),
@@ -4924,7 +4917,7 @@ function init(window, document) {
 
             if(prefs.enableHistory){
                 try {
-                    unsafeWindow.history.pushState(null, docTitle, cplink);
+                    window.history.pushState(null, docTitle, cplink);
                 } catch(e) {}
             }
 
@@ -5042,9 +5035,9 @@ function init(window, document) {
             clearTimeout(timeout);
             timeout = setTimeout(scroll, 100);
         }
-        unsafeWindow.addEventListener('scroll', timeoutfn, false);
+        window.addEventListener('scroll', timeoutfn, false);
         remove.push(function() {
-            unsafeWindow.removeEventListener('scroll', timeoutfn, false);
+            window.removeEventListener('scroll', timeoutfn, false);
         });
 
         autoPO = {

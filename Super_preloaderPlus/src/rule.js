@@ -163,6 +163,7 @@ var SITEINFO=[
             stylish: 'hr.rgsep{display:none;}' +
                 '.rg_meta{display:none}.bili{display:inline-block;margin:0 6px 6px 0;overflow:hidden;position:relative;vertical-align:top}._HG{margin-bottom:2px;margin-right:2px}',
             documentFilter: function(doc){
+                // 修正下一页的图片
                 var x = doc.evaluate('//script/text()[contains(self::text(), "data:image/")]', doc, null, 9, null).singleNodeValue;
                 if (x) {
                     new Function('document, window, google', x.nodeValue)(doc, unsafeWindow, unsafeWindow.google);
@@ -170,18 +171,10 @@ var SITEINFO=[
             },
             startFilter: function(win, doc) {  // 只作用一次
                 // 移除 Google 重定向
-                if (unsafeWindow.rwt) {
-                    try {
-                        Object.defineProperty(unsafeWindow, 'rwt', {
-                            value: function() { return ''; },
-                        });
-                    } catch (e) {}
-                } else {  // Chrome 原生的情况
-                    var script = doc.createElement('script');
-                    script.type = 'text/javascript';
-                    script.textContent = 'window.rwt = function(){}';
-                    doc.documentElement.appendChild(script);
-                }
+                var script = doc.createElement('script');
+                script.type = 'text/javascript';
+                script.textContent = 'window.rwt = function(){}';
+                doc.documentElement.appendChild(script);
 
                 // 移动相关搜索到第一页
                 var brs = doc.getElementById('brs'),

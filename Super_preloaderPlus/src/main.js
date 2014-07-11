@@ -1348,7 +1348,7 @@ function init(window, document) {
 
             if(prefs.enableHistory){
                 try {
-                    unsafeWindow.history.pushState(null, docTitle, cplink);
+                    window.history.pushState(null, docTitle, cplink);
                 } catch(e) {}
             }
 
@@ -1466,9 +1466,9 @@ function init(window, document) {
             clearTimeout(timeout);
             timeout = setTimeout(scroll, 100);
         }
-        unsafeWindow.addEventListener('scroll', timeoutfn, false);
+        window.addEventListener('scroll', timeoutfn, false);
         remove.push(function() {
-            unsafeWindow.removeEventListener('scroll', timeoutfn, false);
+            window.removeEventListener('scroll', timeoutfn, false);
         });
 
         autoPO = {
