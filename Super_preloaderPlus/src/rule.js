@@ -1899,6 +1899,12 @@ var SITEINFO=[
             pageElement:'css;#content>p'
         }
     },
+    {name: '图灵社区 : 图书',
+        url: '^http://www\\.ituring\\.com\\.cn/article/',
+        nextLink: 'auto;',
+        pageElement: '//div[@id="question-header"]/h1 | //div[@class="post-text"]',
+        separatorReal: false
+    },
     {name: "Stack Overflow, Super User, Server Fault, Stack Apps",
         url: "^http://(?:meta\\.)?(?:s(?:erverfault|tackoverflow|uperuser|tackapps)|\\w+\\.stackexchange|askubuntu)\\.com/",
         nextLink: '//a[@rel="next"]',
@@ -2721,6 +2727,31 @@ var SITEINFO=[
             pageElement: '//img[@id="mangaFile"]',
         }
     },
+    {name: '汗汗漫画',
+        url: /^http:\/\/\w+\.vs20\.com\/\d+\/\w+\.htm/i,
+        siteExample: 'http://page.vs20.com/1815454/115321.htm?v=2*s=6',
+        nextLink: function(doc, win, cplink) {
+            // hrefInc 的方式不行因为这个地址最后还有额外的 *s=6
+            var m = cplink.match(/\?v=(\d+)/);
+            if (!m) {
+                // 第一页这种情况 http://page.vs20.com/1815454/115321.htm?s=6
+                return cplink.replace('?s=', '?v=2*s=');
+            } else {
+                var current = Number(m[1]),
+                    next = current + 1;
+
+                var select = doc.querySelector('#all select');
+                if (!select) return;
+                var max = select.options.length;
+                if (next > max) return;
+                return cplink.replace(m[0], '?v=' + next);
+            }
+        },
+        autopager: {
+            useiframe: true,
+            pageElement: '//img[@id="ComicPic"]',
+        }
+    },
     {name: '99漫画old',
         url: /^http:\/\/(cococomic|dm.99manga|99manga|99comic|www.99comic|www.hhcomic)\.(com|cc)\/.+\.htm/i,
         siteExample: 'http://99manga.com/page/168/6481.htm?v=3*s=9',
@@ -3307,15 +3338,15 @@ var SITEINFO_TP=[
             pageElement:'//div[@id="postlist"] | //form[@method="post"][@name]',
             replaceE: '//div[@class="pages" or @class="pg"][child::a[@class="next" or @class="nxt"][@href]]',
             lazyImgSrc: 'zoomfile',
-            filter: function(pages){
-                // 回复后插入到最后一页
-                var doc = unsafeWindow.document;
-                var replays = doc.querySelectorAll("#postlistreply");
-                if(replays.length > 1){
-                    var first = replays[0];
-                    first.parentNode.removeChild(first);
-                }
-            }
+            // filter: function(pages){
+            //     // 回复后插入到最后一页？有时候会在第一页？
+            //     var doc = unsafeWindow.document;
+            //     var replays = doc.querySelectorAll("#postlistreply");
+            //     if(replays.length > 1){
+            //         var first = replays[0];
+            //         first.parentNode.removeChild(first);
+            //     }
+            // }
         }
     },
     {name: 'phpWind论坛列表',
