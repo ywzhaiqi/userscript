@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.7.2
+// @version        3.7.3
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi@gmail.com
 // @description    批量导出百度盘的下载链接
@@ -47,14 +47,14 @@ var Config = {  // 默认的设置
     ],
     YAAW_UA: "user-agent:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_1) AppleWebKit/537.73.11 (KHTML, like Gecko) Version/7.0.1 Safari/537.73.11",
     YAAW_REF: "Referer:http://pan.baidu.com/disk/home",
+    YAAW_COOKIE: "Cookie:" + document.cookie.replace(/; /g, ';'),
     lineBreak: isChrome ? '\r' : '\n',
 };
 
 var TPLS = {
     normal: '{dlink}',
     aria2c: 'aria2c -c -x 10 -s 10 --out "{server_filename}" "{dlink}" --user-agent="netdisk" ' + 
-         '--header "Referer:http://pan.baidu.com/disk/home;"',
-         // + 'Cookie:' + document.cookie + '"',
+         '--header="Cookie:' + document.cookie.replace(/; /g, ';') + '"',
 };
 
 var debug = Config.debug ? console.debug.bind(console) : function() {};
@@ -270,7 +270,8 @@ var mHome = (function(){  // 个人主页
         }
 
         if (path) {
-            document.title = '百度云 网盘-' + path;
+            // 不知道是否是百度盘的问题，需要 2 次 decodeURIComponent
+            document.title = '百度云 网盘-' + decodeURIComponent(path);
         }
     };
 
@@ -614,14 +615,15 @@ var Pan = {
         debug('registerControls');
 
         if (this.pageType == 'diskHome') {
-            // 右上角的更多菜单中添加设置按钮
-            $('<span class="li"><a href="javascript:;">设置</a></span>')
-                .click(UI.preferencesShow.bind(UI))
-                .appendTo('.pulldown.more-info .content');
-            // 扩展菜单的高度
-            GM_addStyle('.module-header .info .more-info .content { height: 310px; }');
+            setTimeout(function(){
+                // 右上角的更多菜单中添加设置按钮
+                $('<span class="li"><a href="javascript:;">设置</a></span>')
+                    .click(UI.preferencesShow.bind(UI))
+                    .appendTo('.pulldown.more-info .content');
+                // 扩展菜单的高度
+                GM_addStyle('.module-header .info .more-info .content { height: 310px; }');
+            }, 1000);
         }
-
 
         if (typeof GM_registerMenuCommand != 'undefined') {
             GM_registerMenuCommand('BaiduPanDownloadHelper 设置', UI.preferencesShow.bind(UI));
@@ -844,10 +846,12 @@ var Pan = {
         items.forEach(function(item){
             if (!item.dlink && Array.isArray(item.children)) {
                 item.children.forEach(function(i){
-                    aria2.addUri(i.dlink, {out: i.server_filename, header: [Config.YAAW_UA, Config.YAAW_REF] });
+                    aria2.addUri(i.dlink, {out: i.server_filename, header: [Config.YAAW_UA, Config.YAAW_REF,
+                        Config.YAAW_COOKIE] });
                 });
             } else {
-                aria2.addUri(item.dlink, {out: item.server_filename, header: [Config.YAAW_UA, Config.YAAW_REF] });
+                aria2.addUri(item.dlink, {out: item.server_filename, header: [Config.YAAW_UA, Config.YAAW_REF,
+                    Config.YAAW_COOKIE] });
             }
         });
 
