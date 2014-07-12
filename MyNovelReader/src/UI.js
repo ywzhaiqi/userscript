@@ -223,6 +223,7 @@ var UI = {
         $form.find("#debug").get(0).checked = Config.debug;
         $form.find("#quietMode").get(0).checked = Config.isQuietMode;
         $form.find("#pic-nightmode-check").get(0).checked = Config.picNightModeCheck;
+        $form.find("#copyCurTitle").get(0).checked = Config.copyCurTitle;
 
         $form.find("#hide-menu-list").get(0).checked = Config.menu_list_hiddden;
         $form.find("#hide-menu-bar").get(0).checked = Config.menu_bar_hidden;
@@ -368,6 +369,7 @@ var UI = {
         Config.isQuietMode = $form.find("#quietMode").get(0).checked;
         Config.debug = $form.find("#debug").get(0).checked;
         Config.picNightModeCheck = $form.find("#pic-nightmode-check").get(0).checked;
+        Config.setCopyCurTitle($form.find("#copyCurTitle").get(0).checked);
 
         Config.addToHistory = $form.find("#add-nextpage-to-history").get(0).checked;
         Config.dblclickPause = $form.find("#enable-dblclick-pause").get(0).checked;
@@ -699,6 +701,10 @@ var Res = {
                     <label title="图片章节用夜间模式没法看，这个选项在启动时会自动切换到缺省皮肤">
                         <input type="checkbox" id="pic-nightmode-check" name="pic-nightmode-check"/>
                         夜间模式的图片章节检测
+                    </label>
+                    <label>
+                        <input type="checkbox" id="copyCurTitle"/>
+                        打开目录复制当前标题
                     </label>
                 </div>
                 <div class="form-row">

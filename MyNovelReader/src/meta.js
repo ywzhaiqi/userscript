@@ -219,10 +219,13 @@
 // @include        http://www.shushuw.cn/shu/*/*.html
 // @include        http://www.78xs.com/article/*/*/*.shtml
 
+// @exclude        */List.htm
 // @exclude        */List.html
 // @exclude        */List.shtml
+// @exclude        */index.htm
 // @exclude        */index.html
 // @exclude        */index.shtml
+// @exclude        */Default.htm
 // @exclude        */Default.html
 // @exclude        */Default.shtml
 

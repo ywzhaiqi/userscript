@@ -466,7 +466,10 @@ var App = {
     copyCurTitle: function() {
         var title = $(App.curFocusElement).find(".title").text()
             .replace(/第?\S+章/, "").trim();
-        GM_setClipboard(title, "text");
+
+        if (Config.copyCurTitle) {
+            GM_setClipboard(title, "text");
+        }
     },
     scrollToArticle: function(elem) {
         var offsetTop;

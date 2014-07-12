@@ -1,15 +1,32 @@
 
+var getBooleanConfig = function(configName, defaultValue) {
+    var config = GM_getValue(configName);
+    if(config === undefined) {
+        GM_setValue(configName, defaultValue);
+        config = defaultValue;
+    }
+    return config;
+};
+
 var Config = {
     getDisableAutoLaunch: function() {  // 强制手动启用模式
-        return this._getBooleanConfig("disable_auto_launch", false);
+        return getBooleanConfig("disable_auto_launch", false);
     },
     setDisableAutoLaunch: function(bool) {
         GM_setValue("disable_auto_launch", bool);
     },
 
+    // 按键调用会遇到问题： Greasemonkey 访问违规：unsafeWindow 无法调用 GM_getValue
+    // 故改成这种形式
+    copyCurTitle: getBooleanConfig("copyCurTitle", true),
+    setCopyCurTitle: function (bool) {
+        this.copyCurTitle = !!bool;
+        GM_setValue("copyCurTitle", !!bool);
+    },
+
     get cn2tw() {
         if (_.isUndefined(this._cn2tw)) {
-            this._cn2tw = this._getBooleanConfig('cn2tw', Config.lang === 'zh-TW' ? true : false);
+            this._cn2tw = getBooleanConfig('cn2tw', Config.lang === 'zh-TW' ? true : false);
         }
         return this._cn2tw;
     },
@@ -19,14 +36,14 @@ var Config = {
     },
 
     get booklink_enable() {  // booklink.me 跳转的自动启动
-        return this._getBooleanConfig("booklink_enable", true);
+        return getBooleanConfig("booklink_enable", true);
     },
     set booklink_enable(bool) {
         GM_setValue("booklink_enable", bool);
     },
 
     get debug() {  // 调试
-        return this._getBooleanConfig("debug", false);
+        return getBooleanConfig("debug", false);
     },
     set debug(bool) {
         GM_setValue("debug", bool);
@@ -34,7 +51,7 @@ var Config = {
 
     get addToHistory() {
         if (_.isUndefined(this._addToHistory)) {
-            this._addToHistory = this._getBooleanConfig("add_nextpage_to_history", true);
+            this._addToHistory = getBooleanConfig("add_nextpage_to_history", true);
         }
         return this._addToHistory;
     },
@@ -44,7 +61,7 @@ var Config = {
     },
 
     get dblclickPause() {
-        return this._getBooleanConfig('dblclick_pause', true);
+        return getBooleanConfig('dblclick_pause', true);
     },
     set dblclickPause(bool) {
         GM_setValue('dblclick_pause', bool);
@@ -130,21 +147,21 @@ var Config = {
     },
 
     get menu_list_hiddden() {
-        return this._getBooleanConfig("menu_list_hiddden", false);
+        return getBooleanConfig("menu_list_hiddden", false);
     },
     set menu_list_hiddden(bool) {
         GM_setValue("menu_list_hiddden", bool);
     },
 
     get menu_bar_hidden() {
-        return this._getBooleanConfig("menu_bar_hidden", false);
+        return getBooleanConfig("menu_bar_hidden", false);
     },
     set menu_bar_hidden(bool) {
         GM_setValue("menu_bar_hidden", bool);
     },
 
     get hide_footer_nav() {
-        return this._getBooleanConfig("hide_footer_nav", true);
+        return getBooleanConfig("hide_footer_nav", true);
     },
     set hide_footer_nav(bool) {
         GM_setValue("hide_footer_nav", bool);
@@ -152,7 +169,7 @@ var Config = {
     },
 
     get hide_preferences_button() {
-        return this._getBooleanConfig("hide_preferences_button", false);
+        return getBooleanConfig("hide_preferences_button", false);
     },
     set hide_preferences_button(bool) {
         GM_setValue('hide_preferences_button', bool);
@@ -198,18 +215,9 @@ var Config = {
     },
 
     get picNightModeCheck() {
-        return this._getBooleanConfig('picNightModeCheck', true);
+        return getBooleanConfig('picNightModeCheck', true);
     },
     set picNightModeCheck(bool) {
         GM_setValue('picNightModeCheck', bool);
     },
-
-    _getBooleanConfig: function(configName, defaultValue) {
-        var config = GM_getValue(configName);
-        if(config === undefined) {
-            GM_setValue(configName, defaultValue);
-            config = defaultValue;
-        }
-        return config;
-    }
 };

@@ -287,7 +287,7 @@ Rule.specialSite = [
             /\[<a.*?首发\[百晓生\] \S+/ig,
             /高速首发.*本章节是地址为/ig,
             /\/\/(?:&nbsp;|访问下载txt小说|高速更新)+\/\//ig,
-            /(www\.)?bxs\.cc/ig,
+            /(www\.)?bxs\.cc|www\.bxs(\.com)?/ig,
             /百晓生.不跳字|不跳字。|更新快纯文字/ig,
             /\.\[，！\]/ig,
             /（未完待续&nbsp;http:\/\/www.Bxs.cc&nbsp;89免费小说阅《百晓生文学网》）/g,
@@ -362,7 +362,6 @@ Rule.specialSite = [
         bookTitleSelector: ".headinfo a:first",
         contentRemove: "p:contains(精品推荐：), p:contains(，免费小说阅读基地！), a",
         contentReplace: [
-            "〖∷更新快∷无弹窗∷纯文字∷ .〗",
             "逸名文学屋："
         ]
     },
@@ -488,6 +487,8 @@ Rule.specialSite = [
         contentReplace: [
             "★百度搜索，免费阅读万本★|访问下载txt小说.百度搜.|免费电子书下载|\\(百度搜\\)|『文學吧x吧.』|¤本站网址：¤",
             "[\\.]*\\s*(?:阅读)?[\\.]*",
+            "★雲來阁免费wwwyunlaigenet★",
+            "&nbsp;关闭</p>",
             { "。\\.": "。" },
         ]
     },
@@ -874,7 +875,7 @@ Rule.specialSite = [
     },
     {siteName: "豌豆文学网",
         url: "^http://www.wandoou.com/book/\\d+/\\d+\\.html",
-        titleReg: "(.*?)最新章节-(.*?)-",
+        titleReg: "最新章节_(.*?)_(.*?),豌豆文学网",
         contentRemove: "center",
         contentReplace: [
             /[{（]<a href.*[}）]|网欢迎广大书友光临阅读，.*/ig,
@@ -946,7 +947,7 @@ Rule.specialSite = [
             var m = html.match(/nextpage="(.*?)";/);
             if (m) return m[1];
         },
-        nextUrl: function($doc) {
+        prevUrl: function($doc) {
             var html = $doc.find('script:contains(prevpage=)').html();
             var m = html.match(/prevpage="(.*?)";/);
             if (m) return m[1];
@@ -994,6 +995,7 @@ Rule.replace = {
     "<a>手机用户请到m.qidian.com阅读。</a>": "",
     ".{2,4}中文网欢迎广大书友": "",
     "访问下载txt小说|◎雲來閣免费万本m.yunlaige.com◎":"",
+    "〖∷更新快∷无弹窗∷纯文字∷.*?〗": "",
     "fqXSw\\.com":"", "\\.5ｄｕ|\\.５du５\\.":"",
     "\\[\\]":"",
     "如果您觉得网不错就多多分享本站谢谢各位读者的支持": "",

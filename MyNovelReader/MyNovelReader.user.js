@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        4.5.5
+// @version        4.5.6
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    shyangs
@@ -219,10 +219,13 @@
 // @include        http://www.shushuw.cn/shu/*/*.html
 // @include        http://www.78xs.com/article/*/*/*.shtml
 
+// @exclude        */List.htm
 // @exclude        */List.html
 // @exclude        */List.shtml
+// @exclude        */index.htm
 // @exclude        */index.html
 // @exclude        */index.shtml
+// @exclude        */Default.htm
 // @exclude        */Default.html
 // @exclude        */Default.shtml
 
@@ -531,7 +534,7 @@ Rule.specialSite = [
             /\[<a.*?首发\[百晓生\] \S+/ig,
             /高速首发.*本章节是地址为/ig,
             /\/\/(?:&nbsp;|访问下载txt小说|高速更新)+\/\//ig,
-            /(www\.)?bxs\.cc/ig,
+            /(www\.)?bxs\.cc|www\.bxs(\.com)?/ig,
             /百晓生.不跳字|不跳字。|更新快纯文字/ig,
             /\.\[，！\]/ig,
             /（未完待续&nbsp;http:\/\/www.Bxs.cc&nbsp;89免费小说阅《百晓生文学网》）/g,
@@ -606,7 +609,6 @@ Rule.specialSite = [
         bookTitleSelector: ".headinfo a:first",
         contentRemove: "p:contains(精品推荐：), p:contains(，免费小说阅读基地！), a",
         contentReplace: [
-            "〖∷更新快∷无弹窗∷纯文字∷ .〗",
             "逸名文学屋："
         ]
     },
@@ -732,6 +734,8 @@ Rule.specialSite = [
         contentReplace: [
             "★百度搜索，免费阅读万本★|访问下载txt小说.百度搜.|免费电子书下载|\\(百度搜\\)|『文學吧x吧.』|¤本站网址：¤",
             "[\\.]*\\s*(?:阅读)?[\\.]*",
+            "★雲來阁免费wwwyunlaigenet★",
+            "&nbsp;关闭</p>",
             { "。\\.": "。" },
         ]
     },
@@ -1118,7 +1122,7 @@ Rule.specialSite = [
     },
     {siteName: "豌豆文学网",
         url: "^http://www.wandoou.com/book/\\d+/\\d+\\.html",
-        titleReg: "(.*?)最新章节-(.*?)-",
+        titleReg: "最新章节_(.*?)_(.*?),豌豆文学网",
         contentRemove: "center",
         contentReplace: [
             /[{（]<a href.*[}）]|网欢迎广大书友光临阅读，.*/ig,
@@ -1190,7 +1194,7 @@ Rule.specialSite = [
             var m = html.match(/nextpage="(.*?)";/);
             if (m) return m[1];
         },
-        nextUrl: function($doc) {
+        prevUrl: function($doc) {
             var html = $doc.find('script:contains(prevpage=)').html();
             var m = html.match(/prevpage="(.*?)";/);
             if (m) return m[1];
@@ -1238,6 +1242,7 @@ Rule.replace = {
     "<a>手机用户请到m.qidian.com阅读。</a>": "",
     ".{2,4}中文网欢迎广大书友": "",
     "访问下载txt小说|◎雲來閣免费万本m.yunlaige.com◎":"",
+    "〖∷更新快∷无弹窗∷纯文字∷.*?〗": "",
     "fqXSw\\.com":"", "\\.5ｄｕ|\\.５du５\\.":"",
     "\\[\\]":"",
     "如果您觉得网不错就多多分享本站谢谢各位读者的支持": "",
@@ -1324,17 +1329,34 @@ Rule.replace = {
 Rule.customRules = [];
 Rule.customReplace = {};
 
+var getBooleanConfig = function(configName, defaultValue) {
+    var config = GM_getValue(configName);
+    if(config === undefined) {
+        GM_setValue(configName, defaultValue);
+        config = defaultValue;
+    }
+    return config;
+};
+
 var Config = {
     getDisableAutoLaunch: function() {  // 强制手动启用模式
-        return this._getBooleanConfig("disable_auto_launch", false);
+        return getBooleanConfig("disable_auto_launch", false);
     },
     setDisableAutoLaunch: function(bool) {
         GM_setValue("disable_auto_launch", bool);
     },
 
+    // 按键调用会遇到问题： Greasemonkey 访问违规：unsafeWindow 无法调用 GM_getValue
+    // 故改成这种形式
+    copyCurTitle: getBooleanConfig("copyCurTitle", true),
+    setCopyCurTitle: function (bool) {
+        this.copyCurTitle = !!bool;
+        GM_setValue("copyCurTitle", !!bool);
+    },
+
     get cn2tw() {
         if (_.isUndefined(this._cn2tw)) {
-            this._cn2tw = this._getBooleanConfig('cn2tw', Config.lang === 'zh-TW' ? true : false);
+            this._cn2tw = getBooleanConfig('cn2tw', Config.lang === 'zh-TW' ? true : false);
         }
         return this._cn2tw;
     },
@@ -1344,14 +1366,14 @@ var Config = {
     },
 
     get booklink_enable() {  // booklink.me 跳转的自动启动
-        return this._getBooleanConfig("booklink_enable", true);
+        return getBooleanConfig("booklink_enable", true);
     },
     set booklink_enable(bool) {
         GM_setValue("booklink_enable", bool);
     },
 
     get debug() {  // 调试
-        return this._getBooleanConfig("debug", false);
+        return getBooleanConfig("debug", false);
     },
     set debug(bool) {
         GM_setValue("debug", bool);
@@ -1359,7 +1381,7 @@ var Config = {
 
     get addToHistory() {
         if (_.isUndefined(this._addToHistory)) {
-            this._addToHistory = this._getBooleanConfig("add_nextpage_to_history", true);
+            this._addToHistory = getBooleanConfig("add_nextpage_to_history", true);
         }
         return this._addToHistory;
     },
@@ -1369,7 +1391,7 @@ var Config = {
     },
 
     get dblclickPause() {
-        return this._getBooleanConfig('dblclick_pause', true);
+        return getBooleanConfig('dblclick_pause', true);
     },
     set dblclickPause(bool) {
         GM_setValue('dblclick_pause', bool);
@@ -1455,21 +1477,21 @@ var Config = {
     },
 
     get menu_list_hiddden() {
-        return this._getBooleanConfig("menu_list_hiddden", false);
+        return getBooleanConfig("menu_list_hiddden", false);
     },
     set menu_list_hiddden(bool) {
         GM_setValue("menu_list_hiddden", bool);
     },
 
     get menu_bar_hidden() {
-        return this._getBooleanConfig("menu_bar_hidden", false);
+        return getBooleanConfig("menu_bar_hidden", false);
     },
     set menu_bar_hidden(bool) {
         GM_setValue("menu_bar_hidden", bool);
     },
 
     get hide_footer_nav() {
-        return this._getBooleanConfig("hide_footer_nav", true);
+        return getBooleanConfig("hide_footer_nav", true);
     },
     set hide_footer_nav(bool) {
         GM_setValue("hide_footer_nav", bool);
@@ -1477,7 +1499,7 @@ var Config = {
     },
 
     get hide_preferences_button() {
-        return this._getBooleanConfig("hide_preferences_button", false);
+        return getBooleanConfig("hide_preferences_button", false);
     },
     set hide_preferences_button(bool) {
         GM_setValue('hide_preferences_button', bool);
@@ -1523,21 +1545,13 @@ var Config = {
     },
 
     get picNightModeCheck() {
-        return this._getBooleanConfig('picNightModeCheck', true);
+        return getBooleanConfig('picNightModeCheck', true);
     },
     set picNightModeCheck(bool) {
         GM_setValue('picNightModeCheck', bool);
     },
-
-    _getBooleanConfig: function(configName, defaultValue) {
-        var config = GM_getValue(configName);
-        if(config === undefined) {
-            GM_setValue(configName, defaultValue);
-            config = defaultValue;
-        }
-        return config;
-    }
 };
+
 
 var uiTrans = {
     "将小说网页文本转换为繁体。\n\n注意：内置的繁简转换表，只收录了简单的单字转换，启用本功能后，如有错误转换的情形，请利用脚本的自订字词取代规则来修正。\n例如：「千里之外」，会错误转换成「千里之外」，你可以加入规则「千里之外=千里之外」来自行修正。": "將小說網頁文字轉換為繁體。\n\n注意：內建的繁簡轉換表，只收錄了簡單的單字轉換，啟用本功能後，如有錯誤轉換的情形，請利用腳本的自訂字詞取代規則來修正。\n例如：「千里之外」，會錯誤轉換成「千裡之外」，你可以加入規則「千裡之外=千里之外」來自行修正。",
@@ -1926,6 +1940,7 @@ var UI = {
         $form.find("#debug").get(0).checked = Config.debug;
         $form.find("#quietMode").get(0).checked = Config.isQuietMode;
         $form.find("#pic-nightmode-check").get(0).checked = Config.picNightModeCheck;
+        $form.find("#copyCurTitle").get(0).checked = Config.copyCurTitle;
 
         $form.find("#hide-menu-list").get(0).checked = Config.menu_list_hiddden;
         $form.find("#hide-menu-bar").get(0).checked = Config.menu_bar_hidden;
@@ -2071,6 +2086,7 @@ var UI = {
         Config.isQuietMode = $form.find("#quietMode").get(0).checked;
         Config.debug = $form.find("#debug").get(0).checked;
         Config.picNightModeCheck = $form.find("#pic-nightmode-check").get(0).checked;
+        Config.setCopyCurTitle($form.find("#copyCurTitle").get(0).checked);
 
         Config.addToHistory = $form.find("#add-nextpage-to-history").get(0).checked;
         Config.dblclickPause = $form.find("#enable-dblclick-pause").get(0).checked;
@@ -2402,6 +2418,10 @@ var Res = {
                     <label title="图片章节用夜间模式没法看，这个选项在启动时会自动切换到缺省皮肤">
                         <input type="checkbox" id="pic-nightmode-check" name="pic-nightmode-check"/>
                         夜间模式的图片章节检测
+                    </label>
+                    <label>
+                        <input type="checkbox" id="copyCurTitle"/>
+                        打开目录复制当前标题
                     </label>
                 </div>
                 <div class="form-row">
@@ -3623,7 +3643,10 @@ var App = {
     copyCurTitle: function() {
         var title = $(App.curFocusElement).find(".title").text()
             .replace(/第?\S+章/, "").trim();
-        GM_setClipboard(title, "text");
+
+        if (Config.copyCurTitle) {
+            GM_setClipboard(title, "text");
+        }
     },
     scrollToArticle: function(elem) {
         var offsetTop;
