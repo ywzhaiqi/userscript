@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.7.3
+// @version        3.7.4
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi@gmail.com
 // @description    批量导出百度盘的下载链接
@@ -430,7 +430,7 @@ var Pan = {
             return;
         }
 
-        var cacheResult = null;
+        var downInfo = null;
 
         // 获取链接，文件 viewshare_all.js，函数 _checkDownloadFile，2013-12-2
         var url = "/share/download?channel=chunlei&clienttype=0&web=1" + "&uk=" + FileUtils.share_uk + "&shareid=" + FileUtils.share_id + "&timestamp=" + FileUtils.share_timestamp + "&sign=" + FileUtils.share_sign;
@@ -443,7 +443,10 @@ var Pan = {
                         "href": result.dlink
                     })
                     .find('b').css('color', 'red');
-                cacheResult = result;
+                downInfo = {
+                    server_filename: unsafeWindow.server_filename,
+                    dlink: result.dlink
+                };
             } else {
                 console.error(result);
                 $('#downFileButtom').click();
@@ -455,8 +458,8 @@ var Pan = {
             .css('padding', '0px 5px')
             .html('YAAW')
             .click(function(){
-                if (data) {
-                    Pan.addToYAAW(data);
+                if (downInfo) {
+                    Pan.addToYAAW(downInfo);
                 } else {
                     Utilities.useToast({
                         toastMode: disk.ui.Toast.MODE_LOADING,
@@ -758,7 +761,7 @@ var Pan = {
         yaawButton.id = "mDownload-copy-yaaw-button";
         yaawButton.innerHTML = "YAAW";
         yaawButton.onclick = function() {
-            self.addToYAAW(self.checkedItems);
+            self.addToYAAW(self.checkedItems, true);
         };
 
         container.appendChild(closeButton);
@@ -835,23 +838,25 @@ var Pan = {
         GM_setClipboard(arr.join(Config.lineBreak), 'text');
         Pan.useToast('已经复制 <b>' + arr.length + '</b> 条' + (isDlink ? '下载' : '') + '链接到剪贴板');
     },
-    addToYAAW: function(items){
+    addToYAAW: function(items, addCookie){
         var aria2 = new ARIA2(prefs.getAria2RPC());
 
         if (!Array.isArray(items)) {
             items = [items];
         }
 
+        var aria2Header = [ Config.YAAW_UA, Config.YAAW_REF];
+        if (addCookie) {
+            aria2Header.push(Config.YAAW_COOKIE);
+        }
 
         items.forEach(function(item){
             if (!item.dlink && Array.isArray(item.children)) {
                 item.children.forEach(function(i){
-                    aria2.addUri(i.dlink, {out: i.server_filename, header: [Config.YAAW_UA, Config.YAAW_REF,
-                        Config.YAAW_COOKIE] });
+                    aria2.addUri(i.dlink, {out: i.server_filename, header: aria2Header });
                 });
             } else {
-                aria2.addUri(item.dlink, {out: item.server_filename, header: [Config.YAAW_UA, Config.YAAW_REF,
-                    Config.YAAW_COOKIE] });
+                aria2.addUri(item.dlink, {out: item.server_filename, header: aria2Header });
             }
         });
 
