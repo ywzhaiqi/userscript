@@ -6,8 +6,9 @@ NextPageModY.user.js
  - **新增：上一页、下一页的调用事件。**原脚本的 Firegestures 调用代码已失效，可采用新方法调用或下面的通用方法。
  - **新增：设置界面。**
  - **新增：是否跳过跨域的链接**。如果存在 yyets.com get douban 脚本并插入了页码，原脚本会找到插入的下一页而不是原页面的下一页。
- - **修正：在文字输入框或选择框按键会生效的问题。**
+ - **修正：在文字输入框或选择框按键会生效的问题**
  - **修改：放宽了尾部 regexp 的判断**，以便支持这个 [测试页面](http://www.sbkk8.cn/mingzhu/ertong/guaiwudashiquanji/guanwu12/210292.html) 的翻页。
+ - **新增：站点规则以适应自动查找失效的网页。**
  - 如需在本地文件中生效，需要在 about:config 中设置 `extensions.greasemonkey.fileIsGreaseable` 为 `true`。
 
 ### 调用代码（FireGestures/MouseGestures2.uc.js）

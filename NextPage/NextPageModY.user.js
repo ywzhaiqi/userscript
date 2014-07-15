@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name               Next Page ModY
 // @author             ywzhaiqi && Sunwan（原作者）
-// @version            1.2
+// @version            1.3
 // @namespace          http://www.zjcnnj.cn/mozilla/greasemonkey/
 // @description        使用左右方向键来翻页
 // @include            http://*
@@ -21,6 +21,8 @@
 (function() {
 
     var Config = {
+        debug: false,
+
         addkeydown: true,
         checkDomainPort: true,  // 是否跳过跨域的链接
         custom_next: "",
@@ -29,8 +31,7 @@
 
     var Rule = {};
 
-    // 支持 css、xpath、函数
-
+    // 自定义规则，用于自动查找无效的情况，支持 css、xpath、函数
     Rule.specialSite = [
         {name: '图灵社区 : 图书 tupubarticle',
             /**
@@ -41,6 +42,7 @@
 
                 nextLink: 'css;.current-article + li > a',
             */
+            url: /www\.ituring\.com.cn\/tupubarticle/i,
             nextLink: '//li[@class="current-article"]/following-sibling::li[1]/a',
             prevLink: '//li[@class="current-article"]/preceding-sibling::li[1]/a'
         },
@@ -116,14 +118,14 @@
     };
 
 
-
     var checked = false;
     var delay = false;
     var emptyRegexp = /^\s$/;
     var next = {};
     var previous = {};
     // 下一页链接里的文字
-    next.texts = ['next',
+    next.texts = [
+        'next',
         'next page',
         'old',
         'older',
@@ -149,7 +151,8 @@
         '后一篇'
     ];
     // 上一页链接里的文字
-    previous.texts = ['previous',
+    previous.texts = [
+        'previous',
         'prev',
         'previous page',
         'new',
@@ -183,7 +186,7 @@
         "后一篇": 30,
         "下一节": 30,
         ">>": 2000,
-        "»": 2000
+        "»": 2000,
     }
     previous.miswords = {
         "上一章": 30,
@@ -192,7 +195,8 @@
         "前一篇": 30,
         "上一节": 30,
         "<<": 2000,
-        "«": 2000
+        "«": 2000,
+        "new": 30,
     }
 
     loadConfig();
@@ -208,10 +212,9 @@
     previous.texts.push("‹");
 
     // 翻页文字的前面和后面可能包含的字符（正则表达式）
-    // var preRegexp = '(^\\s*(?:[<‹«]*|[>›»]*|[\\(\\[『「［【]?)\\s*)';
+    var preRegexp = '(^\\s*(?:[<‹«]*|[>›»]*|[\\(\\[『「［【]?)\\s*)';
     // var nextRegexp = '(\\s*(?:[>›»]*|[\\)\\]』」］】]?)\\s*$)';
     // 调整如下
-    var preRegexp = '(^\\s*(?:[<‹«]*|[>›»]*|[\\(\\[『「［【]?)\\s*)';
     var nextRegexp = '(?:\\s*([＞>›»]*)|(?:[\\)\\]』」］】→]?)\\s*$)';
 
     // 检查定义过的规则
@@ -236,6 +239,7 @@
                     } else if (prevLink) {
                         link = doc.evaluate(prevLink, doc, null, 9, null).singleNodeValue;
                         if (!link) continue;
+                        // if (!link) return -1;
 
                         previous.found = true;
                         previous.link = link;
@@ -591,6 +595,15 @@
             }
         }
 
+        if (Config.debug) {
+            if (next.found)
+                next.link.style.boxShadow = '0 0 2px 2px #FF5555';
+            if (previous.found)
+                previous.link.style.boxShadow = '0 0 2px 2px #5AC900';
+            console.log(next, previous)
+            return;
+        }
+
         if (direction && next.found) {
             openLink(next.link);
         } else if (!direction && previous.found) {
@@ -623,7 +636,9 @@
     }
 
     function loadConfig() {
+        Config.debug = !!GM_getValue('debug', Config.debug);
         Config.addkeydown = !!GM_getValue('addkeydown', Config.addkeydown);
+        Config.checkDomainPort = !!GM_getValue('checkDomainPort', Config.checkDomainPort);
 
         Config.custom_next = GM_getValue('custom_next', Config.custom_next);
         Config.custom_previous = GM_getValue('custom_previous', Config.custom_previous);
@@ -705,6 +720,7 @@
         div.innerHTML = '\
             <div>Next Page 设置</div>\
                 <ul>\
+                    <li><input type="checkbox" id="nextpage-prefs-debug" /> 调试模式</li>\
                     <li><input type="checkbox" id="nextpage-prefs-addkeydown" /> 注册左右键翻页？</li>\
                     <li title="跨域的链接会被跳过">\
                         <input type="checkbox" id="nextpage-prefs-checkDomainPort"/>\
@@ -728,10 +744,11 @@
         };
 
         on($('ok'), 'click', function(){
-            GM_setValue('addkeydown', Config.addkeydown = !!$('addkeydown').checked);
-            GM_setValue('checkDomainPort', Config.checkDomainPort = !!$('checkDomainPort').checked);
-            GM_setValue("custom_next", Config.custom_next = $('custom_next').value);
-            GM_setValue("custom_previous", Config.custom_previous = $('custom_previous').value);
+            GM_setValue('debug', $('debug').checked);
+            GM_setValue('addkeydown', $('addkeydown').checked);
+            GM_setValue('checkDomainPort', $('checkDomainPort').checked);
+            GM_setValue("custom_next", $('custom_next').value);
+            GM_setValue("custom_previous", $('custom_previous').value);
 
             loadConfig();
 
@@ -745,6 +762,7 @@
 
         on($('cancel'), 'click', close);
 
+        $('debug').checked = Config.debug;
         $('addkeydown').checked = Config.addkeydown;
         $('checkDomainPort').checked = Config.checkDomainPort;
         $('custom_next').value = Config.custom_next;
