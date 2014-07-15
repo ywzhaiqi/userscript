@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name               Next Page ModY
 // @author             ywzhaiqi && Sunwan（原作者）
-// @version            1.3
-// @namespace          http://www.zjcnnj.cn/mozilla/greasemonkey/
+// @version            1.3.1
+// @namespace          https://github.com/ywzhaiqi/userscript/tree/master/NextPage
 // @description        使用左右方向键来翻页
 // @include            http://*
 // @include            https://*
@@ -349,7 +349,8 @@
                 found = false;
                 if (!next.found && !(lnc < i) && !(ldnc < i)) {
                     for (var j = 0; j < next.texts.length; j++) {
-                        if (regexp.compile(preRegexp + next.texts[j] + nextRegexp, 'i').test(text)) {
+                        regexp.compile(preRegexp + next.texts[j] + nextRegexp, 'i');
+                        if (regexp.test(text)) {
                             // 检测到“下一页”的链接
                             found = true;
                             next.link = link;
@@ -364,7 +365,8 @@
 
                 if (!found && !previous.found && !(lpc < i) && !(ldpc < i)) {
                     for (var j = 0; j < previous.texts.length; j++) {
-                        if (regexp.compile(preRegexp + previous.texts[j] + nextRegexp, 'i').test(text)) {
+                        regexp.compile(preRegexp + previous.texts[j] + nextRegexp, 'i');
+                        if (regexp.test(text)) {
                             // 检测到“上一页”的链接
                             previous.link = link;
                             num = previous.miswords[previous.texts[j]];
