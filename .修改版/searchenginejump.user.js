@@ -1,8 +1,9 @@
 // ==UserScript==
-// @name           searchEngineJump
+// @name           searchEngineJump 自用修改版
 // @author         NLF
 // @description    方便的在各个引擎之间跳转
-// @version        4.0.1.0
+// @version        4.1.0.0
+// version        4.0.1.0
 // @created        2011-7-2
 // @lastUpdated    2014-1-29
 // @grant          none
@@ -553,287 +554,437 @@
 				favicon: 'http://www.sogou.com/favicon.ico',
 			};
 
-
 			// 视频搜索列表
-			engineList.video = [];
-
-			engineList.video[0] = {
-				name: '优酷',
-				url: 'http://www.soku.com/v?keyword=%s',
-				favicon: 'http://www.soku.com/favicon.ico',
-			};
-			engineList.video[1] = {
-				name: '土豆',
-				url: 'http://www.soku.com/t/nisearch/%s/',
-				favicon: 'http://www.soku.com/favicon.ico',
-			};
-			engineList.video[2] = {
-				name: 'bilibili',
-				url: 'http://www.bilibili.tv/search?keyword=%s',
-				favicon: 'http://www.bilibili.tv/favicon.ico',
-			};
-			engineList.video[3] = {
-				name: 'acfan',
-				url: 'http://www.acfun.tv/search.aspx#query=%s',
-				favicon: 'http://www.acfun.tv/favicon.ico',
-			};
-			engineList.video[4] = {
-				name: '乐视',
-				url: 'http://so.letv.com/s?wd=%s',
-				favicon: 'http://www.letv.com/favicon.ico',
-			};
-			engineList.video[5] = {
-				name: '搜狐',
-				url: 'http://so.tv.sohu.com/mts?wd=%s',
-				favicon: 'http://tv.sohu.com/favicon.ico',
-			};
-			engineList.video[6] = {
-				name: 'youtube',
-				url: 'http://www.youtube.com/results?search_query=%s',
-				// favicon: 'http://www.youtube.com/favicon.ico',
-				favicon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsSAAALEgHS3X78AAABUUlEQVQ4jcWPvUoDQRSFv90dY0JQSEAQDEEjIoqxSaMPkEpsRC0sfAgLS4sgiCiI+IOCz2EC0SaKWGglKIJVwE5iEV2XyWzGwiCbWVFs9MBhfu45594L/w3rMhmPAUfAMJAFIj94bgAJ3E7UXheF0qwAC79omm2dufNE/NFW6LxCE6Qf6WBw94COTAazZjBvNyDdAIL0o1GSs/OMn1RIzMxh1gNM21KTlBqCfGuC53lI22Zga4f+zW1UZxRTJzVJIcEJr6lxXffz1TU1Tcr3eVheMoWOaGgdtjfbA56rVSr7e6S+0AoJPsYUGo3neQDclYqcra0yIj2kZZl+X0hNDehpC1BN3Hqd0411norHjAkbBwsZHqBmHXbHroBcWyxwIRVDwqHXDnUN4loodNkMAJiMfGylCLcNoCyUpgD0AaOtz1BYAPfAS+teAgrfpf8N3gEjkqDhhCdGrQAAAABJRU5ErkJggg==',
-			};
-			engineList.video[7] = {
-				name: 'niconico',
-				url: 'http://www.nicovideo.jp/search/%s',
-				// favicon: 'http://www.nicovideo.jp/favicon.ico',
-				favicon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsSAAALEgHS3X78AAAAa0lEQVQ4ja2SwQ3AMAgDnSojwf4DwE7piyqJSgqo/iHgLAuAP0VEg4hGte8Ohhcrjs0G03QAqtq6FSKSWmZmAMBVcZ61AIxaBkRi7CbpCLvJEcDMn7FcwLx4gnSvET3rA6hcYFHmG6uf+6obtEAl2s1SDqgAAAAASUVORK5CYII=',
-			};
-
+			engineList.video = [
+				{
+					name: '优酷',
+					url: 'http://www.soku.com/v?keyword=%s',
+					favicon: 'http://www.soku.com/favicon.ico',
+				},
+				{
+					name: '土豆',
+					url: 'http://www.soku.com/t/nisearch/%s/',
+					favicon: 'http://www.soku.com/favicon.ico',
+				},
+				{
+					name: 'bilibili',
+					url: 'http://www.bilibili.tv/search?keyword=%s',
+					favicon: 'http://www.bilibili.tv/favicon.ico',
+				},
+				{
+					name: 'acfan',
+					url: 'http://www.acfun.tv/search.aspx#query=%s',
+					favicon: 'http://www.acfun.tv/favicon.ico',
+				},
+				{
+					name: '乐视',
+					url: 'http://so.letv.com/s?wd=%s',
+					favicon: 'http://www.letv.com/favicon.ico',
+				},
+				{
+					name: '搜狐',
+					url: 'http://so.tv.sohu.com/mts?wd=%s',
+					favicon: 'http://tv.sohu.com/favicon.ico',
+				},
+				{
+					name: 'youtube',
+					url: 'http://www.youtube.com/results?search_query=%s',
+					// favicon: 'http://www.youtube.com/favicon.ico',
+					favicon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsSAAALEgHS3X78AAABUUlEQVQ4jcWPvUoDQRSFv90dY0JQSEAQDEEjIoqxSaMPkEpsRC0sfAgLS4sgiCiI+IOCz2EC0SaKWGglKIJVwE5iEV2XyWzGwiCbWVFs9MBhfu45594L/w3rMhmPAUfAMJAFIj94bgAJ3E7UXheF0qwAC79omm2dufNE/NFW6LxCE6Qf6WBw94COTAazZjBvNyDdAIL0o1GSs/OMn1RIzMxh1gNM21KTlBqCfGuC53lI22Zga4f+zW1UZxRTJzVJIcEJr6lxXffz1TU1Tcr3eVheMoWOaGgdtjfbA56rVSr7e6S+0AoJPsYUGo3neQDclYqcra0yIj2kZZl+X0hNDehpC1BN3Hqd0411norHjAkbBwsZHqBmHXbHroBcWyxwIRVDwqHXDnUN4loodNkMAJiMfGylCLcNoCyUpgD0AaOtz1BYAPfAS+teAgrfpf8N3gEjkqDhhCdGrQAAAABJRU5ErkJggg==',
+				},
+				{
+					name: 'niconico',
+					url: 'http://www.nicovideo.jp/search/%s',
+					// favicon: 'http://www.nicovideo.jp/favicon.ico',
+					favicon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsSAAALEgHS3X78AAAAa0lEQVQ4ja2SwQ3AMAgDnSojwf4DwE7piyqJSgqo/iHgLAuAP0VEg4hGte8Ohhcrjs0G03QAqtq6FSKSWmZmAMBVcZ61AIxaBkRi7CbpCLvJEcDMn7FcwLx4gnSvET3rA6hcYFHmG6uf+6obtEAl2s1SDqgAAAAASUVORK5CYII=',
+				},
+				{
+					name: '百度视频',
+            		url: 'http://v.baidu.com/v?word=%s&ie=utf-8',
+            		favicon: 'http://v.baidu.com/favicon.ico'
+				},
+				{
+				    name: '56',
+				    url: 'http://so.56.com/video/%s/?',
+				    favicon: 'http://so.56.com/favicon.ico'
+				},
+				{
+				    name: 'ku6',
+				    url: 'http://so.ku6.com/search?q=%s&ie=utf-8&oe=utf-8',
+				    favicon: 'http://so.ku6.com/favicon.ico'
+				}
+			];
 
 			// 音乐搜索列表
-			engineList.music = [];
-
-			engineList.music[0] = {
-				name: '百度音乐',
-				url: 'http://music.baidu.com/search?ie=utf-8&oe=utf-8&key=%s',
-				favicon: 'http://www.baidu.com/favicon.ico',
-			};
-			engineList.music[1] = {
-				name: '一听',
-				url: 'http://so.1ting.com/all.do?q=%s',
-				favicon: 'http://www.1ting.com/favicon.ico',
-			};
-			engineList.music[2] = {
-				name: '虾米音乐',
-				url: 'http://www.xiami.com/search?key=%s',
-				favicon: 'http://img.xiami.com/favicon.ico',
-			};
-			engineList.music[3] = {
-				name: '音悦Tai',
-				url: 'http://so.yinyuetai.com/mv?keyword=%s',
-				favicon: 'http://www.yinyuetai.com/favicon.ico',
-			};
-			engineList.music[4] = {
-				name: '搜狗音乐',
-				url: 'http://mp3.sogou.com/music.so?query=%s',
-				favicon: 'http://mp3.sogou.com/favicon.ico',
-				encoding: 'gbk',
-			};
+			engineList.music = [
+				{
+					name: '百度音乐',
+					url: 'http://music.baidu.com/search?ie=utf-8&oe=utf-8&key=%s',
+					favicon: 'http://www.baidu.com/favicon.ico',
+				},
+				{
+					name: '一听',
+					url: 'http://so.1ting.com/all.do?q=%s',
+					favicon: 'http://www.1ting.com/favicon.ico',
+				},
+				{
+					name: '虾米音乐',
+					url: 'http://www.xiami.com/search?key=%s',
+					favicon: 'http://img.xiami.com/favicon.ico',
+				},
+				{
+					name: '音悦Tai',
+					url: 'http://so.yinyuetai.com/mv?keyword=%s',
+					favicon: 'http://www.yinyuetai.com/favicon.ico',
+				},
+				{
+					name: '搜狗音乐',
+					url: 'http://mp3.sogou.com/music.so?query=%s',
+					favicon: 'http://mp3.sogou.com/favicon.ico',
+					encoding: 'gbk',
+				},
+				{
+					name: '天天动听',
+		            url: 'http://www.dongting.com/#a=searchlist&q=%s',
+		            favicon: 'http://lib.ttdtweb.com/favicon.ico',
+				},
+				{
+					name: 'QQ音乐',
+					url: 'http://cgi.music.soso.com/fcgi-bin/m.q?w=%s&ie=utf-8&oe=utf-8',
+					favicon: 'http://cache.music.soso.com/sosocache/favicon.ico'
+				},
+				{
+					name: 'Songtaste',
+					url: 'http://www.songtaste.com/search.php?keyword=%s',
+					favicon: 'http://www.songtaste.com/favicon.ico',
+					encoding: 'gbk'
+				},
+				// {
+				// 	name: '5sing',
+				// 	url: 'http://sou.5sing.com/sbz.aspx?key=%s',
+				// 	favicon: ''
+				// },
+				{
+					name: '百度歌词',
+					url: 'http://music.baidu.com/search/lrc?key=%s',
+					favicon: 'http://music.baidu.com/static/images/favicon.ico'
+				}
+			];
 
 			// 图片搜索列表
-			engineList.image = [];
+			engineList.image = [
+				{	
+					name: 'google图片',
+					url: 'http://www.google.com.hk/search?q=%s&tbm=isch',
+					favicon: 'http://www.google.com.hk/favicon.ico',
+				},
+				{
+					name: '百度图片',
+					url: 'http://image.baidu.cn/i?ie=utf-8&word=%s',
+					favicon: 'http://www.baidu.com/favicon.ico',
+				},
+				{
+				    name: '360',
+				    url: 'http://image.so.com/i?ie=utf-8&q=%s&src=tab_web',
+				    favicon: 'http://image.so.com/favicon.ico'
+				},
+				{
+				    name: 'bing',
+				    url: 'http://cn.bing.com/images/search?q=%s&pc=OPER',
+				    favicon: 'http://cn.bing.com/s/a/bing_p.ico'
+				},
+				{
+				    name: '花瓣',
+				    url: 'http://huaban.com/search/?q=%s',
+				    favicon: 'http://huaban.com/favicon.ico'
+				},
+				{
+				    name: '有道',
+				    url: 'http://image.youdao.com/search?q=%s',
+				    favicon: 'http://shared.ydstatic.com/images/favicon.ico'
+				},
+				// {
+				//     name: '搜狗',
+				//     url: 'http://pic.sogou.com/pics?query=%s',
+				//     favicon: 'http://logo.www.sogou.com/images/logo2014/new/favicon.ico'
+				// },
+				{
+					name: 'pixiv',
+					url: 'http://www.pixiv.net/search.php?word=%s',
+					favicon: 'http://www.pixiv.net/favicon.ico',
+				},
+				{
+					name: 'flickr',
+					url: 'http://www.flickr.com/search/?q=%s',
+					// favicon: 'http://www.flickr.com/favicon.ico',
+					favicon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsSAAALEgHS3X78AAABCklEQVQ4je2RPUoDYRCGn5lvE8gF4gHUWEjAwhMIASthQfACwmJnY+dPFrHRA0REK1EQRCEQCAqC4AFs/QHBSuMBFjabb+xMJLsn0LcaeF5e3pmBf8nPtPo0R0kXMEnw0uFo8n3UaNXNOuoaGClkHfncexsGrL3sI7oxdFuCWcTh9CmATTRjVLZHeGqwrh/NlhC9hji5GutmltDPZq19NoULbnJ4is/mA4SV/OWkQilYQrVewMuoCxXBFR0IzIFUijFlBd/Nhzag7+/w1ikM8HSVVu0E89c5CTsczzxKLz7H/MU49gfyFT8M3xg9L6PaAFLwl7Rq97/81a0Q5xYxUvygLb3d28Jmf0zf6blfgwKa+i4AAAAASUVORK5CYII=',
+				},
+				{
+					name: 'picsearch',
+					url: 'http://cn.picsearch.com/index.cgi?q=%s',
+					favicon: 'http://cn.picsearch.com/favicon.ico',
+				},
+				{
+					name: 'deviantART',
+					url: 'http://www.deviantart.com/?q=%s',
+					favicon: 'http://www.deviantart.com/favicon.ico',
+				},
+				{
+					name: 'jpg4',
+					url: 'http://img.jpg4.info/index.php?feed=%s',
+					favicon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAQCAIAAACHs/j/AAAAB3RJTUUH3QUZBA8bjXFPywAAA+xJREFUeJyVlFtsVFUYhde/9z5z2jPDtNNSCx1LLySKESu3YBQjYqIGI9EoYGpMMCFq0ERMAKMmEk3kwQDqq4lGTUgEQ0KIcrEgWlTAsVasaIEibaVDa+lcmDkz58ycffbvA5fok3E9rof1sPKtRdpogBlSEgEIjSYi/B8xsxIKgDZagA1DCM5fPvdeLjMqSDAbZv7vFDAYho0SKu2mxwpjgoQwJgRgvD92fLT1x74BAhkDw8zMxrD5RzJf1VWXQIaNIpUJshu+2LC3Z68goUgoQFB00YoXBm3pgUxECQYbhhIC4CBkImJmEBFJAFe6MEYLEiVdOj58LMbRSrHCYEUkQn8MpZ8bTU7UPeD6yBYqiXgkastfRrzpdTKZsLXRJBSxDsaGRa2jyy5bttXUrKTqHeq9USYTdkIZBYYAa5Zx33NP7NuUSvVXA2zbnV656eCer85s/yQ198mjn345qIQMslOjOz4YHzp9/qU1x9avHc/lFcnR/GhmIjO35bZitWjDJiLBDKHi8dbVMnar65Ybp8n25shfwyfnt5sPX+5avqTplXcPVwI/vevjkxNTjcuWtzy/KX/m97znkxCpidSsplbt6Ihj+1E/7+cVERk24DLBCAFm9iu6tdmZObNZ1Ta89nTsiR8OZ4t5nTqqo9NrAXXnssuJG3Ljk5P+5L4T+8q58s6fdp2VZ/sH+9sb2hQAIrrWL4go0KExbFuCAK9cnj87FotNU4895a5fd7G3x9ZB/OFVs+d1JSL1W+7fUsgVIlFr89ebl7TfvWzufQrMADP9iyhSdjprsqXit33nn1m1wDKIrli9dP5dlZ3vn/l8z7ydPW0zZjBzS7IlmUwCCHq1rtHxhrhgUgYCQKBhWAAIDTJF3n3o9LG+Uw8urFs0b46qicG93HhhSCbbq2MXLz3X7RWLAAc60KH2Qm9xYrHne1P5KSVMVqkoUJnIoPPmVmYueZWO6ZUXV97EymFIIS1RKhzf/pbpnNO25J5b9n9/Yc2jR95+86Et7whTZbAt7I2PbPQ9n4lVcWjbb6dSkYaljZ3dszs7iChX1BC1qjYemAiFVSGk+82BkSOH7n19a1IAQOTVNw4c7Kkw20JcWZtmbdUoEKlI2wYz+V1VOncsWByf5vgBO5QvlMvnRqY6Zs0IATZGzbm9zi38ufFZ5/FuHVQm0umFa9dJXWUpBMmBXwfcouu6bjQapZBZAAZg1swAKAy8qUzOrnHq6+tAxMZIaV2aHD+1+zOLw/qOzoauBQ1NTRHLIlCpXBoZHnFd13GcarVKQVhlY0jIa6AA18+KQ2YmIhNqS9kAKgAAi0MAhvnKlUmS16H4G/RUIZBbMjsmAAAAAElFTkSuQmCC',
+				},
 
-			engineList.image[0] = {
-				name: 'google图片',
-				url: 'http://www.google.com.hk/search?q=%s&tbm=isch',
-				favicon: 'http://www.google.com.hk/favicon.ico',
-			};
-			engineList.image[1] = {
-				name: '百度图片',
-				url: 'http://image.baidu.cn/i?ie=utf-8&word=%s',
-				favicon: 'http://www.baidu.com/favicon.ico',
-			};
-			engineList.image[2] = {
-				name: 'pixiv',
-				url: 'http://www.pixiv.net/search.php?word=%s',
-				favicon: 'http://www.pixiv.net/favicon.ico',
-			};
-			engineList.image[3] = {
-				name: 'flickr',
-				url: 'http://www.flickr.com/search/?q=%s',
-				// favicon: 'http://www.flickr.com/favicon.ico',
-				favicon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsSAAALEgHS3X78AAABCklEQVQ4je2RPUoDYRCGn5lvE8gF4gHUWEjAwhMIASthQfACwmJnY+dPFrHRA0REK1EQRCEQCAqC4AFs/QHBSuMBFjabb+xMJLsn0LcaeF5e3pmBf8nPtPo0R0kXMEnw0uFo8n3UaNXNOuoaGClkHfncexsGrL3sI7oxdFuCWcTh9CmATTRjVLZHeGqwrh/NlhC9hji5GutmltDPZq19NoULbnJ4is/mA4SV/OWkQilYQrVewMuoCxXBFR0IzIFUijFlBd/Nhzag7+/w1ikM8HSVVu0E89c5CTsczzxKLz7H/MU49gfyFT8M3xg9L6PaAFLwl7Rq97/81a0Q5xYxUvygLb3d28Jmf0zf6blfgwKa+i4AAAAASUVORK5CYII=',
-			};
-			engineList.image[4] = {
-				name: 'picsearch',
-				url: 'http://cn.picsearch.com/index.cgi?q=%s',
-				favicon: 'http://cn.picsearch.com/favicon.ico',
-			};
-			engineList.image[5] = {
-				name: 'deviantART',
-				url: 'http://www.deviantart.com/?q=%s',
-				favicon: 'http://www.deviantart.com/favicon.ico',
-			};
-			engineList.image[6] = {
-				name: 'jpg4',
-				url: 'http://img.jpg4.info/index.php?feed=%s',
-			};
-
+			];
 
 			// 下载资源
-			engineList.download = [];
-
-			engineList.download[0] = {
-				name: '人人影视',
-				url: 'http://www.yyets.com/search/index?keyword=%s',
-				favicon: 'http://www.yyets.com/favicon.ico',
-			};
-			engineList.download[1] = {
-				name: '网盘搜索',
-				url: 'http://so.baiduyun.me/search.php?wd=%s',
-				favicon: 'http://so.baiduyun.me/favicon.ico',
-			};
-			engineList.download[2] = {
-				name: '我爱P2P',
-				url: 'http://oabt.org/?topic_title=%s',
-				favicon: 'http://oabt.org/favicon.ico',
-			};
-			engineList.download[3] = {
-				name: '极影动漫',
-				url: 'http://bt.ktxp.com/search.php?keyword=%s',
-				favicon: 'http://bt.ktxp.com/favicon.ico',
-			};
-			engineList.download[4] = {
-				name: '动漫花园',
-				url: 'http://share.dmhy.org/topics/list?keyword=%s',
-				favicon: 'http://share.dmhy.org/favicon.ico',
-			};
-			engineList.download[5] = {
-				name: '射手字幕',
-				url: 'http://www.shooter.cn/search/%s',
-				favicon: 'http://shooter.cn/favicon.ico',
-			};
-			engineList.download[6] = {
-				name: 'simpledCD',
-				url: 'http://simplecd.me/search/entry/?query=%s',
-			};
-			engineList.download[7] = {
-				name: 'ed2000',
-				url: 'http://www.ed2000.com/FileList.asp?SearchWord=%s',
-				favicon: 'http://www.ed2000.com/favicon.ico',
-			};
-
+			engineList.download = [
+				{
+					name: '人人影视',
+					url: 'http://www.yyets.com/search/index?keyword=%s',
+					favicon: 'http://www.yyets.com/favicon.ico',
+				},
+				{
+					name: '网盘搜索',
+					url: 'http://so.baiduyun.me/search.php?wd=%s',
+					favicon: 'http://so.baiduyun.me/favicon.ico',
+				},
+				{
+					name: '我爱P2P',
+					url: 'http://oabt.org/?topic_title=%s',
+					favicon: 'http://oabt.org/favicon.ico',
+				},
+				{
+					name: '极影动漫',
+					url: 'http://bt.ktxp.com/search.php?keyword=%s',
+					favicon: 'http://bt.ktxp.com/favicon.ico',
+				},
+				{
+					name: '动漫花园',
+					url: 'http://share.dmhy.org/topics/list?keyword=%s',
+					favicon: 'http://share.dmhy.org/favicon.ico',
+				},
+				{
+					name: '射手字幕',
+					url: 'http://www.shooter.cn/search/%s',
+					favicon: 'http://shooter.cn/favicon.ico',
+				},
+				{
+					name: 'VeryCD',
+					url: 'http://www.verycd.com/search/folders/%s',
+					favicon: 'http://www.verycd.com/favicon.ico?v=2'
+				},
+				{
+					name: 'simpledCD',
+					url: 'http://simplecd.me/search/entry/?query=%s',
+					// favicon: '',
+				},
+				{
+					name: 'ed2000',
+					url: 'http://www.ed2000.com/FileList.asp?SearchWord=%s',
+					favicon: 'http://www.ed2000.com/favicon.ico',
+				},
+				{
+				    name: 'nyaa',
+				    url: 'http://www.nyaa.se/?page=search&term=%s',
+				    favicon: 'http://files.nyaa.se/favicon.png'
+				},
+				{
+				    name: '海盗湾',
+				    url: 'https://kickass.to/usearch/%s/',
+				    favicon: 'https://kastatic.com/images/favicon.ico'
+				},
+				{
+				    name: 'btspread',
+				    url: 'http://www.btspread.com/search/%s',
+				    favicon: 'http://www.btspread.com/app/btspread/View/images/favicon.ico'
+				},
+				{
+				    name: 'torrentkitty',
+				    url: 'http://www.torrentkitty.org/search/%s',
+				    favicon: 'http://www.torrentkitty.org/favicon.ico'
+				},
+				// 无法访问？
+				// {
+				//     name: 'BTDigg',
+				//     url: 'http://btdigg.org/search?q=%s',
+				//     favicon: ''
+				// },
+			];
 
 			// 购物列表
-
-			engineList.shopping = [];
-			engineList.shopping[0] = {
-				name: '淘宝',
-				url: 'http://s.taobao.com/search?q=%s',
-				favicon: 'http://www.taobao.com/favicon.ico',
-			};
-			engineList.shopping[1] = {
-				name: '京东',
-				url: 'http://search.jd.com/Search?keyword=%s&enc=utf-8',
-				favicon: 'http://www.jd.com/favicon.ico',
-			};
-			engineList.shopping[2] = {
-				name: '苏宁',
-				url: 'http://search.suning.com/%s/',
-				favicon: 'http://www.suning.com/favicon.ico',
-			};
-			engineList.shopping[3] = {
-				name: '当当',
-				url: 'http://search.dangdang.com/search.php?key=%s',
-				favicon: 'http://www.dangdang.com/favicon.ico',
-				encoding: 'gbk',
-			};
-			engineList.shopping[5] = {
-				name: '亚马逊',
-				url: 'http://www.amazon.cn/s/ref=nb_sb_noss?field-keywords=%s',
-				favicon: 'http://www.amazon.cn/favicon.ico',
-			};
-			engineList.shopping[6] = {
-				name: '360购物',
-				url: 'http://s.mall.360.cn/search.html?query=%s',
-				favicon: 'http://s.mall.360.cn/favicon.ico',
-			};
+			engineList.shopping = [
+				{
+					name: '一淘',
+		            url: 'http://s.etao.com/search?q=%s',
+		            favicon: 'http://a.tbcdn.cn/apps/e/base/favicon.ico'
+				},
+				{
+					name: '淘宝',
+					url: 'http://s.taobao.com/search?q=%s',
+					favicon: 'http://www.taobao.com/favicon.ico',
+				},
+				{
+					name: '天猫',
+					url: 'http://list.tmall.com/search_product.htm?q=%s&type=p',
+					favicon: 'http://a.tbcdn.cn/p/mall/base/favicon.ico',
+					encoding: 'gbk'
+				},
+				{
+					name: '京东',
+					url: 'http://search.jd.com/Search?keyword=%s&enc=utf-8',
+					favicon: 'http://www.jd.com/favicon.ico',
+				},
+				{
+					name: '苏宁',
+					url: 'http://search.suning.com/%s/',
+					favicon: 'http://www.suning.com/favicon.ico',
+				},
+				{
+					name: '当当',
+					url: 'http://search.dangdang.com/search.php?key=%s',
+					favicon: 'http://www.dangdang.com/favicon.ico',
+					encoding: 'gbk',
+				},
+				{
+					name: '亚马逊',
+					url: 'http://www.amazon.cn/s/ref=nb_sb_noss?field-keywords=%s',
+					favicon: 'http://www.amazon.cn/favicon.ico',
+				},
+				{
+					name: '360购物',
+					url: 'http://s.mall.360.cn/search.html?query=%s',
+					favicon: 'http://s.mall.360.cn/favicon.ico',
+				},
+				{
+					name: 'QQ网购',
+					url: 'http://se.wanggou.com/comm_search?KeyWord=%s',
+					favicon: 'http://www.wanggou.com/favicon.ico',
+					encoding: 'gbk'
+				},
+				{
+					name: '易迅',
+					url: 'http://searchex.yixun.com/html?charset=utf-8&as=1&key=%s',
+					favicon: 'http://www.yixun.com/favicon.ico',
+				}
+			];
 
 
 			//翻译列表
-			engineList.translate = [];
-
-			engineList.translate[0] = {
-				name: 'google翻译',
-				url: 'http://translate.google.com.hk/?q=%s',
-				favicon: 'http://translate.google.com.hk/favicon.ico',
-			};
-			engineList.translate[1] = {
-				name: '百度翻译',
-				url: 'http://fanyi.baidu.com/#auto/zh/%s',
-				favicon: 'http://fanyi.baidu.com/favicon.ico',
-			};
-			engineList.translate[2] = {
-				name: '有道词典',
-				url: 'http://dict.youdao.com/search?q=%s',
-				favicon: 'http://dict.youdao.com/favicon.ico',
-			};
-			engineList.translate[3] = {
-				name: '爱词霸',
-				url: 'http://www.iciba.com/%s',
-				favicon: 'http://www.iciba.com/favicon.ico',
-			};
-			engineList.translate[4] = {
-				name: '海词',
-				url: 'http://dict.cn/%s',
-				favicon: 'http://dict.cn/favicon.ico',
-			};
-			engineList.translate[5] = {
-				name: '沪江日语',
-				url: 'http://dict.hjenglish.com/jp/jc/%s',
-				favicon: 'http://dict.hjenglish.com/favicon_jp.ico',
-			};
-			engineList.translate[6] = {
-				name: '汉典',
-				url: 'http://www.zdic.net/sousuo/?q=%s',
-				favicon: 'http://www.zdic.net/favicon.ico',
-			};
+			engineList.translate = [
+				{
+					name: 'google翻译',
+					url: 'http://translate.google.com.hk/?q=%s',
+					favicon: 'http://translate.google.com.hk/favicon.ico',
+				},
+				{
+					name: '百度翻译',
+					url: 'http://fanyi.baidu.com/#auto/zh/%s',
+					favicon: 'http://fanyi.baidu.com/favicon.ico',
+				},
+				{
+					name: '有道翻译',
+					url: 'http://fanyi.youdao.com/translate?i=%s',
+					favicon: 'http://shared.ydstatic.com/images/favicon.ico'
+				},
+				{
+					name: '有道词典',
+					url: 'http://dict.youdao.com/search?q=%s',
+					favicon: 'http://dict.youdao.com/favicon.ico',
+				},
+				{
+					name: 'bing 翻译',
+					url: 'http://www.bing.com/translator/?&text=%s&from=&to=zh-chs',
+					favicon: 'http://www.bing.com/translator//Icon.ico'
+				},
+				{
+					name: 'bing 词典',
+					url: 'http://www.bing.com/dict/search?q=%s&go=&qs=bs&form=CM',
+					favicon: 'http://www.bing.com/s/wlflag.ico'
+				},
+				{
+					name: '爱词霸',
+					url: 'http://www.iciba.com/%s',
+					favicon: 'http://www.iciba.com/favicon.ico',
+				},
+				{
+					name: '海词',
+					url: 'http://dict.cn/%s',
+					favicon: 'http://dict.cn/favicon.ico',
+				},
+				{
+					name: '沪江EN',
+					url: 'http://dict.hjenglish.com/w/%s',
+					favicon: 'http://dict.hjenglish.com/favicon.ico'
+				},
+				// {
+				// 	name: '沪江日语',
+				// 	url: 'http://dict.hjenglish.com/jp/jc/%s',
+				// 	favicon: 'http://dict.hjenglish.com/favicon_jp.ico',
+				// },
+				{
+					name: '汉典',
+					url: 'http://www.zdic.net/sousuo/?q=%s',
+					favicon: 'http://www.zdic.net/favicon.ico',
+				},
+			];
 
 
 			//知识列表
-			engineList.knowledge = [];
-			engineList.knowledge[0] = {
-				name: '百度百科',
-				url: 'http://baike.baidu.com/search/word?pic=1&sug=1&word=%s',
-				favicon: 'http://baike.baidu.com/favicon.ico',
-			};
-			engineList.knowledge[1] = {
-				name: '维基(ZH)',
-				url: 'http://zh.wikipedia.org/wiki/%s',
-				favicon: 'http://zh.wikipedia.org/favicon.ico',
-			};
-			engineList.knowledge[2] = {
-				name: '知乎',
-				url: 'http://www.zhihu.com/search?q=%s',
-				favicon: 'http://www.zhihu.com/favicon.ico',
-			};
-			engineList.knowledge[4] = {
-				name: '互动百科',
-				url: 'http://so.hudong.com/s/doc/%s',
-				favicon: 'http://www.baike.com/favicon.ico',
-			};
-			engineList.knowledge[5] = {
-				name: '百度文库',
-				url: 'http://wenku.baidu.com/search?word=%s&ie=utf-8',
-				favicon: 'http://www.baidu.com/favicon.ico',
-			};
-			engineList.knowledge[6] = {
-				name: '豆丁文档',
-				url: 'http://www.docin.com/search.do?searchcat=2&searchType_banner=p&nkey=%s',
-				favicon: 'http://www.docin.com/favicon.ico',
-			};
-			engineList.knowledge[7] = {
-				name: '爱问共享',
-				url: 'http://ishare.iask.sina.com.cn/search.php?key=%s',
-				favicon: 'http://ishare.iask.sina.com.cn/favicon.ico',
-				encoding: 'gbk',
-			};
-			engineList.knowledge[8] = {
-				name: '百度知道',
-				url: 'http://zhidao.baidu.com/search?word=%s',
-				favicon: 'http://www.baidu.com/favicon.ico',
-			};
+			engineList.knowledge = [
+				{
+					name: '百度百科',
+					url: 'http://baike.baidu.com/search/word?pic=1&sug=1&word=%s',
+					favicon: 'http://baike.baidu.com/favicon.ico',
+				},
+				{
+					name: '维基(ZH)',
+					url: 'http://zh.wikipedia.org/wiki/%s',
+					favicon: 'http://zh.wikipedia.org/favicon.ico',
+				},
+				{
+					name: '维基(en)',
+					url: 'http://en.wikipedia.org/wiki/%s',
+					favicon: 'http://en.wikipedia.org/favicon.ico',
+				},
+				{
+					name: '知乎',
+					url: 'http://www.zhihu.com/search?q=%s',
+					favicon: 'http://www.zhihu.com/favicon.ico',
+				},
+				{
+					name: '互动百科',
+					url: 'http://so.hudong.com/s/doc/%s',
+					favicon: 'http://www.baike.com/favicon.ico',
+				},
+				{
+					name: 'Google 学术搜索',
+					url: 'http://scholar.google.com/scholar?hl=zh-CN&q=%s&btnG=&lr=%s',
+				    favicon: 'http://scholar.google.com/favicon.ico'
+				},
+				{
+					name: '百度文库',
+					url: 'http://wenku.baidu.com/search?word=%s&ie=utf-8',
+					favicon: 'http://www.baidu.com/favicon.ico',
+				},
+				{
+					name: '豆丁文档',
+					url: 'http://www.docin.com/search.do?searchcat=2&searchType_banner=p&nkey=%s',
+					favicon: 'http://www.docin.com/favicon.ico',
+				},
+				{
+					name: '爱问共享',
+					url: 'http://ishare.iask.sina.com.cn/search.php?key=%s',
+					favicon: 'http://ishare.iask.sina.com.cn/favicon.ico',
+					encoding: 'gbk',
+				},
+				{
+					name: '百度知道',
+					url: 'http://zhidao.baidu.com/search?word=%s',
+					favicon: 'http://www.baidu.com/favicon.ico',
+				},
+			];
+
 
 			//社交列表
 			engineList.sociality = [];
@@ -876,8 +1027,6 @@
 				// favicon: 'https://plus.google.com/favicon.ico',
 				favicon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAACXBIWXMAAAsSAAALEgHS3X78AAACe0lEQVQokWWSTUhUcRTFz73vjW+ceeOYEqFpQdAoWRG2KDFEIaQoaBFBEbSRiBaRFEFIbSIyCgNd9EG4iHaFQYWbrIVBBUlIFEnShH2MNjnqjPPGeW/m/f+3xYQk/TZncw4XzrkU39eCEsyiNQoemEEMEUDIDGAl5l8lEjdPZZZZt15cVwoeBQIwTJVZgMh/AWLx8lZsU/Xx7uLPKSu2qWxDTDtZZ2Q4NThApglgOcYggvI5FK653O99mfh16Vzy6gUpeMUfU6nBASICIL6/fIFBrN18efMOo7LK+/zJiK4qxCcXh4eCm7cFautEazAbdgTMIALAgIBZL+UAWBsbtZOVgqcyaUC0k5WiR5ZVe2OQLEt7LohMaM3B8vz7d0tvX1UeOlb48S0//tZu7Ujd7PPnZs3qNVwRNcJhI1oFIfFciu9rAZEoxVbQbu8s39psd+xJP7yf7O0JNjTVXL9jRCo4HNE5R2UWps8eN07H6gEQs15M58fHuDxkt+3mULgwFS8mvudevnBGRyJtuxPnTmQePxDPZRBBa1H+qiNd6waHwh2d2efDgbX1a/vuWg1NxWRCZ9Mql1OZebW4AIhZam1Nz5VgY9PMxe7idEIvZbPPdtVeuxU9cNid+CCeN32mSzyPrSBEWHyfIxV2e2dm+FHuzSgAtisWnz7MPHnA0SiUEq2V40Dr0nYmEcH3i8mZyoNH1dxs/uM4RKpPng1t3znb3wvDAECmsbw0fd3fKgXXatyy+tT5sg0bVXoeIv7vmfl7t5fGXnPYhtb//hJN7t0JIvHyZJhsR2CYANTCnKiiEYrISjcAczI1V6oVoiU1DwgAMgMgEmcW//EHm/43y2ruaCUAAAAASUVORK5CYII=',
 			};
-
-
 
 
 			//控制列表的具体细节
@@ -8886,42 +9035,44 @@
 				};
 			});
 
+			function addToDocumnet() {
+				dropLists.forEach(function (item) {
+					container.appendChild(item[0]);
+					document.body.appendChild(item[1]);
 
-			dropLists.forEach(function (item) {
-				container.appendChild(item[0]);
-				document.body.appendChild(item[1]);
+					item[1].addEventListener('mousedown', mousedownhandler, true);
 
-				item[1].addEventListener('mousedown', mousedownhandler, true);
-
-				new DropDownList(item[0], item[1]);
-			});
+					new DropDownList(item[0], item[1]);
+				});
 
 
-			// 插入到文档中
-			switch (matchedRule.insertIntoDoc.where.toLowerCase()) {
-				case 'beforebegin' :
-					iTarget.parentNode.insertBefore(container, iTarget);
-				break;
-				case 'afterbegin' :
-					if (iTarget.firstChild) {
-						iTarget.insertBefore(container, iTarget.firstChild);
-					} else {
+				// 插入到文档中
+				switch (matchedRule.insertIntoDoc.where.toLowerCase()) {
+					case 'beforebegin' :
+						iTarget.parentNode.insertBefore(container, iTarget);
+					break;
+					case 'afterbegin' :
+						if (iTarget.firstChild) {
+							iTarget.insertBefore(container, iTarget.firstChild);
+						} else {
+							iTarget.appendChild(container);
+						};
+					break;
+					case 'beforeend' :
 						iTarget.appendChild(container);
-					};
-				break;
-				case 'beforeend' :
-					iTarget.appendChild(container);
-				break;
-				case 'afterend' :
-					if (iTarget.nextSibling) {
-						iTarget.parentNode.insertBefore(container, iTarget.nextSibling);
-					} else {
-						iTarget.parentNode.appendChild(container);
-					};
-				break;
+					break;
+					case 'afterend' :
+						if (iTarget.nextSibling) {
+							iTarget.parentNode.insertBefore(container, iTarget.nextSibling);
+						} else {
+							iTarget.parentNode.appendChild(container);
+						};
+					break;
 
-			};
+				};
+			}
 
+			addToDocumnet();
 		});
 
 	};
