@@ -140,6 +140,11 @@ var App = {
             App.site = App.getCurSiteInfo();
         }
 
+        if (App.site.startFilter) {
+            App.site.startFilter();
+            console.log('run startFilter function success');
+        }
+
         var parser = new Parser(App.site, document);
         var hasContent = !!parser.hasContent();
         if (hasContent) {
@@ -669,6 +674,7 @@ var App = {
 
             if (Config.addToHistory) {
                 document.title = parser.docTitle;
+
                 // TODO: 起点无法添加整个网址，只能添加后半部分。
                 var url = parser.curPageUrl.replace('http://read.qidian.com', '');
                 try {

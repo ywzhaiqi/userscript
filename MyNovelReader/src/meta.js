@@ -103,6 +103,8 @@
 // @include        http://www.ziyuge.com/*/*/*/*/*.html
 
 // 其它网站
+// @include        http://www.geiliwx.com/GeiLi/*/*/*.shtml
+// @include        http://www.d586.com/*/*/
 // @include        http://www.bookgew.com/Html/Book/*/*/*.htm
 // @include        http://read.shuhaha.com/Html/Book/*/*/*.html
 // @include        http://www.biqi.me/files/article/html/*/*/*.html

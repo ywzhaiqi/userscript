@@ -130,7 +130,7 @@ Rule.specialSite = [
             //     src: durl,
             //     charset: 'GB2312'
             // });
-        }
+        },
     },
     {siteName: "晋江文学网",
         url: /^http:\/\/www\.jjwxc\.net\/onebook\.php\S*/,
@@ -486,7 +486,6 @@ Rule.specialSite = [
         titleReg: "(.*?)最新章节_\\S* (.*)_手牵手小说网",
         contentReplace: [
             "★百度搜索，免费阅读万本★|访问下载txt小说.百度搜.|免费电子书下载|\\(百度搜\\)|『文學吧x吧.』|¤本站网址：¤",
-            "[\\.]*\\s*(?:阅读)?[\\.]*",
             "★雲來阁免费wwwyunlaigenet★",
             "&nbsp;关闭</p>",
             { "。\\.": "。" },
@@ -703,6 +702,17 @@ Rule.specialSite = [
         url: "^http://www\\.bookabc\\.net/.*\\.html",
         useiframe: true
     },
+    {siteName: "给力文学小说阅读网",
+        url: "^http://www\\.geiliwx\\.com/.*\\.shtml",
+        titleSelector: 'h1',
+        bookTitleSelector: '#breadCrumb>a:eq(1)',
+        useiframe: true,
+        contentReplace: [
+            "（百度搜索给力文学网更新最快最稳定\\)",
+            "给力文学网",
+            "看最快更新"
+        ]
+    },
     // ============== 内容需要2次获取的 =========================
     {siteName: "手打吧",
         url: /^http:\/\/shouda8\.com\/\w+\/\d+\.html/,
@@ -867,6 +877,7 @@ Rule.specialSite = [
     },
     {siteName: "D586小说网",
         url: 'http://www\\.d586\\.com/',
+        contentSelector: ".yd_text2",
         contentRemove: 'a',
         contentReplace: [
             '【www.13800100.com文字首发D5８6小说网】',
@@ -875,7 +886,6 @@ Rule.specialSite = [
     },
     {siteName: "豌豆文学网",
         url: "^http://www.wandoou.com/book/\\d+/\\d+\\.html",
-        titleReg: "最新章节_(.*?)_(.*?),豌豆文学网",
         contentRemove: "center",
         contentReplace: [
             /[{（]<a href.*[}）]|网欢迎广大书友光临阅读，.*/ig,
@@ -1020,7 +1030,7 @@ Rule.replace = {
 
     // === 双字替换 ===
     "暧m[eè][iì]":"暧昧",
-    "不liáng":"不良", "b[ěe]i(\\s|&nbsp;)*j[īi]ng":"北京","半shen": "半身", "b[ìi]j[ìi]ng":"毕竟", "报(了?)jing":"报$1警", "bèi'pò":"被迫", "包yǎng":"包养",
+    "不liáng":"不良", "b[ěe]i(\\s|&nbsp;)*j[īi]ng":"北京","半shen": "半身", "b[ìi]j[ìi]ng":"毕竟", "报(了?)jing":"报$1警", "bèi'pò":"被迫", "包yǎng":"包养", "biǎo子":"婊子",
     "ch[oō]ngd[oò]ng":"冲动", "chong物":"宠物", "cao(练|作)":"操$1", "出gui":"出轨", "缠mian": "缠绵", "成shu": "成熟", "(?:赤|chi)\\s*lu[oǒ]": "赤裸", "春guang": "春光", "chun风":"春风", "chuang伴":"床伴", "沉mi":"沉迷", "沉lun":"沉沦", "刺ji":"刺激", "chao红":"潮红", "初chun":"初春", "＂ｃｈｉ　ｌｕｏ＂":"赤裸",
     "dang校": "党校", "da子": "鞑子", "大tui":"大腿", "diao丝": "屌丝", "d[úu](?:\\s|&nbsp;|<br/>)*l[ìi]": "独立", "d[uú]\\s{0,2}c[áa]i":"独裁", "d?[iì]f[āa]ng":"地方", "d[ìi]\\s*d[ūu]":"帝都", "di国":"帝国", "duo落":"堕落",
     "f[ǎa]ngf[óo]":"仿佛", "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "f[èe]nn[ùu]":"愤怒",
@@ -1039,7 +1049,7 @@ Rule.replace = {
     "w[ēe]ixi[ée]":"威胁", "wèizh[ìi]":"位置", "wei员":"委员",
     "xiu长": "修长", "亵du": "亵渎", "xing福": "幸福", "小bo":"小波", "xiong([^a-z])":"胸$1", "小tui":"小腿", "xiàn\\'zhì":"限制",
     "yin(冷|暗|谋|险|沉|沟|癸派|后)":"阴$1", "y[iī]y[àa]ng":"一样", "y[īi]di[ǎa]n":"一点", "y[ǐi]j[īi]ng":"已经", "疑huo":"疑惑", "影mi":"影迷",  "阳w[ěe]i": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "(?:you|诱)(?:惑|huo)": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人", "御yòng":"御用", "旖ni":"旖旎", "yu念":"欲念", "you敌深入":"诱敌深入", "影she":"影射", "牙qian":"牙签",
-    "z[iì]j[iǐ]": "自己","z[ìi](?:\\s|<br/?>|&nbsp;)*y[oó]u": "自由","zh[iī]d?[àa]u?o":"知道","zhì'fú":"制服", "zha药": "炸药", "zhan有": "占有", "政f[ǔu]": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zong理":"总理", "zh[ōo]ngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]y[oò]u":"左右", "zh[oō]uw[ée]i":"周围", "中nan海":"中南海", "中j委":"中纪委", "中zu部":"中组部", "政zhi局":"政治局", "(昨|一|时|余)(?:<br/?>|&nbsp;|\\s)*ì":"$1日", "照she":"照射",
+    "z[iì]j[iǐ]": "自己","z[ìi](?:\\s|<br/?>|&nbsp;)*y[oó]u": "自由","zh[iī]d?[àa]u?o":"知道","zhì'fú":"制服", "zha药": "炸药", "zhan有": "占有", "政f[ǔu]": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zong理":"总理", "zh[ōo]ngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]y[oò]u":"左右", "zh[oō]uw[ée]i":"周围", "中nan海":"中南海", "中j委":"中纪委", "中zu部":"中组部", "政zhi局":"政治局", "(昨|一|时|余)(?:<br/?>|&nbsp;|\\s)*ì":"$1日", "照she":"照射", "坠luò":"坠落",
 
     // === 单字替换 ===
     "b[āà]ng":"棒","bào":"爆","bà":"吧","bī":"逼","bō":"波",
