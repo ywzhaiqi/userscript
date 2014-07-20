@@ -63,6 +63,10 @@ Mouseover Popup Image Viewer
 
 	{"r":"(static\\.cnbetacdn\\.com\\/newsimg\\/.*)_180x132\\.([a-z]+)","s":"http://$1"}
 
+### pixiv
+
+    {"r":"pixiv\\.net/member_illust.php\\?mode=medium&illust_id=(\\d*)", "q":".works_display>a>img"}
+
 #### 人人网（部分有效）
 
 	{"r":"http:\\/\\/fmn\\.(rrimg|rrfmn|xnpic)\\.com\\/(.*)\\/p\\/.*85lt_(.*\\.jpg)","s":"http://fmn.$1.com/$2/$3"}
