@@ -3,12 +3,17 @@
 // @namespace   https://github.com/ywzhaiqi
 // @description 在 Firefox 上把优酷从2列改成3列，只适应于个人显示器尺寸。
 // @include     http://*.youku.com/*
-// @version     1
+// @version     2014.7.21
 // @grant       none
 // @run-at      document-start
+// @noframes
 // ==/UserScript==
 
 (function(){
+    if (window.top != window.self) {  // return in iframe
+        return;
+    }
+
     var fn = function(){
         var w = document.documentElement ? document.documentElement.clientWidth : document.body.clientWidth
             ,r = 1230
