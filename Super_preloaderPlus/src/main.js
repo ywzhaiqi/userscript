@@ -965,7 +965,7 @@ function init(window, document) {
                         text-align:center!important;\
                         font-size:14px!important;\
                         padding:3px 0!important;\
-                        margin:5px 10px 8px!important;\
+                        margin:5px 10px 8px;\
                         clear:both!important;\
                         border-top:1px solid #ccc!important;\
                         border-bottom:1px solid #ccc!important;\
@@ -1093,7 +1093,7 @@ function init(window, document) {
                             font-size:14px!important;\
                             display:block!important;\
                             padding:3px 0!important;\
-                            margin:5px 10px 8px!important;\
+                            margin:5px 10px 8px;\
                             clear:both!important;\
                             border-top:1px solid #ccc!important;\
                             border-bottom:1px solid #ccc!important;\
@@ -2629,7 +2629,7 @@ function getRalativePageStr(lastUrl, currentUrl, nextUrl) {
     } else {
         ralativePageStr = '';
     }
-    return ralativePageStr;
+    return ralativePageStr || '';
 }
 
 function handleLazyImgSrc(rule, doc) {

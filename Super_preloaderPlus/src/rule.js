@@ -195,7 +195,7 @@ var SITEINFO=[
         autopager: {
             pageElement: 'css;div#content_left',
             replaceE: 'css;#page',
-            stylish: '.autopagerize_page_info { margin-bottom: 10px; }',
+            stylish: '.autopagerize_page_info, div.sp-separator { margin-bottom: 10px !important; }',
             startFilter: function(win) {
                 // 设置百度搜索类型为 s?wd=
                 try {
@@ -209,6 +209,7 @@ var SITEINFO=[
         nextLink:'//div[@id="page"]/a[text()="下一页>"] | id("snext")',
         autopager:{
             pageElement:'//div[@id="container"]',
+            stylish: '.autopagerize_page_info, div.sp-separator { margin-bottom: 20px !important; }'
         }
     },
     {name: '搜狗搜索',
@@ -437,11 +438,12 @@ var SITEINFO=[
             separatorReal: false
         }
     },
-    {name: 'IT之家极速版 - 滚动IT新闻 - 最新IT文章列表',
-        url: /^http:\/\/www\.ithome\.com\/list\//i,
-        nextLink: 'auto;',
+    {name: 'IT 之家',
+        url: /^http:\/\/\w+\.ithome\.com\//i,
+        nextLink: 'id("Pager")/div[@class="pagenew"]/a[text()=">"]',
         autopager: {
-            pageElement: 'id("wrapper")/div[@class="content fl"]/div[@class="post_list"]',
+            pageElement: 'id("wrapper")/div[@class="content fl"]/div[@class="cate_list" or @class="post_list"]/ul[@class="ulcl"]',
+            replaceE: 'id("Pager")/div[@class="pagenew"]'
         }
     },
     {name: '虎嗅网',
@@ -588,6 +590,15 @@ var SITEINFO=[
         nextLink: 'auto;',
         autopager: {
             pageElement: '//div[@class="news_content_left"]/div[@class="content"]',
+        }
+    },
+    {name: '铁血网',
+        url: /^http:\/\/bbs\.tiexue\.net\/post.*\.html/i,
+        exampleUrl: 'http://bbs.tiexue.net/post2_7969883_3.html',
+        nextLink: '//div[@class="page"]/a[text()="下一页"]',
+        autopager: {
+            pageElement: 'id("postContent")/div[@class="newconli2"]',
+            relatedObj: true
         }
     },
 
@@ -798,7 +809,7 @@ var SITEINFO=[
         url: '^http://.*\\.douban\\.com/subject',
         nextLink: '//div[@class="paginator"]/span[@class="next"]/a[contains(text(),"后页>")]',
         autopager: {
-            pageElement: '//ul[contains(@class,"topic-reply")] | //div[@id="comments" or @class="post-comments"]'
+            pageElement: '//ul[contains(@class,"topic-reply")] | //div[@id="comments" or @class="post-comments" or @class="article"]'
         }
     },
     {name: '我的小组话题 - 豆瓣',
@@ -1696,6 +1707,11 @@ var SITEINFO=[
         nextLink: '//div[@class="pagenavi"]/a[contains(text(), "下一页")]',
         pageElement: '//div[@id="container"]/div[@class="content"]/div[@class="post-list"]',
     },
+    {name: 'iPc.me - 与你分享互联网的精彩！',
+        url: '^http://www\\.ipc\\.me/',
+        nextLink: '//div[@class="pagenavi"]/a[contains(text(), "下一页")]',
+        pageElement: 'id("posts-list")',
+    },
     {name: '独木成林',
         url: '^http://www\\.guofs\\.com/',
         nextLink: '//a[@class="nextpostslink"]',
@@ -1870,7 +1886,7 @@ var SITEINFO=[
         nextLink:'//div[@class="page_nav"]/descendant::a[text()="下一页"]',
         autopager:{
             pageElement:'//body/div/div[@class="content"]/table',
-            replaceE:'////div[@class="page_nav"]',
+            replaceE:'//div[@class="page_nav"]',
         }
     },
     {name: 'CSDN话题',
@@ -2720,8 +2736,29 @@ var SITEINFO=[
             pageElement: '//img[@id="mangaFile"]',
         }
     },
+    {name: '基德漫画网',
+        url: /^http:\/\/www\.jide123\.net\/manhua\/.*\.html/i,
+        exampleUrl: 'http://www.jide123.net/manhua/3670/272725.html?p=2',
+        nextLink: {
+            startAfter: '?p=',
+            mFails: [/^http:\/\/www\.jide123\.net\/manhua\/.*\.html/i, '?p=1'],
+            inc: 1,
+            isLast: function(doc, win, lhref) {
+                var select = doc.getElementById('qTcms_select_i');
+                if (select) {
+                    var s2os = select.options;
+                    var s2osl = s2os.length;
+                    if (select.selectedIndex == s2osl - 1) return true;
+                }
+            },
+        },
+        autopager: {
+            pageElement: 'id("qTcms_pic")',
+            useiframe: true,
+        }
+    },
     {name: '汗汗漫画',
-        url: /^http:\/\/\w+\.vs20\.com\/\d+\/\w+\.htm/i,
+        url: /^http:\/\/\w+\.(?:vs20|3gmanhua|hhcomic)\.(?:com|net)\/\w+\/\w+\.htm/i,
         siteExample: 'http://page.vs20.com/1815454/115321.htm?v=2*s=6',
         nextLink: function(doc, win, cplink) {
             // hrefInc 的方式不行因为这个地址最后还有额外的 *s=6
@@ -2968,6 +3005,14 @@ var SITEINFO=[
         autopager: {
             pageElement: 'id("struct_2ColRightIn")/div[@class="unit_ItemList"]/div[contains(@class, "parts_ItemBox")]',
             relatedObj: true
+        }
+    },
+    {name: 'JAVLibrary',
+        url: /^http:\/\/www\.javlibrary\.com\/cn\//i,
+        exampleUrl: 'http://www.javlibrary.com/cn/vl_bestrated.php',
+        nextLink: '//div[@class="page_selector"]/a[@class="page next"]',
+        autopager: {
+            pageElement: 'id("rightcolumn")/div[@class="videothumblist"] | id("rightcolumn")/div[@class="starbox"]',
         }
     },
 
