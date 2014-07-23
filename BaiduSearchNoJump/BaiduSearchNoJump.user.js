@@ -11,9 +11,10 @@
 // updateURL     https://userscripts.org/scripts/source/161812.meta.js
 // downloadURL   https://userscripts.org/scripts/source/161812.user.js
 // @icon         http://tb.himg.baidu.com/sys/portrait/item/d4346e6f65313332ac06
-// @version      2014.06.27
+// @version      2014.07.23
 // @grant        GM_xmlhttpRequest
 // @run-at       document-end
+// @note         2014-07-23，增加链接选择器 a[href^="//www.baidu.com/link?url="]
 // @note         2014-06-10，放弃原服务器解析的方法，改用 HEAD 方式。
 // @note         2014-05-28，增加对百度不刷新页面的支持
 // @note         2014-05-24，增加对翻页脚本的支持
@@ -43,6 +44,8 @@ function decode(url,target){
     // });
     // 
     
+    console.log(url)
+    
     GM_xmlhttpRequest({
         method: 'HEAD',
         url: url,
@@ -52,14 +55,15 @@ function decode(url,target){
         onload: function(response) {
             var newUrl = response.finalUrl;
             // console.log('111', newUrl);
-            target.setAttribute('href', newUrl);
+            if (newUrl)
+                target.setAttribute('href', newUrl);
         }
     })
 }
 
 function checkDocument(doc) {
     if (!doc) doc = document;
-    var links = doc.querySelectorAll('a[href^="http://www.baidu.com/link?url="]');
+    var links = doc.querySelectorAll('a[href^="http://www.baidu.com/link?url="], a[href^="//www.baidu.com/link?url="]');
     if (!links) return;
     [].forEach.call(links, function(link){
         // console.log('decode url: ', link.href)
