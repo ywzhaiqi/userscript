@@ -809,7 +809,7 @@ var SITEINFO=[
         url: '^http://.*\\.douban\\.com/subject',
         nextLink: '//div[@class="paginator"]/span[@class="next"]/a[contains(text(),"后页>")]',
         autopager: {
-            pageElement: '//ul[contains(@class,"topic-reply")] | //div[@id="comments" or @class="post-comments" or @class="article"]'
+            pageElement: '//ul[contains(@class,"topic-reply")] | //div[@class="article"]/table | //div[@id="comments" or @class="post-comments"]'
         }
     },
     {name: '我的小组话题 - 豆瓣',

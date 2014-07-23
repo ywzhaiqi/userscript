@@ -4,7 +4,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.2.8
+// @version      6.2.9
 // @homepageURL  https://greasyfork.org/scripts/293-super-preloaderplus-one
 // @updateURL    https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js
 // @downloadURL  https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js
@@ -854,7 +854,7 @@ var SITEINFO=[
         url: '^http://.*\\.douban\\.com/subject',
         nextLink: '//div[@class="paginator"]/span[@class="next"]/a[contains(text(),"后页>")]',
         autopager: {
-            pageElement: '//ul[contains(@class,"topic-reply")] | //div[@id="comments" or @class="post-comments" or @class="article"]'
+            pageElement: '//ul[contains(@class,"topic-reply")] | //div[@class="article"]/table | //div[@id="comments" or @class="post-comments"]'
         }
     },
     {name: '我的小组话题 - 豆瓣',
