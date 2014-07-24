@@ -1,6 +1,6 @@
 {
   "name": "MyNovelReader",
-  "version": "4.5.7",
+  "version": "4.5.8",
   "devDependencies": {
     "grunt": "~0.4.5",
     "grunt-contrib-jshint": "~0.10.0",

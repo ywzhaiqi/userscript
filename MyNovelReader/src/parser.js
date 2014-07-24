@@ -102,6 +102,8 @@ Parser.prototype = {
         //     chapterTitle = chapterTitle.replace(bookTitle, '').trim();
         // }
 
+        bookTitle = bookTitle.replace(/最新章节$/, '');
+
         docTitle = bookTitle ?
                 bookTitle + ' - ' + chapterTitle :
                 docTitle;

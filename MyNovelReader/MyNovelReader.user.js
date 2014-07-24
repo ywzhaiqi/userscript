@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        4.5.7
+// @version        4.5.8
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    shyangs
@@ -313,6 +313,7 @@ Rule.specialSite = [
         // titleReg: "小说:(.*?)(?:独家首发)/(.*?)/.*",
         titleSelector: "#lbChapterName",
         bookTitleSelector: ".page_site > a:last",
+        // contentSelector: "#hdContent",
         contentReplace: {
             "\\[img=(.*)\\]": "<p><img src='$1'></p><p>",
             "\\[+CP.*(http://file.*\\.jpg)\\]+": "<p><img src='$1'></p><p>",
@@ -322,7 +323,7 @@ Rule.specialSite = [
         },
         contentRemove: "span[id^='ad_']",
         contentPatch: function(fakeStub){
-            fakeStub.find('div#content > script[src]:first').addClass('reader-ajax');
+            fakeStub.find('#maincontent  script[src$=".txt"]').addClass('reader-ajax');
         },
     },
     {siteName: "起点中文网免费频道",
@@ -1090,7 +1091,7 @@ Rule.specialSite = [
         contentReplace: [
             "[\\*]+本章节来源六九中文.*请到六九中文阅读最新章节[\\*]+|－\\\\[wＷ]+.*书友上传/－",
             "\\请到 www，69zw，com 六*九*中*文*阅读/",
-            "【 注册会员可获私人书架，看书更方便！：】"
+            "【 注册会员可获私人书架，看书更方便！：】",
         ]
     },
     {siteName: "免费小说阅读网",
@@ -1259,6 +1260,7 @@ Rule.replace = {
     "\\[\\]":"",
     "如果您觉得网不错就多多分享本站谢谢各位读者的支持": "",
     "全文字无广告|\\(看书窝&nbsp;看书窝&nbsp;无弹窗全文阅读\\)": "",
+    "水印广告测试": "",
     "uutxt\\.org": "",
     "3vbook\\.cn": "",
     "txt53712/": "",
@@ -1297,7 +1299,7 @@ Rule.replace = {
     "t[uū]r[áa]n":"突然", "tiaojiao": "调教", "偷qing":"偷情", "推dao": "推倒", "脱guang": "脱光", "t[èe]bi[ée]":"特别", "t[ōo]nggu[òo]":"通过", "tian来tian去":"舔来舔去",
     "w[ēe]ixi[ée]":"威胁", "wèizh[ìi]":"位置", "wei员":"委员",
     "xiu长": "修长", "亵du": "亵渎", "xing福": "幸福", "小bo":"小波", "xiong([^a-z])":"胸$1", "小tui":"小腿", "xiàn\\'zhì":"限制",
-    "yin(冷|暗|谋|险|沉|沟|癸派|后)":"阴$1", "y[iī]y[àa]ng":"一样", "y[īi]di[ǎa]n":"一点", "y[ǐi]j[īi]ng":"已经", "疑huo":"疑惑", "影mi":"影迷",  "阳w[ěe]i": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "(?:you|诱)(?:惑|huo)": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人", "御yòng":"御用", "旖ni":"旖旎", "yu念":"欲念", "you敌深入":"诱敌深入", "影she":"影射", "牙qian":"牙签",
+    "yin(冷|暗|谋|险|沉|沟|癸派|后)":"阴$1", "y[iī]y[àa]ng":"一样", "y[īi]di[ǎa]n":"一点", "y[ǐi]j[īi]ng":"已经", "疑huo":"疑惑", "影mi":"影迷",  "阳w[ěe]i": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "(?:you|诱)(?:惑|huo)": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人", "御yòng":"御用", "旖ni":"旖旎", "yu念":"欲念", "you敌深入":"诱敌深入", "影she":"影射", "牙qian":"牙签", "一yè情":"一夜情",
     "z[iì]j[iǐ]": "自己","z[ìi](?:\\s|<br/?>|&nbsp;)*y[oó]u": "自由","zh[iī]d?[àa]u?o":"知道","zhì'fú":"制服", "zha药": "炸药", "zhan有": "占有", "政f[ǔu]": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zong理":"总理", "zh[ōo]ngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]y[oò]u":"左右", "zh[oō]uw[ée]i":"周围", "中nan海":"中南海", "中j委":"中纪委", "中zu部":"中组部", "政zhi局":"政治局", "(昨|一|时|余)(?:<br/?>|&nbsp;|\\s)*ì":"$1日", "照she":"照射", "坠luò":"坠落",
 
     // === 单字替换 ===
@@ -2686,6 +2688,8 @@ Parser.prototype = {
         // if (info.trimBookTitle !== false) {
         //     chapterTitle = chapterTitle.replace(bookTitle, '').trim();
         // }
+
+        bookTitle = bookTitle.replace(/最新章节$/, '');
 
         docTitle = bookTitle ?
                 bookTitle + ' - ' + chapterTitle :
