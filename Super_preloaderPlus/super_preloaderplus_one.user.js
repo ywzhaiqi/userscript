@@ -4,7 +4,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.2.9
+// @version      6.3.0
 // @homepageURL  https://greasyfork.org/scripts/293-super-preloaderplus-one
 // @updateURL    https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js
 // @downloadURL  https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js
@@ -469,7 +469,7 @@ var SITEINFO=[
         exampleUrl: 'http://www.ftchinese.com/story/001053472',
         nextLink: '//div[@class="pagination"]/a[text()="余下全文"]',
         autopager: {
-            pageElement: '//div[@id="bodytext"]/div[1]',
+            pageElement: '//div[@id="bodytext"]',
             relatedObj: true,
             replaceE: '//div[@class="pagination"]'
         }

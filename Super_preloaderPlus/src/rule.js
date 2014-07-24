@@ -424,7 +424,7 @@ var SITEINFO=[
         exampleUrl: 'http://www.ftchinese.com/story/001053472',
         nextLink: '//div[@class="pagination"]/a[text()="余下全文"]',
         autopager: {
-            pageElement: '//div[@id="bodytext"]/div[1]',
+            pageElement: '//div[@id="bodytext"]',
             relatedObj: true,
             replaceE: '//div[@class="pagination"]'
         }

@@ -53,7 +53,6 @@ module.exports = function(grunt) {
     grunt.registerTask('default', [
         //'jshint',
         'concat',
-        'watch'
     ])
 
     grunt.registerTask('watch', ['watch'])
