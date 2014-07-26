@@ -564,7 +564,7 @@ Parser.prototype = {
         }
 
         var url = "";
-        links.each(function(){
+        links && links.each(function(){
             url = $(this).attr("href");
             if(!url || url.indexOf("#") === 0 || url.indexOf("javascript:") === 0)
                 return;
