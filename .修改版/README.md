@@ -27,9 +27,12 @@ PS：脚本自身已经支持自动翻页，但作者未将相似图片搜索支
  - 增加 360云盘 的检查（有效文件的检查未完成）
  - 文件名加入英文（Scriptish 中文忽略的 bug）
 
-### picviewer.user.js（2014-7-7）
+### picviewerCE.user.js（2014-7-26）
 
- - 修正了一个 document.body 不存在的 bug
+[picViewer By NLF](http://userscripts.org/scripts/show/105741) 修改版
+
+ - 新增了几个站点的规则
+ - 新窗口 `输出所有图片链接` 命令纯属测试
 
 ### quick-view-douban 修正版.user.js（2013-09-01）
 
