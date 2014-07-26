@@ -32,7 +32,7 @@ PS：脚本自身已经支持自动翻页，但作者未将相似图片搜索支
 [picViewer By NLF](http://userscripts.org/scripts/show/105741) 修改版
 
  - 新增了几个站点的规则
- - 新窗口 `输出所有图片链接` 命令纯属测试
+ - 新窗口 `输出所有图片链接` 命令（纯属测试）
 
 ### quick-view-douban 修正版.user.js（2013-09-01）
 

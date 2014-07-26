@@ -2,7 +2,8 @@
 // @name           picViewer CE
 // @author         NLF
 // @description    围观图（support （opera，firefox（GreaseMonkey），chrome） Latest Stable，IE9+）
-// @version        4.2.6.1
+// @version        4.2.6.3
+// version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
 // @grant          GM_getValue
@@ -10,12 +11,12 @@
 // @grant          GM_openInTab
 // @run-at         document-start
 // @namespace      http://userscripts.org/users/NLF
-// @homepage       http://userscripts.org/scripts/show/105741
-// @downloadURL    https://userscripts.org/scripts/source/105741.user.js
-// @updateURL      https://userscripts.org/scripts/source/105741.meta.js
+// @homepage       https://github.com/ywzhaiqi/userscript/tree/master/.%E4%BF%AE%E6%94%B9%E7%89%88
+// homepage       http://userscripts.org/scripts/show/105741
+// downloadURL    https://userscripts.org/scripts/source/105741.user.js
+// updateURL      https://userscripts.org/scripts/source/105741.meta.js
 // @include        http*
-// @match          http*://*/*
-// @note           修正了一个 document.body 不存在的 bug
+// match          *://*/*
 // ==/UserScript==
 
 ;(function(topObject,window,document,unsafeWindow){
@@ -1703,7 +1704,7 @@
 						this.all=ret;
 						return ret;
 					},
-					listAllInNewWindow: function() {				
+					listAllInNewWindow: function() {
 						var nodes = document.querySelectorAll('.pv-gallery-sidebar-thumb-container[data-src]');
 						var arr = [].map.call(nodes, function(node){
 							return '<tr><td><img src=' + node.dataset.src + ' /></td></tr>'
