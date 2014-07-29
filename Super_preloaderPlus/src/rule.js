@@ -172,8 +172,8 @@ var SITEINFO=[
                 }
 
                 // 修正可能出现的 小箭头更多按钮 排版不正确的情况（2014-7-29）
-                var oClassName = document.querySelector('.ab_button').className;
-                [].forEach.call(doc.querySelectorAll('.ab_button'), function(elem){
+                var oClassName = window.document.querySelector('#ires .ab_button').className;
+                [].forEach.call(doc.querySelectorAll('#ires .ab_button'), function(elem){
                     if (elem.className != oClassName)
                         elem.className = oClassName;
                 });

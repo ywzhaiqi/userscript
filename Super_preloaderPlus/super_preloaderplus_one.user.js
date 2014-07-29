@@ -4,7 +4,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.3.1
+// @version      6.3.2
 // @homepageURL  https://greasyfork.org/scripts/293-super-preloaderplus-one
 // @updateURL    https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js
 // @downloadURL  https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js
@@ -217,8 +217,8 @@ var SITEINFO=[
                 }
 
                 // 修正可能出现的 小箭头更多按钮 排版不正确的情况（2014-7-29）
-                var oClassName = document.querySelector('.ab_button').className;
-                [].forEach.call(doc.querySelectorAll('.ab_button'), function(elem){
+                var oClassName = window.document.querySelector('#ires .ab_button').className;
+                [].forEach.call(doc.querySelectorAll('#ires .ab_button'), function(elem){
                     if (elem.className != oClassName)
                         elem.className = oClassName;
                 });
