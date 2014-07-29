@@ -10,6 +10,10 @@
  - 添加2个例子站点规则
  - 改进原自动翻页的监视方式
 
+### doubanIMDb.user.js
+
+2014-7-29，dirtyacc 修正烂番茄 ApiKey。详见 http://bbs.kafan.cn/forum.php?mod=viewthread&tid=1759550
+
 ### Google Images direct link.user.js
 
 [Google Images direct link By Lorentz](http://userscripts.org:8080/scripts/show/78355) 修改版。
