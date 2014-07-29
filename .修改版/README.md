@@ -52,13 +52,13 @@ PS：脚本自身已经支持自动翻页，但作者未将相似图片搜索支
  - 修正电影搜索，电影搜索限制：每分钟10次（采用公开 api v2）
  - 搜索面板增加图片的显示
 
-### searchenginejump.user.js（2014-7-2）
+### searchenginejump.user.js
 
-[searchEngineJump By NLF](http://userscripts.org/scripts/show/84970) 自用修改版。
+[searchEngineJump By NLF](http://userscripts.org/scripts/show/84970) 自用修改版。可改用 [SearchEngineJump_by_ted423](https://greasyfork.org/zh-CN/scripts/213-searchenginejump-by-ted423)，更加全面。
 
  - 修正 bing 因为改版失效的问题
  - 修改 @include 不为全局
- - 参考 [SearchEngineJump_by_ted423](https://greasyfork.org/scripts/213-searchenginejump-by-ted423/) 新增了很多站点
+ - 从 ted423 版中提取了一些新的搜索
 
 ### TiebaNojump.user.js
 

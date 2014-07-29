@@ -5,15 +5,16 @@
 // @version        4.1.0.0
 // version        4.0.1.0
 // @created        2011-7-2
-// @lastUpdated    2014-1-29
+// @lastUpdated    2014-7-29
 // @grant          none
 // @run-at         document-start
 // @namespace      http://userscripts.org/users/NLF
 // @homepage       http://userscripts.org/scripts/show/84970
-// @downloadURL    https://userscripts.org/scripts/source/84970.user.js
-// @updateURL      https://userscripts.org/scripts/source/84970.meta.js
+// downloadURL    https://userscripts.org/scripts/source/84970.user.js
+// updateURL      https://userscripts.org/scripts/source/84970.meta.js
 // include        *
 // match          *://*/*
+
 // @include        /^https?:\/\/www\.google(?:\.[A-z]{2,3}){1,2}\/[^?]+\?(?:&?q=|(?:[^#](?!&tbm=))+?&q=)(?:.(?!&tbm=))*$/
 // @include        /^https?:\/\/www\.google(?:\.[A-z]{2,3}){1,2}\/[^#]*#(?:&?q=|.+?&q=).+/
 // @include        /^https?:\/\/www\.baidu\.com\/(?:s|baidu)/
@@ -30,6 +31,17 @@
 // @include        /^https?:\/\/www\.youtube\.com\/results/
 // @include        /^https?:\/\/www\.nicovideo\.jp\/search\//
 // @include        /^https?:\/\/music\.baidu\.com\/search/
+// @include        /^https?:\/\/so\.1ting\.com\/all\.do/
+// @include        /^https?:\/\/www\.xiami\.com\/search/
+// @include        /^https?:\/\/image\.baidu\.cn\/i/
+// @include        /^https?:\/\/www\.google(?:\.[A-z]{2,3}){1,2}\/[^?]+\?.*&tbm=isch/
+// @include        /^https?:\/\/www\.flickr\.com\/search\//
+// @include        /^https?:\/\/[^.]*\.bing\.com\/images/
+// @include        /^https?:\/\/www\.yyets\.com\/search\//
+// @include        /^https?:\/\/bt\.ktxp\.com\/search\.php\?/
+// @include        /^http:\/\/oabt\.org\/\?topic_title=/
+// @include        /^https?:\/\/s\.taobao\.com\/search/
+// @include        /^https?:\/\/search\.jd\.com\/Search/
 // ==/UserScript==
 
 (function () {
@@ -113,6 +125,8 @@
 						keyword: '//input[@name="q"]',
 						where: 'beforeBegin',
 					},
+					// 自定义样式，我新增的
+					css: '',
 				},
 				{name: "google-hash-query",// 不刷新页面显示搜索结果的google
 					enabled: true,
@@ -391,12 +405,12 @@
 					',
 					insertIntoDoc: {
 						keyword: 'css;input#kw',
-						target: 'css;#browserNavBar',
+						target: 'css;.mod-channel-nav',
 						where: 'beforeBegin',
 					},
 				},
 				{name: "谷歌图片",
-					url: /^https?:\/\/wwww\.google(?:\.[A-z]{2,3}){1,2}\/[^?]+\?.*&tbm=isch/,
+					url: /^https?:\/\/www\.google(?:\.[A-z]{2,3}){1,2}\/[^?]+\?.*&tbm=isch/,
 					enabled: true,
 					engineList: "image",
 					style: '\
@@ -423,6 +437,26 @@
 						target: 'css;#main',
 						where: 'beforeBegin',
 					},
+				},
+				{name: "Bing image search",
+					url: /^https?:\/\/[^.]*\.bing\.com\/images/,
+					enabled: true,
+					engineList: "image",
+					style: '\
+						border-top: 1px solid #E6E6E6;\
+						border-bottom: 1px solid #E6E6E6;\
+						margin-top:5px;\
+					',
+					insertIntoDoc: {
+						keyword: 'css;#sb_form_q',
+						target: 'css;#b_header',
+						where: 'beforeEnd',
+					},
+					css: '\
+						#rfPane {\
+							margin-top: 50px;\
+						}\
+					',
 				},
 
 				// 资源下载
@@ -743,6 +777,11 @@
 					name: '人人影视',
 					url: 'http://www.yyets.com/search/index?keyword=%s',
 					favicon: 'http://www.yyets.com/favicon.ico',
+				},
+				{
+					name: '丫丫下载站',
+					url: 'http://www.yayaxz.com/search/%s',
+					favicon: 'http://www.yayaxz.com/favicon.ico',
 				},
 				{
 					name: '网盘搜索',
@@ -8766,7 +8805,7 @@
 
 			if (!iTarget || !iInput) return;
 
-			// 添加全局样式
+			// 添加全局样式和自定义样式
 			var globalStyle = document.createElement('style');
 			globalStyle.type = 'text/css';
 			globalStyle.textContent = getMStr(function () {
@@ -8869,7 +8908,7 @@
 					}
 				*/
 
-			}).cssText;
+			}).cssText + '\n' + (matchedRule.css || '');
 			document.head.appendChild(globalStyle);
 
 
