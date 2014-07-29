@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           userscripts 只显示中文
 // @namespace      https://github.com/ywzhaiqi
-// @version        1.7.1
+// @version        1.7.2
 // @author         ywzhaiqi@gmail.com
 // @description    在 userscripts、greasyfork 脚本页面只显示中文脚本，支持 AutoPager 和其它翻页脚本。
 // @homepageURL    https://greasyfork.org/scripts/305
@@ -9,6 +9,7 @@
 // @downloadURL    https://greasyfork.org/scripts/305/code/305.user.js
 
 // @include        http*://greasyfork.org/scripts*
+// @include        http*://greasyfork.org/*/scripts*
 // @include        http*://userscripts.org*/scripts*
 // @include        http*://userscripts-mirror.org*/scripts*
 // @grant          GM_getValue
