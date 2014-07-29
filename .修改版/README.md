@@ -22,6 +22,12 @@
 
 PS：脚本自身已经支持自动翻页，但作者未将相似图片搜索支持自动翻页，可能是因为该方法会因为翻页页数的增加而造成工作量的增加。
 
+### Manga_OnlineViewer_CE.user.js
+
+[Manga OnlineViewer](https://greasyfork.org/scripts/1319-manga-onlineviewer) 修改版
+
+ - 增加了一个站点：[5652 漫画网](http://mh.5652.com/)
+
 ### PanLinkCheck.user.js（2014-5-27）
 
 [网盘死链检查 By Jixun](https://greasyfork.org/scripts/1262)
