@@ -2847,7 +2847,15 @@ function createDocumentByString(str) {  // string转为DOM
     if (document.documentElement.nodeName != 'HTML') {
         return new DOMParser().parseFromString(str, 'application/xhtml+xml');
     }
+
     var doc;
+    try {
+        // firefox and chrome 30+，Opera 12 会报错
+        doc = new DOMParser().parseFromString(str, 'text/html');
+    } catch (ex) {}
+
+    if (doc) return doc;
+
     if (document.implementation.createHTMLDocument) {
         doc = document.implementation.createHTMLDocument('superPreloader');
     } else {

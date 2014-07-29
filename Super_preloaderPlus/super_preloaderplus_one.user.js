@@ -4,7 +4,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.3.0
+// @version      6.3.1
 // @homepageURL  https://greasyfork.org/scripts/293-super-preloaderplus-one
 // @updateURL    https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js
 // @downloadURL  https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js
@@ -211,15 +211,33 @@ var SITEINFO=[
                 // 修正下一页的图片
                 var x = doc.evaluate('//script/text()[contains(self::text(), "data:image/")]', doc, null, 9, null).singleNodeValue;
                 if (x) {
-                    new Function('document, window, google', x.nodeValue)(doc, unsafeWindow, unsafeWindow.google);
+                    try {
+                        new Function('document, window, google', x.nodeValue)(doc, unsafeWindow, unsafeWindow.google);
+                    } catch (e) {}
                 }
+
+                // 修正可能出现的 小箭头更多按钮 排版不正确的情况（2014-7-29）
+                var oClassName = document.querySelector('.ab_button').className;
+                [].forEach.call(doc.querySelectorAll('.ab_button'), function(elem){
+                    if (elem.className != oClassName)
+                        elem.className = oClassName;
+                });
             },
             startFilter: function(win, doc) {  // 只作用一次
                 // 移除 Google 重定向
                 var script = doc.createElement('script');
                 script.type = 'text/javascript';
-                script.textContent = 'window.rwt = function(){}';
+                script.textContent = '\
+                    Object.defineProperty(window, "rwt", {\
+                        configurable: false,\
+                        enumerable: true,\
+                        get: function () {\
+                            return function() {};\
+                        },\
+                    });\
+                ';
                 doc.documentElement.appendChild(script);
+                doc.documentElement.removeChild(script);
 
                 // 移动相关搜索到第一页
                 var brs = doc.getElementById('brs'),
@@ -2799,6 +2817,27 @@ var SITEINFO=[
         },
         autopager: {
             pageElement: 'id("qTcms_pic")',
+            useiframe: true,
+        }
+    },
+    {name: '5652在线漫画',
+        url: /^http:\/\/mh\.5652\.com\/mh\/.*\.shtml/i,
+        exampleUrl: 'http://mh.5652.com/mh/20130124/5484/125907.shtml?p=2',
+        nextLink: {
+            startAfter: '?p=',
+            mFails: [/^http:\/\/mh\.5652\.com\/mh\/.*\.shtml/i, '?p=1'],
+            inc: 1,
+            isLast: function(doc, win, lhref) {
+                var select = doc.querySelector('.Directory_bar select');
+                if (select) {
+                    var s2os = select.options;
+                    var s2osl = s2os.length;
+                    if (select.selectedIndex == s2osl - 1) return true;
+                }
+            },
+        },
+        autopager: {
+            pageElement: 'id("show_img")',
             useiframe: true,
         }
     },
@@ -6461,7 +6500,15 @@ function createDocumentByString(str) {  // string转为DOM
     if (document.documentElement.nodeName != 'HTML') {
         return new DOMParser().parseFromString(str, 'application/xhtml+xml');
     }
+
     var doc;
+    try {
+        // firefox and chrome 30+，Opera 12 会报错
+        doc = new DOMParser().parseFromString(str, 'text/html');
+    } catch (ex) {}
+
+    if (doc) return doc;
+
     if (document.implementation.createHTMLDocument) {
         doc = document.implementation.createHTMLDocument('superPreloader');
     } else {
