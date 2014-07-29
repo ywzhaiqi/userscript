@@ -623,12 +623,17 @@ mConsole("Starting Manga OnlineViewer");
     var mh5652 = function () {
         mConsole("Loading mh5652");
         return {
+            // 标题
             title: $.trim($(".BrowseConT_infoTitle span:first").text() + $('.path_bar a:last')[0].nextSibling.nodeValue),
+            // 目录页网址
             series: $(".path_bar a:last").attr("href"),
+            // 这一话共几页
             quant: $('.Directory_bar select option:last').attr('value'),
+            // 上一话
             prev: $("#mh_directory .pre").attr("href"),
+            // 下一话
             next: $("#mh_directory .next").attr("href"),
-
+            // 一开始执行的函数。下面这个是直接提取页面内容得到所有的图片地址
             before: function() {
                 var input = document.body.innerHTML;
                 var regex = /page.add\('.*?','(.*?)'\)/g;
@@ -638,15 +643,15 @@ mConsole("Starting Manga OnlineViewer");
                     output.push(matches[1]);
                 }
 
-                window.imageUrls = output;
+                this.imageUrls = output;
             },
+            // 添加图片到页面，其中 addImg 函数
             pages: function () {
                 for (var i = 1; i <= this.quant; i++) {
                     mConsole("Page " + i);
-                    addImg(i, window.imageUrls[i - 1]);
+                    addImg(i, this.imageUrls[i - 1]);
                 }
             },
-            // img: 'img#show_img'
         };
     }
     // == MangaFox ===================================================================================================================================
