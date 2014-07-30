@@ -2,7 +2,7 @@
 // @name        Manga OnlineViewer CE
 // @description Shows all pages at once in online view. MangaFox, MangaReader/MangaPanda, MangaStream, MangaInn, AnyManga, AnimeA, MangaHere, MangaShare, Batoto, MangaDevil, MangaCow, MangaChapter, 7manga, MangaPirate.net and MangaBee/OneManga.me manga sites. Fakku, HBrowse, Hentai2Read and Doujin-moe Hentai sites.
 // version   9.01
-// @version    2014.7.30.3
+// @version    2014.7.30.4
 // @author    Tago
 // @modified  ywzhaiqi
 // @namespace https://greasyfork.org/users/1849-tago
@@ -56,6 +56,7 @@
 // @include /http://pururin.com/view/.+/.+/.+/
 // @include /https?://fufufuu.net/m/.+/.+/
 // @include /.+/read/.+/
+// @note    汉化 By 卡饭 390720046、Oos。http://bbs.kafan.cn/forum.php?mod=redirect&goto=findpost&ptid=1759879&pid=32207515
 // @history 6.00 Full Script Overhaul
 // @history 7.00 Large code clean up, Individual page functions
 // @history 8.00 Layout Improvement, Fix Chrome compatibility, Improved Zoom
@@ -288,7 +289,7 @@ mConsole("Starting Manga OnlineViewer");
                         "</div>" +
                         "<div id='ViewerControls' class='painel' style='display: none;>" +
                             "<span class='controlLable'>主题:</span> <select id='ThemeSelector'></select> " +
-                            "<span class='controlLable'>Pages/Second:</span> "+
+                            "<span class='controlLable'>页/秒:</span> "+
                             "<select id='PagesPerSecond'>"+
                                 "<option value='3000'>0.3</option>"+
                                 "<option value='2000'>0.5</option>"+
@@ -298,7 +299,7 @@ mConsole("Starting Manga OnlineViewer");
                                 "<option value='125'>08</option>"+
                                 "<option value='100'>10</option>"+
                             "</select> " +
-                            "<span class='controlLable'>缩放:</span> "+
+                            "<span class='controlLable'>默认缩放:</span> "+
                             "<select id='DefaultZoom'>"+
                                 "<option value='50'>50%</option>"+
                                 "<option value='75'>75%</option>"+
@@ -309,19 +310,19 @@ mConsole("Starting Manga OnlineViewer");
                                 "<option value='200'>200%</option>"+
                                 "<option value='1000'>自适宽度</option>"+
                             "</select> " +
-                            "<span class='controlLable'>超大自适宽度:</span> "+
+                            "<span class='controlLable'>自适宽度 (如果过大):</span> "+
                             "<input type='checkbox' val='true' name='fitIfOversized' id='fitIfOversized' "+ (GM_getValue("MangaFitWidthIfOversized", "true") == "true" ?"checked" : "" ) +"> " +
-                            "<span class='controlLable'>缩略图:</span> "+
+                            "<span class='controlLable'>显示缩略图:</span> "+
                             "<input type='checkbox' val='true' name='showThumbnails' id='showThumbnails' "+ (GM_getValue("MangaShowThumbnails", "true") == "true" ?"checked" : "" ) +"> " +
                         "</div>" +
                         "<div id='Counters' class='controlLable'>" +
                             "<i>0</i> of <b>" + Manga.quant + "</b> 加载" +
-                            "<span class='controlLable'>到:</span> <select id='gotoPage'><option selected>#</option></select>" +
+                            "<span class='controlLable'>到:</span> <select id='gotoPage'><option selected>#</option></select>" + " 页" +
                         "</div>" +
                         "<div id='Navigation' align='center' class='painel " + (GM_getValue("MangaShowThumbnails", "true") == "true" ?"" : "disabled" ) + "'>"+
                             "<div id='NavigationCounters' class='controlLable'>" +
                             "<img id='' alt='menu' src='" + menu + "' class='nav'/>" +
-                                " <i>0</i> of <b>" + Manga.quant + "</b> Pages Loaded " +
+                                " <i>0</i> of <b>" + Manga.quant + "</b> 页已加载 " +
                             "<img id='' alt='menu' src='" + menu + "' class='nav'/>" +
                             "</div>" +
                         "</div>" +
@@ -1323,8 +1324,8 @@ mConsole("Starting Manga OnlineViewer");
     var ExHentai = function () {
         mConsole("Loading ExHentai");
         return {
-            title: $("#il h1").text().trim(),
-            series: $("div#i5 div.sb a").attr("href"),
+            title: $("#il h1").text().trim() || $("h1").text().trim(),
+            series: $("div#i5 div.sb a").attr("href") || $("div#i5 div.sb a").attr("href"),
             quant: $(".sn div span:last").text(),
             prev: "#",
             next: "#",
@@ -1333,8 +1334,9 @@ mConsole("Starting Manga OnlineViewer");
             page: function (i) {
                 var self = this;
                 getHtml(self.url, function (html) {
-                    addImg(i, $(html).find("#img").attr("src"));
-                    self.url = $(html).find("#img").parent().attr("href");
+                    var $img = $('<div>').html(html).find("#img, div.sni > a > img");
+                    addImg(i, $img.attr("src"));
+                    self.url = $img.parent().attr("href");
                 });
             }
         };
