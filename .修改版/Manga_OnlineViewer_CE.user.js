@@ -2,15 +2,24 @@
 // @name        Manga OnlineViewer CE
 // @description Shows all pages at once in online view. MangaFox, MangaReader/MangaPanda, MangaStream, MangaInn, AnyManga, AnimeA, MangaHere, MangaShare, Batoto, MangaDevil, MangaCow, MangaChapter, 7manga, MangaPirate.net and MangaBee/OneManga.me manga sites. Fakku, HBrowse, Hentai2Read and Doujin-moe Hentai sites.
 // @version   9.01
-// @date      2014-07-29
+// @date      2014-07-30
 // @author    Tago
 // @modified  ywzhaiqi
 // @namespace https://greasyfork.org/users/1849-tago
 // @grant  GM_getValue
 // @grant  GM_setValue
+// @grant  GM_xmlhttpRequest
 // @require http://code.jquery.com/jquery-2.1.1.min.js
+// @homePageURL https://github.com/ywzhaiqi/userscript/tree/master/.%E4%BF%AE%E6%94%B9%E7%89%88
 
 // @include /http://mh.5652.com/mh/\d+/\d+/\d+.shtml/
+// @include /http://(www|manhua)\.(dmzj|178)\.com/.+/.+shtml/
+// @include /http://www\.imanhua\.com\/comic\/.+/
+// @include /http://www\.tuku\.cc/comic/\d+/\d+//
+// @include /http://www\.xindm\.cn\/mh/.+/
+// @include http://www.kkkmh.com/manhua/*/*/*.html*
+// 国外的
+// @include http://hentai4manga.com/hentai_manga/*/*/*
 
 // @include /http://mangafox.me/manga/.+/.+//
 // @include /http://www.mangareader.net/.+/.+/
@@ -59,7 +68,15 @@ mConsole("Starting Manga OnlineViewer");
     $(document).ready(function () {
         mConsole("Identifying Site");
         // Manga Sites
-        OnlineViewer(/mh.5652/, mh5652);
+        // 我添加的站点
+        OnlineViewer(/mh.5652/, mh5652, 0);
+        OnlineViewer(/(dmzj|178)/, dmzj, 0);
+        OnlineViewer(/imanhua/, imanhua, 0);
+        OnlineViewer(/tuku.cc/, tukuCc, 0);
+        OnlineViewer(/xindm/, xindm, 0);
+        OnlineViewer(/kkkmh/, kkkmh, 0);
+        // 国外的
+        OnlineViewer(/hentai4manga/, hentai4manga, 0);
 
         OnlineViewer(/mangafox/, MangaFox);
         OnlineViewer(/(mangareader|mangapanda)/, MangaReader);
@@ -97,11 +114,15 @@ mConsole("Starting Manga OnlineViewer");
         }
     });
     // Check if url matches the site
-    function OnlineViewer(check, callback) {
+    function OnlineViewer(check, callback, timer) {
         if (check.test(window.location.host)) {
-            setTimeout(function () {
+            if (timer == 0) {
                 formatPage(callback());
-            }, 3000);
+            } else {
+                setTimeout(function () {
+                    formatPage(callback());
+                }, timer || 3000);
+            }
         }
     }   
     //Organize the site adding place holders for the manga pages
@@ -109,26 +130,28 @@ mConsole("Starting Manga OnlineViewer");
         mConsole("Found " + Manga.quant + " pages,");
         if (Manga.before !== undefined ) Manga.before();
         if (Manga.quant > 0) {
-            $("body > :not(#MangaOnlineViewer)").remove();
-            $("body").removeClass().addClass(GM_getValue("MangaTheme", "Light"));
-            $("script").remove();
-            $("head > :not(title, meta)").remove();
-            $('head').append("<script src='http://code.jquery.com/jquery-2.0.3.min.js'></script>");
-            reader(Manga);
-            $("#PagesPerSecond option[value="+GM_getValue("MangaTimer", 1000)+"]").attr("selected","true");
-            $("#DefaultZoom option[value="+GM_getValue("MangaZoom", 100)+"]").attr("selected","true");
-            $(".ChapterControl a[href*='undefined']").attr("href", "");
-            configCSS();            
-            setTimeout(function () {             
-                addPages(Manga);
-                controls();
-                setKeyDownEvents();
-                checkImagesLoaded();            
-                mConsole("Site rebuild done");
-                setTimeout(function () {                
-                    loadPages(Manga);
+            setTimeout(function() {
+                $("body > :not(#MangaOnlineViewer)").remove();
+                $("body").removeClass().addClass(GM_getValue("MangaTheme", "Light"));
+                $("script").remove();
+                $("head > :not(title, meta)").remove();
+                // $('head').append("<script src='http://code.jquery.com/jquery-2.0.3.min.js'></script>");
+                reader(Manga);
+                $("#PagesPerSecond option[value="+GM_getValue("MangaTimer", 1000)+"]").attr("selected","true");
+                $("#DefaultZoom option[value="+GM_getValue("MangaZoom", 100)+"]").attr("selected","true");
+                $(".ChapterControl a[href*='undefined']").attr("href", "");
+                configCSS();            
+                setTimeout(function () {             
+                    addPages(Manga);
+                    controls();
+                    setKeyDownEvents();
+                    checkImagesLoaded();            
+                    mConsole("Site rebuild done");
+                    setTimeout(function () {                
+                        loadPages(Manga);
+                    }, 50);
                 }, 50);
-            }, 50);
+            }, Manga.timeout || 0);
         }
     }
     //Images
@@ -654,6 +677,162 @@ mConsole("Starting Manga OnlineViewer");
             },
         };
     }
+    var dmzj = function () {
+        mConsole("Loading dmzj");
+        return {
+            title: $(".display_middle").text().trim(),
+            series: $("a.redhotl").attr("href"),
+            quant: $('#jump_select option:last').attr('value'),
+            prev: $("a#prev_chapter").attr("href"),
+            next: $("a#next_chapter").attr("href"),
+            pages: function () {
+                var img_prefix = unsafeWindow.img_prefix,
+                    arr_pages = unsafeWindow.arr_pages;
+                var image_source;
+                for (var i = 1; i <= this.quant; i++) {
+                    mConsole("Page " + i);
+                    image_source = img_prefix + arr_pages[i-1];
+                    addImg(i, image_source);
+                }
+            },
+        };
+    }
+    var imanhua = function () {
+        mConsole("Loading imanhua");
+        return {
+            title: $("#title h1").text() + ' - ' + $("#title h2").text(),
+            series: $("#title h1 a").attr("href"),
+            quant: $('#pageSelect option:last').attr('value'),
+            prev: "#",
+            next: "#",
+            // timeout: 1000,
+            before: function() {
+                // 获取下一章、上一章的网址
+                function run() {
+                    function getChapterUrl(callback) {
+                        $.getJSON('http://feedback.imanhua.com/chapter' + '?cb=?', {
+                            bid: cInfo.bid,
+                            cid: cInfo.cid
+                        }, callback)
+                    }
+
+                    getChapterUrl(function (data) {
+                        var next = '/comic/' + cInfo.bid + '/list_' + data.n + '.html';
+                        var prev = '/comic/' + cInfo.bid + '/list_' + data.p + '.html';
+
+                        setTimeout(function() {
+                            $('.next').attr('href', next);
+                            $('.prev').attr('href', prev);
+                        }, 500)
+                    });
+                }
+                
+                var script = document.createElement('script');
+                script.textContent = ';(' + run.toString() + ')();';
+                document.body.appendChild(script);
+                document.body.removeChild(script);
+            },
+            pages: function () {
+                var pVars = unsafeWindow.pVars,
+                    cInfo = unsafeWindow.cInfo,
+                    arr = [],
+                    curServNum = pVars.curServ,
+                    serverUrl = getServerUrl(),
+                    midUrl = cInfo.cid > 7910 ? "/Files/Images/" + cInfo.bid + "/" + cInfo.cid + "/" : "",
+                    name,
+                    image_source;
+                
+                for (var i = 1; i <= this.quant; i++) {
+                    mConsole("Page " + i);
+                    name = encodeURI(cInfo.files[i - 1]);
+                    image_source = "http://" + serverUrl + midUrl + name;
+                    addImg(i, image_source);
+                }
+                
+                function getServerUrl(n) {
+                    if (n = n || !1, n === !1) arr.push(curServNum);
+                     else {
+                        var t = Math.floor(Math.random() * pVars.priServ);
+                        if ((',' + arr.toString() + ',') .indexOf(',' + t + ',') == - 1) arr.push(t),
+                        curServNum = t;
+                         else if (arr.length >= pVars.priServ) curServNum = pVars.priServ;
+                         else return getServerUrl(!0)
+                    }
+                    return pVars.servs[curServNum].host
+                }
+            },
+        };
+    }
+    var tukuCc = function () {
+        mConsole("Loading tukuCc");
+        return {
+            title: $.trim($(".currentPos > a:last")[0].nextSibling.nodeValue.replace('在线阅读', '')),
+            series: $(".currentPos > a:last").attr('href'),
+            quant: $("div.pages select option:last").text().match(/[0-9]+/),
+            prev: $("div.pages a:contains(上一章)").attr("href"),
+            next: $("#nextchapter").attr("href"),
+            pages: function() {
+                var getImgUrl = unsafeWindow.getImgUrl;
+                for (var i = 1; i <= this.quant; i++) {
+                    mConsole("Page " + i);
+                    addImg(i, getImgUrl(i, 0));
+                }
+            },
+        };
+    }
+    var xindm = function () {
+        mConsole("Loading xindm");
+        return {
+            title: $("span.black_02 b").text().trim(),
+            series: $('a:contains(新动漫首页)').next().attr('href'),
+            quant: $("select#PageSelect1 option:last").val(),
+            prev: $("a:contains(上一章)").attr("href"),
+            next: $("a:contains(下一章)").attr("href"),
+            pages: function() {
+                var PicServerNow = unsafeWindow.PicServerNow,
+                    ArrayPhoto = unsafeWindow.ArrayPhoto;
+                for (var i = 1; i <= this.quant; i++) {
+                    mConsole("Page " + i);
+                    addImg(i, PicServerNow + ArrayPhoto[i-1]);
+                }
+            },
+        };
+    }
+    var kkkmh = function () {
+        mConsole("Loading kkkmh");
+        return {
+            title: $("div.notice.green").text().trim().replace('你正在观看的是', ''),
+            series: $('#chapter-func a:contains(返回目录)').attr('href'),
+            quant: $("select#select_menu option:last").val(),
+            prev: $('#chapter-func a:contains(上一章)').attr('href'),
+            next: $('#chapter-func a:contains(下一章)').attr('href'),
+            pages: function() {
+                var current_pic_server = unsafeWindow.current_pic_server,
+                    hex2bin = unsafeWindow.hex2bin,
+                    pic = unsafeWindow.pic;
+                for (var i = 1; i <= this.quant; i++) {
+                    mConsole("Page " + i);
+                    addImg(i, current_pic_server + hex2bin(pic[i - 1]));
+                }
+            },
+        };
+    }
+
+    var hentai4manga = function () {
+        mConsole("Loading hentai4manga");
+        return {
+            title: $(".category-label").text().trim(),
+            series: location.href.replace(/\/\d+\//, '/'),
+            quant: $('select#sl option').size(),
+            prev: "#",
+            next: "#",
+            url: function (i) {
+                return "../" + i + "/";
+            },
+            img: '#textboxContent img'
+        };
+    }
+
     // == MangaFox ===================================================================================================================================
     var MangaFox = function () {
         mConsole("Loading MangaFox");
