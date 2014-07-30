@@ -2,7 +2,7 @@
 // @name        Manga OnlineViewer CE
 // @description Shows all pages at once in online view. MangaFox, MangaReader/MangaPanda, MangaStream, MangaInn, AnyManga, AnimeA, MangaHere, MangaShare, Batoto, MangaDevil, MangaCow, MangaChapter, 7manga, MangaPirate.net and MangaBee/OneManga.me manga sites. Fakku, HBrowse, Hentai2Read and Doujin-moe Hentai sites.
 // version   9.01
-// @version    2014.7.30.2
+// @version    2014.7.30.3
 // @author    Tago
 // @modified  ywzhaiqi
 // @namespace https://greasyfork.org/users/1849-tago
@@ -130,7 +130,7 @@ mConsole("Starting Manga OnlineViewer");
                 }, timer || 3000);
             }
         }
-    }   
+    }
     //Organize the site adding place holders for the manga pages
     function formatPage(Manga) {
         mConsole("Found " + Manga.quant + " pages,");
@@ -263,8 +263,8 @@ mConsole("Starting Manga OnlineViewer");
                         "</div>" +
                         "<div id='ChapterControlTop' class='ChapterControl'>" +
                             "<a name='bottom' href='#ChapterControlBottom' style='display: none;'>Bottom</a>" +
-                            "<a class='prev' name='prev' href='" + Manga.prev + "'>Previous</a>" +
-                            "<a class='next' name='next' href='" + Manga.next + "'>Next</a>" +
+                            "<a class='prev' name='prev' href='" + Manga.prev + "'>上一话</a>" +
+                            "<a class='next' name='next' href='" + Manga.next + "'>下一话</a>" +
                         "</div>" +
                         "<div id='Chapter' align='center' class='" + (GM_getValue("MangaFitWidthIfOversized", "true") == "true" ?"fitWidthIfOversized" : "" ) + "'></div>" +
                         "<div class='ViewerTitle'><br/>" +
@@ -272,8 +272,8 @@ mConsole("Starting Manga OnlineViewer");
                         "</div>" +
                         "<div id='ChapterControlBottom' class='ChapterControl'>" +
                             "<a name='top' href='#MangaOnlineViewer'>Top</a>" +
-                            "<a class='prev' name='prev' href='" + Manga.prev + "'>Previous</a>" +
-                            "<a class='next' name='next' href='" + Manga.next + "'>Next</a>" +
+                            "<a class='prev' name='prev' href='" + Manga.prev + "'>上一话</a>" +
+                            "<a class='next' name='next' href='" + Manga.next + "'>下一话</a>" +
                         "</div>" +
                         "<div id='ImageOptions'>" +
                             "<div class='painel'>" +
@@ -284,11 +284,11 @@ mConsole("Starting Manga OnlineViewer");
                                 "<img id='settings' alt='settings' src='" + settings + "' class='controlButton'/>" +
                             "</div>" +
                             "<img id='menu' alt='menu' src='" + menu + "' class=''/>" +
-                            "<div id='Zoom' class='controlLable'>Zoom: <b>"+GM_getValue("MangaZoom", 100)+"</b> %</div>" +
+                            "<div id='Zoom' class='controlLable'>缩放: <b>"+GM_getValue("MangaZoom", 100)+"</b> %</div>" +
                         "</div>" +
                         "<div id='ViewerControls' class='painel' style='display: none;>" +
-                            "<span class='controlLable'>Theme:</span> <select id='ThemeSelector'></select> " +
-                            "<span class='controlLable'>Pages/Second:</span> "+
+                            "<span class='controlLable'>主题:</span> <select id='ThemeSelector'></select> " +
+                            "<span class='controlLable'>页数/Second:</span> "+
                             "<select id='PagesPerSecond'>"+
                                 "<option value='3000'>0.3</option>"+
                                 "<option value='2000'>0.5</option>"+
@@ -298,7 +298,7 @@ mConsole("Starting Manga OnlineViewer");
                                 "<option value='125'>08</option>"+
                                 "<option value='100'>10</option>"+
                             "</select> " +
-                            "<span class='controlLable'>Default Zoom:</span> "+
+                            "<span class='controlLable'>缩放:</span> "+
                             "<select id='DefaultZoom'>"+
                                 "<option value='50'>50%</option>"+
                                 "<option value='75'>75%</option>"+
@@ -307,16 +307,16 @@ mConsole("Starting Manga OnlineViewer");
                                 "<option value='150'>150%</option>"+
                                 "<option value='175'>175%</option>"+
                                 "<option value='200'>200%</option>"+
-                                "<option value='1000'>Fit Width</option>"+
+                                "<option value='1000'>自适宽度</option>"+
                             "</select> " +
-                            "<span class='controlLable'>Fit Width if Oversized:</span> "+
+                            "<span class='controlLable'>超大自适宽度:</span> "+
                             "<input type='checkbox' val='true' name='fitIfOversized' id='fitIfOversized' "+ (GM_getValue("MangaFitWidthIfOversized", "true") == "true" ?"checked" : "" ) +"> " +
-                            "<span class='controlLable'>Show Thumbnails:</span> "+
+                            "<span class='controlLable'>缩略图:</span> "+
                             "<input type='checkbox' val='true' name='showThumbnails' id='showThumbnails' "+ (GM_getValue("MangaShowThumbnails", "true") == "true" ?"checked" : "" ) +"> " +
-                        "</div>" +  
+                        "</div>" +
                         "<div id='Counters' class='controlLable'>" +
-                            "<i>0</i> of <b>" + Manga.quant + "</b> Pages Loaded" +
-                            "<span class='controlLable'>Go to Page:</span> <select id='gotoPage'><option selected>#</option></select>" +
+                            "<i>0</i> of <b>" + Manga.quant + "</b> 加载" +
+                            "<span class='controlLable'>到:</span> <select id='gotoPage'><option selected>#</option></select>" +
                         "</div>" +
                         "<div id='Navigation' align='center' class='painel " + (GM_getValue("MangaShowThumbnails", "true") == "true" ?"" : "disabled" ) + "'>"+
                             "<div id='NavigationCounters' class='controlLable'>" +
@@ -347,7 +347,7 @@ mConsole("Starting Manga OnlineViewer");
             options.push("<option value='" + i + "'>" + i + "</option>");
             thumbs.push("<div id='ThumbNail" + i + "' class='ThumbNail'>" +
                             "<img id='ThumbNailImg" + i + "' alt='' src=''/>" +
-                            "<span>" + i + "</span>" +                  
+                            "<span>" + i + "</span>" +
                         "</div>");
         }
         $("#Chapter").append(pages.join(''));
@@ -378,10 +378,10 @@ mConsole("Starting Manga OnlineViewer");
     //Load Pages Entry
     function loadPages(Manga) {
       mConsole("Loading Images");
-        if (Manga.pages !== undefined) {        
+        if (Manga.pages !== undefined) {
             mConsole("Method manual bulk");
             Manga.pages();
-        } else {        
+        } else {
                 if (Manga.page !== undefined) {
                     mConsole("Method manual individual");
                 } else {
@@ -604,7 +604,7 @@ mConsole("Starting Manga OnlineViewer");
         }
         $("#gotoPage").bind("change", function () {
             scrollToElement($("#Page" + $(this).val()));
-        });     
+        });
         $(".ThumbNail").bind("click", function () {
             scrollToElement($("#Page" + $(this).find("span").html()));
         });
@@ -612,7 +612,7 @@ mConsole("Starting Manga OnlineViewer");
         $("#settings").click(function () {
             $("#ViewerControls").slideToggle();
             $("#ImageOptions").toggleClass("settingsOpen");
-            $("#Navigation").toggleClass("visible"); 
+            $("#Navigation").toggleClass("visible");
         });
         //Individual Page functions
         //Reload Page
@@ -728,7 +728,7 @@ mConsole("Starting Manga OnlineViewer");
                         }, 500)
                     });
                 }
-                
+
                 var script = document.createElement('script');
                 script.textContent = ';(' + run.toString() + ')();';
                 document.body.appendChild(script);
@@ -743,14 +743,14 @@ mConsole("Starting Manga OnlineViewer");
                     midUrl = cInfo.cid > 7910 ? "/Files/Images/" + cInfo.bid + "/" + cInfo.cid + "/" : "",
                     name,
                     image_source;
-                
+
                 for (var i = 1; i <= this.quant; i++) {
                     mConsole("Page " + i);
                     name = encodeURI(cInfo.files[i - 1]);
                     image_source = "http://" + serverUrl + midUrl + name;
                     addImg(i, image_source);
                 }
-                
+
                 function getServerUrl(n) {
                     if (n = n || !1, n === !1) arr.push(curServNum);
                      else {
@@ -924,7 +924,7 @@ mConsole("Starting Manga OnlineViewer");
             img: 'img#img',
             before: function(){
                 if(window.location.pathname.match(/\/.+\/.+\/chapter-[0-9]+.*/)){
-                    var path = window.location.pathname.split("/");     
+                    var path = window.location.pathname.split("/");
                     window.location.pathname = "/" +path[2] +"/"+path[3].match(/[0-9]+/);
                 } else if(window.location.search){
                window.location.href = window.location.pathname;
