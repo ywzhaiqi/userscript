@@ -2,7 +2,7 @@
 // @name        Manga OnlineViewer CE
 // @description Shows all pages at once in online view. MangaFox, MangaReader/MangaPanda, MangaStream, MangaInn, AnyManga, AnimeA, MangaHere, MangaShare, Batoto, MangaDevil, MangaCow, MangaChapter, 7manga, MangaPirate.net and MangaBee/OneManga.me manga sites. Fakku, HBrowse, Hentai2Read and Doujin-moe Hentai sites.
 // version   9.01
-// @version    2014.7.30.1
+// @version    2014.7.30.2
 // @author    Tago
 // @modified  ywzhaiqi
 // @namespace https://greasyfork.org/users/1849-tago
@@ -15,7 +15,7 @@
 // @include /http://mh.5652.com/mh/\d+/\d+/\d+.shtml/
 // @include /http://(www|manhua)\.(dmzj|178)\.com/.+/.+shtml/
 // @include /http://www\.imanhua\.com\/comic\/.+/
-// @include /http://www\.tuku\.cc/comic/\d+/\d+//
+// @include /http://www\.tuku\.cc/comic/.+/
 // @include /http://www\.xindm\.cn\/mh/.+/
 // @include http://www.kkkmh.com/manhua/*/*/*.html*
 // @include /http://www.jide123.(net|com)/manhua/.*.html/
@@ -832,7 +832,7 @@ mConsole("Starting Manga OnlineViewer");
                     qTcms_S_m_murl = unsafeWindow.qTcms_S_m_murl;
                 for (var i = 1; i <= this.quant; i++) {
                     mConsole("Page " + i);
-                    addImg(i, getPicUrlP(qTcms_S_m_murl, i-1));
+                    addImg(i, getPicUrlP(qTcms_S_m_murl, i));
                 }
             },
         };
