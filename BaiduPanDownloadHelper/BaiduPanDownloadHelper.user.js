@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.7.4
+// @version        3.7.5
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi@gmail.com
 // @description    批量导出百度盘的下载链接
@@ -234,6 +234,7 @@ var mHome = (function(){  // 个人主页
 
                     Pan.checkedItems = fileList;
                     Pan.showPanel(fileList);
+
                 } else {  // 简易的导出下载链接的方式
                    var dlinks = result.dlink.map(function(i) { return i.dlink; });
                    if (!panel) {
@@ -455,8 +456,8 @@ var Pan = {
 
         // 增加 YAAW 按钮
         $('<a class="new-dbtn" href="javascript:;" hidefocus="true">')
-            .css('padding', '0px 5px')
-            .html('YAAW')
+            .css('padding-left', '10px')
+            .html('<b>YAAW</b>')
             .click(function(){
                 if (downInfo) {
                     Pan.addToYAAW(downInfo);
