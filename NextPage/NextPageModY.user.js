@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name               Next Page ModY
 // @author             ywzhaiqi && Sunwan（原作者）
-// @version            1.3.1
-// @namespace          https://github.com/ywzhaiqi/userscript/tree/master/NextPage
+// @version            1.3.2
+// @namespace          https://github.com/ywzhaiqi
 // @description        使用左右方向键来翻页
+// @homepageURL        https://github.com/ywzhaiqi/userscript/tree/master/NextPage
 // @include            http://*
 // @include            https://*
 // @include            file://*
@@ -33,6 +34,12 @@
 
     // 自定义规则，用于自动查找无效的情况，支持 css、xpath、函数
     Rule.specialSite = [
+        {name: '百度贴吧',
+            url: 'tieba.baidu.com/',
+            nextLink: '//div[@class="pager clearfix"]/descendant::a[@class="next"] | //ul[@class="l_posts_num"]/descendant::a[text()="下一页"]',
+            preLink: '//div[@class="pager clearfix"]/descendant::a[@class="pre"] | //ul[@class="l_posts_num"]/descendant::a[text()="上一页"]',
+            click: true,  // 采用模拟点击的方式，而不是替换地址
+        },
         {name: '图灵社区 : 图书 tupubarticle',
             /**
                 url 支持正则、字符串、数组，默认去掉了 http 头
@@ -44,17 +51,17 @@
             */
             url: /www\.ituring\.com.cn\/tupubarticle/i,
             nextLink: '//li[@class="current-article"]/following-sibling::li[1]/a',
-            prevLink: '//li[@class="current-article"]/preceding-sibling::li[1]/a'
+            preLink: '//li[@class="current-article"]/preceding-sibling::li[1]/a'
         },
         {name: 'Google code',
             url: /code\.google\.com\//i,
             nextLink: '//a[@title="Next"]',
-            prevLink: '//a[@title="Previous"]'
+            preLink: '//a[@title="Previous"]'
         },
         {name: 'ZEALER',
             url: /www\.zealer\.com\//i,
             nextLink: '//li[@class="next"]/a',
-            prevLink: '//li[@class="previous"]/a'
+            preLink: '//li[@class="previous"]/a'
         },
     ];
 
@@ -223,11 +230,12 @@
         var doc = win.document;
 
         var search = function(array) {
-            var i, nextLink, prevLink, xpath, link;
+            var i, site, nextLink, preLink, xpath, link;
             for (i = 0; i < array.length; i++) {
-                if (isMatchUrls(array[i].url)) {
-                    nextLink = array[i].nextLink;
-                    prevLink = array[i].prevLink;
+                site = array[i];
+                if (isMatchUrls(site.url)) {
+                    nextLink = site.nextLink;
+                    preLink = site.preLink;
 
                     if (direction && nextLink) {
                         link = doc.evaluate(nextLink, doc, null, 9, null).singleNodeValue;
@@ -235,14 +243,16 @@
 
                         next.found = true;
                         next.link = link;
+                        next.click = !!site.click;
                         return 1
-                    } else if (prevLink) {
-                        link = doc.evaluate(prevLink, doc, null, 9, null).singleNodeValue;
+                    } else if (preLink) {
+                        link = doc.evaluate(preLink, doc, null, 9, null).singleNodeValue;
                         if (!link) continue;
                         // if (!link) return -1;
 
                         previous.found = true;
                         previous.link = link;
+                        previous.click = !!site.click;
                         return 1;
                     }
                 }
@@ -555,10 +565,13 @@
         return document.defaultView.getComputedStyle(aNode, null).getPropertyValue("color");
     }
 
-    function openLink(linkNode) {
+    function openLink(linkNode, click) {
         if (!linkNode) return;
+
+        linkNode.focus();
+
         var hf = linkNode.getAttribute("href");
-        if (!linkNode.hasAttribute("onclick") && hf && !(/^#/.test(hf)) && linkNode.href != location.href) {
+        if (!click && !linkNode.hasAttribute("onclick") && hf && !(/^#/.test(hf)) && linkNode.href != location.href) {
             cleanVars();
             location.assign(linkNode.href);
         } else {
@@ -607,9 +620,9 @@
         }
 
         if (direction && next.found) {
-            openLink(next.link);
+            openLink(next.link, next.click);
         } else if (!direction && previous.found) {
-            openLink(previous.link)
+            openLink(previous.link, previous.click)
         }
     }
 
