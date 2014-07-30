@@ -22,7 +22,7 @@
 
 PS：脚本自身已经支持自动翻页，但作者未将相似图片搜索支持自动翻页，可能是因为该方法会因为翻页页数的增加而造成工作量的增加。
 
-### Manga_OnlineViewer_CE.user.js
+### [Manga_OnlineViewer_CE.user.js][]
 
 [Manga OnlineViewer](https://greasyfork.org/scripts/1319-manga-onlineviewer) 修改版。
 
@@ -38,12 +38,14 @@ PS：脚本自身已经支持自动翻页，但作者未将相似图片搜索支
  - 增加 360云盘 的检查（有效文件的检查未完成）
  - 文件名加入英文（Scriptish 中文忽略的 bug）
 
-### picviewerCE.user.js（2014-7-26）
+### picviewerCE.user.js
 
 [picViewer By NLF](http://userscripts.org/scripts/show/105741) 修改版
 
  - 新增了几个站点的规则
- - 新窗口 `输出所有图片链接` 命令（纯属测试）
+ - 新增了几个库的命令
+    - 新窗口 `输出所有图片链接` （纯属测试）
+    - 显示隐藏底部列表。可配合 [Manga_OnlineViewer_CE.user.js][] 脚本。
 
 ### quick-view-douban 修正版.user.js（2013-09-01）
 
@@ -77,3 +79,6 @@ PS：脚本自身已经支持自动翻页，但作者未将相似图片搜索支
 
  - 修正 firefox 下的一个问题
  - 完全改写代码结构
+
+
+[Manga_OnlineViewer_CE.user.js]: https://github.com/ywzhaiqi/userscript/blob/master/.%E4%BF%AE%E6%94%B9%E7%89%88/Manga_OnlineViewer_CE.user.js

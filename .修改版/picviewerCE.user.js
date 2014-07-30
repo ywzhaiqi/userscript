@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name           picViewer CE
 // @author         NLF
+// @modified       ywzhaiqi
 // @description    围观图（support （opera，firefox（GreaseMonkey），chrome） Latest Stable，IE9+）
-// @version        4.2.6.3
+// @version        2014.7.30
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
@@ -656,6 +657,7 @@
 					return b;
 				});
 				//console.log(camelPro);
+				// 会有个错误 invalid 'in' operand style
 				if(camelPro in style){
 					return camelPro;
 				};
@@ -1353,6 +1355,10 @@
 								'<span class="pv-gallery-head-command-drop-list-item" data-command="scrollIntoView" title="滚动到当前图片所在的位置">定位到图片</span>'+
 								'<span class="pv-gallery-head-command-drop-list-item" data-command="enterCollection" title="查看所有收藏的图片">查看所有收藏</span>'+
 								'<span class="pv-gallery-head-command-drop-list-item" data-command="listAllInNewWindow" title="输出所有图片链接">输出所有图片链接</span>'+
+								'<span class="pv-gallery-head-command-drop-list-item" title="显示隐藏底部列表">'+
+									'<input id="pv-gallery-head-command-drop-list-item-showHideBottom" type="checkbox" checked="checked" />'+
+									'<label for="pv-gallery-head-command-drop-list-item-showHideBottom" data-command="showHideBottom">显示底部列表</label>'+
+								'</span>'+
 							'</span>'+
 						'</span>'+
 
@@ -1962,9 +1968,18 @@
 							};
 
 						}break;
-						case 'listAllInNewWindow': {
+						case 'listAllInNewWindow':
 							collection.listAllInNewWindow();
-						}break;
+							break;
+						case 'showHideBottom':
+							var imgContainer = document.querySelector('.pv-gallery-img-container-bottom'),
+								sidebar = document.querySelector('.pv-gallery-sidebar-container-bottom'),
+								isHidden = !(sidebar.style.visibility == 'hidden'),
+								input = document.getElementById('pv-gallery-head-command-drop-list-item-showHideBottom');
+							sidebar.style.visibility = isHidden ? 'hidden' : 'visible';
+							imgContainer.style.borderBottom = isHidden ? '0px' : '120px solid transparent';
+							input.checked = !isHidden;
+							break;
 						case 'enterCollection':{
 							//进入管理模式
 							collection.enter();
