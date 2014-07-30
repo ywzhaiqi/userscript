@@ -288,7 +288,7 @@ mConsole("Starting Manga OnlineViewer");
                         "</div>" +
                         "<div id='ViewerControls' class='painel' style='display: none;>" +
                             "<span class='controlLable'>主题:</span> <select id='ThemeSelector'></select> " +
-                            "<span class='controlLable'>页数/Second:</span> "+
+                            "<span class='controlLable'>Pages/Second:</span> "+
                             "<select id='PagesPerSecond'>"+
                                 "<option value='3000'>0.3</option>"+
                                 "<option value='2000'>0.5</option>"+
