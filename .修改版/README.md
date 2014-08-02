@@ -17,7 +17,7 @@
 - 相似图片搜索增加自动翻页的支持。
 - PS：脚本自身已经支持自动翻页，但作者未将相似图片搜索支持自动翻页，可能是因为该方法会因为翻页页数的增加而造成工作量的增加。
 
-### [Manga_OnlineViewer_CE.user.js][]
+### [Manga_OnlineViewer_CE.user.js](https://github.com/ywzhaiqi/userscript/blob/master/.%E4%BF%AE%E6%94%B9%E7%89%88/Manga_OnlineViewer_CE.user.js)
 
 - [Manga OnlineViewer](https://greasyfork.org/scripts/1319-manga-onlineviewer) 修改版。
 - 增加了几个站点：[5652 漫画网](http://mh.5652.com/)，[动漫之家漫画网](http://manhua.dmzj.com/)，[爱漫画](http://www.imanhua.com/)，[CC图库漫画网](http://www.tuku.cc/)，[新动漫网](http://www.xindm.cn/)，[看漫画](http://www.kkkmh.com/)，[动漫屋](http://www.dm5.com/)，[基德在线漫画网](http://www.jide123.net/)

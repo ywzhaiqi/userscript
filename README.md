@@ -24,7 +24,6 @@ GM 脚本
 	- [Google Images direct link.user.js](.修改版/Google Images direct link.user.js)
 	- [Manga_OnlineViewer_CE.user.js](.修改版/Manga_OnlineViewer_CE.user.js)
 	- [PanLinkCheck.user.js](.修改版/PanLinkCheck.user.js)
-	- [README.md](.修改版/README.md)
 	- [TiebaNojump.user.js](.修改版/TiebaNojump.user.js)
 	- [TxtReader.user.js](.修改版/TxtReader.user.js)
 	- [Video_wipe_ADs.user.js](.修改版/Video_wipe_ADs.user.js)
