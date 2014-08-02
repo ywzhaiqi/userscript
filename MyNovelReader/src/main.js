@@ -243,6 +243,9 @@ var App = {
             }
         }
 
+        $(document).unbind("keypress");
+        $(document).unbind("keydown");
+
         // remove body style
         $('link[rel="stylesheet"], style, script').remove();
         $('*').removeAttr('style');

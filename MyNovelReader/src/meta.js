@@ -58,6 +58,7 @@
 // @include        http://www.wcxiaoshuo.com/wcxs-*-*/
 // @include        http://www.ranwen.cc/*/*/*/*.html
 // @include        http://www.ranwen.net/files/article/*/*/*.html
+// @include        http://www.64mi.com/*/*/*/*.html
 // @include        http://www.bxs.cc/*/*.html
 // @include        http://www.laishuwu.com/html/*/*/*.html
 // @include        http://www.binhuo.com/html/*/*/*.html
