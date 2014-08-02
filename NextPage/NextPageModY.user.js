@@ -63,6 +63,11 @@
             nextLink: '//li[@class="next"]/a',
             preLink: '//li[@class="previous"]/a'
         },
+        {name: 'nhentai: hentai dojinshi and manga',
+            url: /nhentai\.net/i,
+            nextLink: 'css;.pagination > a.next',
+            preLink: 'css;.pagination > a.previous',
+        }
     ];
 
     // 来自 nextpage.uc.xul
@@ -124,6 +129,43 @@
         return some(urls, function(url){ return toRE(url).test(matchUrl); });
     };
 
+    // 获取单个元素,混合
+    function getElement(selector, contextNode, doc, win) {
+        var ret;
+        if (!selector) return ret;
+        doc = doc || document;
+        win = win || window;
+        contextNode = contextNode || doc;
+        var type = typeof selector;
+        if (type == 'string') {
+            if (selector.search(/^css;/i) === 0) {
+                ret = getElementByCSS(selector.slice(4), contextNode);
+            } else {
+                ret = getElementByXpath(selector, contextNode, doc);
+            }
+        } else if (type == 'function') {
+            ret = selector(doc, win, cplink);
+        } else if (selector instanceof Array) {
+            for (var i = 0, l = selector.length; i < l; i++) {
+                ret = getElement(selector[i], contextNode, doc, win);
+                if (ret) {
+                    break;
+                }
+            }
+        }
+        return ret;
+    };
+
+    // css 获取单个元素
+    function getElementByCSS(css, contextNode) {
+        return (contextNode || document).querySelector(css);
+    }
+
+    function getElementByXpath(xpath, contextNode, doc) {
+        doc = doc || document;
+        contextNode = contextNode || doc;
+        return doc.evaluate(xpath, contextNode, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    }
 
     var checked = false;
     var delay = false;
@@ -238,7 +280,7 @@
                     preLink = site.preLink;
 
                     if (direction && nextLink) {
-                        link = doc.evaluate(nextLink, doc, null, 9, null).singleNodeValue;
+                        link = getElement(nextLink, doc);
                         if (!link) continue;
 
                         next.found = true;
@@ -246,7 +288,7 @@
                         next.click = !!site.click;
                         return 1
                     } else if (preLink) {
-                        link = doc.evaluate(preLink, doc, null, 9, null).singleNodeValue;
+                        link = getElement(preLink, doc);
                         if (!link) continue;
                         // if (!link) return -1;
 
