@@ -2,7 +2,7 @@
 // @name        Manga OnlineViewer CE
 // @description Shows all pages at once in online view. MangaFox, MangaReader/MangaPanda, MangaStream, MangaInn, AnyManga, AnimeA, MangaHere, MangaShare, Batoto, MangaDevil, MangaCow, MangaChapter, 7manga, MangaPirate.net and MangaBee/OneManga.me manga sites. Fakku, HBrowse, Hentai2Read and Doujin-moe Hentai sites.
 // version   9.01
-// @version    2014.7.30.4
+// @version    2014.8.2.1
 // @author    Tago
 // @modified  ywzhaiqi
 // @namespace https://greasyfork.org/users/1849-tago
@@ -22,6 +22,7 @@
 // @include /http://(www|tel)\.dm5\.com/.+/
 // 国外的
 // @include http://hentai4manga.com/hentai_manga/*/*/*
+// @include http://nhentai.net/g/*/*/
 
 // @include /http://mangafox.me/manga/.+/.+//
 // @include /http://www.mangareader.net/.+/.+/
@@ -83,6 +84,7 @@ mConsole("Starting Manga OnlineViewer");
         OnlineViewer(/dm5/, dm5, 0);
         // 国外的
         OnlineViewer(/hentai4manga/, hentai4manga, 0);
+        OnlineViewer(/nhentai/, nhentai, 0);
 
         OnlineViewer(/mangafox/, MangaFox);
         OnlineViewer(/(mangareader|mangapanda)/, MangaReader);
@@ -895,6 +897,20 @@ mConsole("Starting Manga OnlineViewer");
                 return "../" + i + "/";
             },
             img: '#textboxContent img'
+        };
+    }
+    var nhentai = function () {
+        mConsole("Loading nhentai");
+        return {
+            title: $('title').text().split('-')[0].trim(),
+            series: $('#page-container div a').attr('href'),
+            quant: $('.num-pages:first').text(),
+            prev: "#",
+            next: "#",
+            url: function (i) {
+                return window.location.href.replace(/\/\d+\/$/, '/') + i;
+            },
+            img: '#page-container img'
         };
     }
 
