@@ -222,6 +222,12 @@ var SITEINFO=[
             }
         }
     },
+    {name: '百度搜索 - baidulocal',
+        url: '^https?://www\\.baidu\\.com/s.*&tn=baidulocal',
+        nextLink: '//a[font[text()="下一页"]]',
+        pageElement: '//table[@width="100%" and @border="0"]/tbody/tr/td/ol',
+        exampleUrl: 'http://www.baidu.com/s?wd=firefox&rsv_spt=1&issp=1&rsv_bp=0&ie=utf-8&tn=baidulocal&inputT=1364',
+    },
     {name: '360搜索',
         url: "http://www\\.so\\.com/s",
         nextLink:'//div[@id="page"]/a[text()="下一页>"] | id("snext")',
@@ -1544,6 +1550,11 @@ var SITEINFO=[
             pageElement: 'id("section")/div[@class="main"]/div[@class="forum-content"]',
         }
     },
+    {name: '昆侖 - 资源/连载',
+        url: '^http://bbs\\.ikunlun\\.net/forum\\.php.*$',
+        nextLink: '//a[@class="now"]/following-sibling::a[1][not(@class="last") ]',
+        pageElement: '//tr[@class="topic_list_row"]',
+    },
 
     // ========================= picture ================================================
     {name: 'Flickr搜索',
@@ -2601,7 +2612,7 @@ var SITEINFO=[
             pageElement: '//div[@class="main cf"]/div[@class="content-block cf"]/div[1]',
         }
     },
-    {name: '178漫画',
+    {name: '动漫之家漫画网',
         url: "^http://(www|manhua)\\.dmzj\\.com/.+/.+shtml|^http://manhua\\.178\\.com/.+/.+shtml",
         siteExample:'http://manhua.178.com/lansechumoshi/15794.shtml',
         nextLink:'//div[@class="pages2"]/descendant::a[text()="下一页"]',
@@ -3053,6 +3064,22 @@ var SITEINFO=[
         autopager: {
             pageElement: 'id("rightcolumn")/div[@class="videothumblist"] | id("rightcolumn")/div[@class="starbox"]',
         }
+    },
+    {name: 'NyaaTorrents',
+        url: '^http://(?:(?:www|sukebei?)\\.)?nyaa\\.se/',
+        nextLink: '//div[@class="pages"]/b/following-sibling::a[1]',
+        pageElement: '//table[@class="tlist"]',
+        exampleUrl: 'http://www.nyaa.se/',
+    },
+    {name: '极影动漫',
+        url: 'http://bt.ktxp.com/.+[0-9]+-*',
+        nextLink: '//span[@class="current"]/following-sibling::a[1]',
+        pageElement: '//div[@class="item-box round-corner" and div/@class="title"]',
+    },
+    {name: 'BTDigg Search',
+        url: '^https?://btdigg.org/search*',
+        nextLink: '//a[contains(text(),"→")]',
+        pageElement: '//body/div/div/center',
     },
 
     // ==================== 国外站点 ===================

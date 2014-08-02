@@ -115,11 +115,16 @@ Firefox（Greasemonkey/Scriptish），Chrome（原生/Tampermonkey），Maxthon�
             }
         },
 
-### 风险脚本的误报
+### Google 搜索的说明
 
-[风险脚本过滤器](http://userscripts.org/scripts/issues/164600) 检测到：自动 follow。
+Super\_preloaderPlus\_one 脚本不支持从 Google 主页搜索的翻页，只能用这样的搜索
 
-它的检测正则是 `follow(_|\/|([^.\s]+)(\.|\?))`， 匹配脚本内 `following-sibling::*[.` 或 `following::a[contains(., \"Next\")]` 等。
+ [https://www.google.com/search?q=firefox](https://www.google.com/search?q=firefox)
+
+这两类半支持
+
+ [https://www.google.com/#newwindow=1&q=firefox](https://www.google.com/#newwindow=1&q=firefox) 
+ [https://www.google.com/webhp?q=firefox#newwindow=1&q=firefox&safe=strict](https://www.google.com/webhp?q=firefox#newwindow=1&q=firefox&safe=strict)。
 
 ### 更新
 
