@@ -154,7 +154,7 @@ Parser.prototype = {
             _main_selector = "h1, h2, h3",
             _second_selector = "#TextTitle, #title, .ChapterName, #lbChapterName, div.h1",
             _positive_regexp = /第?\S+[章节卷回]|\d{2,4}/,
-            _negative_regexp = /[上下]一章/,
+            _negative_regexp = /[上前下后][一]?[页张个篇章节步]/,
             _title_remove_regexp = /最新章节|书书网/,
             $doc = $(document),
             _document_title = document.title ? document.title : $doc.find("title").text(),
@@ -227,6 +227,8 @@ Parser.prototype = {
             score +=  _font_size_add_score;
 
             debug("  计算大小后得分", score);
+
+            debug("  ----------------------");
 
             possibleTitles[_heading_text] = score;
         });

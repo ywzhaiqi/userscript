@@ -134,7 +134,7 @@ var UI = {
                 position: fixed;\
                 right: 10px;\
                 bottom: 10px;\
-                z-index: 1597;\
+                z-index: 2247483648;\
                 padding: 20px 5px;\
                 width: 50px;\
                 height: 20px;\

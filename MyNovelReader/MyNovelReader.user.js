@@ -757,7 +757,7 @@ Rule.specialSite = [
     {siteName: "六月中文网，盗梦人小说网",
         url: "^http://www\\.(?:6yzw\\.org|daomengren\\.com)/.*\\.html",
         bookTitleSelector: ".con_top>a:last",
-        contentRemove: "a[href='http://i./'], a[href='http://www.87xsw.com']",
+        contentRemove: "a[href]",
         contentReplace: [
             "{飘天文学[\\s\\S]*您的支持就是我们最大的动力}",
             "(（未完待续），|精彩推荐：，)?最新最快更新热门小说，享受无弹窗阅读就在：",
@@ -1895,7 +1895,7 @@ var UI = {
                 position: fixed;\
                 right: 10px;\
                 bottom: 10px;\
-                z-index: 1597;\
+                z-index: 2247483648;\
                 padding: 20px 5px;\
                 width: 50px;\
                 height: 20px;\
@@ -2772,7 +2772,7 @@ Parser.prototype = {
             _main_selector = "h1, h2, h3",
             _second_selector = "#TextTitle, #title, .ChapterName, #lbChapterName, div.h1",
             _positive_regexp = /第?\S+[章节卷回]|\d{2,4}/,
-            _negative_regexp = /[上下]一章/,
+            _negative_regexp = /[上前下后][一]?[页张个篇章节步]/,
             _title_remove_regexp = /最新章节|书书网/,
             $doc = $(document),
             _document_title = document.title ? document.title : $doc.find("title").text(),
@@ -2845,6 +2845,8 @@ Parser.prototype = {
             score +=  _font_size_add_score;
 
             debug("  计算大小后得分", score);
+
+            debug("  ----------------------");
 
             possibleTitles[_heading_text] = score;
         });

@@ -505,7 +505,7 @@ Rule.specialSite = [
     {siteName: "六月中文网，盗梦人小说网",
         url: "^http://www\\.(?:6yzw\\.org|daomengren\\.com)/.*\\.html",
         bookTitleSelector: ".con_top>a:last",
-        contentRemove: "a[href='http://i./'], a[href='http://www.87xsw.com']",
+        contentRemove: "a[href]",
         contentReplace: [
             "{飘天文学[\\s\\S]*您的支持就是我们最大的动力}",
             "(（未完待续），|精彩推荐：，)?最新最快更新热门小说，享受无弹窗阅读就在：",
