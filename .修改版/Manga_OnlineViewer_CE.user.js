@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name        Manga OnlineViewer CE
 // @description Shows all pages at once in online view. MangaFox, MangaReader/MangaPanda, MangaStream, MangaInn, AnyManga, AnimeA, MangaHere, MangaShare, Batoto, MangaDevil, MangaCow, MangaChapter, 7manga, MangaPirate.net and MangaBee/OneManga.me manga sites. Fakku, HBrowse, Hentai2Read and Doujin-moe Hentai sites.
-// version   9.01
-// @version    2014.8.2.1
+// version   9.02
+// date 2014-08-04
+// @version    2014.8.5.1
 // @author    Tago
 // @modified  ywzhaiqi
 // @namespace https://greasyfork.org/users/1849-tago
@@ -20,9 +21,6 @@
 // @include http://www.kkkmh.com/manhua/*/*/*.html*
 // @include /http://www.jide123.(net|com)/manhua/.*.html/
 // @include /http://(www|tel)\.dm5\.com/.+/
-// 国外的
-// @include http://hentai4manga.com/hentai_manga/*/*/*
-// @include http://nhentai.net/g/*/*/
 
 // @include /http://mangafox.me/manga/.+/.+//
 // @include /http://www.mangareader.net/.+/.+/
@@ -49,6 +47,7 @@
 // @include /http://eatmanga.com/Manga-Scan/.+/.+//
 // @include /http://.*senmanga.com/.+/.+\/?/
 // @include /http://manga.lyght.net/series/.+\.html/
+// @include /http://dynasty-scans.com/chapters/.+/
 // @include /http://luscious.net/c/.+/
 // @include /http://www.wondersluts.com/.+/
 // @include /http://hentaimangaonline.com/image/.+//
@@ -56,6 +55,8 @@
 // @include /http://g.e-hentai.org/s/.+/.+/
 // @include /http://pururin.com/view/.+/.+/.+/
 // @include /https?://fufufuu.net/m/.+/.+/
+// @include /http://hentai4manga.com/hentai_manga/.+/.+/
+// @include /http://nhentai.net/g/.+/.+/
 // @include /.+/read/.+/
 // @note    汉化 By 卡饭 390720046、Oos。http://bbs.kafan.cn/forum.php?mod=redirect&goto=findpost&ptid=1759879&pid=32207515
 // @history 6.00 Full Script Overhaul
@@ -63,6 +64,7 @@
 // @history 8.00 Layout Improvement, Fix Chrome compatibility, Improved Zoom
 // @history 9.00 Added Thumbnails Navigation, Improved performance
 // @history 9.01 Added MangaJoy
+// @history 9.02 Added hentai4manga, nHentai and dynasty-scans
 // ==/UserScript==
 var VERBOSE = false;function mConsole(s){if(VERBOSE) console.log(s || "");}
 mConsole("Starting Manga OnlineViewer");
@@ -82,9 +84,6 @@ mConsole("Starting Manga OnlineViewer");
         OnlineViewer(/kkkmh/, kkkmh, 0);
         OnlineViewer(/jide123/, jide123, 0);
         OnlineViewer(/dm5/, dm5, 0);
-        // 国外的
-        OnlineViewer(/hentai4manga/, hentai4manga, 0);
-        OnlineViewer(/nhentai/, nhentai, 0);
 
         OnlineViewer(/mangafox/, MangaFox);
         OnlineViewer(/(mangareader|mangapanda)/, MangaReader);
@@ -104,6 +103,7 @@ mConsole("Starting Manga OnlineViewer");
         OnlineViewer(/senmanga/, SenManga);
         OnlineViewer(/mangabird/, MangaBird);
         OnlineViewer(/manga.lyght/, MangaLyght);
+        OnlineViewer(/dynasty\-scans/, dynastyscans);
         // Hentai sites
         OnlineViewer(/fakku.net/, Fakku);
         OnlineViewer(/doujin-moe.us/, DoujinMoeNM);
@@ -114,6 +114,8 @@ mConsole("Starting Manga OnlineViewer");
         OnlineViewer(/(exhentai|e-hentai)/, ExHentai);
         OnlineViewer(/pururin/, Pururin);
         OnlineViewer(/fufufuu/, Fufufuu);
+		OnlineViewer(/hentai4manga/, hentai4manga);
+        OnlineViewer(/nhentai/, nHentai);
         // FoOlSlide
         if ($("meta[content~='FoOlSlide']").length > 0) {
             setTimeout(function () {
@@ -885,35 +887,6 @@ mConsole("Starting Manga OnlineViewer");
         };
     }
 
-    var hentai4manga = function () {
-        mConsole("Loading hentai4manga");
-        return {
-            title: $(".category-label").text().trim(),
-            series: location.href.replace(/\/\d+\//, '/'),
-            quant: $('select#sl option').size(),
-            prev: "#",
-            next: "#",
-            url: function (i) {
-                return "../" + i + "/";
-            },
-            img: '#textboxContent img'
-        };
-    }
-    var nhentai = function () {
-        mConsole("Loading nhentai");
-        return {
-            title: $('title').text().split('-')[0].trim(),
-            series: $('#page-container div a').attr('href'),
-            quant: $('.num-pages:first').text(),
-            prev: "#",
-            next: "#",
-            url: function (i) {
-                return window.location.href.replace(/\/\d+\/$/, '/') + i;
-            },
-            img: '#page-container img'
-        };
-    }
-
     // == MangaFox ===================================================================================================================================
     var MangaFox = function () {
         mConsole("Loading MangaFox");
@@ -1236,6 +1209,25 @@ mConsole("Starting Manga OnlineViewer");
             img: "#mainimage"
         };
     }
+    // == DynastyScans ========================================================================================================================
+	var dynastyscans = function () {
+		mConsole("Loading Dynasty-Scans");
+		var temp = JSON.parse($("script:last").html().match(/\[.+\]/))
+        return {
+            title: $("#chapter-title").text(),
+            series: "#",
+            quant: temp.length,
+            prev: "#",
+            next: "#",
+			data: temp,
+			pages: function(){
+                for (var i = 1; i <= this.quant; i++) {
+					mConsole("Page " + i);
+                    addImg(i, this.data[i - 1].image);
+                }
+            }
+        };
+	}
     // == Fakku =======================================================================================================================================
     var Fakku = function () {
         mConsole("Loading Fakku");
@@ -1341,7 +1333,7 @@ mConsole("Starting Manga OnlineViewer");
         mConsole("Loading ExHentai");
         return {
             title: $("#il h1").text().trim() || $("h1").text().trim(),
-            series: $("div#i5 div.sb a").attr("href") || $("div#i5 div.sb a").attr("href"),
+            series: $("div#i5 div.sb a").attr("href"),
             quant: $(".sn div span:last").text(),
             prev: "#",
             next: "#",
@@ -1387,6 +1379,34 @@ mConsole("Starting Manga OnlineViewer");
                     addImg(i, this.data.page_list[i - 1].url);
                 }
             }
+        };
+    }
+    var hentai4manga = function () {
+        mConsole("Loading hentai4manga");
+        return {
+            title: $(".category-label").text().trim(),
+            series: location.href.replace(/\/\d+\//, '/'),
+            quant: $('select#sl option').size(),
+            prev: "#",
+            next: "#",
+            url: function (i) {
+                return "../" + i + "/";
+            },
+            img: '#textboxContent img'
+        };
+    }
+    var nHentai = function() {
+        mConsole("Loading nHentai");
+        return {
+            title: $(".btn:eq(1)").text().trim() || $('title').text().split('-')[0].trim(),
+            series: $("div#page-container div a").attr("href"),
+            quant: $(".num-pages:first").html(),
+            prev: "#",
+            next: "#",
+            url: function(i) {
+                return "../" + i + "/";
+            },
+            img: '#page-container p a img'
         };
     }
     // == FoOlSlide ========================================================================================================================
