@@ -2,7 +2,7 @@
 // @name           searchEngineJump 自用修改版
 // @author         NLF
 // @description    方便的在各个引擎之间跳转
-// @version        4.1.0.0
+// @version        4.1.0.1
 // version        4.0.1.0
 // @created        2011-7-2
 // @lastUpdated    2014-7-29
@@ -150,6 +150,7 @@
 					},
 				},
 				{name: "baidu网页搜索",
+					// 新增了百度简洁搜索：http://www.baidu.com/s?wd=firefox&ie=utf-8&tn=baidulocal
 					url: /^https?:\/\/www\.baidu\.com\/(?:s|baidu)/,
 					enabled: true,
 					engineList: "web",
@@ -160,9 +161,12 @@
 						margin-top:5px;\
 					',
 					insertIntoDoc: {
-						keyword: 'css;input#kw',
-						target: 'css;#head',
-						where: 'beforeEnd',
+						keyword: function() {
+							var input = document.querySelector('input#kw') || document.querySelector('input[name="wd"]');
+							if (input) return input.value;
+						},
+						target: 'id("head") | html/body/table[2]',
+						where: 'afterEnd',
 					},
 				},
 				{name: "必应网页搜索",
@@ -560,6 +564,7 @@
 			engineList.web[1] = {
 				name: '百度',
 				url: 'http://www.baidu.com/s?wd=%s&ie=utf-8',
+				// url: 'http://www.baidu.com/s?wd=%s&ie=utf-8&tn=baidulocal',
 				favicon: 'http://www.baidu.com/favicon.ico',
 			};
 			engineList.web[2] = {
