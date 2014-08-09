@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name               Next Page ModY
 // @author             ywzhaiqi && Sunwan（原作者）
-// @version            1.3.2
+// @version            1.3.3
 // @namespace          https://github.com/ywzhaiqi
 // @description        使用左右方向键来翻页
 // @homepageURL        https://github.com/ywzhaiqi/userscript/tree/master/NextPage
@@ -57,6 +57,12 @@
             url: /code\.google\.com\//i,
             nextLink: '//a[@title="Next"]',
             preLink: '//a[@title="Previous"]'
+        },
+        {name: 'greasyfork forum',
+            url: /greasyfork\.org\/forum/i,
+            nextLink: '//a[@class="Next"]',
+            preLink: '//a[@class="Previous"]',
+            autoGet: false,
         },
         {name: 'ZEALER',
             url: /www\.zealer\.com\//i,
@@ -245,7 +251,7 @@
         "上一节": 30,
         "<<": 2000,
         "«": 2000,
-        "new": 30,
+        "new":30,
     }
 
     loadConfig();
@@ -271,37 +277,35 @@
         win = win || window;
         var doc = win.document;
 
+        var result;
         var search = function(array) {
-            var i, site, nextLink, preLink, xpath, link;
+            var i, site, selector, link;
             for (i = 0; i < array.length; i++) {
                 site = array[i];
                 if (isMatchUrls(site.url)) {
-                    nextLink = site.nextLink;
-                    preLink = site.preLink;
+                    selector = direction ? site.nextLink : site.preLink;
+                    obj = direction ? next : previous;
 
-                    if (direction && nextLink) {
-                        link = getElement(nextLink, doc);
-                        if (!link) continue;
-
-                        next.found = true;
-                        next.link = link;
-                        next.click = !!site.click;
-                        return 1
-                    } else if (preLink) {
-                        link = getElement(preLink, doc);
-                        if (!link) continue;
-                        // if (!link) return -1;
-
-                        previous.found = true;
-                        previous.link = link;
-                        previous.click = !!site.click;
-                        return 1;
+                    link = getElement(selector, doc);
+                    if (!link) {
+                        if (site.autoGet == false) {
+                            result = -1;
+                            return -1;
+                        } else {
+                            continue;
+                        }
                     }
+
+                    obj.found = true;
+                    obj.link = link;
+                    obj.click = !!site.click;
+                    result = 1;
+                    return 1;
                 }
             }
         };
 
-        if (search(Rule.specialSite) || search(Rule.specialCommon)) return 1;
+        if (search(Rule.specialSite) || search(Rule.specialCommon)) return result;
         //对子窗口应用特殊规则
         if (searchSub) {
             var f = win.frames;
@@ -644,6 +648,7 @@
 
         var c = checkDefinedNext(window, direction);
         if (c == -1) {
+            console.log('没有找到' + (direction ? '下' : '上') + '一页链接，站点规则设置禁止自动查找');
             return;
         } else if (!c) {
             if (!checked) {
@@ -679,6 +684,10 @@
 
         // 确保光标不是定位在文字输入框或选择框
         if (localName == 'textarea' || localName == 'input' || localName == 'select')
+            return;
+
+        // 视频播放器
+        if (localName == 'object')
             return;
 
         // 百度贴吧回复输入的问题
