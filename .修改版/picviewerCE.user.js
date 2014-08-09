@@ -10,7 +10,7 @@
 // @grant          GM_getValue
 // @grant          GM_setValue
 // @grant          GM_openInTab
-// @run-at         document-start
+// run-at         document-start
 // @namespace      http://userscripts.org/users/NLF
 // @homepage       https://github.com/ywzhaiqi/userscript/tree/master/.%E4%BF%AE%E6%94%B9%E7%89%88
 // homepage       http://userscripts.org/scripts/show/105741
@@ -18,6 +18,7 @@
 // updateURL      https://userscripts.org/scripts/source/105741.meta.js
 // @include        http*
 // match          *://*/*
+// @exclude       http://www.toodledo.com/tasks/*
 // ==/UserScript==
 
 ;(function(topObject,window,document,unsafeWindow){
@@ -141,7 +142,8 @@
 				url:/^https?:\/\/[^.]*\.douban\.com/i,
 				getImage:function(){
 					var oldsrc=this.src;
-					var newsrc=oldsrc.replace(/\/view\/photo\/photo\/public\//i,'/view/photo/raw/public/');
+					// 有一些的图片没有 raw
+					var newsrc=oldsrc.replace(/\/view\/photo\/(?:photo|albumcover)\/public\//i,'/view/photo/raw/public/');
 					if(newsrc!=oldsrc)return newsrc;
 				}
 			},
@@ -348,6 +350,18 @@
 				getImage: function() {
 					var src = this.src;
 					var ret = src.replace(/\/s([^\.\/]+\.[a-z]+$)/i, '/$1');
+					if (ret!=src) return ret;
+				}
+			},
+
+			// 漫画站
+			{sitename: "nhentai",
+				url: /^http:\/\/nhentai\.net\/g\/\d+\//i,
+				enabled: true,
+				siteExample: "http://nhentai.net/g/113475/",
+				getImage: function() {
+					var src = this.src;
+					var ret = src.replace(/\/(\d+)t(\.[a-z]+)$/i, '/$1$2');
 					if (ret!=src) return ret;
 				}
 			},
@@ -644,24 +658,26 @@
 			var style=elem.style;
 			var camelPro;
 
-			for(var i=0,ii=prefix.length;i<ii;i++){
-				var first=true;
-				camelPro=(prefix[i]+proName).replace(/-([a-z])/g,function(a,b){
-					b=b.toUpperCase();
-					if(first){
-						first=false;
-						if(!capitalize){
-							b=b.toLowerCase();
+			// 会有个错误 invalid 'in' operand style
+			try {
+				for(var i=0,ii=prefix.length;i<ii;i++){
+					var first=true;
+					camelPro=(prefix[i]+proName).replace(/-([a-z])/g,function(a,b){
+						b=b.toUpperCase();
+						if(first){
+							first=false;
+							if(!capitalize){
+								b=b.toLowerCase();
+							};
 						};
-					};
-					return b;
-				});
-				//console.log(camelPro);
-				// 会有个错误 invalid 'in' operand style
-				if(camelPro in style){
-					return camelPro;
-				};
-			};
+						return b;
+					});
+					//console.log(camelPro);
+					if(camelPro in style){
+						return camelPro;
+					}
+				}
+			} catch(ex) {}
 
 			if(!capitalize)return;
 			return cssProSupported(proName,elem,false);
