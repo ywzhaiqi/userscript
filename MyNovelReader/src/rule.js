@@ -946,6 +946,14 @@ Rule.specialSite = [
         titleSelector: '.title',
         bookTitleSelector: '.linkleft > a:last',
     },
+    {siteName: "云来阁",
+        url: "http://www\\.yunlaige\\.com/html/\\d+/\\d+/\\d+\\.html",
+        titleSelector: '.ctitle',
+        contentRemove: '.bottomlink',
+        contentReplace: [
+            '[☆★◆〓『【◎].*?(?:YUNLAIGE|云 来 阁|ｙｕｎｌａｉｇｅ).*?[☆◆★〓』】◎]',
+        ]
+    },
 
     // ===== 特殊的获取下一页链接
     {siteName: "看书啦",

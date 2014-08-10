@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        4.6.1
+// @version        4.6.2
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    shyangs
@@ -104,6 +104,7 @@
 // @include        http://www.ziyuge.com/*/*/*/*/*.html
 
 // 其它网站
+// @include        http://www.yunlaige.com/html/*/*/*.html
 // @include        http://www.cfwx.net/files/article/html/*/*/*.html
 // @include        http://www.7dsw.com/book/*/*/*.html
 // @include        http://www.geiliwx.com/GeiLi/*/*/*.shtml
@@ -1197,6 +1198,14 @@ Rule.specialSite = [
         url: "http://www\\.cfwx\\.net/files/article/html/\\d+/\\d+/\\d+\\.html",
         titleSelector: '.title',
         bookTitleSelector: '.linkleft > a:last',
+    },
+    {siteName: "云来阁",
+        url: "http://www\\.yunlaige\\.com/html/\\d+/\\d+/\\d+\\.html",
+        titleSelector: '.ctitle',
+        contentRemove: '.bottomlink',
+        contentReplace: [
+            '[☆★◆〓『【◎].*?(?:YUNLAIGE|云 来 阁|ｙｕｎｌａｉｇｅ).*?[☆◆★〓』】◎]',
+        ]
     },
 
     // ===== 特殊的获取下一页链接
