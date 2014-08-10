@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        4.6.2
+// @version        4.6.3
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    shyangs
@@ -750,7 +750,9 @@ Rule.specialSite = [
         titleReg: "(.*?)最新章节_\\S* (.*)_手牵手小说网",
         contentReplace: [
             "★百度搜索，免费阅读万本★|访问下载txt小说.百度搜.|免费电子书下载|\\(百度搜\\)|『文學吧x吧.』|¤本站网址：¤",
-            "★雲來阁免费wwwyunlaigenet★",
+            // "[☆★◆〓『【◎](?:真正无弹窗|雲來阁免费).*?www.?yunlaige.?net[★◆◇]",
+            "[☆★◆〓『【◎◇].*?(?:yunlaige|云 来 阁|ｙｕｎｌａｉｇｅ).*?[☆◆★〓』】◎◇]",
+            "『万本收费免费看』",
             "&nbsp;关闭</p>",
             { "。\\.": "。" },
         ]
@@ -1204,7 +1206,7 @@ Rule.specialSite = [
         titleSelector: '.ctitle',
         contentRemove: '.bottomlink',
         contentReplace: [
-            '[☆★◆〓『【◎].*?(?:YUNLAIGE|云 来 阁|ｙｕｎｌａｉｇｅ).*?[☆◆★〓』】◎]',
+            '[☆★◆〓『【◎◇].*?(?:yunlaige|云 来 阁|ｙｕｎｌａｉｇｅ).*?[☆◆★〓』】◎◇]',
         ]
     },
 
