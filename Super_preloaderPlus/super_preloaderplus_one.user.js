@@ -4,7 +4,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.3.3
+// @version      6.3.4
 // @homepageURL  https://greasyfork.org/scripts/293-super-preloaderplus-one
 // @updateURL    https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js
 // @downloadURL  https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js
@@ -769,7 +769,7 @@ var SITEINFO=[
         url: /^https?:\/\/www\.youtube\.com\/results/i,
         nextLink: '//div[contains(concat(" ", @class, " "), " yt-uix-pager ")]//a[last()][@href]',
         autopager: {
-            pageElement: 'id("search-results result-list context-data-container")',
+            pageElement: 'id("results")',
             lazyImgSrc: 'data-thumb'
         }
     },
@@ -786,13 +786,16 @@ var SITEINFO=[
     {name: '淘宝搜索',
         url: '^http://(?:list|s|search[^.]*)\\.taobao\\.com/search',
         nextLink: '//a[@class="page-next"]',
-        pageElement: '//div[@class="tb-content"]',
+        autopager: {
+            pageElement: '//div[@class="tb-content"]',
+            lazyImgSrc: 'data-lazyload-src|data-ks-lazyload',
+        }
     },
     {name: "淘宝",
         url: /^http:\/\/(?!bbs).*\.taobao\.com\//i,
         nextLink: 'auto;',
         autopager: {
-            pageElement: '//div[@id="J_ShopSearchResult"]/div/div[contains(@class, "shop-hesper-bd")]',
+            pageElement: '//div[@id="J_ShopSearchResult"]/div/div[contains(@class, "shop-hesper-bd")] | id("J_ItemListsContainer")/ul[@class="item-lists"]',
             lazyImgSrc: 'data-lazyload-src|data-ks-lazyload',
         }
     },
@@ -3487,15 +3490,21 @@ var SITEINFO_TP=[
             pageElement:'//div[@id="postlist"] | //form[@method="post"][@name]',
             replaceE: '//div[@class="pages" or @class="pg"][child::a[@class="next" or @class="nxt"][@href]]',
             lazyImgSrc: 'zoomfile',
-            // filter: function(pages){
-            //     // 回复后插入到最后一页？有时候会在第一页？
-            //     var doc = unsafeWindow.document;
-            //     var replays = doc.querySelectorAll("#postlistreply");
-            //     if(replays.length > 1){
-            //         var first = replays[0];
-            //         first.parentNode.removeChild(first);
-            //     }
-            // }
+            filter: function(pages){
+                // 回复后插入到最后一页
+                var replays = document.querySelectorAll("#postlistreply");
+                if(replays.length > 1){
+                    var first = replays[0];
+                    first.parentNode.removeChild(first);
+                }
+
+                // 修正代码着色
+                // 在卡饭论坛如果不存在，会提示，所以默认禁用
+                // var SyntaxHighlighter = unsafeWindow.SyntaxHighlighter;
+                // if (SyntaxHighlighter && SyntaxHighlighter.highlight) {
+                //     SyntaxHighlighter.highlight();
+                // }
+            }
         }
     },
     {name: 'phpWind论坛列表',
