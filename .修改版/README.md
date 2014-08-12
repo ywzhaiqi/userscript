@@ -72,3 +72,8 @@
 - 修正 bing 因为改版失效的问题
 - 修改 @include 不为全局
 - 从 ted423 版中提取了一些新的搜索
+
+### [Youku_RSS.user.js](Youku_RSS.user.js)
+
+- 修正了这类网址的插入位置，http://i.youku.com/u/UNTEzNTY1OTgw
+- 这类网址怎么得到 RSS 订阅地址？http://www.youku.com/show_page/id_z6939e1f4c08611e38b3f.html
