@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           Youku RSS
-// @version        2014.8.12
+// @version        2014.8.13
 // version        0.2.2
 // @namespace      https://userscripts.org/users/256199
 // @author         NightsoN
@@ -25,7 +25,8 @@ if (locationHref.match(/u\.youku\.com\/user_show\//)){
 } else if (locationHref.match(/i\.youku\.com\/u\//)){
 	// http://i.youku.com/u/UNTEzNTY1OTgw
     document.querySelector(".share-list > ul").insertAdjacentHTML('afterbegin',
-        '<li><a target="_blank" href="http://www.youku.com/user/rss/id/' + window.to_user_id + '">RSS订阅</a></li>');
+        '<li><a target="_blank" href="http://www.youku.com/user/rss/id/' + 
+        (window.to_user_id || window.ownerEncodeid) + '">RSS订阅</a></li>');
 } else if (locationHref.match(/www\.youku\.com\/playlist_show\//)){
 	document.querySelector('.listsub .handle').insertAdjacentHTML('beforeend',
         '<a>&nbsp|&nbsp</a><a href="' + document.querySelector('link[rel="alternate"]').href + '">RSS订阅</a>');
