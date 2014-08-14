@@ -25,10 +25,11 @@ if (locationHref.match(/u\.youku\.com\/user_show\//)){
         '<a class="pLinkCopy fPLink" href="http://www.youku.com/user/rss/id/' + window.userId + '")">订阅</a>');
 } else if (locationHref.match(/i\.youku\.com\/u\//)){
 	// http://i.youku.com/u/UNTEzNTY1OTgw
-    document.querySelector(".share-list > ul").insertAdjacentHTML('afterbegin',
-        '<li><a target="_blank" href="http://www.youku.com/user/rss/id/' + 
-            (window.to_user_id || window.ownerEncodeid) + '"><img class="ico ico__weixin" src="' + 
-            rssImg + '" /></a></li>');
+    var html = '<li>' +
+        '<a target="_blank" href="http://www.youku.com/user/rss/id/' + (window.to_user_id || window.ownerEncodeid) + '">' +
+            '<img class="ico" src="' + rssImg + '" />' +
+        '</a></li>';
+    document.querySelector(".share-list > ul").insertAdjacentHTML('afterbegin', html);
 } else if (locationHref.match(/www\.youku\.com\/playlist_show\//)){
 	document.querySelector('.listsub .handle').insertAdjacentHTML('beforeend',
         '<a>&nbsp|&nbsp</a><a href="' + document.querySelector('link[rel="alternate"]').href + '">RSS订阅</a>');
