@@ -288,15 +288,15 @@ Parser.prototype = {
                     var text = res.responseText;
                     if (text.indexOf('{"CID":') == 0) {  // 未完成，创世中文的
                         text = JSON.parse(text).Content;
-                        self.content = $('<div>').html(text).find('.bookreadercontent').html()
-                        callback(self);
+                        text = $('<div>').html(text).find('.bookreadercontent').html();
                     } else {
                         text = text.replace(/document.write(ln)?\('/, "")
                                 .replace("');", "")
                                 .replace(/[\n\r]/g, '</p><p>');
-                        self.content = self.handleContentText(text, self.info);
-                        callback(self);
                     }
+
+                    self.content = self.handleContentText(text, self.info);
+                    callback(self);
                 }
             });
         }else{

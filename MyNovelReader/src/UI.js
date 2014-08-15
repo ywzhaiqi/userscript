@@ -85,7 +85,6 @@ var UI = {
             style = $('<style id="skin_style">').appendTo('head');
         }
 
-
         // 图片章节夜间模式会变的无法看
         if (isFirst && skin_name.indexOf('夜间'.uiTrans()) != -1 && Config.picNightModeCheck) {
             setTimeout(function(){

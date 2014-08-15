@@ -13,7 +13,8 @@ var Rule = {
     indexSelectors: ["a[href='index.html']", "a:contains('返回书目')", "a:contains('章节目录')", "a:contains('章节列表')",
         "a:econtains('最新章节')", "a:contains('回目录')","a:contains('回书目')", "a:contains('目 录')", "a:contains('目录')"],
 
-    contentSelectors: ["#pagecontent", "#contentbox", "#bmsy_content", "#bookpartinfo", "#htmlContent", "#chapter_content", "#chapterContent", "#partbody",
+    contentSelectors: ["#pagecontent", "#contentbox", "#bmsy_content", "#bookpartinfo", "#htmlContent", 
+        "#text_area", "#chapter_content", "#chapterContent", "#partbody",
         "#article_content", "#BookTextRead", "#booktext", "#BookText", "#readtext", "#text_c", "#txt_td", "#TXT", "#txt", "#zjneirong",
         ".novel_content", ".readmain_inner", ".noveltext", ".booktext",
         "#contentTxt", "#oldtext", "#a_content", "#contents", "#content2", "#content", ".content"],
@@ -125,22 +126,43 @@ Rule.specialSite = [
     {siteName: "创世中文网",
         url: "^http://chuangshi\\.qq\\.com/",
         titleReg: "(.*?)_(.*)_创世中文",
-        contentSelector: ".bookreadercontent",
-        contentHandle: false,
-        useiframe: true,
-        mutationSelector: "#chaptercontainer",  // 内容生成监视器
-        mutationChildCount: 1,
+        // contentSelector: ".bookreadercontent",
+        contentSelector: "#chaptercontainer",
+        // contentHandle: false,
+        // useiframe: true,
+        // mutationSelector: "#chaptercontainer",  // 内容生成监视器
+        // mutationChildCount: 1,
+        timeout: 500,
+        contentRemove: '> p:last',
         contentPatch: function(fakeStub){
-            fakeStub.find('.bookreadercontent  > p:last').remove();
-            // 下面的补丁方式目前还不支持获取下一页链接
-            // var cid = fakeStub.find('body').html().match(/ var cid = "(\d+?)",/)[1];
-            // var durl = 'http://chuangshi.qq.com/read/bookreader/' + cid +'/0';
-            // fakeStub.find('body').append('<div id=content></div>');
-            // fakeStub.find('div#content').attr({
-            //     class: 'reader-ajax',
-            //     src: durl,
-            //     charset: 'GB2312'
-            // });
+            var $body = fakeStub.find('body');
+                html = $body.html(),
+                novel_showid = unsafeWindow.novel_showid,
+                _main = unsafeWindow.CS.page.bookReader.main,
+                uuid = html.match(/uuid = "(\d+?)"/i)[1];
+
+            var preChapterInfo = _main.getPreChapterInfo(uuid),
+                nextChapterInfo = _main.getNextChapterInfo(uuid);
+                _pre_uuid = preChapterInfo ? preChapterInfo['uuid'] : 0;
+                _next_uuid = nextChapterInfo ? nextChapterInfo['uuid'] : 0;
+
+            // 上下页
+            $('<a rel="prev">').attr('href', _getReadPageUrl(_pre_uuid)).prependTo($body);
+            $('<a rel="next">').attr('href', _getReadPageUrl(_next_uuid)).prependTo($body);
+
+            // 内容
+            var durl = 'http://chuangshi.qq.com/index.php/Bookreader/' + novel_showid +'/' + uuid;
+            fakeStub.find('body').append('<div id="content"></div>');
+            fakeStub.find('div#content').attr({
+                class: 'reader-ajax',
+                src: durl,
+                charset: 'GB2312'
+            });
+
+            function _getReadPageUrl(uuid) {
+                if (!uuid) return 'javascript:;';
+                return window.location.href.replace(/(\d)+\.html/, uuid + '.html');
+            }
         },
     },
     {siteName: "晋江文学网",
@@ -497,7 +519,6 @@ Rule.specialSite = [
         titleReg: "(.*?)最新章节_\\S* (.*)_手牵手小说网",
         contentReplace: [
             "★百度搜索，免费阅读万本★|访问下载txt小说.百度搜.|免费电子书下载|\\(百度搜\\)|『文學吧x吧.』|¤本站网址：¤",
-            // "[☆★◆〓『【◎](?:真正无弹窗|雲來阁免费).*?www.?yunlaige.?net[★◆◇]",
             "[☆★◆〓『【◎◇].*?(?:yunlaige|云 来 阁|ｙｕｎｌａｉｇｅ).*?[☆◆★〓』】◎◇]",
             "『万本收费免费看』",
             "&nbsp;关闭</p>",
@@ -899,6 +920,7 @@ Rule.specialSite = [
     },
     {siteName: "豌豆文学网",
         url: "^http://www.wandoou.com/book/\\d+/\\d+\\.html",
+        titleReg: '(.*?)最新章节-(.*)-.*无弹窗广告_豌豆文学网',
         contentRemove: "center",
         contentReplace: [
             /[{（]<a href.*[}）]|网欢迎广大书友光临阅读，.*/ig,
@@ -951,9 +973,11 @@ Rule.specialSite = [
     {siteName: "云来阁",
         url: "http://www\\.yunlaige\\.com/html/\\d+/\\d+/\\d+\\.html",
         titleSelector: '.ctitle',
+        contentSelector: '#content',
         contentRemove: '.bottomlink',
         contentReplace: [
             '[☆★◆〓『【◎◇].*?(?:yunlaige|云 来 阁|ｙｕｎｌａｉｇｅ).*?[☆◆★〓』】◎◇]',
+            '【最新更新】',
         ]
     },
 
@@ -1057,13 +1081,13 @@ Rule.replace = {
 
     // === 双字替换 ===
     "暧m[eè][iì]":"暧昧",
-    "bàn\\s*fǎ":"办法", "不liáng":"不良", "b[ěe]i(\\s|&nbsp;)*j[īi]ng":"北京","半shen": "半身", "b[ìi]j[ìi]ng":"毕竟", "报(了?)jing":"报$1警", "bèi'pò":"被迫", "包yǎng":"包养", "biǎo子":"婊子",
+    "bàn\\s*fǎ":"办法", "不liáng":"不良", "b[ěe]i(\\s|&nbsp;)*j[īi]ng":"北京","半shen": "半身", "b[ìi]j[ìi]ng":"毕竟", "报(了?)jing":"报$1警", "bèi'pò":"被迫", "包yǎng":"包养", "biǎo子":"婊子", "biǎo\\s*xiàn\\s*":"表现",
     "ch[oō]ngd[oò]ng":"冲动", "chong物":"宠物", "cao(练|作)":"操$1", "出gui":"出轨", "缠mian": "缠绵", "成shu": "成熟", "(?:赤|chi)\\s*lu[oǒ]": "赤裸", "春guang": "春光", "chun风":"春风", "chuang伴":"床伴", "沉mi":"沉迷", "沉lun":"沉沦", "刺ji":"刺激", "chao红":"潮红", "初chun":"初春", "＂ｃｈｉ　ｌｕｏ＂":"赤裸",
-    "dang校": "党校", "da子": "鞑子", "大tui":"大腿", "dǎ\\s*suàn":"打算", "diao丝": "屌丝", "d[úu](?:\\s|&nbsp;|<br/>)*l[ìi]": "独立", "d[uú]\\s{0,2}c[áa]i":"独裁", "d?[iì]f[āa]ng":"地方", "d[ìi]\\s*d[ūu]":"帝都", "di国":"帝国", "du[oò]落":"堕落",
+    "dang校": "党校", "da子": "鞑子", "大tui":"大腿", "dǎ\\s*suàn":"打算", "diao丝": "屌丝", "d[úu](?:\\s|&nbsp;|<br/>)*l[ìi]": "独立", "d[uú]\\s{0,2}c[áa]i":"独裁",  "d?[iì]f[āa]ng":"地方", "d[ìi]\\s*d[ūu]":"帝都", "di国":"帝国", "du[oò]落":"堕落", "坠luò":"坠落",
     "f[ǎa]ngf[óo]":"仿佛", "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "f[èe]nn[ùu]":"愤怒",
-    "gao潮": "高潮", "高氵朝":"高潮", "干chai": "干柴", "勾yin":"勾引", "gu[oò]ch[ée]ng":"过程", "gu[āa]n\\s*x[iì]":"关系", "g[ǎa]nji[àa]o":"感觉", "国wu院":"国务院",
-    "hù士":"护士", "há'guó":"韩国", "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "h[ǎa]oxi[àa]ng":"好像", "hu[áa]ngs[èe]":"黄色", "皇d[ìi]":"皇帝", "昏昏yu睡":"昏昏欲睡", "回dang":"回荡",
-    "jian(臣|细)":"奸$1", "jian货":"贱货", "jing察":"警察", "j[ìi]nháng":"进行", "jīng\\s*guò":"经过", "ji烈":"激烈", "j[iì](nv|女)": "妓女", "jirou": "鸡肉", "ji者":"记者", "ju花":"菊花","j[īi]动":"激动", "jili[èe]":"激烈", "肌r[òo]u":"肌肉","ji射":"激射", "ji[ēe]ch[uù]":"接触", "jiù\\s*shì":"就是", "j[ùu]li[èe]": "剧烈", "jǐng惕": "警惕", "节cao":"节操", "浸yin":"浸淫",
+    "gao潮": "高潮", "高氵朝":"高潮", "gāo\\s*xìng\\s*":"高兴", "干chai": "干柴", "勾yin":"勾引", "gu[oò]ch[ée]ng":"过程", "gu[āa]n\\s*x[iì]":"关系", "g[ǎa]nji[àa]o":"感觉", "国wu院":"国务院", "gù\\s*yì\\s*":"故意",
+    "hā\\s*hā\\s*":"哈哈", "hù士":"护士", "há'guó":"韩国", "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "h[ǎa]oxi[àa]ng":"好像", "hu[áa]ngs[èe]":"黄色", "皇d[ìi]":"皇帝", "昏昏yu睡":"昏昏欲睡", "回dang":"回荡", "huí\\s*qù\\s*":"回去",
+    "jian(臣|细)":"奸$1", "jiànmiàn":"见面", "jian货":"贱货", "jing察":"警察", "j[ìi]nháng":"进行", "jīng\\s*guò":"经过", "ji烈":"激烈", "j[iì](nv|女)": "妓女", "jirou": "鸡肉", "ji者":"记者", "jì\\s*xù\\s*":"继续", "ju花":"菊花","j[īi]动":"激动", "jili[èe]":"激烈", "肌r[òo]u":"肌肉","ji射":"激射", "ji[ēe]ch[uù]":"接触", "jiù\\s*shì":"就是", "j[ùu]li[èe]": "剧烈", "jǐng惕": "警惕", "节cao":"节操", "浸yin":"浸淫", "jù\\s*jué\\s*":"拒绝",
     "k[ěe]n[ée]ng": "可能", "开bao": "开苞",  "k[àa]o近": "靠近", "口wen":"口吻",
     "ling辱": "凌辱", "luan蛋": "卵蛋", "脸sè": "脸色", "lu出":"露出", "流máng":"流氓", "lun理":"伦理",
     "m[ǎa]ny[ìi]":"满意", "m[ǎa]sh[àa]ng":"马上", "m[ée]iy[oǒ]u":"没有", "mei国": "美国", "m[íi]ngb[áa]i":"明白", "迷huan": "迷幻", "mi茫":"迷茫", "m[íi]n\\s{0,2}zh[ǔu]": "民主", "迷jian": "迷奸", "mimi糊糊":"迷迷糊糊", "末(?:\\s|<br/?>)*ì":"末日", "面se":"面色", "mengmeng":"蒙蒙", 
@@ -1073,10 +1097,10 @@ Rule.replace = {
     "r[úu]gu[oǒ]":"如果", "r[oó]ngy[ìi]":"容易", "ru(房|白色)": "乳$1", "rén员":"人员", "rén形":"人形", "人chao":"人潮", 
     "she(门|术|手|程|击)":"射$1", "sh[iì]ji[eè]":"世界", "sh[ií]ji[aā]n":"时间", "sh[ií]h[oò]u": "时候", "sh[ií]me":"什么", "si人":"私人", "shi女":"侍女", "shi身": "失身", "sh[ūu]j[ìi]":"书记", "shu女": "熟女", "shu[　\\s]?xiong":"酥胸", "(?:上|shang)chuang": "上床", "呻y[íi]n": "呻吟", "sh[ēe]ngzh[íi]": "生殖", "深gu": "深谷", "双xiu": "双修", "生r[ìi]": "生日", "si盐":"私盐", "shi卫":"侍卫", "si下":"私下", "sao扰":"骚扰", "ｓｈｕａｎｇ　ｆｅｎｇ":"双峰", 
     "t[uū]r[áa]n":"突然", "tiaojiao": "调教", "偷qing":"偷情", "推dao": "推倒", "脱guang": "脱光", "t[èe]bi[ée]":"特别", "t[ōo]nggu[òo]":"通过", "同ju":"同居", "tian来tian去":"舔来舔去",
-    "w[ēe]ixi[ée]":"威胁", "wèizh[ìi]":"位置", "wei员":"委员",
-    "xiu长": "修长", "亵du": "亵渎", "xing福": "幸福", "小bo":"小波", "小niū":"小妞", "xiong([^a-z])":"胸$1", "小tui":"小腿", "xiàn\\'zhì":"限制", "xiōng\\s*dì":"兄弟",
-    "yin(冷|暗|谋|险|沉|沟|癸派|后)":"阴$1", "y[iī]y[àa]ng":"一样", "y[īi]di[ǎa]n":"一点", "y[ǐi]j[īi]ng":"已经", "疑huo":"疑惑", "yí\\s*huò":"疑惑", "影mi":"影迷",  "阳w[ěe]i": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "(?:you|诱)(?:惑|huo)": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人", "御yòng":"御用", "旖ni":"旖旎", "yu念":"欲念", "you敌深入":"诱敌深入", "影she":"影射", "牙qian":"牙签", "一yè情":"一夜情",
-    "z[iì]j[iǐ]": "自己","z[ìi](?:\\s|<br/?>|&nbsp;)*y[oó]u": "自由","zh[iī]d?[àa]u?o":"知道","zhì'fú":"制服", "zha药": "炸药", "zhan有": "占有", "zhè\\s*gè":"这个", "政f[ǔu]": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zong理":"总理", "zh[ōo]ngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]\\s*y[oò]u":"左右", "zh[oō]uw[ée]i":"周围", "中nan海":"中南海", "中j委":"中纪委", "中zu部":"中组部", "政zhi局":"政治局", "(昨|一|时|余)(?:<br/?>|&nbsp;|\\s)*ì":"$1日", "照she":"照射", "坠luò":"坠落",
+    "w[ēe]ixi[ée]":"威胁", "wèizh[ìi]":"位置", "wei员":"委员", "wèi\\s*dào\\s*":"味道",
+    "xiu长": "修长", "亵du": "亵渎", "xing福": "幸福", "小bo":"小波", "小niū":"小妞", "xiong([^a-z])":"胸$1", "小tui":"小腿", "xiàohuà":"笑话", "xiàn\\'zhì":"限制", "xiōng\\s*dì":"兄弟",
+    "yì\\s*wài\\s*":"意外", "yin(冷|暗|谋|险|沉|沟|癸派|后)":"阴$1", "y[iī]y[àa]ng":"一样", "y[īi]di[ǎa]n":"一点", "y[ǐi]j[īi]ng":"已经", "疑huo":"疑惑", "yí\\s*huò":"疑惑", "影mi":"影迷",  "阳w[ěe]i": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "(?:you|诱)(?:惑|huo)": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人", "御yòng":"御用", "旖ni":"旖旎", "yu念":"欲念", "you敌深入":"诱敌深入", "影she":"影射", "牙qian":"牙签", "一yè情":"一夜情",
+    "z[iì]j[iǐ]": "自己","z[ìi](?:\\s|<br/?>|&nbsp;)*y[oó]u": "自由","zh[iī]d?[àa]u?o":"知道","zhì'fú":"制服", "zha药": "炸药", "zhan有": "占有", "zhè\\s*gè":"这个", "政f[ǔu]": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zong理":"总理", "zh[ōo]ngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]\\s*y[oò]u":"左右", "zhǔ\\s*dòng":"主动", "zh[oō]uw[ée]i":"周围", "中nan海":"中南海", "中j委":"中纪委", "中zu部":"中组部", "政zhi局":"政治局", "(昨|一|时|余)(?:<br/?>|&nbsp;|\\s)*ì":"$1日", "照she":"照射", "zhǔn\\s*bèi\\s*":"准备", 
 };
 
 // 单字替换，可能会误替换，所以需要特殊处理

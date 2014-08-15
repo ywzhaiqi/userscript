@@ -1,3 +1,4 @@
+
 var App = {
     isEnabled: false,
     parsedPages: {},
@@ -295,7 +296,6 @@ var App = {
             GM_setValue("auto_enable", false);
             L_setValue("mynoverlreader_disable_once", "true");
 
-            // unsafeWindow.location = App.activeUrl;
             window.location = App.activeUrl;
         } else {
             GM_setValue("auto_enable", true);
@@ -368,8 +368,7 @@ var App = {
     registerControls: function() {
         // 内容滚动
         var throttled = _.throttle(App.scroll, 100);
-        // $(unsafeWindow).scroll(throttled); // 奶牛和 TM 冲突，需要 unsafeWindow
-        $(window).scroll(throttled); // 奶牛和 TM 冲突，需要 unsafeWindow
+        $(window).scroll(throttled);
  
         App.registerKeys();
 
