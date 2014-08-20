@@ -2,10 +2,9 @@
 // @name           searchEngineJump 自用修改版
 // @author         NLF
 // @description    方便的在各个引擎之间跳转
-// @version        4.1.0.1
+// @version        2014.08.20
 // version        4.0.1.0
 // @created        2011-7-2
-// @lastUpdated    2014-7-29
 // @grant          none
 // @run-at         document-start
 // @namespace      http://userscripts.org/users/NLF
@@ -155,7 +154,7 @@
 					enabled: true,
 					engineList: "web",
 					style: '\
-						padding-left:5px;\
+						padding-left:138px;\
 						border-top:1px solid #D9E1F7;\
 						border-bottom:1px solid #D9E1F7;\
 						margin-top:5px;\
@@ -165,8 +164,8 @@
 							var input = document.querySelector('input#kw') || document.querySelector('input[name="wd"]');
 							if (input) return input.value;
 						},
-						target: 'id("head") | html/body/table[2]',
-						where: 'afterEnd',
+						target: 'id("container") | html/body/table[2]',
+						where: 'beforeBegin',
 					},
 				},
 				{name: "必应网页搜索",
@@ -712,7 +711,7 @@
 
 			// 图片搜索列表
 			engineList.image = [
-				{	
+				{
 					name: 'google图片',
 					url: 'http://www.google.com.hk/search?q=%s&tbm=isch',
 					favicon: 'http://www.google.com.hk/favicon.ico',
