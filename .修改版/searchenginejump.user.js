@@ -2,7 +2,7 @@
 // @name           searchEngineJump 自用修改版
 // @author         NLF
 // @description    方便的在各个引擎之间跳转
-// @version        2014.08.20
+// @version        2014.08.21
 // version        4.0.1.0
 // @created        2011-7-2
 // @grant          none
@@ -820,7 +820,7 @@
 				{
 					name: 'simpledCD',
 					url: 'http://simplecd.me/search/entry/?query=%s',
-					// favicon: '',
+					favicon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAADXklEQVQ4jW2TW0ybBRiGv8CcmaDObRKFta4ZPdAjbf+e/vYvLS39e6L0XBqa6gDBrYVWXItmQHbI3MiExci2bBMVwxaN08Z0BhdmjDEx2cWuvPCCeGFMTAxxFblxUPN6u5E9189z975EOzD5Tj7nHloadA8uLrmyl1ftydlvjMHJOaXtNQcRNez0H8McKr/Bjyz/FSpUEczfgm/0U7hfvQQufhqMdxxyS/reQSmnfmJsi5+8ZE+dhTPzHqKlVfS9WUUw9xn4oWtw9J+DyV+EihuAWBvYbG3Xex6LudS5vDMzj+7MHJwD5xHMfY7o8TsIjd2Cd/g6HP3vwugbg5pLQ6r341AHt/HsgTYJERFZEvP7eouVDe/ri+g5sgBX9iJc2XnESqvoK1TgHb4Oe/IUGM8IlGwcUh0PkYLDSyJ1lYgayJ+7MR6b/Bap6R8Qeetr8MNX4c5exPBMBR9VfsbphRXYwmV0OjLoMPVC3NkNkdyKNrF+e/fuZjl5Rj6shIpfIFq+jeSJu0hNfYfi7Ar+fbiFWq22Xa/X8eXt76FkI5DqenBYZYdIboFQwmDvi8Jx6ho4f98ztADf6DUEc58gVLiJOz/9irW1tY2mpqZMtVqd29ragt6RgIzxQqJ1o13jhEjBYX9r+wdkCOTvWSMl2KJl2KIlsOEJ3PzqLtbX1zeWl5fNtVrt/QcP/oYjMQODNw+tcxAqWxodpghahOorpLKlbmi7M+h0pqGxJ6DmYuiJjeL3P/5EvV7HP5ubOHVhEUZfAdbIDMy9k2D4MWgcQ3ihVfI2CeWmjJThITcFoLD0Qsn2QWWLweIfwbGpj5EuLoENvQMNNwAlm4S+5ygMvgkouSMPichORPSMSGH9TaJzQ2bwQm4KQGmNgeGPwp44A2d6Dl2pWWjsWSjMMciYAGSGMFrF1h+JqJmIiFoEHeFDCtt/Yq0LMsYHpTUOgzcPa3gaXOwM7PGzMPAFKMwxSPUBCCVsjWiX99ExNhxok0yIlNy2RMdDZU2B8eRgDpbB9k2BDU/DEjoBhSWJV+Rdtaeebj5GRLt23qFh735BWCi1/KJg+6F1jYLhCzD6j8PoL0HnHt8WSLn7RI3RJ8WPsq/5+bbky4dNVwVy58pBaddKi0BzpbFxT5KIWnbK/wOtw491zisfFwAAAABJRU5ErkJggg==',
 				},
 				{
 					name: 'ed2000',
@@ -847,12 +847,11 @@
 				    url: 'http://www.torrentkitty.org/search/%s',
 				    favicon: 'http://www.torrentkitty.org/favicon.ico'
 				},
-				// 无法访问？
-				// {
-				//     name: 'BTDigg',
-				//     url: 'http://btdigg.org/search?q=%s',
-				//     favicon: ''
-				// },
+				{
+					name: 'BTDigg',
+					url: 'https://btdigg.org/search?q=%s',
+					favicon: 'https://btdigg.org/favicon.ico'
+				},
 			];
 
 			// 购物列表
