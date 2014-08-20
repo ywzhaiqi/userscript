@@ -4,7 +4,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.3.4
+// @version      6.3.5
 // @homepageURL  https://greasyfork.org/scripts/293-super-preloaderplus-one
 // @updateURL    https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js
 // @downloadURL  https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js
@@ -256,9 +256,10 @@ var SITEINFO=[
         nextLink:'//p[@id="page"]/a[contains(text(),"下一页")][@href]',
         preLink:'//p[@id="page"]/a[contains(text(),"上一页")][@href]',
         autopager: {
-            pageElement: 'css;div#content_left',
+            pageElement: 'css;div#content_left > *',
+            HT_insert:['css;div#content_left',2], 
             replaceE: 'css;#page',
-            stylish: '.autopagerize_page_info, div.sp-separator { margin-bottom: 10px !important; }',
+            stylish: '.autopagerize_page_info, div.sp-separator {margin-bottom: 10px !important;}',
             startFilter: function(win) {
                 // 设置百度搜索类型为 s?wd=
                 try {
@@ -669,6 +670,27 @@ var SITEINFO=[
             pageElement: 'id("postContent")/div[@class="newconli2"]',
             relatedObj: true
         }
+    },
+    {name: '看天下',
+        url: /^http:\/\/www\.vistastory\.com\/.*\.html/i,
+        exampleUrl: 'http://www.vistastory.com/a/201408/5395.html',
+        nextLink: '//a[@class="cpnext"]',
+        autopager: {
+            pageElement: 'css;.arc_body',
+        }
+    },
+    {name: '参政消息',
+        url: '^http://china\\.cankaoxiaoxi\\.com/.*\\.shtml',
+        nextLink: 'id("next_page")',
+        pageElement: 'id("ctrlfscont")',
+        exampleUrl: 'http://china.cankaoxiaoxi.com/roll10/2014/0817/464381.shtml',
+    },
+
+    {name: '凯迪社区',
+        url: '^http://club\\.kdnet\\.net/list\\.asp',
+        nextLink: 'auto;',
+        pageElement: '//div[@class="lf w840px"]/div[@class="list-table"]/table',
+        exampleUrl: 'http://club.kdnet.net/list.asp?t=0&boardid=1&selTimeLimit=0&action=&topicmode=0&s=&page=1',
     },
 
     //--- 国外新闻
@@ -3490,6 +3512,7 @@ var SITEINFO_TP=[
             pageElement:'//div[@id="postlist"] | //form[@method="post"][@name]',
             replaceE: '//div[@class="pages" or @class="pg"][child::a[@class="next" or @class="nxt"][@href]]',
             lazyImgSrc: 'zoomfile',
+            stylish: '.mbbs_code{font-family:Monaco,Consolas,"Lucida Console","Courier New",serif;font-size:12px;line-height:1.8em;list-style-type:decimal-leading-zero;padding-left:10px;background:none repeat scroll 0 0 #f7f7f7;color:#666;border:1px solid #ccc;overflow:hidden;padding:10px 0 5px 10px}',
             filter: function(pages){
                 // 回复后插入到最后一页
                 var replays = document.querySelectorAll("#postlistreply");
@@ -3498,12 +3521,18 @@ var SITEINFO_TP=[
                     first.parentNode.removeChild(first);
                 }
 
-                // 修正代码着色
                 // 在卡饭论坛如果不存在，会提示，所以默认禁用
                 // var SyntaxHighlighter = unsafeWindow.SyntaxHighlighter;
                 // if (SyntaxHighlighter && SyntaxHighlighter.highlight) {
                 //     SyntaxHighlighter.highlight();
                 // }
+            },
+            documentFilter: function(doc) {
+                // 卡饭论坛的下一页代码区域可能无法着色，所以手动修改并添加样式
+                var pres = doc.querySelectorAll('pre[class^="brush:"]');
+                [].forEach.call(pres, function(pre){
+                    pre.classList.add('mbbs_code');
+                });
             }
         }
     },
