@@ -20,7 +20,7 @@ GM 脚本
 - [verycdShowLink](verycdShowLink)：verycd页面无需登入也能显示 ed2k 链接。
 - [威锋电子书批量下载](威锋电子书批量下载)：批量导出 [iPad 电子书资源分享区 - 威锋论坛][] 附件的下载地址。
 - [.修改版](.修改版)
-	- [Blacklist_Blocker_Rule.user.js](.修改版/Blacklist_Blocker_Rule.user.js)
+	- [Blacklist_Blocker_Rule.user.js](.修改版/Blacklist_Blocker_Rule.user.js)，原作者写的只支持 Firefox。
 	- [Google Images direct link.user.js](.修改版/Google Images direct link.user.js)
 	- [Manga_OnlineViewer_CE.user.js](.修改版/Manga_OnlineViewer_CE.user.js)
 	- [PanLinkCheck.user.js](.修改版/PanLinkCheck.user.js)
