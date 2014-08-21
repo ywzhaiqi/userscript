@@ -3,7 +3,7 @@
 // @description Shows all pages at once in online view. MangaFox, MangaReader/MangaPanda, MangaStream, MangaInn, AnyManga, AnimeA, MangaHere, MangaShare, Batoto, MangaDevil, MangaCow, MangaChapter, 7manga, MangaPirate.net and MangaBee/OneManga.me manga sites. Fakku, HBrowse, Hentai2Read and Doujin-moe Hentai sites.
 // version   9.02
 // date 2014-08-04
-// @version    2014.8.5.1
+// @version    2014.8.21.1
 // @author    Tago
 // @modified  ywzhaiqi
 // @namespace https://greasyfork.org/users/1849-tago
@@ -739,7 +739,7 @@ mConsole("Starting Manga OnlineViewer");
                 document.body.appendChild(script);
                 document.body.removeChild(script);
             },
-            pages: function () {
+            page: function (i) {
                 var pVars = unsafeWindow.pVars,
                     cInfo = unsafeWindow.cInfo,
                     arr = [],
@@ -749,12 +749,9 @@ mConsole("Starting Manga OnlineViewer");
                     name,
                     image_source;
 
-                for (var i = 1; i <= this.quant; i++) {
-                    mConsole("Page " + i);
-                    name = encodeURI(cInfo.files[i - 1]);
-                    image_source = "http://" + serverUrl + midUrl + name;
-                    addImg(i, image_source);
-                }
+                name = encodeURI(cInfo.files[i - 1]);
+                image_source = "http://" + serverUrl + midUrl + name;
+                addImg(i, image_source);
 
                 function getServerUrl(n) {
                     if (n = n || !1, n === !1) arr.push(curServNum);
