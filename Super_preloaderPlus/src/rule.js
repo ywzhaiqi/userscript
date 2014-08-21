@@ -291,7 +291,7 @@ var SITEINFO=[
         }
     },
 
-    // ====== 目前 Super_preloaderPlus_one 不支持用于 uAutoPagerize2 的规则 ==================
+    // ====== 目前 Super_preloaderPlus_one 还有问题的 ========
     {name: '水木社区',
         url: '^http://www\\.newsmth\\.net/nForum',
         nextLink: '//a[@title="下一页"]',
@@ -299,7 +299,7 @@ var SITEINFO=[
         exampleUrl: 'http://www.newsmth.net/nForum/#!board/TouHou'
     },
 
-    // =============== baidu 其它 ======================
+    // =============== baidu 其它 ===========
     {name: '百度贴吧列表',
         url: /^http:\/\/tieba\.baidu\.(cn|com)\/f/i,
         nextLink: '//div[@class="pager clearfix"]/descendant::a[@class="next"]',
@@ -674,7 +674,7 @@ var SITEINFO=[
         }
     },
     {name: "搜库-专找视频",
-        url: "^http://www\\.soku\\.com/search",
+        url: "^http://www\\.soku\\.com/",
         nextLink: '//li[@class="next"]/a[@title="下一页"]',
         autopager: {
             pageElement: '//div[@class="sk_result"]',
@@ -814,6 +814,14 @@ var SITEINFO=[
             lazyImgSrc: 'data-lazyload',
         }
     },
+    {name: '京东读书',
+        url: /^http:\/\/read\.jd\.com\/.*\/.*\.html/i,
+        exampleUrl: 'http://read.jd.com/16171/778043.html',
+        nextLink: 'auto;',
+        autopager: {
+            pageElement: '//div[@class="mc clearfix"]',
+        }
+    },
     {name: '亚马逊',
         url: /^http:\/\/www\.amazon\.cn\/gp\/search\//i,
         nextLink: 'auto;',
@@ -850,6 +858,15 @@ var SITEINFO=[
         nextLink: 'auto;',
         autopager: {
             pageElement: 'id("agreement")',
+        }
+    },
+    {name: ' 秒便宜论坛',
+        url: /^http:\/\/bbs\.miaopy\.com\//i,
+        exampleUrl: 'http://bbs.miaopy.com/activity/list-3.aspx',
+        nextLink: 'auto;',
+        autopager: {
+            pageElement: 'css;.forumtopics-list',
+            stylish: 'div.sp-separator { width: 800px !important;}'
         }
     },
 
@@ -1162,7 +1179,12 @@ var SITEINFO=[
         autopager: {
             pageElement: 'id("J_posts_list")',
             replaceE: 'css;.pages',
-            useiframe: true
+            documentFilter: function(doc) {
+                // 头像载入出错的修正
+                [].forEach.call(doc.querySelectorAll('img.J_avatar'), function(img){
+                    img.setAttribute('onerror', 'this.src="http://www.firefox.net.cn/res/images/face/face_small.jpg";');
+                });
+            }
         }
     },
     {name: 'Firefox中文社区 - 帖子',
@@ -1708,7 +1730,7 @@ var SITEINFO=[
         exampleUrl: 'http://soso.nipic.com/search.aspx?t=tk&q=%B7%E2%C3%E6',
         nextLink: 'auto;',
         autopager: {
-            pageElement: 'id("bd") | //center/table[@width="900" and @cellspacing="0" and @cellpadding="0" and @border="0"]',
+            pageElement: 'id("bd") | //ul[@class="search-result-box clearfix"] | //center/table[@width="900" and @cellspacing="0" and @cellpadding="0" and @border="0"]',
             lazyImgSrc: "data-original",
             stylish: '.lazy { display: block; }'
         }
