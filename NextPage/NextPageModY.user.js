@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name               Next Page ModY
 // @author             ywzhaiqi && Sunwan（原作者）
-// @version            1.3.3
+// @version            1.3.4
 // @namespace          https://github.com/ywzhaiqi
 // @description        使用左右方向键来翻页
 // @homepageURL        https://github.com/ywzhaiqi/userscript/tree/master/NextPage
@@ -687,7 +687,7 @@
             return;
 
         // 视频播放器
-        if (localName == 'object')
+        if (localName == 'object' || localName == 'embed')
             return;
 
         // 百度贴吧回复输入的问题
