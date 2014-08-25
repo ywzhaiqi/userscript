@@ -1,17 +1,18 @@
 // ==UserScript==
 // @id             verycd@ywzhaiqi@gmail.com
 // @name           verycd补全下载链接
-// @version        1.5.2
+// @version        1.5.3
 // @author         ywzhaiqi@gmail.com
+// @namespace      https://github.com/ywzhaiqi
 // @description    在 verycd 页面直接显示下载链接，可通过多个站点获取，防止失效。
 // downloadURL     http://userscripts.org/scripts/source/158764.user.js
 // updateURL       http://userscripts.org/scripts/source/158764.meta.js
 
 // @homepageURL    https://greasyfork.org/scripts/301/
-// @updateURL      https://greasyfork.org/scripts/301/code.meta.js
-// @downloadURL    https://greasyfork.org/scripts/301/code.user.js
 // @include        http://www.verycd.com/topics/*
 // @require        http://code.jquery.com/jquery-1.9.1.min.js
+// @grant          GM_xmlhttpRequest
+// @grant          GM_addStyle
 // ==/UserScript==
 
 var debug = false;
@@ -53,9 +54,9 @@ function getDoc(url, callback, data){
         onload: function(responseDetail){
             var doc = '';
             if(responseDetail.status == 200){
-                // For Firefox
+                // For Firefox, Chrome 30+ Supported
                 doc = new DOMParser().parseFromString(responseDetail.responseText, 'text/html');
-                // For Chrome
+                
                 if(doc == undefined){
                     doc = document.implementation.createHTMLDocument("");
                     doc.querySelector('html').innerHTML = responseText;
@@ -194,7 +195,7 @@ var VERYCD = {
                 xbug("Current Site Pos: " + VERYCD.curSitePos);
                 var site = VERYCD.sites[VERYCD.curSitePos],
                     pageProcessor = site.pageProcessor ? site.pageProcessor : VERYCD.commondPageProcessor;
-                pageProcessor(doc, site);
+                pageProcessor(doc, site, url);
             }else{  // 如果不成功则取下一个站点
                 VERYCD.get(++VERYCD.curSitePos);
             }
@@ -228,14 +229,15 @@ var VERYCD = {
 
 // 其他站点的配置
 VERYCD.sites = [
-    {   name: '逛大街（默认）',
-        id: 'site_gdajie',
-        BASE_URL: '',
-        url: location.href.replace('www.verycd.com', 'www.verycd.gdajie.com'),
-        search_selector: "#emuleFile a[href^='http://www.verycd.gdajie.com']",
+    {   
+        name: 'ed2kers',
+        id: 'site_ed2kers',
+        BASE_URL: 'http://www.ed2kers.com',
+        url: "http://www.ed2kers.com/index.php/search/index?c=0&keyword=" + VERYCD.title.replace(/'/g, " "),
+        search_selector: ".techdes a:contains('" + VERYCD.title.replace(/&/g, "&amp;") + "')"
     },
     {
-        name: "SimpleCD",
+        name: "SimpleCD（默认）",
         id: 'site_simplecd',
         BASE_URL: "http://simplecd.me",
         url: "http://simplecd.me/search/entry/?query=" + VERYCD.title.replace(/\/|-|&/g, " "),
@@ -252,20 +254,43 @@ VERYCD.sites = [
             xbug("Get SimpleCD: " + url);
             getDoc(url, function(doc){
                 $('td:contains("ed2k://")', doc).each(function(i, el){
-                    var url = $(this).text();
+                    var url = $.trim($(this).text());
                     data[i] = ed2kLink(url);
                 });
+
                 VERYCD.display_content(data);
             });
         }
     },
     {   
-        name: 'ed2kers',
-        id: 'site_ed2kers',
-        BASE_URL: 'http://www.ed2kers.com',
-        url: "http://www.ed2kers.com/index.php/search/index?c=0&keyword=" + VERYCD.title.replace(/'/g, " "),
-        search_selector: ".techdes a:contains('" + VERYCD.title.replace(/&/g, "&amp;") + "')"
-    }
+        name: '逛大街',
+        id: 'site_gdajie',
+        BASE_URL: '',
+        url: location.href.replace('www.verycd.com', 'www.verycd.gdajie.com'),
+        // search_selector: "#emuleFile a[href^='http://www.verycd.gdajie.com']",
+        pageProcessor: function(doc, site, url) {  // 解决只有一个的问题
+            var data = [];
+            var count = 0;
+            var getDownloadUrl = function(url, i, total) {
+                getDoc(url, function(doc){
+                    var url = $(doc).find('a[href^="ed2k://"]').attr('href');
+                    data[i] = ed2kLink(url);
+                    count += 1;
+
+                    xbug('正在获取第 ', count, ' 个，共 ', total, ' 个');
+                    // if (count == total) {
+                        VERYCD.display_content(data);
+                    // }
+                });
+            };
+
+            var $links = $(doc).find("#emuleFile a[href^='http://www.verycd.gdajie.com']");
+            $links.each(function(i, link){
+                var url = $(link).attr('href');
+                getDownloadUrl(url, i, $links.size());
+            });
+        }
+    },
 
     // {   name: 'VeryCD Fetch', host: 'verycdfetch.duapp.com',  //2013-2-10 测试失效
     //     url: location.href.replace('www.verycd.com', 'verycdfetch.duapp.com'),
