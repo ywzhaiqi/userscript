@@ -3,7 +3,7 @@
 // @description Shows all pages at once in online view. MangaFox, MangaReader/MangaPanda, MangaStream, MangaInn, AnyManga, AnimeA, MangaHere, MangaShare, Batoto, MangaDevil, MangaCow, MangaChapter, 7manga, MangaPirate.net and MangaBee/OneManga.me manga sites. Fakku, HBrowse, Hentai2Read and Doujin-moe Hentai sites.
 // version   9.02
 // date 2014-08-04
-// @version    2014.8.21.1
+// @version    2014.8.27.1
 // @author    Tago
 // @modified  ywzhaiqi
 // @namespace https://greasyfork.org/users/1849-tago
@@ -714,6 +714,7 @@ mConsole("Starting Manga OnlineViewer");
             quant: $('#pageSelect option:last').attr('value'),
             prev: "#",
             next: "#",
+
             before: function() {  // 加上下一章和上一章的链接
                 function run() {
                     function getChapterUrl(callback) {
@@ -741,28 +742,37 @@ mConsole("Starting Manga OnlineViewer");
             },
             page: function (i) {
                 var pVars = unsafeWindow.pVars,
-                    cInfo = unsafeWindow.cInfo,
-                    arr = [],
-                    curServNum = pVars.curServ,
-                    serverUrl = getServerUrl(),
-                    midUrl = cInfo.cid > 7910 ? "/Files/Images/" + cInfo.bid + "/" + cInfo.cid + "/" : "",
-                    name,
-                    image_source;
+                    cInfo = unsafeWindow.cInfo
+                    arr = [];
 
-                name = encodeURI(cInfo.files[i - 1]);
-                image_source = "http://" + serverUrl + midUrl + name;
-                addImg(i, image_source);
+                // 获取下 html 页面，防止盗链？结果无效
+                // var nextPage = cInfo.burl + '?p=' + (i + 1)
+                // getHtml(nextPage, function(html){
+                //     console.log('获取', nextPage)
+                // });
 
-                function getServerUrl(n) {
-                    if (n = n || !1, n === !1) arr.push(curServNum);
-                     else {
-                        var t = Math.floor(Math.random() * pVars.priServ);
-                        if ((',' + arr.toString() + ',') .indexOf(',' + t + ',') == - 1) arr.push(t),
-                        curServNum = t;
-                         else if (arr.length >= pVars.priServ) curServNum = pVars.priServ;
-                         else return getServerUrl(!0)
+                getAndAdd(i);
+
+                function getAndAdd(i) {
+                    var curServNum = pVars.curServ,
+                        serverUrl = getServerUrl(),
+                        midUrl = cInfo.cid > 7910 ? "/Files/Images/" + cInfo.bid + "/" + cInfo.cid + "/" : "";
+
+                    var name = encodeURI(cInfo.files[i - 1]);
+                    var image_source = "http://" + serverUrl + midUrl + name;
+                    addImg(i, image_source);
+
+                    function getServerUrl(n) {
+                        if (n = n || !1, n === !1) arr.push(curServNum);
+                         else {
+                            var t = Math.floor(Math.random() * pVars.priServ);
+                            if ((',' + arr.toString() + ',') .indexOf(',' + t + ',') == - 1) arr.push(t),
+                            curServNum = t;
+                             else if (arr.length >= pVars.priServ) curServNum = pVars.priServ;
+                             else return getServerUrl(!0)
+                        }
+                        return pVars.servs[curServNum].host
                     }
-                    return pVars.servs[curServNum].host
                 }
             },
         };
@@ -1403,7 +1413,7 @@ mConsole("Starting Manga OnlineViewer");
             url: function(i) {
                 return "../" + i + "/";
             },
-            img: '#page-container p a img'
+            img: '#image-container img'
         };
     }
     // == FoOlSlide ========================================================================================================================
