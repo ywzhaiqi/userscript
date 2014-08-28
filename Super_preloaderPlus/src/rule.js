@@ -869,6 +869,22 @@ var SITEINFO=[
             stylish: 'div.sp-separator { width: 800px !important;}'
         }
     },
+    {name: '露天拍賣',
+        url: /^http:\/\/[a-z]+\.ruten\.com\.tw\//i,
+        exampleUrl: 'http://class.ruten.com.tw/category/sub00.php?c=0019000800010001',
+        nextLink: 'auto;',
+        autopager: {
+            pageElement: '//div[@class="searchResult"]',
+        }
+    },
+    {name: ' Yahoo!奇摩拍賣',
+        url: /^https:\/\/tw\.bid\.yahoo\.com\//i,
+        exampleUrl: 'https://tw.bid.yahoo.com/tw/2092076277-category-leaf.html?.r=1408853888',
+        nextLink: 'auto;',
+        autopager: {
+            pageElement: 'id("srp_sl_result")',
+        }
+    },
 
     // ========================= 知识、阅读 ============================
     {name: '豆瓣-书影音评论',
@@ -1401,8 +1417,8 @@ var SITEINFO=[
             pageElement:'//div[@class="z threadCommon"] | //div[@class="mb10 bodd"]',
         }
     },
-    {name: '魔兽世界',
-        url: /^http:\/\/wow\.178\.com\/.*\.html/i,
+    {name: '178 魔兽世界、178动漫频道',
+        url: /^http:\/\/[a-z]+\.178\.com\/.*\.html/i,
         exampleUrl: 'http://wow.178.com/201308/170546277543.html',
         nextLink: 'id("cms_page_next")',
         autopager: {
@@ -3081,6 +3097,15 @@ var SITEINFO=[
         exampleUrl: 'http://exhentai.org/s/0088446283/653117-4',
         useiframe: true
     },
+    {name: 'exhentai gallery',
+        url: /^http:\/\/exhentai\.org\/g\//i,
+        exampleUrl: 'http://exhentai.org/g/514954/d4fcb4973e/?p=1',
+        nextLink: '//table[@class="ptt"]//a[text()=">"]',
+        autopager: {
+            pageElement: '//div[@id="gdt"]',
+            relatedObj: true
+        }
+    },
     {name: '1024社区',
         url: '^http://(www\\.)?t66y\\.com/|^http://cl\\.man\\.lv/',
         nextLink: '//div[@class="pages"]/b/following-sibling::a[1]',
@@ -3128,6 +3153,7 @@ var SITEINFO=[
         nextLink: '//a[contains(text(),"→")]',
         pageElement: '//body/div/div/center',
     },
+ 
 
     // ==================== 国外站点 ===================
     {name: 'AnandTech',
