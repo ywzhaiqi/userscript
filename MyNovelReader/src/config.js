@@ -43,10 +43,15 @@ var Config = {
     },
 
     get debug() {  // 调试
-        return getBooleanConfig("debug", false);
+        if (_.isUndefined(this._debug)) {
+            this._debug = getBooleanConfig("debug", false);
+        }
+        return this._debug;
     },
     set debug(bool) {
+        this._debug = bool;
         GM_setValue("debug", bool);
+        toggleConsole(bool);
     },
 
     get addToHistory() {
@@ -68,14 +73,14 @@ var Config = {
     },
 
     get remain_height() {  // 距离底部多少高度（px）开始加载下一页
-        if(!this._remain_height){
+        if(_.isUndefined(this._remain_height)){
             this._remain_height = parseInt(GM_getValue("remain_height"), 10) || 400;
         }
         return this._remain_height;
     },
     set remain_height(val) {
-        GM_setValue("remain_height", val);
         this._remain_height = val;
+        GM_setValue("remain_height", val);
     },
 
     get lang() {
@@ -85,7 +90,8 @@ var Config = {
         return this._lang;
     },
     set lang(val) {
-        GM_setValue("lang", this._lang = val);
+        this._lang = val;
+        GM_setValue("lang", val);
     },
 
     get font_family() {

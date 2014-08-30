@@ -3,6 +3,8 @@ function Parser(){
     this.init.apply(this, arguments);
 }
 Parser.prototype = {
+    constructor: Parser,
+
     init: function (info, doc, curPageUrl) {
         this.info = info || {};
         this.doc = doc;
@@ -21,9 +23,9 @@ Parser.prototype = {
         if(contentPatch){
             try {
                 contentPatch(this.$doc);
-                debug("Apply Content Patch Success.");
+                C.log("Apply Content Patch Success.");
             } catch (e) {
-                debug("Error: Content Patch Error!", e);
+                C.log("Error: Content Patch Error!", e);
             }
         }
     },
@@ -42,7 +44,7 @@ Parser.prototype = {
             for(var i = 0, l = selectors.length; i < l; i++){
                 $content = this.$doc.find(selectors[i]);
                 if($content.length > 0){
-                    debug("  自动查找内容选择器: " + selectors[i]);
+                    C.log("自动查找内容选择器: " + selectors[i]);
                     break;
                 }
             }
@@ -53,10 +55,17 @@ Parser.prototype = {
         return $content.size() > 0;
     },
     getAll: function(callback){
+
+        C.group('开始获取标题');
         this.getTitles();
+        C.groupEnd();
+
+        C.group('开始获取链接');
         this.getPrevUrl();
         this.getIndexUrl();
         this.getNextUrl();
+        C.groupEnd();
+
         this.getContent(callback);
 
         return this;
@@ -77,7 +86,7 @@ Parser.prototype = {
                 chapterTitle = matches[chapterPos].trim();
             }
 
-            debug("  TitleReg:", info.titleReg, matches);
+            C.log("TitleReg:", info.titleReg, matches);
         } else {
            chapterTitle = this.getTitleFromInfo(info.titleSelector);
 
@@ -118,9 +127,9 @@ Parser.prototype = {
         this.chapterTitle = chapterTitle;
         this.docTitle = docTitle;
 
-        debug("  Book Title: " + this.bookTitle);
-        debug("  Chapter Title: " + this.chapterTitle);
-        debug("  Document Title: " + this.docTitle);
+        C.log("Book Title: " + this.bookTitle);
+        C.log("Chapter Title: " + this.chapterTitle);
+        C.log("Document Title: " + this.docTitle);
     },
     getTitleFromInfo: function(selectorOrArray) {
         var title = '';
@@ -148,13 +157,12 @@ Parser.prototype = {
     },
     // 智能获取章节标题
     autoGetChapterTitle: function (document) {
-        debug("AutoGetTitle start");
-
         var
             _main_selector = "h1, h2, h3",
             _second_selector = "#TextTitle, #title, .ChapterName, #lbChapterName, div.h1",
-            _positive_regexp = /第?\S+[章节卷回]|\d{2,4}/,
-            _negative_regexp = /[上前下后][一]?[页张个篇章节步]/,
+            _positive_regexp = Rule.titleRegExp,
+            // _positive_regexp = /第?\S+[章节卷回]|\d{2,4}/,
+            // _negative_regexp = /[上前下后][一]?[页张个篇章节步]/,
             _title_remove_regexp = /最新章节|书书网/,
             $doc = $(document),
             _document_title = document.title ? document.title : $doc.find("title").text(),
@@ -172,6 +180,8 @@ Parser.prototype = {
         var possibleTitles = {},
             _heading_text;
 
+        C.groupCollapsed('自动查找章节标题');
+
         $(_headings).each(function(){
             var _heading = this,
                 _heading_text = _heading.textContent.trim();
@@ -180,7 +190,7 @@ Parser.prototype = {
                 return;
             }
 
-            debug("  开始计算", _heading_text, "的得分");
+            C.group('开始计算 "' + _heading_text + '" 的得分');
 
             // h1 为 1， h2 为 2
             var
@@ -190,16 +200,17 @@ Parser.prototype = {
                 _matched_words = ""
             ;
 
-            debug("  初始得分:" + score);
+            C.log("初始得分：" + score);
 
-            if (_positive_regexp.test(_heading_text)) {
+            // 后面这种是特殊的判断
+            if (_positive_regexp.test(_heading_text) || /\d{2,4}/.test(_heading_text)) {
                 score += 50;
             }
-            if(_negative_regexp.test(_heading_text)){
-                score -= 100;
-            }
+            // if(_negative_regexp.test(_heading_text)){
+            //     score -= 100;
+            // }
 
-            debug("  符合正则计算后得分：", score);
+            C.log("符合正则计算后得分：" + score);
 
             //  count words present in title
             for (var j = 0, _j = _heading_words.length; j < _j; j++) {
@@ -209,12 +220,7 @@ Parser.prototype = {
             }
             score += _matched_words.length * 1.5;
 
-            // 跳过长度太小的
-            // if (_matched_words.length < 5) {
-                // return;
-            // }
-
-            debug("  跟页面标题比较后得分：", score);
+            C.log("跟页面标题比较后得分：" + score);
 
             var _font_size_text = "",
                 _font_size_add_score = 0,
@@ -226,13 +232,13 @@ Parser.prototype = {
 
             score +=  _font_size_add_score;
 
-            debug("  计算大小后得分", score);
-
-            debug("  ----------------------");
+            C.log("计算大小后得分：" + score);
 
             possibleTitles[_heading_text] = score;
-        });
 
+            C.groupEnd();
+        });
+        
         // 找到分数最高的值
         var topScoreTitle,
             score_tmp = 0;
@@ -259,10 +265,12 @@ Parser.prototype = {
 
         curTitle = curTitle.replace(Rule.titleReplace, "");
 
+        C.groupEnd();
+
         return curTitle;
     },
     getContent: function(callback){
-        if(callback === undefined){
+        if(_.isUndefined(callback)){
             callback = function() {};
         }
 
@@ -279,14 +287,15 @@ Parser.prototype = {
             var url = ajaxScript.attr('src');
             if(!url) return;
             var charset = ajaxScript.attr('charset') || 'utf-8';
-            debug('内容特殊处理 Ajax: ', url, ". charset=" + charset);
+            C.log('Ajax 获取内容: ', url, ". charset=" + charset);
+
             GM_xmlhttpRequest({
                 url: url,
                 method: "GET",
                 overrideMimeType: "text/html;charset=" + charset,
                 onload: function(res){
                     var text = res.responseText;
-                    if (text.indexOf('{"CID":') == 0) {  // 未完成，创世中文的
+                    if (text.indexOf('{"CID":') == 0) {  // 创世中文
                         text = JSON.parse(text).Content;
                         text = $('<div>').html(text).find('.bookreadercontent').html();
                     } else {
@@ -307,11 +316,12 @@ Parser.prototype = {
     handleContentText: function(text, info){
         if(!text) return null;
 
-        var 
-            startTime = Date.now(),
-            contentHandle = info.contentHandle === undefined ? true : info.contentHandle,
-            contentReplace = info.contentReplace
-        ;
+        // 贴吧的内容处理比较耗时间
+
+        C.group('开始内容处理');
+        C.time('内容处理');
+
+        var contentHandle = (typeof(info.contentHandle) == 'undefined') ? true : info.contentHandle;
 
         // 拼音字、屏蔽字修复
         if(contentHandle){
@@ -335,39 +345,20 @@ Parser.prototype = {
 
         // GM_setClipboard(text);
         
-        if (contentReplace) {
-            var replaceText = function(rep){
-                switch(true) {
-                    case _.isRegExp(rep):
-                        text = text.replace(rep, '');
-                        break;
-                    case _.isString(rep):
-                        var regexp = new RegExp(rep, 'ig');
-                        text = text.replace(regexp, '');
-                        break
-                    case _.isArray(rep):
-                        rep.forEach(function(r){ replaceText(r) });
-                        break;
-                    case _.isObject(rep):
-                        var key;
-                        for(key in rep){
-                            text = text.replace(new RegExp(key, "ig"), rep[key]);
-                        }
-                        break;
-                }
-            };
-
-            replaceText(contentReplace);
+        if (info.contentReplace) {
+            text = this.replaceText(text, info.contentReplace);
         }
 
-        if(info){
-            // 去除内容中包含的标题
-            if(this.bookTitle){
-                var titleRegText = "";
-                titleRegText += this.bookTitle + "\\d+";
-
-                text = text.replace(new RegExp(titleRegText, "g"), "");
-                debug("Content replace title: " + titleRegText);
+        // 去除内容中的标题
+        if(this.chapterTitle && Rule.titleRegExp.test(this.chapterTitle)){
+            try {
+                var reg = this.chapterTitle.replace(/[()\[\]{}|+.,^$?\\*]/g, "\\$&")
+                        .replace(/\s+/g, '\\s*')
+                reg = new RegExp(reg, 'ig');
+                text = text.replace(reg, "");
+                C.log('去除内容中的标题', reg);
+            } catch(e) {
+                console.error(e);
             }
         }
 
@@ -379,25 +370,47 @@ Parser.prototype = {
 
         text = this.contentCustomReplace(text);
 
-        debug('内容替换共耗时：' + (Date.now() - startTime) + ' ms');
-
         // 采用 DOM 方式进行处理
         var $div = $("<div>").html(text);
-
-        if(contentHandle){
-           // 给独立的文本添加 <p></p>
-           $div.contents().filter(function(){
-                   return this.nodeType == 3 && this.textContent.trim().length;
-               }).wrap("<p></p>")
-               .end()
-               .filter('br')
-                   .remove();
-        }
 
         // contentRemove
         $div.find(Rule.contentRemove).remove();
         if(info.contentRemove){
             $div.find(info.contentRemove).remove();
+        }
+
+        // 给独立的文本添加 <p></p>
+        var wrapTextNodes = function($div) {
+            function getTextNodesIn(node, includeWhitespaceNodes) {
+                var textNodes = [],
+                    nonWhitespaceMatcher = /\S/;
+
+                function getTextNodes(node) {
+                    if (node.nodeType == 3) {
+                        if (includeWhitespaceNodes || nonWhitespaceMatcher.test(node.nodeValue)) {
+                            textNodes.push(node);
+                        }
+                    } else if (node.nodeType == 1 && node.nodeName == 'P') {
+                        return;
+                    } else {
+                        for (var i = 0, len = node.childNodes.length; i < len; ++i) {
+                            getTextNodes(node.childNodes[i]);
+                        }
+                    }
+                }
+
+                getTextNodes(node);
+                return textNodes;
+            }
+
+            var textNodes = getTextNodesIn($div.get(0));
+            $(textNodes).wrap("<p></p>");
+        };
+
+        if(contentHandle){
+            $div.filter('br').remove();
+
+            wrapTextNodes($div);
         }
 
         $div.find('*').removeAttr('style');
@@ -426,6 +439,9 @@ Parser.prototype = {
         // 删除空白的、单个字符的 p
         text = text.replace(Rule.removeLineRegExp, "");
 
+        C.timeEnd('内容处理');
+        C.groupEnd();
+
         return text;
     },
     contentReplacements: function (text) {
@@ -433,6 +449,30 @@ Parser.prototype = {
 
         for (var key in Rule.replace) {
             text = text.replace(new RegExp(key, "ig"), Rule.replace[key]);
+        }
+        return text;
+    },
+    replaceText: function(text, replaceRule){
+        var self = this;
+        switch(true) {
+            case _.isRegExp(replaceRule):
+                text = text.replace(replaceRule, '');
+                break;
+            case _.isString(replaceRule):
+                var regexp = new RegExp(replaceRule, 'ig');
+                text = text.replace(regexp, '');
+                break
+            case _.isArray(replaceRule):
+                replaceRule.forEach(function(r){
+                    text = self.replaceText(text, r)
+                });
+                break;
+            case _.isObject(replaceRule):
+                var key;
+                for(key in replaceRule){
+                    text = text.replace(new RegExp(key, "ig"), replaceRule[key]);
+                }
+                break;
         }
         return text;
     },
@@ -458,9 +498,80 @@ Parser.prototype = {
         }
         return text;
     },
+    getPrevUrl: function(){
+        var url = '',
+            link, selector;
+
+        if (this.info.prevSelector === false) {
+            this.prevUrl = url;
+            return url;
+        }
+
+        if (this.info.prevUrl && _.isFunction(this.info.prevUrl)) {
+            url = this.info.prevUrl(this.$doc);
+            url = this.checkLinks(url);
+        }
+
+        if (!url) {
+            selector = this.info.prevSelector || Rule.prevSelector;
+            link = this.$doc.find(selector);
+            if(link.length){
+                url = this.checkLinks(link);
+            }
+        }
+
+        if (url) {
+            C.log("找到上一页链接: " + url);
+        } else {
+            C.log("无法找到上一页链接");
+        }
+
+        this.prevUrl = url || '';
+        return url;
+    },
+    getIndexUrl: function(){
+        var url = '',
+            link;
+
+        if (this.info.indexSelector === false) {
+            this.indexUrl = url;
+            return url;
+        }
+
+        if(this.info.indexSelector){
+            link = this.$doc.find(this.info.indexSelector);
+        }else{
+            var selectors = Rule.indexSelectors;
+            var _indexLink;
+            // 按照顺序选取目录链接
+            for(var i = 0, l = selectors.length; i < l; i++){
+                _indexLink = this.$doc.find(selectors[i]);
+                if(_indexLink.length > 0){
+                    link = _indexLink;
+                    break;
+                }
+            }
+        }
+
+        if(link && link.length){
+            url = this.checkLinks(link);
+            C.log("找到目录链接: " + url);
+        }else{
+            C.log("无法找到目录链接.");
+        }
+
+        this.indexUrl = url;
+        return url;
+    },
     getNextUrl: function(){
-        var url, link,
+        var url = '',
+            link,
             selector = this.info.nextSelector || Rule.nextSelector;
+
+        if (this.info.nextSelector === false) {
+            this.nextUrl = url;
+            return url;
+        }
 
         if (this.info.nextUrl && _.isFunction(this.info.nextUrl)) {
             url = this.info.nextUrl(this.$doc);
@@ -469,15 +580,18 @@ Parser.prototype = {
 
         if (!url) {
             link = this.$doc.find(selector);
-            if(link.length > 0){
+            if(link.length){
                 url = this.checkLinks(link);
-                debug("找到下一页链接: " + url);
-            }else{
-                debug("无法找到下一页链接.", link);
             }
         }
 
-        this.nextUrl = url;
+        if (url) {
+            C.log("找到下一页链接: " + url);
+        } else {
+            C.log("无法找到下一页链接");
+        }
+
+        this.nextUrl = url || '';
         this.isTheEnd = !this.checkNextUrl(url);
         if(this.isTheEnd){
             this.theEndColor = config.end_color;
@@ -498,7 +612,7 @@ Parser.prototype = {
         }
 
         switch(true){
-            case url === '':
+            case url == '':
             case Rule.nextUrlIgnore.test(url):
             case url == this.indexUrl:
             case url == this.prevUrl:
@@ -508,56 +622,6 @@ Parser.prototype = {
             default:
                 return true;
         }
-    },
-    getPrevUrl: function(){
-        var url, link, selector;
-
-        if (this.info.prevUrl && _.isFunction(this.info.prevUrl)) {
-            url = this.info.prevUrl(this.$doc);
-            url = this.checkLinks(url);
-        }
-
-        if (!url) {
-            selector = this.info.prevSelector || Rule.prevSelector;
-
-            link = this.$doc.find(selector);
-            if(link.length > 0){
-                url = this.checkLinks(link);
-                debug("找到上一页链接: " + url);
-            }else{
-                debug("无法找到上一页链接.", link);
-            }
-        }
-
-        this.prevUrl = url || '';
-        return url;
-    },
-    getIndexUrl: function(){
-        var url, link;
-        if(this.info.indexSelector){
-            link = this.$doc.find(this.info.indexSelector);
-        }else{
-            var selectors = Rule.indexSelectors;
-            var _indexLink;
-            // 按照顺序选取目录链接
-            for(var i = 0, l = selectors.length; i < l; i++){
-                _indexLink = this.$doc.find(selectors[i]);
-                if(_indexLink.length > 0){
-                    link = _indexLink;
-                    break;
-                }
-            }
-        }
-
-        if(link && link.length > 0){
-            url = this.checkLinks(link);
-            debug("找到目录链接: " + url);
-        }else{
-            debug("无法找到目录链接.");
-        }
-
-        this.indexUrl = url;
-        return url;
     },
     checkLinks: function(links){
         var self = this;

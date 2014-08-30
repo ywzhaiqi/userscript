@@ -29,9 +29,6 @@
 // @require        https://greasyfork.org/scripts/2672-meihua-cn2tw/code/Meihua_cn2tw.js?version=7375
 // @resource fontawesomeWoff http://libs.baidu.com/fontawesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3
 
-// 手动启用列表
-// @include        http://tieba.baidu.com/p/*
-
 // @include        http://read.qidian.com/*,*.aspx
 // @include        http://readbook.qidian.com/bookreader/*,*.html
 // @include        http://free.qidian.com/Free/ReadChapter.aspx?*
@@ -52,6 +49,9 @@
 // @include        http://novel.hongxiu.com/*/*/*.shtml
 // @include        http://www.readnovel.com/novel/*.html
 // http://www.tianyabook.com/*/*.htm
+
+// @include        http://tieba.baidu.com/p/*
+// @include        http://booklink.me/*
 
 // booklink.me
 // @include        http://www.shumilou.com/*/*.html

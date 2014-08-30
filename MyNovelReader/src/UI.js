@@ -118,14 +118,14 @@ var UI = {
         if (this._isQuietMode) {
             $(selector).addClass("quiet-mode");
 
-            // 隐藏滚动条
-            this.$_quietStyle = $('<style>')
-                .text('scrollbar {visibility:collapse !important; } body {overflow: hidden !important; overflow-x: hidden !important;}')
-                .appendTo('head');
+            if (!isChrome) {  // firefox 下隐藏滚动条
+                this.$_quietStyle = $('<style>')
+                    .text('scrollbar {visibility:collapse !important; } body {overflow: hidden !important; overflow-x: hidden !important;}')
+                    .appendTo('head');
+            }
         } else {
             $(selector).removeClass("quiet-mode");
         }
-
     },
     addButton: function(){
         GM_addStyle('\
@@ -306,7 +306,8 @@ var UI = {
                 UI.preferencesSaveHandler();
                 break;
             case 'debug':
-                debug = target.checked ? console.log.bind(console) : function() {};
+                Config.debug = !Config.debug;
+                toggleConsole(Config.debug);
                 break;
             case 'quietMode':
                 UI.toggleQuietMode(target.checked);
@@ -345,6 +346,9 @@ var UI = {
                     Config.hideMenuListKey = key;
                     $(target).val(key);
                 }
+                break;
+            // case 'saveAsTxt':
+            //     Download.saveAsTxt();
                 break;
             default:
                 break;
@@ -425,8 +429,9 @@ UI.skins["暗色皮肤".uiTrans()] = "body { color: #666; background: rgba(0;0;0
 UI.skins["白底黑字".uiTrans()] = "body { color: black; background: white;}\
                 .title { font-weight: bold; border-bottom: 0.1em solid; margin-bottom: 1.857em; padding-bottom: 0.857em;}";
 UI.skins["夜间模式".uiTrans()] = "body { color: #939392; background: #2d2d2d; } #preferencesBtn { background: white; } #mynovelreader-content img { background-color: #c0c0c0; }";
-UI.skins["夜间模式2".uiTrans()] = "body { color: #679; background: black; } #preferencesBtn { background: white; }";
-UI.skins["夜间模式3".uiTrans()] = "body { color: #e3e3e3; background: #2d2d2d; } #preferencesBtn { background: white; }";
+UI.skins["夜间模式1".uiTrans()] = "body { color: #679; background: black; } #preferencesBtn { background: white; }";
+UI.skins["夜间模式2".uiTrans()] = "body { color: #e3e3e3; background: #2d2d2d; } #preferencesBtn { background: white; }";
+UI.skins["夜间模式（多看）".uiTrans()] = "body { color: #3A5056; background: #101819; } #preferencesBtn { background: white; } #mynovelreader-content img { background-color: #c0c0c0; }";
 UI.skins["橙色背景".uiTrans()] = "body { color: #24272c; background: #FEF0E1; }";
 UI.skins["绿色背景".uiTrans()] = "body { color: black; background: #d8e2c8; }";
 UI.skins["绿色背景2".uiTrans()] = "body { color: black; background: #CCE8CF; }";
@@ -441,7 +446,6 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 } else if (isChrome) {
     fontawesomeWoff = "data:font/woff;charset=utf-8;base64," + fontawesomeWoff;
 }
-
 
 var Res = {
     CSS_MAIN: function() {

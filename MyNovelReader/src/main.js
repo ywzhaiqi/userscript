@@ -14,17 +14,27 @@ var App = {
             return;
         }
 
-        if (App.isLaunched) return;
-        App.isLaunched = true;
+        // 手动调用
+        var readx = function() {
+            // 防止 unsafeWindow cannot call: GM_getValue
+            setTimeout(function() {
+                App.launch();
+            }, 0);
+        };
+        exportFunction(readx, unsafeWindow, {defineAs: "readx"});
+
 
         App.loadCustomSetting();
         App.site = App.getCurSiteInfo();
-        // 百度贴吧不好判断，手动调用 readx 启用
-        if (App.site.enable === false) {
-            return;
-        }
+        // // 百度贴吧不好判断，手动调用 readx 启用
+        // if (App.site.enable === false && !document.referrer.match(/booklink\.me/)) {
+        //     return;
+        // }
 
-        if (App.isAutoLaunch()) {
+        var autoLaunch = App.isAutoLaunch();
+        if (autoLaunch === -1) {
+            return;
+        } else if (autoLaunch) {
             if (App.site.mutationSelector) { // 特殊的启动：等待js把内容生成完毕
                 App.addMutationObserve(document, App.launch);
             } else if (App.site.timeout) { // 延迟启动
@@ -45,7 +55,7 @@ var App = {
         }
         if (_.isArray(customRules)) {
             Rule.customRules = customRules;
-            debug('载入自定义站点规则成功', customRules);
+            C.log('载入自定义站点规则成功', customRules);
         }
 
         // load custom replace rules
@@ -65,7 +75,7 @@ var App = {
 
         Rule.customReplace = parseCustomReplaceRules(Config.customReplaceRules);
 
-        debug('载入自定义替换规则成功', Rule.customReplace);
+        C.log('载入自定义替换规则成功', Rule.customReplace);
     },
     getCurSiteInfo: function() {
         var rules = Rule.customRules.concat(Rule.specialSite);
@@ -76,25 +86,32 @@ var App = {
         });
         if (!info) {
             info = {};
-            debug("没有找到规则，尝试自动模式。");
+            C.log("没有找到规则，尝试自动模式。");
         } else {
-            debug("找到规则：", info);
+            C.log("找到规则：", info);
         }
         return info;
     },
     isAutoLaunch: function() {
         var locationHref = window.location.href,
+            locationHost = location.host,
             referrer = document.referrer;
         switch (true) {
             case L_getValue("mynoverlreader_disable_once") == 'true':
                 L_removeValue("mynoverlreader_disable_once");
                 return false;
-                // case location.hostname == 'www.fkzww.net' && !document.title.match(/网文快讯/):  // 啃书只自动启用一个地方
-                //     return false;
+            // case location.hostname == 'www.fkzww.net' && !document.title.match(/网文快讯/):  // 啃书只自动启用一个地方
+            //     return false;
             case Config.booklink_enable && /booklink\.me/.test(referrer):
                 return true;
             case Config.getDisableAutoLaunch():
-                return false;
+            case locationHost == 'tieba.baidu.com':
+                var title = $('.core_title_txt').text();
+                if (title.match(Rule.titleRegExp)) {
+                    return false;
+                } else {
+                    return -1;
+                }
             case GM_getValue("auto_enable"):
             case config.soduso && /www\.sodu\.so/.test(referrer):
                 return true;
@@ -126,7 +143,7 @@ var App = {
             observer.observe(target, {
                 childList: true
             });
-            debug("添加 MutationObserve 成功：", selector);
+            C.log("添加 MutationObserve 成功：", selector);
         } else {
             callback();
         }
@@ -305,7 +322,7 @@ var App = {
         }
     },
     removeListener: function() {
-        debug("移除各种事件监听");
+        C.log("移除各种事件监听");
         App.remove.forEach(function(_remove) {
             _remove();
         });
@@ -434,12 +451,15 @@ var App = {
             return false;
         });
 
-        key('right', function() {
+        key('right', function(event) {
             if (App.getRemain() === 0) {
                 location.href = App.lastRequestUrl || App.requestUrl;
             } else {
                 App.scrollToArticle(App.curFocusElement.nextSibling || App.$doc.height());
             }
+
+            event.preventDefault();
+            event.stopPropagation();
             return false;
         });
 
@@ -587,19 +607,19 @@ var App = {
         }
     },
     httpRequest: function(nextUrl) {
-        debug("获取下一页: " + nextUrl);
+        C.log("获取下一页: " + nextUrl);
         GM_xmlhttpRequest({
             url: nextUrl,
             method: "GET",
             overrideMimeType: "text/html;charset=" + document.characterSet,
             onload: function(res) {
-                var doc = createDocumentByString(res.responseText);
+                var doc = parseHTML(res.responseText);
                 App.beforeLoad(doc);
             }
         });
     },
     iframeRequest: function(nextUrl) {
-        debug("iframeRequest: " + nextUrl);
+        C.log("iframeRequest: " + nextUrl);
         if (!App.iframe) {
             var i = document.createElement('iframe');
             App.iframe = i;
@@ -726,12 +746,88 @@ var App = {
     }
 };
 
+var BookLinkMe = {
+    clickedColor: "666666",
 
-// 防止 unsafeWindow cannot call: GM_getValue
-unsafeWindow.readx = function() {
-    setTimeout(function() {
-        App.launch();
-    }, 0);
+    init: function() {
+        if (location.host != 'booklink.me') return;
+
+        this.addUnreadButton();
+
+        if (location.pathname.indexOf("/book-") === 0) {
+            this.chapterPageAddTiebaLink();
+        }
+    },
+    addUnreadButton: function(){  // 添加一键打开所有未读链接
+        var $parent = $('td[colspan="2"]:contains("未读"):first');
+        if(!$parent.length) return;
+
+        var openAllUnreadLinks = function(event){
+            event.preventDefault();
+
+            var links = $x('./ancestor::table[@width="100%"]/descendant::a[img[@alt="未读"]]', event.target);
+            links.forEach(function(link){
+                // 忽略没有盗版的
+                var chapterLink = link.parentNode.nextSibling.nextSibling.querySelector('a');
+                if (chapterLink.querySelector('font[color="800000"]')) {
+                    return;
+                }
+
+                if(isFirefox)
+                    link.click();
+                else
+                    GM_openInTab(link.href);
+
+                // 设置点击后的样式
+                // 未读左边的 1x 链接
+                link.parentNode.previousSibling.querySelector('font')
+                    .setAttribute('color', BookLinkMe.clickedColor);
+                chapterLink.classList.add('mclicked');
+            });
+        };
+
+
+        $('<a>')
+            .attr({ href: 'javascript:void(0)', title: '一键打开所有未读链接', style: 'width:auto;' })
+            .click(openAllUnreadLinks)
+            .append($('<img src="me.png" style="max-width: 20px;">'))
+            .appendTo($parent);
+    },
+    chapterPageAddTiebaLink: function() {
+        var link = $('font:contains("贴吧")').parent().get(0);
+        if (!link) return;
+
+        console.log('GM_xmlhttpRequest', link.href);
+
+        GM_xmlhttpRequest({
+            method: "GET",
+            url: link.href,
+            onload: function(response) {
+                var doc = parseHTML(response.responseText);
+
+                $('a:contains("搜索本章节")').each(function(){
+                    var $this = $(this),
+                        $thisLine = $this.parent().parent(),
+                        chapterTitle = $thisLine.prev().find('a[href^="/jump.php"]:first').text();
+
+                    if (!chapterTitle) return;
+
+                    var $link = $(doc).find('.threadlist_text > a:contains("' + chapterTitle + '"):first');
+                    if (!$link.length) return;
+
+                    var url = 'http://tieba.baidu.com' + $link.attr('href');
+                    $('<a>')
+                        .attr({ target: '_blank', href: url })
+                        .text('贴吧')
+                        .appendTo($this.parent());
+                });
+            }
+        });
+    }
 };
 
-App.init()
+if (location.host === 'booklink.me') {
+    BookLinkMe.init();
+} else {
+    App.init();
+}

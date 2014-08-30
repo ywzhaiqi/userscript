@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        4.6.4
+// @version        4.6.5
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    shyangs
@@ -29,9 +29,6 @@
 // @require        https://greasyfork.org/scripts/2672-meihua-cn2tw/code/Meihua_cn2tw.js?version=7375
 // @resource fontawesomeWoff http://libs.baidu.com/fontawesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3
 
-// 手动启用列表
-// @include        http://tieba.baidu.com/p/*
-
 // @include        http://read.qidian.com/*,*.aspx
 // @include        http://readbook.qidian.com/bookreader/*,*.html
 // @include        http://free.qidian.com/Free/ReadChapter.aspx?*
@@ -52,6 +49,9 @@
 // @include        http://novel.hongxiu.com/*/*/*.shtml
 // @include        http://www.readnovel.com/novel/*.html
 // http://www.tianyabook.com/*/*.htm
+
+// @include        http://tieba.baidu.com/p/*
+// @include        http://booklink.me/*
 
 // booklink.me
 // @include        http://www.shumilou.com/*/*.html
@@ -239,6 +239,7 @@
 // ==/UserScript==
 
 var isChrome = !!window.chrome;
+var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
 
 // 其它设置
 var config = {
@@ -254,8 +255,10 @@ var READER_AJAX = "reader-ajax";   // 内容需要 ajax 的 className
 
 // ===== 自动尝试的规则 =====
 var Rule = {
+    titleRegExp: /第?\s*[一二两三四五六七八九十○零百千万亿0-9１２３４５６７８９０]{1,6}\s*[章回卷节折篇幕集]/i,
     titleReplace: /^章节目录|^文章正文|^正文|全文免费阅读|最新章节|\(文\)/,
 
+    // nextRegExp: /[上前下后][一]?[页张个篇章节步]/,
     nextSelector: "a[rel='next'], a:contains('下一页'), a:contains('下一章'), a:contains('下一节'), a:contains('下页')",
     prevSelector: "a[rel='prev'], a:contains('上一页'), a:contains('上一章'), a:contains('上一节'), a:contains('上页')",
     // 忽略的下一页链接，匹配 href
@@ -321,11 +324,13 @@ Rule.specialSite = [
         // contentSelector: "#hdContent",
         nextUrl: function($doc){  // 为了避免起点某次改版后把1页拆成2页，然后造成重复载入第一页的情况
             var html = $doc.find('script:contains(nextpage=)').html();
+            if (!html) return;
             var m = html.match(/nextpage='(.*?)'/);
             if (m) return m[1];
         },
         prevUrl: function($doc){
             var html = $doc.find('script:contains(prevpage=)').html();
+            if (!html) return;
             var m = html.match(/prevpage='(.*?)'/);
             if (m) return m[1];
         },
@@ -334,7 +339,7 @@ Rule.specialSite = [
             "\\[+CP.*(http://file.*\\.jpg)\\]+": "<p><img src='$1'></p><p>",
             "\\[bookid=(\\d+)，bookname=(.*?)\\]": "<a href='http://www.qidian.com/Book/$1.aspx'>$2</a>",
             "www.cmfu.com发布|起点中文网www.qidian.com欢迎广大书友光临阅读.*": "",
-            '(<p>\\s+)?<a href="?http://www.(?:qidian|cmfu).com"?>起点中文网.*': ''
+            '(<p>\\s+)?<a href="?http://www.(?:qidian|cmfu).com"?>起点中文网.*': '',
         },
         contentRemove: "span[id^='ad_']",
         contentPatch: function(fakeStub){
@@ -391,8 +396,14 @@ Rule.specialSite = [
             var $body = fakeStub.find('body');
                 html = $body.html(),
                 novel_showid = unsafeWindow.novel_showid,
-                _main = unsafeWindow.CS.page.bookReader.main,
-                uuid = html.match(/uuid = "(\d+?)"/i)[1];
+                _main = unsafeWindow.CS.page.bookReader.main;
+
+            var m = html.match(/uuid\s*=\s*["'](\d+)["']/i);
+            if (!m) {
+                console.error('无法找到 uuid', html);
+                return;
+            }
+            var uuid = m[1];
 
             var preChapterInfo = _main.getPreChapterInfo(uuid),
                 nextChapterInfo = _main.getNextChapterInfo(uuid);
@@ -468,10 +479,13 @@ Rule.specialSite = [
         url: /^http:\/\/tieba\.baidu.com\/p\//,
         titleSelector: "h1.core_title_txt",
         bookTitleSelector: ".card_title_fname",
+        nextSelector: false,
+        indexSelector: false,
+        prevSelector: false,
 
         contentSelector: "#j_p_postlist",
         contentRemove: "#sofa_post, .d_author, .share_btn_wrapper, .core_reply, .j_user_sign",
-        style: ".clear { border-top:1px solid #cccccc; margin-bottom: 50px;}",  // 显示楼层的分割线
+        style: ".clear { border-top:1px solid #cccccc; margin-bottom: 50px; visibility: visible !important;}",  // 显示楼层的分割线
     },
     // {siteName: "天涯在线书库（部分支持）",
     //     url: /www\.tianyabook\.com\/.*\.htm/,
@@ -541,9 +555,13 @@ Rule.specialSite = [
         titleReg: /(.*) (.*?) 书迷楼/,
         titlePos: 1,
         contentSelector: "#content",
-        contentReplace: ['div lign="ener"&gt;|.*更多章节请到网址隆重推荐去除广告全文字小说阅读器',
+        contentRemove: 'a',
+        contentReplace: [
+            'div lign="ener"&gt;|.*更多章节请到网址隆重推荐去除广告全文字小说阅读器',
             '起点中文网www.qidian.com欢迎广大书.*',
-            '书迷楼最快更新.*'],
+            '书迷楼最快更新.*',
+            {'<p>\\?\\?': '<p>'},
+        ],
         fixImage: true,
         contentPatch: function(fakeStub){
             fakeStub.find("#content").find("div.title:last")
@@ -557,6 +575,7 @@ Rule.specialSite = [
         fixImage: true,
         contentReplace: {
             "&lt;冰火#中文.*|冰火中文&nbsp;(www.)?binhuo.com|冰.火.中文|绿色小说|lvsexs|冰火中文.": "",
+            "LU5.ｃｏM|lU５.com|LU5.com":"",
             "([^/])www\\.binhuo\\.com": "$1"
         },
         contentPatch: function(fakeStub){
@@ -615,8 +634,9 @@ Rule.specialSite = [
             "看更新最快的小说就搜索—— 木鱼哥——无弹窗，全文字": "",
             "【看最新小说就搜索.*全文字首发】": "",
             "<p>.*?无弹窗</p>":"",
-            "bb\\.king|【木&nbsp;鱼&nbsp;哥&nbsp;.*?】|【一秒钟记住本站：muyuge.com&nbsp;木鱼哥】":"",
+            "bb\\.king|【木&nbsp;鱼&nbsp;哥&nbsp;.*?】|【一秒钟记住本站：muyuge.com.*木鱼哥】":"",
             "——推荐阅读——[\\s\\S]+": "",
+            "【 木鱼哥 ——更新最快，全文字首发】":"",
         },
     },
     {siteName: "追书网",
@@ -771,10 +791,12 @@ Rule.specialSite = [
         url: "^http://www\\.sqsxs\\.com/\\d+/\\d+/\\d+\\.html",
         titleReg: "(.*?)最新章节_\\S* (.*)_手牵手小说网",
         contentReplace: [
+            "◆免费◆",
             "★百度搜索，免费阅读万本★|访问下载txt小说.百度搜.|免费电子书下载|\\(百度搜\\)|『文學吧x吧.』|¤本站网址：¤",
-            "[☆★◆〓『【◎◇].*?(?:yunlaige|云 来 阁|ｙｕｎｌａｉｇｅ).*?[☆◆★〓』】◎◇]",
-            "『万本收费免费看』",
+            "[☆★◆〓『【◎◇].*?(?:yunlaige|云 来 阁|ｙｕｎｌａｉｇｅ|免费看).*?[☆◆★〓』】◎◇]",
             "&nbsp;关闭</p>",
+            "&nbsp;&nbsp;&nbsp;&nbsp;\\?",
+            "\\[☆更.新.最.快☆无.弹.窗☆全.免.费\\]",
             { "。\\.": "。" },
         ]
     },
@@ -1226,6 +1248,7 @@ Rule.specialSite = [
     {siteName: "云来阁",
         url: "http://www\\.yunlaige\\.com/html/\\d+/\\d+/\\d+\\.html",
         titleSelector: '.ctitle',
+        bookTitleSelector: '#hlBookName',
         contentSelector: '#content',
         contentRemove: '.bottomlink',
         contentReplace: [
@@ -1325,7 +1348,7 @@ Rule.replace = {
     "强(\\*{2})u5B9D":"强大法宝",
 
     // === 多字替换 ===
-    "cao之过急":"操之过急",
+    "cao之过急":"操之过急", "chunguang大泄":"春光大泄",
     "大公无si":"大公无私",
     "fu道人家":"妇道人家", "放sōng'xià来":"放松下来",
     "奸yin掳掠":"奸淫掳掠",
@@ -1334,9 +1357,9 @@ Rule.replace = {
 
     // === 双字替换 ===
     "暧m[eè][iì]":"暧昧",
-    "bàn\\s*fǎ":"办法", "不liáng":"不良", "b[ěe]i(\\s|&nbsp;)*j[īi]ng":"北京","半shen": "半身", "b[ìi]j[ìi]ng":"毕竟", "报(了?)jing":"报$1警", "bèi'pò":"被迫", "包yǎng":"包养", "biǎo子":"婊子", "biǎo\\s*xiàn\\s*":"表现",
+    "bàn\\s*fǎ":"办法", "不liáng":"不良", "b[ěe]i(\\s|&nbsp;)*j[īi]ng":"北京","半shen": "半身", "b[ìi]j[ìi]ng":"毕竟", "报(了?)jing":"报$1警", "bèi'pò":"被迫", "包yǎng":"包养", "(?:biǎo|婊\\\\?)子":"婊子", "biǎo\\s*xiàn\\s*":"表现",
     "ch[oō]ngd[oò]ng":"冲动", "chong物":"宠物", "cao(练|作)":"操$1", "出gui":"出轨", "缠mian": "缠绵", "成shu": "成熟", "(?:赤|chi)\\s*lu[oǒ]": "赤裸", "春guang": "春光", "chun风":"春风", "chuang伴":"床伴", "沉mi":"沉迷", "沉lun":"沉沦", "刺ji":"刺激", "chao红":"潮红", "初chun":"初春", "＂ｃｈｉ　ｌｕｏ＂":"赤裸",
-    "dang校": "党校", "da子": "鞑子", "大tui":"大腿", "dǎ\\s*suàn":"打算", "diao丝": "屌丝", "d[úu](?:\\s|&nbsp;|<br/>)*l[ìi]": "独立", "d[uú]\\s{0,2}c[áa]i":"独裁",  "d?[iì]f[āa]ng":"地方", "d[ìi]\\s*d[ūu]":"帝都", "di国":"帝国", "du[oò]落":"堕落", "坠luò":"坠落",
+    "dān\\s*xīn":"当心", "dang校": "党校", "da子": "鞑子", "大tui":"大腿", "dǎ\\s*suàn":"打算", "diao丝": "屌丝", "d[úu](?:\\s|&nbsp;|<br/>)*l[ìi]": "独立", "d[uú]\\s{0,2}c[áa]i":"独裁",  "d?[iì]f[āa]ng":"地方", "d[ìi]\\s*d[ūu]":"帝都", "di国":"帝国", "du[oò]落":"堕落", "坠luò":"坠落",
     "f[ǎa]ngf[óo]":"仿佛", "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "f[èe]nn[ùu]":"愤怒",
     "gao潮": "高潮", "高氵朝":"高潮", "gāo\\s*xìng\\s*":"高兴", "干chai": "干柴", "勾yin":"勾引", "gu[oò]ch[ée]ng":"过程", "gu[āa]n\\s*x[iì]":"关系", "g[ǎa]nji[àa]o":"感觉", "国wu院":"国务院", "gù\\s*yì\\s*":"故意",
     "hā\\s*hā\\s*":"哈哈", "hù士":"护士", "há'guó":"韩国", "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "h[ǎa]oxi[àa]ng":"好像", "hu[áa]ngs[èe]":"黄色", "皇d[ìi]":"皇帝", "昏昏yu睡":"昏昏欲睡", "回dang":"回荡", "huí\\s*qù\\s*":"回去",
@@ -1346,13 +1369,13 @@ Rule.replace = {
     "m[ǎa]ny[ìi]":"满意", "m[ǎa]sh[àa]ng":"马上", "m[ée]iy[oǒ]u":"没有", "mei国": "美国", "m[íi]ngb[áa]i":"明白", "迷huan": "迷幻", "mi茫":"迷茫", "m[íi]n\\s{0,2}zh[ǔu]": "民主", "迷jian": "迷奸", "mimi糊糊":"迷迷糊糊", "末(?:\\s|<br/?>)*ì":"末日", "面se":"面色", "mengmeng":"蒙蒙", 
     "nàme":"那么", "nǎo\\s*dài":"脑袋", "n[ée]ngg[oò]u":"能够", "nán\\s{0,2}hǎi": "那会", "内jian":"内奸", "[内內]y[iī]":"内衣", "内ku":"内裤",
     "pi[áa]o客":"嫖客", "p[áa]ngbi[āa]n":"旁边",
-    "q[íi]gu[àa]i":"奇怪", "qing\\s*(ren|人)":"情人", "qin兽":"禽兽", "q[iī]ngch[uǔ]":"清楚", "què\\s*dìng":"确定", "球mi":"球迷", "青chun":"青春", "青lou":"青楼",
+    "q[íi]gu[àa]i":"奇怪", "qing\\s*(ren|人)":"情人", "qin兽":"禽兽", "q[iī]ngch[uǔ]":"清楚", "què\\s*dìng":"确定", "球mi":"球迷", "青chun":"青春", "青lou":"青楼", "qiang[　\\s]*jian":"强奸",
     "r[úu]gu[oǒ]":"如果", "r[oó]ngy[ìi]":"容易", "ru(房|白色)": "乳$1", "rén员":"人员", "rén形":"人形", "人chao":"人潮", 
     "she(门|术|手|程|击)":"射$1", "sh[iì]ji[eè]":"世界", "sh[ií]ji[aā]n":"时间", "sh[ií]h[oò]u": "时候", "sh[ií]me":"什么", "si人":"私人", "shi女":"侍女", "shi身": "失身", "sh[ūu]j[ìi]":"书记", "shu女": "熟女", "shu[　\\s]?xiong":"酥胸", "(?:上|shang)chuang": "上床", "呻y[íi]n": "呻吟", "sh[ēe]ngzh[íi]": "生殖", "深gu": "深谷", "双xiu": "双修", "生r[ìi]": "生日", "si盐":"私盐", "shi卫":"侍卫", "si下":"私下", "sao扰":"骚扰", "ｓｈｕａｎｇ　ｆｅｎｇ":"双峰", 
     "t[uū]r[áa]n":"突然", "tiaojiao": "调教", "偷qing":"偷情", "推dao": "推倒", "脱guang": "脱光", "t[èe]bi[ée]":"特别", "t[ōo]nggu[òo]":"通过", "同ju":"同居", "tian来tian去":"舔来舔去",
     "w[ēe]ixi[ée]":"威胁", "wèizh[ìi]":"位置", "wei员":"委员", "wèi\\s*dào\\s*":"味道",
     "xiu长": "修长", "亵du": "亵渎", "xing福": "幸福", "小bo":"小波", "小niū":"小妞", "xiong([^a-z])":"胸$1", "小tui":"小腿", "xiàohuà":"笑话", "xiàn\\'zhì":"限制", "xiōng\\s*dì":"兄弟",
-    "yì\\s*wài\\s*":"意外", "yin(冷|暗|谋|险|沉|沟|癸派|后)":"阴$1", "y[iī]y[àa]ng":"一样", "y[īi]di[ǎa]n":"一点", "y[ǐi]j[īi]ng":"已经", "疑huo":"疑惑", "yí\\s*huò":"疑惑", "影mi":"影迷",  "阳w[ěe]i": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "(?:you|诱)(?:惑|huo)": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人", "御yòng":"御用", "旖ni":"旖旎", "yu念":"欲念", "you敌深入":"诱敌深入", "影she":"影射", "牙qian":"牙签", "一yè情":"一夜情",
+    "yì\\s*wài\\s*":"意外", "yin(冷|暗|谋|险|沉|沟|癸派|后)":"阴$1", "y[iī]y[àa]ng":"一样", "y[īi]di[ǎa]n":"一点", "yī\\s*zhèn":"一阵", "y[ǐi]j[īi]ng":"已经", "疑huo":"疑惑", "yí\\s*huò":"疑惑", "影mi":"影迷",  "阳w[ěe]i": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "(?:you|诱)(?:惑|huo)": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人", "御yòng":"御用", "旖ni":"旖旎", "yu念":"欲念", "you敌深入":"诱敌深入", "影she":"影射", "牙qian":"牙签", "一yè情":"一夜情",
     "z[iì]j[iǐ]": "自己","z[ìi](?:\\s|<br/?>|&nbsp;)*y[oó]u": "自由","zh[iī]d?[àa]u?o":"知道","zhì'fú":"制服", "zha药": "炸药", "zhan有": "占有", "zhè\\s*gè":"这个", "政f[ǔu]": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zong理":"总理", "zh[ōo]ngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]\\s*y[oò]u":"左右", "zhǔ\\s*dòng":"主动", "zh[oō]uw[ée]i":"周围", "中nan海":"中南海", "中j委":"中纪委", "中zu部":"中组部", "政zhi局":"政治局", "(昨|一|时|余)(?:<br/?>|&nbsp;|\\s)*ì":"$1日", "照she":"照射", "zhǔn\\s*bèi\\s*":"准备", 
 };
 
@@ -1401,7 +1424,7 @@ Rule.replace = {
     };
 
     $.extend(Rule.replace, replaceOthers);
-})()
+})();
 
 
 // 自定义的
@@ -1452,10 +1475,15 @@ var Config = {
     },
 
     get debug() {  // 调试
-        return getBooleanConfig("debug", false);
+        if (_.isUndefined(this._debug)) {
+            this._debug = getBooleanConfig("debug", false);
+        }
+        return this._debug;
     },
     set debug(bool) {
+        this._debug = bool;
         GM_setValue("debug", bool);
+        toggleConsole(bool);
     },
 
     get addToHistory() {
@@ -1477,14 +1505,14 @@ var Config = {
     },
 
     get remain_height() {  // 距离底部多少高度（px）开始加载下一页
-        if(!this._remain_height){
+        if(_.isUndefined(this._remain_height)){
             this._remain_height = parseInt(GM_getValue("remain_height"), 10) || 400;
         }
         return this._remain_height;
     },
     set remain_height(val) {
-        GM_setValue("remain_height", val);
         this._remain_height = val;
+        GM_setValue("remain_height", val);
     },
 
     get lang() {
@@ -1494,7 +1522,8 @@ var Config = {
         return this._lang;
     },
     set lang(val) {
-        GM_setValue("lang", this._lang = val);
+        this._lang = val;
+        GM_setValue("lang", val);
     },
 
     get font_family() {
@@ -1721,7 +1750,35 @@ if(!String.prototype.uiTrans){
 }
 
 //------------------- 辅助函数 ----------------------------------------
-var debug = Config.debug ? console.log.bind(console) : function() {};
+
+var nullFn = function() {};
+
+// Check if is GM 2.x
+if (typeof exportFunction == 'undefined') {
+    // For GM 1.x backward compatibility, should work.
+    var exportFunction = (function(foo, scope, defAs) {
+        scope[defAs.defineAs] = foo;
+    }).bind(unsafeWindow);
+}
+
+var C;
+toggleConsole(Config.debug);
+
+function toggleConsole(debug) {
+    if (debug) {
+        C = console;
+    } else {
+        C = {
+            log: nullFn,
+            error: nullFn,
+            group: nullFn,
+            groupCollapsed: nullFn,
+            groupEnd: nullFn,
+            time: nullFn,
+            timeEnd: nullFn,
+        };
+    }
+}
 
 function L_getValue(key) { // 个别用户禁用本地存储会报错
     try {
@@ -1742,10 +1799,11 @@ function L_removeValue(key) {
 }
 
 
-function createDocumentByString(str) {
+function parseHTML(str) {
     var doc;
     try {
-        doc = new DOMParser().parseFromString(str, "text/html"); // chrome 30+ 已支持
+        // firefox and chrome 30+，Opera 12 会报错
+        doc = new DOMParser().parseFromString(str, "text/html");
     } catch (ex) {}
 
     if (!doc) {
@@ -1763,17 +1821,42 @@ function toRE(obj, flags) {
     }
 }
 
+function wildcardToRegExpStr(urlstr) {
+    if (urlstr.source) return urlstr.source;
+    let reg = urlstr.replace(/[()\[\]{}|+.,^$?\\]/g, "\\$&").replace(/\*+/g, function(str){
+        return str === "*" ? ".*" : "[^/]*";
+    });
+    return "^" + reg + "$";
+}
+
 function getUrlHost(url) {
     var a = document.createElement('a');
     a.href = url;
     return a.host;
 }
 
+function $x(aXPath, aContext) {
+    var nodes = [];
+    var doc = document;
+    var aContext = aContext || doc;
+
+    try {
+        var results = doc.evaluate(aXPath, aContext, null,
+            XPathResult.ANY_TYPE, null);
+        var node;
+        while (node = results.iterateNext()) {
+            nodes.push(node);
+        }
+    } catch (ex) {}
+
+    return nodes;
+}
+
 Function.prototype.getMStr = function() {  // 多行String
     var lines = new String(this);
     lines = lines.substring(lines.indexOf("/*") + 3, lines.lastIndexOf("*/"));
     return lines;
-}
+};
 
 $.nano = function(template, data) {
     return template.replace(/\{([\w\.]*)\}/g, function(str, key) {
@@ -1914,14 +1997,14 @@ var UI = {
         if (this._isQuietMode) {
             $(selector).addClass("quiet-mode");
 
-            // 隐藏滚动条
-            this.$_quietStyle = $('<style>')
-                .text('scrollbar {visibility:collapse !important; } body {overflow: hidden !important; overflow-x: hidden !important;}')
-                .appendTo('head');
+            if (!isChrome) {  // firefox 下隐藏滚动条
+                this.$_quietStyle = $('<style>')
+                    .text('scrollbar {visibility:collapse !important; } body {overflow: hidden !important; overflow-x: hidden !important;}')
+                    .appendTo('head');
+            }
         } else {
             $(selector).removeClass("quiet-mode");
         }
-
     },
     addButton: function(){
         GM_addStyle('\
@@ -2102,7 +2185,8 @@ var UI = {
                 UI.preferencesSaveHandler();
                 break;
             case 'debug':
-                debug = target.checked ? console.log.bind(console) : function() {};
+                Config.debug = !Config.debug;
+                toggleConsole(Config.debug);
                 break;
             case 'quietMode':
                 UI.toggleQuietMode(target.checked);
@@ -2141,6 +2225,9 @@ var UI = {
                     Config.hideMenuListKey = key;
                     $(target).val(key);
                 }
+                break;
+            // case 'saveAsTxt':
+            //     Download.saveAsTxt();
                 break;
             default:
                 break;
@@ -2221,8 +2308,9 @@ UI.skins["暗色皮肤".uiTrans()] = "body { color: #666; background: rgba(0;0;0
 UI.skins["白底黑字".uiTrans()] = "body { color: black; background: white;}\
                 .title { font-weight: bold; border-bottom: 0.1em solid; margin-bottom: 1.857em; padding-bottom: 0.857em;}";
 UI.skins["夜间模式".uiTrans()] = "body { color: #939392; background: #2d2d2d; } #preferencesBtn { background: white; } #mynovelreader-content img { background-color: #c0c0c0; }";
-UI.skins["夜间模式2".uiTrans()] = "body { color: #679; background: black; } #preferencesBtn { background: white; }";
-UI.skins["夜间模式3".uiTrans()] = "body { color: #e3e3e3; background: #2d2d2d; } #preferencesBtn { background: white; }";
+UI.skins["夜间模式1".uiTrans()] = "body { color: #679; background: black; } #preferencesBtn { background: white; }";
+UI.skins["夜间模式2".uiTrans()] = "body { color: #e3e3e3; background: #2d2d2d; } #preferencesBtn { background: white; }";
+UI.skins["夜间模式（多看）".uiTrans()] = "body { color: #3A5056; background: #101819; } #preferencesBtn { background: white; } #mynovelreader-content img { background-color: #c0c0c0; }";
 UI.skins["橙色背景".uiTrans()] = "body { color: #24272c; background: #FEF0E1; }";
 UI.skins["绿色背景".uiTrans()] = "body { color: black; background: #d8e2c8; }";
 UI.skins["绿色背景2".uiTrans()] = "body { color: black; background: #CCE8CF; }";
@@ -2237,7 +2325,6 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 } else if (isChrome) {
     fontawesomeWoff = "data:font/woff;charset=utf-8;base64," + fontawesomeWoff;
 }
-
 
 var Res = {
     CSS_MAIN: function() {
@@ -2655,6 +2742,8 @@ function Parser(){
     this.init.apply(this, arguments);
 }
 Parser.prototype = {
+    constructor: Parser,
+
     init: function (info, doc, curPageUrl) {
         this.info = info || {};
         this.doc = doc;
@@ -2673,9 +2762,9 @@ Parser.prototype = {
         if(contentPatch){
             try {
                 contentPatch(this.$doc);
-                debug("Apply Content Patch Success.");
+                C.log("Apply Content Patch Success.");
             } catch (e) {
-                debug("Error: Content Patch Error!", e);
+                C.log("Error: Content Patch Error!", e);
             }
         }
     },
@@ -2694,7 +2783,7 @@ Parser.prototype = {
             for(var i = 0, l = selectors.length; i < l; i++){
                 $content = this.$doc.find(selectors[i]);
                 if($content.length > 0){
-                    debug("  自动查找内容选择器: " + selectors[i]);
+                    C.log("自动查找内容选择器: " + selectors[i]);
                     break;
                 }
             }
@@ -2705,10 +2794,17 @@ Parser.prototype = {
         return $content.size() > 0;
     },
     getAll: function(callback){
+
+        C.group('开始获取标题');
         this.getTitles();
+        C.groupEnd();
+
+        C.group('开始获取链接');
         this.getPrevUrl();
         this.getIndexUrl();
         this.getNextUrl();
+        C.groupEnd();
+
         this.getContent(callback);
 
         return this;
@@ -2729,7 +2825,7 @@ Parser.prototype = {
                 chapterTitle = matches[chapterPos].trim();
             }
 
-            debug("  TitleReg:", info.titleReg, matches);
+            C.log("TitleReg:", info.titleReg, matches);
         } else {
            chapterTitle = this.getTitleFromInfo(info.titleSelector);
 
@@ -2770,9 +2866,9 @@ Parser.prototype = {
         this.chapterTitle = chapterTitle;
         this.docTitle = docTitle;
 
-        debug("  Book Title: " + this.bookTitle);
-        debug("  Chapter Title: " + this.chapterTitle);
-        debug("  Document Title: " + this.docTitle);
+        C.log("Book Title: " + this.bookTitle);
+        C.log("Chapter Title: " + this.chapterTitle);
+        C.log("Document Title: " + this.docTitle);
     },
     getTitleFromInfo: function(selectorOrArray) {
         var title = '';
@@ -2800,13 +2896,12 @@ Parser.prototype = {
     },
     // 智能获取章节标题
     autoGetChapterTitle: function (document) {
-        debug("AutoGetTitle start");
-
         var
             _main_selector = "h1, h2, h3",
             _second_selector = "#TextTitle, #title, .ChapterName, #lbChapterName, div.h1",
-            _positive_regexp = /第?\S+[章节卷回]|\d{2,4}/,
-            _negative_regexp = /[上前下后][一]?[页张个篇章节步]/,
+            _positive_regexp = Rule.titleRegExp,
+            // _positive_regexp = /第?\S+[章节卷回]|\d{2,4}/,
+            // _negative_regexp = /[上前下后][一]?[页张个篇章节步]/,
             _title_remove_regexp = /最新章节|书书网/,
             $doc = $(document),
             _document_title = document.title ? document.title : $doc.find("title").text(),
@@ -2824,6 +2919,8 @@ Parser.prototype = {
         var possibleTitles = {},
             _heading_text;
 
+        C.groupCollapsed('自动查找章节标题');
+
         $(_headings).each(function(){
             var _heading = this,
                 _heading_text = _heading.textContent.trim();
@@ -2832,7 +2929,7 @@ Parser.prototype = {
                 return;
             }
 
-            debug("  开始计算", _heading_text, "的得分");
+            C.group('开始计算 "' + _heading_text + '" 的得分');
 
             // h1 为 1， h2 为 2
             var
@@ -2842,16 +2939,17 @@ Parser.prototype = {
                 _matched_words = ""
             ;
 
-            debug("  初始得分:" + score);
+            C.log("初始得分：" + score);
 
-            if (_positive_regexp.test(_heading_text)) {
+            // 后面这种是特殊的判断
+            if (_positive_regexp.test(_heading_text) || /\d{2,4}/.test(_heading_text)) {
                 score += 50;
             }
-            if(_negative_regexp.test(_heading_text)){
-                score -= 100;
-            }
+            // if(_negative_regexp.test(_heading_text)){
+            //     score -= 100;
+            // }
 
-            debug("  符合正则计算后得分：", score);
+            C.log("符合正则计算后得分：" + score);
 
             //  count words present in title
             for (var j = 0, _j = _heading_words.length; j < _j; j++) {
@@ -2861,12 +2959,7 @@ Parser.prototype = {
             }
             score += _matched_words.length * 1.5;
 
-            // 跳过长度太小的
-            // if (_matched_words.length < 5) {
-                // return;
-            // }
-
-            debug("  跟页面标题比较后得分：", score);
+            C.log("跟页面标题比较后得分：" + score);
 
             var _font_size_text = "",
                 _font_size_add_score = 0,
@@ -2878,13 +2971,13 @@ Parser.prototype = {
 
             score +=  _font_size_add_score;
 
-            debug("  计算大小后得分", score);
-
-            debug("  ----------------------");
+            C.log("计算大小后得分：" + score);
 
             possibleTitles[_heading_text] = score;
-        });
 
+            C.groupEnd();
+        });
+        
         // 找到分数最高的值
         var topScoreTitle,
             score_tmp = 0;
@@ -2911,10 +3004,12 @@ Parser.prototype = {
 
         curTitle = curTitle.replace(Rule.titleReplace, "");
 
+        C.groupEnd();
+
         return curTitle;
     },
     getContent: function(callback){
-        if(callback === undefined){
+        if(_.isUndefined(callback)){
             callback = function() {};
         }
 
@@ -2931,14 +3026,15 @@ Parser.prototype = {
             var url = ajaxScript.attr('src');
             if(!url) return;
             var charset = ajaxScript.attr('charset') || 'utf-8';
-            debug('内容特殊处理 Ajax: ', url, ". charset=" + charset);
+            C.log('Ajax 获取内容: ', url, ". charset=" + charset);
+
             GM_xmlhttpRequest({
                 url: url,
                 method: "GET",
                 overrideMimeType: "text/html;charset=" + charset,
                 onload: function(res){
                     var text = res.responseText;
-                    if (text.indexOf('{"CID":') == 0) {  // 未完成，创世中文的
+                    if (text.indexOf('{"CID":') == 0) {  // 创世中文
                         text = JSON.parse(text).Content;
                         text = $('<div>').html(text).find('.bookreadercontent').html();
                     } else {
@@ -2959,11 +3055,12 @@ Parser.prototype = {
     handleContentText: function(text, info){
         if(!text) return null;
 
-        var 
-            startTime = Date.now(),
-            contentHandle = info.contentHandle === undefined ? true : info.contentHandle,
-            contentReplace = info.contentReplace
-        ;
+        // 贴吧的内容处理比较耗时间
+
+        C.group('开始内容处理');
+        C.time('内容处理');
+
+        var contentHandle = (typeof(info.contentHandle) == 'undefined') ? true : info.contentHandle;
 
         // 拼音字、屏蔽字修复
         if(contentHandle){
@@ -2987,39 +3084,20 @@ Parser.prototype = {
 
         // GM_setClipboard(text);
         
-        if (contentReplace) {
-            var replaceText = function(rep){
-                switch(true) {
-                    case _.isRegExp(rep):
-                        text = text.replace(rep, '');
-                        break;
-                    case _.isString(rep):
-                        var regexp = new RegExp(rep, 'ig');
-                        text = text.replace(regexp, '');
-                        break
-                    case _.isArray(rep):
-                        rep.forEach(function(r){ replaceText(r) });
-                        break;
-                    case _.isObject(rep):
-                        var key;
-                        for(key in rep){
-                            text = text.replace(new RegExp(key, "ig"), rep[key]);
-                        }
-                        break;
-                }
-            };
-
-            replaceText(contentReplace);
+        if (info.contentReplace) {
+            text = this.replaceText(text, info.contentReplace);
         }
 
-        if(info){
-            // 去除内容中包含的标题
-            if(this.bookTitle){
-                var titleRegText = "";
-                titleRegText += this.bookTitle + "\\d+";
-
-                text = text.replace(new RegExp(titleRegText, "g"), "");
-                debug("Content replace title: " + titleRegText);
+        // 去除内容中的标题
+        if(this.chapterTitle && Rule.titleRegExp.test(this.chapterTitle)){
+            try {
+                var reg = this.chapterTitle.replace(/[()\[\]{}|+.,^$?\\*]/g, "\\$&")
+                        .replace(/\s+/g, '\\s*')
+                reg = new RegExp(reg, 'ig');
+                text = text.replace(reg, "");
+                C.log('去除内容中的标题', reg);
+            } catch(e) {
+                console.error(e);
             }
         }
 
@@ -3031,25 +3109,47 @@ Parser.prototype = {
 
         text = this.contentCustomReplace(text);
 
-        debug('内容替换共耗时：' + (Date.now() - startTime) + ' ms');
-
         // 采用 DOM 方式进行处理
         var $div = $("<div>").html(text);
-
-        if(contentHandle){
-           // 给独立的文本添加 <p></p>
-           $div.contents().filter(function(){
-                   return this.nodeType == 3 && this.textContent.trim().length;
-               }).wrap("<p></p>")
-               .end()
-               .filter('br')
-                   .remove();
-        }
 
         // contentRemove
         $div.find(Rule.contentRemove).remove();
         if(info.contentRemove){
             $div.find(info.contentRemove).remove();
+        }
+
+        // 给独立的文本添加 <p></p>
+        var wrapTextNodes = function($div) {
+            function getTextNodesIn(node, includeWhitespaceNodes) {
+                var textNodes = [],
+                    nonWhitespaceMatcher = /\S/;
+
+                function getTextNodes(node) {
+                    if (node.nodeType == 3) {
+                        if (includeWhitespaceNodes || nonWhitespaceMatcher.test(node.nodeValue)) {
+                            textNodes.push(node);
+                        }
+                    } else if (node.nodeType == 1 && node.nodeName == 'P') {
+                        return;
+                    } else {
+                        for (var i = 0, len = node.childNodes.length; i < len; ++i) {
+                            getTextNodes(node.childNodes[i]);
+                        }
+                    }
+                }
+
+                getTextNodes(node);
+                return textNodes;
+            }
+
+            var textNodes = getTextNodesIn($div.get(0));
+            $(textNodes).wrap("<p></p>");
+        };
+
+        if(contentHandle){
+            $div.filter('br').remove();
+
+            wrapTextNodes($div);
         }
 
         $div.find('*').removeAttr('style');
@@ -3078,6 +3178,9 @@ Parser.prototype = {
         // 删除空白的、单个字符的 p
         text = text.replace(Rule.removeLineRegExp, "");
 
+        C.timeEnd('内容处理');
+        C.groupEnd();
+
         return text;
     },
     contentReplacements: function (text) {
@@ -3085,6 +3188,30 @@ Parser.prototype = {
 
         for (var key in Rule.replace) {
             text = text.replace(new RegExp(key, "ig"), Rule.replace[key]);
+        }
+        return text;
+    },
+    replaceText: function(text, replaceRule){
+        var self = this;
+        switch(true) {
+            case _.isRegExp(replaceRule):
+                text = text.replace(replaceRule, '');
+                break;
+            case _.isString(replaceRule):
+                var regexp = new RegExp(replaceRule, 'ig');
+                text = text.replace(regexp, '');
+                break
+            case _.isArray(replaceRule):
+                replaceRule.forEach(function(r){
+                    text = self.replaceText(text, r)
+                });
+                break;
+            case _.isObject(replaceRule):
+                var key;
+                for(key in replaceRule){
+                    text = text.replace(new RegExp(key, "ig"), replaceRule[key]);
+                }
+                break;
         }
         return text;
     },
@@ -3110,9 +3237,80 @@ Parser.prototype = {
         }
         return text;
     },
+    getPrevUrl: function(){
+        var url = '',
+            link, selector;
+
+        if (this.info.prevSelector === false) {
+            this.prevUrl = url;
+            return url;
+        }
+
+        if (this.info.prevUrl && _.isFunction(this.info.prevUrl)) {
+            url = this.info.prevUrl(this.$doc);
+            url = this.checkLinks(url);
+        }
+
+        if (!url) {
+            selector = this.info.prevSelector || Rule.prevSelector;
+            link = this.$doc.find(selector);
+            if(link.length){
+                url = this.checkLinks(link);
+            }
+        }
+
+        if (url) {
+            C.log("找到上一页链接: " + url);
+        } else {
+            C.log("无法找到上一页链接");
+        }
+
+        this.prevUrl = url || '';
+        return url;
+    },
+    getIndexUrl: function(){
+        var url = '',
+            link;
+
+        if (this.info.indexSelector === false) {
+            this.indexUrl = url;
+            return url;
+        }
+
+        if(this.info.indexSelector){
+            link = this.$doc.find(this.info.indexSelector);
+        }else{
+            var selectors = Rule.indexSelectors;
+            var _indexLink;
+            // 按照顺序选取目录链接
+            for(var i = 0, l = selectors.length; i < l; i++){
+                _indexLink = this.$doc.find(selectors[i]);
+                if(_indexLink.length > 0){
+                    link = _indexLink;
+                    break;
+                }
+            }
+        }
+
+        if(link && link.length){
+            url = this.checkLinks(link);
+            C.log("找到目录链接: " + url);
+        }else{
+            C.log("无法找到目录链接.");
+        }
+
+        this.indexUrl = url;
+        return url;
+    },
     getNextUrl: function(){
-        var url, link,
+        var url = '',
+            link,
             selector = this.info.nextSelector || Rule.nextSelector;
+
+        if (this.info.nextSelector === false) {
+            this.nextUrl = url;
+            return url;
+        }
 
         if (this.info.nextUrl && _.isFunction(this.info.nextUrl)) {
             url = this.info.nextUrl(this.$doc);
@@ -3121,15 +3319,18 @@ Parser.prototype = {
 
         if (!url) {
             link = this.$doc.find(selector);
-            if(link.length > 0){
+            if(link.length){
                 url = this.checkLinks(link);
-                debug("找到下一页链接: " + url);
-            }else{
-                debug("无法找到下一页链接.", link);
             }
         }
 
-        this.nextUrl = url;
+        if (url) {
+            C.log("找到下一页链接: " + url);
+        } else {
+            C.log("无法找到下一页链接");
+        }
+
+        this.nextUrl = url || '';
         this.isTheEnd = !this.checkNextUrl(url);
         if(this.isTheEnd){
             this.theEndColor = config.end_color;
@@ -3150,7 +3351,7 @@ Parser.prototype = {
         }
 
         switch(true){
-            case url === '':
+            case url == '':
             case Rule.nextUrlIgnore.test(url):
             case url == this.indexUrl:
             case url == this.prevUrl:
@@ -3160,56 +3361,6 @@ Parser.prototype = {
             default:
                 return true;
         }
-    },
-    getPrevUrl: function(){
-        var url, link, selector;
-
-        if (this.info.prevUrl && _.isFunction(this.info.prevUrl)) {
-            url = this.info.prevUrl(this.$doc);
-            url = this.checkLinks(url);
-        }
-
-        if (!url) {
-            selector = this.info.prevSelector || Rule.prevSelector;
-
-            link = this.$doc.find(selector);
-            if(link.length > 0){
-                url = this.checkLinks(link);
-                debug("找到上一页链接: " + url);
-            }else{
-                debug("无法找到上一页链接.", link);
-            }
-        }
-
-        this.prevUrl = url || '';
-        return url;
-    },
-    getIndexUrl: function(){
-        var url, link;
-        if(this.info.indexSelector){
-            link = this.$doc.find(this.info.indexSelector);
-        }else{
-            var selectors = Rule.indexSelectors;
-            var _indexLink;
-            // 按照顺序选取目录链接
-            for(var i = 0, l = selectors.length; i < l; i++){
-                _indexLink = this.$doc.find(selectors[i]);
-                if(_indexLink.length > 0){
-                    link = _indexLink;
-                    break;
-                }
-            }
-        }
-
-        if(link && link.length > 0){
-            url = this.checkLinks(link);
-            debug("找到目录链接: " + url);
-        }else{
-            debug("无法找到目录链接.");
-        }
-
-        this.indexUrl = url;
-        return url;
     },
     checkLinks: function(links){
         var self = this;
@@ -3274,17 +3425,27 @@ var App = {
             return;
         }
 
-        if (App.isLaunched) return;
-        App.isLaunched = true;
+        // 手动调用
+        var readx = function() {
+            // 防止 unsafeWindow cannot call: GM_getValue
+            setTimeout(function() {
+                App.launch();
+            }, 0);
+        };
+        exportFunction(readx, unsafeWindow, {defineAs: "readx"});
+
 
         App.loadCustomSetting();
         App.site = App.getCurSiteInfo();
-        // 百度贴吧不好判断，手动调用 readx 启用
-        if (App.site.enable === false) {
-            return;
-        }
+        // // 百度贴吧不好判断，手动调用 readx 启用
+        // if (App.site.enable === false && !document.referrer.match(/booklink\.me/)) {
+        //     return;
+        // }
 
-        if (App.isAutoLaunch()) {
+        var autoLaunch = App.isAutoLaunch();
+        if (autoLaunch === -1) {
+            return;
+        } else if (autoLaunch) {
             if (App.site.mutationSelector) { // 特殊的启动：等待js把内容生成完毕
                 App.addMutationObserve(document, App.launch);
             } else if (App.site.timeout) { // 延迟启动
@@ -3305,7 +3466,7 @@ var App = {
         }
         if (_.isArray(customRules)) {
             Rule.customRules = customRules;
-            debug('载入自定义站点规则成功', customRules);
+            C.log('载入自定义站点规则成功', customRules);
         }
 
         // load custom replace rules
@@ -3325,7 +3486,7 @@ var App = {
 
         Rule.customReplace = parseCustomReplaceRules(Config.customReplaceRules);
 
-        debug('载入自定义替换规则成功', Rule.customReplace);
+        C.log('载入自定义替换规则成功', Rule.customReplace);
     },
     getCurSiteInfo: function() {
         var rules = Rule.customRules.concat(Rule.specialSite);
@@ -3336,25 +3497,32 @@ var App = {
         });
         if (!info) {
             info = {};
-            debug("没有找到规则，尝试自动模式。");
+            C.log("没有找到规则，尝试自动模式。");
         } else {
-            debug("找到规则：", info);
+            C.log("找到规则：", info);
         }
         return info;
     },
     isAutoLaunch: function() {
         var locationHref = window.location.href,
+            locationHost = location.host,
             referrer = document.referrer;
         switch (true) {
             case L_getValue("mynoverlreader_disable_once") == 'true':
                 L_removeValue("mynoverlreader_disable_once");
                 return false;
-                // case location.hostname == 'www.fkzww.net' && !document.title.match(/网文快讯/):  // 啃书只自动启用一个地方
-                //     return false;
+            // case location.hostname == 'www.fkzww.net' && !document.title.match(/网文快讯/):  // 啃书只自动启用一个地方
+            //     return false;
             case Config.booklink_enable && /booklink\.me/.test(referrer):
                 return true;
             case Config.getDisableAutoLaunch():
-                return false;
+            case locationHost == 'tieba.baidu.com':
+                var title = $('.core_title_txt').text();
+                if (title.match(Rule.titleRegExp)) {
+                    return false;
+                } else {
+                    return -1;
+                }
             case GM_getValue("auto_enable"):
             case config.soduso && /www\.sodu\.so/.test(referrer):
                 return true;
@@ -3386,7 +3554,7 @@ var App = {
             observer.observe(target, {
                 childList: true
             });
-            debug("添加 MutationObserve 成功：", selector);
+            C.log("添加 MutationObserve 成功：", selector);
         } else {
             callback();
         }
@@ -3565,7 +3733,7 @@ var App = {
         }
     },
     removeListener: function() {
-        debug("移除各种事件监听");
+        C.log("移除各种事件监听");
         App.remove.forEach(function(_remove) {
             _remove();
         });
@@ -3694,12 +3862,15 @@ var App = {
             return false;
         });
 
-        key('right', function() {
+        key('right', function(event) {
             if (App.getRemain() === 0) {
                 location.href = App.lastRequestUrl || App.requestUrl;
             } else {
                 App.scrollToArticle(App.curFocusElement.nextSibling || App.$doc.height());
             }
+
+            event.preventDefault();
+            event.stopPropagation();
             return false;
         });
 
@@ -3847,19 +4018,19 @@ var App = {
         }
     },
     httpRequest: function(nextUrl) {
-        debug("获取下一页: " + nextUrl);
+        C.log("获取下一页: " + nextUrl);
         GM_xmlhttpRequest({
             url: nextUrl,
             method: "GET",
             overrideMimeType: "text/html;charset=" + document.characterSet,
             onload: function(res) {
-                var doc = createDocumentByString(res.responseText);
+                var doc = parseHTML(res.responseText);
                 App.beforeLoad(doc);
             }
         });
     },
     iframeRequest: function(nextUrl) {
-        debug("iframeRequest: " + nextUrl);
+        C.log("iframeRequest: " + nextUrl);
         if (!App.iframe) {
             var i = document.createElement('iframe');
             App.iframe = i;
@@ -3986,12 +4157,88 @@ var App = {
     }
 };
 
+var BookLinkMe = {
+    clickedColor: "666666",
 
-// 防止 unsafeWindow cannot call: GM_getValue
-unsafeWindow.readx = function() {
-    setTimeout(function() {
-        App.launch();
-    }, 0);
+    init: function() {
+        if (location.host != 'booklink.me') return;
+
+        this.addUnreadButton();
+
+        if (location.pathname.indexOf("/book-") === 0) {
+            this.chapterPageAddTiebaLink();
+        }
+    },
+    addUnreadButton: function(){  // 添加一键打开所有未读链接
+        var $parent = $('td[colspan="2"]:contains("未读"):first');
+        if(!$parent.length) return;
+
+        var openAllUnreadLinks = function(event){
+            event.preventDefault();
+
+            var links = $x('./ancestor::table[@width="100%"]/descendant::a[img[@alt="未读"]]', event.target);
+            links.forEach(function(link){
+                // 忽略没有盗版的
+                var chapterLink = link.parentNode.nextSibling.nextSibling.querySelector('a');
+                if (chapterLink.querySelector('font[color="800000"]')) {
+                    return;
+                }
+
+                if(isFirefox)
+                    link.click();
+                else
+                    GM_openInTab(link.href);
+
+                // 设置点击后的样式
+                // 未读左边的 1x 链接
+                link.parentNode.previousSibling.querySelector('font')
+                    .setAttribute('color', BookLinkMe.clickedColor);
+                chapterLink.classList.add('mclicked');
+            });
+        };
+
+
+        $('<a>')
+            .attr({ href: 'javascript:void(0)', title: '一键打开所有未读链接', style: 'width:auto;' })
+            .click(openAllUnreadLinks)
+            .append($('<img src="me.png" style="max-width: 20px;">'))
+            .appendTo($parent);
+    },
+    chapterPageAddTiebaLink: function() {
+        var link = $('font:contains("贴吧")').parent().get(0);
+        if (!link) return;
+
+        console.log('GM_xmlhttpRequest', link.href);
+
+        GM_xmlhttpRequest({
+            method: "GET",
+            url: link.href,
+            onload: function(response) {
+                var doc = parseHTML(response.responseText);
+
+                $('a:contains("搜索本章节")').each(function(){
+                    var $this = $(this),
+                        $thisLine = $this.parent().parent(),
+                        chapterTitle = $thisLine.prev().find('a[href^="/jump.php"]:first').text();
+
+                    if (!chapterTitle) return;
+
+                    var $link = $(doc).find('.threadlist_text > a:contains("' + chapterTitle + '"):first');
+                    if (!$link.length) return;
+
+                    var url = 'http://tieba.baidu.com' + $link.attr('href');
+                    $('<a>')
+                        .attr({ target: '_blank', href: url })
+                        .text('贴吧')
+                        .appendTo($this.parent());
+                });
+            }
+        });
+    }
 };
 
-App.init()
+if (location.host === 'booklink.me') {
+    BookLinkMe.init();
+} else {
+    App.init();
+}

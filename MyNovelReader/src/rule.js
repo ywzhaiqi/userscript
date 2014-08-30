@@ -1,8 +1,10 @@
 
 // ===== 自动尝试的规则 =====
 var Rule = {
+    titleRegExp: /第?\s*[一二两三四五六七八九十○零百千万亿0-9１２３４５６７８９０]{1,6}\s*[章回卷节折篇幕集]/i,
     titleReplace: /^章节目录|^文章正文|^正文|全文免费阅读|最新章节|\(文\)/,
 
+    // nextRegExp: /[上前下后][一]?[页张个篇章节步]/,
     nextSelector: "a[rel='next'], a:contains('下一页'), a:contains('下一章'), a:contains('下一节'), a:contains('下页')",
     prevSelector: "a[rel='prev'], a:contains('上一页'), a:contains('上一章'), a:contains('上一节'), a:contains('上页')",
     // 忽略的下一页链接，匹配 href
@@ -68,11 +70,13 @@ Rule.specialSite = [
         // contentSelector: "#hdContent",
         nextUrl: function($doc){  // 为了避免起点某次改版后把1页拆成2页，然后造成重复载入第一页的情况
             var html = $doc.find('script:contains(nextpage=)').html();
+            if (!html) return;
             var m = html.match(/nextpage='(.*?)'/);
             if (m) return m[1];
         },
         prevUrl: function($doc){
             var html = $doc.find('script:contains(prevpage=)').html();
+            if (!html) return;
             var m = html.match(/prevpage='(.*?)'/);
             if (m) return m[1];
         },
@@ -81,7 +85,7 @@ Rule.specialSite = [
             "\\[+CP.*(http://file.*\\.jpg)\\]+": "<p><img src='$1'></p><p>",
             "\\[bookid=(\\d+)，bookname=(.*?)\\]": "<a href='http://www.qidian.com/Book/$1.aspx'>$2</a>",
             "www.cmfu.com发布|起点中文网www.qidian.com欢迎广大书友光临阅读.*": "",
-            '(<p>\\s+)?<a href="?http://www.(?:qidian|cmfu).com"?>起点中文网.*': ''
+            '(<p>\\s+)?<a href="?http://www.(?:qidian|cmfu).com"?>起点中文网.*': '',
         },
         contentRemove: "span[id^='ad_']",
         contentPatch: function(fakeStub){
@@ -138,8 +142,14 @@ Rule.specialSite = [
             var $body = fakeStub.find('body');
                 html = $body.html(),
                 novel_showid = unsafeWindow.novel_showid,
-                _main = unsafeWindow.CS.page.bookReader.main,
-                uuid = html.match(/uuid = "(\d+?)"/i)[1];
+                _main = unsafeWindow.CS.page.bookReader.main;
+
+            var m = html.match(/uuid\s*=\s*["'](\d+)["']/i);
+            if (!m) {
+                console.error('无法找到 uuid', html);
+                return;
+            }
+            var uuid = m[1];
 
             var preChapterInfo = _main.getPreChapterInfo(uuid),
                 nextChapterInfo = _main.getNextChapterInfo(uuid);
@@ -215,10 +225,13 @@ Rule.specialSite = [
         url: /^http:\/\/tieba\.baidu.com\/p\//,
         titleSelector: "h1.core_title_txt",
         bookTitleSelector: ".card_title_fname",
+        nextSelector: false,
+        indexSelector: false,
+        prevSelector: false,
 
         contentSelector: "#j_p_postlist",
         contentRemove: "#sofa_post, .d_author, .share_btn_wrapper, .core_reply, .j_user_sign",
-        style: ".clear { border-top:1px solid #cccccc; margin-bottom: 50px;}",  // 显示楼层的分割线
+        style: ".clear { border-top:1px solid #cccccc; margin-bottom: 50px; visibility: visible !important;}",  // 显示楼层的分割线
     },
     // {siteName: "天涯在线书库（部分支持）",
     //     url: /www\.tianyabook\.com\/.*\.htm/,
@@ -288,9 +301,13 @@ Rule.specialSite = [
         titleReg: /(.*) (.*?) 书迷楼/,
         titlePos: 1,
         contentSelector: "#content",
-        contentReplace: ['div lign="ener"&gt;|.*更多章节请到网址隆重推荐去除广告全文字小说阅读器',
+        contentRemove: 'a',
+        contentReplace: [
+            'div lign="ener"&gt;|.*更多章节请到网址隆重推荐去除广告全文字小说阅读器',
             '起点中文网www.qidian.com欢迎广大书.*',
-            '书迷楼最快更新.*'],
+            '书迷楼最快更新.*',
+            {'<p>\\?\\?': '<p>'},
+        ],
         fixImage: true,
         contentPatch: function(fakeStub){
             fakeStub.find("#content").find("div.title:last")
@@ -304,6 +321,7 @@ Rule.specialSite = [
         fixImage: true,
         contentReplace: {
             "&lt;冰火#中文.*|冰火中文&nbsp;(www.)?binhuo.com|冰.火.中文|绿色小说|lvsexs|冰火中文.": "",
+            "LU5.ｃｏM|lU５.com|LU5.com":"",
             "([^/])www\\.binhuo\\.com": "$1"
         },
         contentPatch: function(fakeStub){
@@ -362,8 +380,9 @@ Rule.specialSite = [
             "看更新最快的小说就搜索—— 木鱼哥——无弹窗，全文字": "",
             "【看最新小说就搜索.*全文字首发】": "",
             "<p>.*?无弹窗</p>":"",
-            "bb\\.king|【木&nbsp;鱼&nbsp;哥&nbsp;.*?】|【一秒钟记住本站：muyuge.com&nbsp;木鱼哥】":"",
+            "bb\\.king|【木&nbsp;鱼&nbsp;哥&nbsp;.*?】|【一秒钟记住本站：muyuge.com.*木鱼哥】":"",
             "——推荐阅读——[\\s\\S]+": "",
+            "【 木鱼哥 ——更新最快，全文字首发】":"",
         },
     },
     {siteName: "追书网",
@@ -518,10 +537,12 @@ Rule.specialSite = [
         url: "^http://www\\.sqsxs\\.com/\\d+/\\d+/\\d+\\.html",
         titleReg: "(.*?)最新章节_\\S* (.*)_手牵手小说网",
         contentReplace: [
+            "◆免费◆",
             "★百度搜索，免费阅读万本★|访问下载txt小说.百度搜.|免费电子书下载|\\(百度搜\\)|『文學吧x吧.』|¤本站网址：¤",
-            "[☆★◆〓『【◎◇].*?(?:yunlaige|云 来 阁|ｙｕｎｌａｉｇｅ).*?[☆◆★〓』】◎◇]",
-            "『万本收费免费看』",
+            "[☆★◆〓『【◎◇].*?(?:yunlaige|云 来 阁|ｙｕｎｌａｉｇｅ|免费看).*?[☆◆★〓』】◎◇]",
             "&nbsp;关闭</p>",
+            "&nbsp;&nbsp;&nbsp;&nbsp;\\?",
+            "\\[☆更.新.最.快☆无.弹.窗☆全.免.费\\]",
             { "。\\.": "。" },
         ]
     },
@@ -973,6 +994,7 @@ Rule.specialSite = [
     {siteName: "云来阁",
         url: "http://www\\.yunlaige\\.com/html/\\d+/\\d+/\\d+\\.html",
         titleSelector: '.ctitle',
+        bookTitleSelector: '#hlBookName',
         contentSelector: '#content',
         contentRemove: '.bottomlink',
         contentReplace: [
@@ -1072,7 +1094,7 @@ Rule.replace = {
     "强(\\*{2})u5B9D":"强大法宝",
 
     // === 多字替换 ===
-    "cao之过急":"操之过急",
+    "cao之过急":"操之过急", "chunguang大泄":"春光大泄",
     "大公无si":"大公无私",
     "fu道人家":"妇道人家", "放sōng'xià来":"放松下来",
     "奸yin掳掠":"奸淫掳掠",
@@ -1081,9 +1103,9 @@ Rule.replace = {
 
     // === 双字替换 ===
     "暧m[eè][iì]":"暧昧",
-    "bàn\\s*fǎ":"办法", "不liáng":"不良", "b[ěe]i(\\s|&nbsp;)*j[īi]ng":"北京","半shen": "半身", "b[ìi]j[ìi]ng":"毕竟", "报(了?)jing":"报$1警", "bèi'pò":"被迫", "包yǎng":"包养", "biǎo子":"婊子", "biǎo\\s*xiàn\\s*":"表现",
+    "bàn\\s*fǎ":"办法", "不liáng":"不良", "b[ěe]i(\\s|&nbsp;)*j[īi]ng":"北京","半shen": "半身", "b[ìi]j[ìi]ng":"毕竟", "报(了?)jing":"报$1警", "bèi'pò":"被迫", "包yǎng":"包养", "(?:biǎo|婊\\\\?)子":"婊子", "biǎo\\s*xiàn\\s*":"表现",
     "ch[oō]ngd[oò]ng":"冲动", "chong物":"宠物", "cao(练|作)":"操$1", "出gui":"出轨", "缠mian": "缠绵", "成shu": "成熟", "(?:赤|chi)\\s*lu[oǒ]": "赤裸", "春guang": "春光", "chun风":"春风", "chuang伴":"床伴", "沉mi":"沉迷", "沉lun":"沉沦", "刺ji":"刺激", "chao红":"潮红", "初chun":"初春", "＂ｃｈｉ　ｌｕｏ＂":"赤裸",
-    "dang校": "党校", "da子": "鞑子", "大tui":"大腿", "dǎ\\s*suàn":"打算", "diao丝": "屌丝", "d[úu](?:\\s|&nbsp;|<br/>)*l[ìi]": "独立", "d[uú]\\s{0,2}c[áa]i":"独裁",  "d?[iì]f[āa]ng":"地方", "d[ìi]\\s*d[ūu]":"帝都", "di国":"帝国", "du[oò]落":"堕落", "坠luò":"坠落",
+    "dān\\s*xīn":"当心", "dang校": "党校", "da子": "鞑子", "大tui":"大腿", "dǎ\\s*suàn":"打算", "diao丝": "屌丝", "d[úu](?:\\s|&nbsp;|<br/>)*l[ìi]": "独立", "d[uú]\\s{0,2}c[áa]i":"独裁",  "d?[iì]f[āa]ng":"地方", "d[ìi]\\s*d[ūu]":"帝都", "di国":"帝国", "du[oò]落":"堕落", "坠luò":"坠落",
     "f[ǎa]ngf[óo]":"仿佛", "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "f[èe]nn[ùu]":"愤怒",
     "gao潮": "高潮", "高氵朝":"高潮", "gāo\\s*xìng\\s*":"高兴", "干chai": "干柴", "勾yin":"勾引", "gu[oò]ch[ée]ng":"过程", "gu[āa]n\\s*x[iì]":"关系", "g[ǎa]nji[àa]o":"感觉", "国wu院":"国务院", "gù\\s*yì\\s*":"故意",
     "hā\\s*hā\\s*":"哈哈", "hù士":"护士", "há'guó":"韩国", "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "h[ǎa]oxi[àa]ng":"好像", "hu[áa]ngs[èe]":"黄色", "皇d[ìi]":"皇帝", "昏昏yu睡":"昏昏欲睡", "回dang":"回荡", "huí\\s*qù\\s*":"回去",
@@ -1093,13 +1115,13 @@ Rule.replace = {
     "m[ǎa]ny[ìi]":"满意", "m[ǎa]sh[àa]ng":"马上", "m[ée]iy[oǒ]u":"没有", "mei国": "美国", "m[íi]ngb[áa]i":"明白", "迷huan": "迷幻", "mi茫":"迷茫", "m[íi]n\\s{0,2}zh[ǔu]": "民主", "迷jian": "迷奸", "mimi糊糊":"迷迷糊糊", "末(?:\\s|<br/?>)*ì":"末日", "面se":"面色", "mengmeng":"蒙蒙", 
     "nàme":"那么", "nǎo\\s*dài":"脑袋", "n[ée]ngg[oò]u":"能够", "nán\\s{0,2}hǎi": "那会", "内jian":"内奸", "[内內]y[iī]":"内衣", "内ku":"内裤",
     "pi[áa]o客":"嫖客", "p[áa]ngbi[āa]n":"旁边",
-    "q[íi]gu[àa]i":"奇怪", "qing\\s*(ren|人)":"情人", "qin兽":"禽兽", "q[iī]ngch[uǔ]":"清楚", "què\\s*dìng":"确定", "球mi":"球迷", "青chun":"青春", "青lou":"青楼",
+    "q[íi]gu[àa]i":"奇怪", "qing\\s*(ren|人)":"情人", "qin兽":"禽兽", "q[iī]ngch[uǔ]":"清楚", "què\\s*dìng":"确定", "球mi":"球迷", "青chun":"青春", "青lou":"青楼", "qiang[　\\s]*jian":"强奸",
     "r[úu]gu[oǒ]":"如果", "r[oó]ngy[ìi]":"容易", "ru(房|白色)": "乳$1", "rén员":"人员", "rén形":"人形", "人chao":"人潮", 
     "she(门|术|手|程|击)":"射$1", "sh[iì]ji[eè]":"世界", "sh[ií]ji[aā]n":"时间", "sh[ií]h[oò]u": "时候", "sh[ií]me":"什么", "si人":"私人", "shi女":"侍女", "shi身": "失身", "sh[ūu]j[ìi]":"书记", "shu女": "熟女", "shu[　\\s]?xiong":"酥胸", "(?:上|shang)chuang": "上床", "呻y[íi]n": "呻吟", "sh[ēe]ngzh[íi]": "生殖", "深gu": "深谷", "双xiu": "双修", "生r[ìi]": "生日", "si盐":"私盐", "shi卫":"侍卫", "si下":"私下", "sao扰":"骚扰", "ｓｈｕａｎｇ　ｆｅｎｇ":"双峰", 
     "t[uū]r[áa]n":"突然", "tiaojiao": "调教", "偷qing":"偷情", "推dao": "推倒", "脱guang": "脱光", "t[èe]bi[ée]":"特别", "t[ōo]nggu[òo]":"通过", "同ju":"同居", "tian来tian去":"舔来舔去",
     "w[ēe]ixi[ée]":"威胁", "wèizh[ìi]":"位置", "wei员":"委员", "wèi\\s*dào\\s*":"味道",
     "xiu长": "修长", "亵du": "亵渎", "xing福": "幸福", "小bo":"小波", "小niū":"小妞", "xiong([^a-z])":"胸$1", "小tui":"小腿", "xiàohuà":"笑话", "xiàn\\'zhì":"限制", "xiōng\\s*dì":"兄弟",
-    "yì\\s*wài\\s*":"意外", "yin(冷|暗|谋|险|沉|沟|癸派|后)":"阴$1", "y[iī]y[àa]ng":"一样", "y[īi]di[ǎa]n":"一点", "y[ǐi]j[īi]ng":"已经", "疑huo":"疑惑", "yí\\s*huò":"疑惑", "影mi":"影迷",  "阳w[ěe]i": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "(?:you|诱)(?:惑|huo)": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人", "御yòng":"御用", "旖ni":"旖旎", "yu念":"欲念", "you敌深入":"诱敌深入", "影she":"影射", "牙qian":"牙签", "一yè情":"一夜情",
+    "yì\\s*wài\\s*":"意外", "yin(冷|暗|谋|险|沉|沟|癸派|后)":"阴$1", "y[iī]y[àa]ng":"一样", "y[īi]di[ǎa]n":"一点", "yī\\s*zhèn":"一阵", "y[ǐi]j[īi]ng":"已经", "疑huo":"疑惑", "yí\\s*huò":"疑惑", "影mi":"影迷",  "阳w[ěe]i": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "(?:you|诱)(?:惑|huo)": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人", "御yòng":"御用", "旖ni":"旖旎", "yu念":"欲念", "you敌深入":"诱敌深入", "影she":"影射", "牙qian":"牙签", "一yè情":"一夜情",
     "z[iì]j[iǐ]": "自己","z[ìi](?:\\s|<br/?>|&nbsp;)*y[oó]u": "自由","zh[iī]d?[àa]u?o":"知道","zhì'fú":"制服", "zha药": "炸药", "zhan有": "占有", "zhè\\s*gè":"这个", "政f[ǔu]": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zong理":"总理", "zh[ōo]ngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]\\s*y[oò]u":"左右", "zhǔ\\s*dòng":"主动", "zh[oō]uw[ée]i":"周围", "中nan海":"中南海", "中j委":"中纪委", "中zu部":"中组部", "政zhi局":"政治局", "(昨|一|时|余)(?:<br/?>|&nbsp;|\\s)*ì":"$1日", "照she":"照射", "zhǔn\\s*bèi\\s*":"准备", 
 };
 
@@ -1148,7 +1170,7 @@ Rule.replace = {
     };
 
     $.extend(Rule.replace, replaceOthers);
-})()
+})();
 
 
 // 自定义的

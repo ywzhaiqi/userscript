@@ -1,5 +1,33 @@
 //------------------- 辅助函数 ----------------------------------------
-var debug = Config.debug ? console.log.bind(console) : function() {};
+
+var nullFn = function() {};
+
+// Check if is GM 2.x
+if (typeof exportFunction == 'undefined') {
+    // For GM 1.x backward compatibility, should work.
+    var exportFunction = (function(foo, scope, defAs) {
+        scope[defAs.defineAs] = foo;
+    }).bind(unsafeWindow);
+}
+
+var C;
+toggleConsole(Config.debug);
+
+function toggleConsole(debug) {
+    if (debug) {
+        C = console;
+    } else {
+        C = {
+            log: nullFn,
+            error: nullFn,
+            group: nullFn,
+            groupCollapsed: nullFn,
+            groupEnd: nullFn,
+            time: nullFn,
+            timeEnd: nullFn,
+        };
+    }
+}
 
 function L_getValue(key) { // 个别用户禁用本地存储会报错
     try {
@@ -20,10 +48,11 @@ function L_removeValue(key) {
 }
 
 
-function createDocumentByString(str) {
+function parseHTML(str) {
     var doc;
     try {
-        doc = new DOMParser().parseFromString(str, "text/html"); // chrome 30+ 已支持
+        // firefox and chrome 30+，Opera 12 会报错
+        doc = new DOMParser().parseFromString(str, "text/html");
     } catch (ex) {}
 
     if (!doc) {
@@ -41,17 +70,42 @@ function toRE(obj, flags) {
     }
 }
 
+function wildcardToRegExpStr(urlstr) {
+    if (urlstr.source) return urlstr.source;
+    let reg = urlstr.replace(/[()\[\]{}|+.,^$?\\]/g, "\\$&").replace(/\*+/g, function(str){
+        return str === "*" ? ".*" : "[^/]*";
+    });
+    return "^" + reg + "$";
+}
+
 function getUrlHost(url) {
     var a = document.createElement('a');
     a.href = url;
     return a.host;
 }
 
+function $x(aXPath, aContext) {
+    var nodes = [];
+    var doc = document;
+    var aContext = aContext || doc;
+
+    try {
+        var results = doc.evaluate(aXPath, aContext, null,
+            XPathResult.ANY_TYPE, null);
+        var node;
+        while (node = results.iterateNext()) {
+            nodes.push(node);
+        }
+    } catch (ex) {}
+
+    return nodes;
+}
+
 Function.prototype.getMStr = function() {  // 多行String
     var lines = new String(this);
     lines = lines.substring(lines.indexOf("/*") + 3, lines.lastIndexOf("*/"));
     return lines;
-}
+};
 
 $.nano = function(template, data) {
     return template.replace(/\{([\w\.]*)\}/g, function(str, key) {
