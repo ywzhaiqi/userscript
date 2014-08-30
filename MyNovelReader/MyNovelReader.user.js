@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        4.6.5
+// @version        4.6.5.1
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    shyangs
@@ -1823,7 +1823,7 @@ function toRE(obj, flags) {
 
 function wildcardToRegExpStr(urlstr) {
     if (urlstr.source) return urlstr.source;
-    let reg = urlstr.replace(/[()\[\]{}|+.,^$?\\]/g, "\\$&").replace(/\*+/g, function(str){
+    var reg = urlstr.replace(/[()\[\]{}|+.,^$?\\]/g, "\\$&").replace(/\*+/g, function(str){
         return str === "*" ? ".*" : "[^/]*";
     });
     return "^" + reg + "$";

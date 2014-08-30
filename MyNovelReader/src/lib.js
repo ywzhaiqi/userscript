@@ -72,7 +72,7 @@ function toRE(obj, flags) {
 
 function wildcardToRegExpStr(urlstr) {
     if (urlstr.source) return urlstr.source;
-    let reg = urlstr.replace(/[()\[\]{}|+.,^$?\\]/g, "\\$&").replace(/\*+/g, function(str){
+    var reg = urlstr.replace(/[()\[\]{}|+.,^$?\\]/g, "\\$&").replace(/\*+/g, function(str){
         return str === "*" ? ".*" : "[^/]*";
     });
     return "^" + reg + "$";
