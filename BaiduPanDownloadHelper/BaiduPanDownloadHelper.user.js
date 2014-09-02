@@ -1,9 +1,9 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.7.5
+// @version        3.7.6
 // @namespace      https://github.com/ywzhaiqi
-// @author         ywzhaiqi@gmail.com
+// @author         ywzhaiqi
 // @description    批量导出百度盘的下载链接
 // @grant          GM_getValue
 // @grant          GM_setValue
@@ -21,6 +21,8 @@
 // @updateURL      https://greasyfork.org/scripts/294/code.meta.js
 // @downloadURL    https://greasyfork.org/scripts/294/code.user.js
 // @require        http://code.jquery.com/jquery-2.1.1.min.js
+// 兼容 GM 1.x, 2.x
+// @require        https://greasyfork.org/scripts/2599/code/gm2_port_v102.js
 
 // @include        http*://yun.baidu.com/share/link*
 // @include        http*://pan.baidu.com/share/link*
@@ -184,13 +186,14 @@ var mHome = (function(){  // 个人主页
     var downloadAll = function() {
         // 得到选中的条目，过滤文件夹
         // var fs_ids = dataCenter.get('selectedList'),  // ["812801091852241", "860551491728460"]
-        var 
-            nodeList = dataCenter.get('selectedItemList'),
-            fs_ids = [],
-            fileList = []
-        ;
-
-        nodeList.forEach(function($div){
+        var fs_ids = [],
+            fileList = [];
+        
+        // 不兼容于 GM 2.0+
+        // var nodeList = dataCenter.get('selectedItemList')
+        var nodes = $('.list-view-home .chked').map(function(i, node) { return node.parentNode.parentNode; })
+        $(nodes).each(function(i, div){
+            var $div = $(div);
             if ($div.attr('data-extname') === 'dir') return;
 
             var fs_id = $div.attr('data-id');
@@ -205,21 +208,22 @@ var mHome = (function(){  // 个人主页
 
         if (fileList.length === 0) return;
 
-        Toast.obtain.useToast({
+        Toast.obtain.useToast(cloneInto({
             toastMode: Toast.obtain.MODE_LOADING,
             msg: "正在获取中，请稍后...",
             sticky: true,
-        });
+        }, unsafeWindow));
 
         var isSimplePanel = prefs.getIsSimplePanel();
 
         // 获取下载地址
-        var
-            fidlist = "[" + fs_ids.join(',') + "]",
+        var fidlist = "[" + fs_ids.join(',') + "]",
             type = 'dlink',
             callback = function(result) {
                 // console.log(result);
                 // console.log(fileList)
+                
+                if (!result.dlink) return;
 
                 if (!isSimplePanel) {  // 以前的导出方式
                     result.dlink.forEach(function(info){
@@ -244,21 +248,12 @@ var mHome = (function(){  // 个人主页
                 }
 
                 Toast.obtain.setVisible(false);
-            }
-        ;
+            };
 
-        commonService.getDlink(fidlist, type, callback);
+        // 兼容 Greasemonkey 2.0+
+        exportFunction(callback, unsafeWindow, {defineAs: "gm_pan_callback"});
 
-        // 获取其它信息？上面的方式只有下载链接
-        // this.getList(null, function(list) {
-        //     var selectedList = list.filter(function(info) { return selectedListID.indexOf(info.fs_id) > 0 });
-
-        //     selectedList.forEach(function(info) {
-
-        //     });
-        //     // end
-        //     // Toast.obtain.setVisible(false);
-        // });
+        commonService.getDlink(fidlist, type, unsafeWindow.gm_pan_callback);
     };
 
     var setDocumentTitle = function() {  // 设置页面标题，根据 hash 变化而变化，方便历史记录检索
@@ -289,8 +284,8 @@ var mHome = (function(){  // 个人主页
         window.addEventListener('hashchange', setDocumentTitle, false);
 
         UI.addQuickLinks();
-        // 修正添加后出现滚动条的情况
-        GM_addStyle('.side-options { margin: auto; }');
+        // 修正添加后，放大状态可能错位的情况
+        GM_addStyle('.module-aside .remaining{ top:auto !important; bottom: 5% !important; }');
 
         setMaxSize();
     };
@@ -437,7 +432,6 @@ var Pan = {
         var url = "/share/download?channel=chunlei&clienttype=0&web=1" + "&uk=" + FileUtils.share_uk + "&shareid=" + FileUtils.share_id + "&timestamp=" + FileUtils.share_timestamp + "&sign=" + FileUtils.share_sign;
         var data = { fid_list: "[" + disk.util.ViewShareUtils.fsId + "]" };
         $.post(url, data, function(result) {
-            console.log(result)
             if (result && result.errno == 0 && result.dlink) {
                 $('#downFileButtom')
                     .attr({
@@ -450,7 +444,7 @@ var Pan = {
                 };
             } else {
                 console.error(result);
-                $('#downFileButtom').click();
+                document.getElementById('downFileButtom').click();
             }
         });
 
@@ -462,11 +456,13 @@ var Pan = {
                 if (downInfo) {
                     Pan.addToYAAW(downInfo);
                 } else {
-                    Utilities.useToast({
+                    var args = cloneInto({
                         toastMode: disk.ui.Toast.MODE_LOADING,
                         msg: "正在获取链接，请等待",
                         sticky: false
-                    });
+                    }, unsafeWindow);
+
+                    Utilities.useToast(args);
                 }
             })
             .insertAfter('#downFileButtom');
@@ -869,18 +865,18 @@ var Pan = {
         // disk.ui.Toast.MODE_LOADING    载入
         // disk.ui.Toast.MODE_SUCCESS    正常
         if (Utilities) {
-            return Utilities.useToast({
+            return Utilities.useToast(cloneInto({
                 toastMode: disk.ui.Toast.MODE_CAUTION,
                 msg: msg,
                 sticky: sticky || false
-            });
+            }, unsafeWindow));
         } else if (require) {
             var Toast = require("common:widget/toast/toast.js");
-            Toast.obtain.useToast({
+            Toast.obtain.useToast(cloneInto({
                 toastMode: Toast.obtain.MODE_CAUTION,
                 msg: msg,
                 sticky: sticky || false,
-            });
+            }, unsafeWindow));
         }
     }
 };
@@ -910,7 +906,7 @@ var prefs = {
     getQuickLinks: function() {
         var quickLinks = GM_getValue('quickLinks');
         if (typeof quickLinks === 'undefined') {
-            quickLinks = 'Books=/Books\n小说=/Books/小说\n网络小说=/Books/网络小说';
+            quickLinks = 'Books=/Books\n小说=/Books/小说';
         }
         return quickLinks;
     },
@@ -1105,10 +1101,15 @@ function SimplePanel() {
     this.init.apply(this, arguments);
 }
 SimplePanel.prototype = {
+    constructor: SimplePanel,
+    toString: function() {
+        return "[object SimplePanel]";
+    },
+
     init: function (namespace, doc) {
         this.doc = doc || document;
         this.win = this.doc.defaultView;
-        this.namespace = namespace || 'GM_';
+        this.namespace = namespace || 'GM';
 
         this.html = this.html.replace(/\{namespace\}/g, this.namespace);
         this.css = this.css.replace(/\{namespace\}/g, this.namespace);
