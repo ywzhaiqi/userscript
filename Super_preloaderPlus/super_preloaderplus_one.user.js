@@ -4,7 +4,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.3.7
+// @version      6.3.8
 // @homepageURL  https://greasyfork.org/scripts/293-super-preloaderplus-one
 // @updateURL    https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js
 // @downloadURL  https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js
@@ -1046,6 +1046,15 @@ var SITEINFO=[
             pageElement: '//div[@class="result-list" or @class="sub-recommend"]/div[@class="content"]',
         }
     },
+    {name: '电驴站 爱磁力 iCiLi - 电驴下载站',
+        url: /^http:\/\/www\.icili\.com\/emule/i,
+        exampleUrl: 'http://www.icili.com/emule',
+        nextLink: 'id("main")/div[@class="pager"]/descendant::a[text()=" > "]',
+        autopager: {
+            pageElement: 'id("main")/ul',
+            replaceE: 'id("main")/div[@class="pager"]'
+        }
+    },
     {name: '射手网',
         url: /^http:\/\/(?:www\.)?shooter\.cn\/search\//i,
         exampleUrl: 'http://www.shooter.cn/search/Elysium/',
@@ -1235,7 +1244,7 @@ var SITEINFO=[
         }
     },
     {name: 'Firefox中文社区 - 列表',
-        url: '^http://www\\.firefox\\.net\\.cn/thread',
+        url: '^https?://www\\.firefox\\.net\\.cn/thread',
         nextLink: '//div[@class="pages"]/a[contains(text(), "下一页")]',
         autopager: {
             pageElement: 'id("J_posts_list")',
@@ -1249,7 +1258,7 @@ var SITEINFO=[
         }
     },
     {name: 'Firefox中文社区 - 帖子',
-        url: '^http://www\\.firefox\\.net\\.cn/read',
+        url: '^https?://www\\.firefox\\.net\\.cn/read',
         nextLink: '//div[@class="pages"]/a[contains(text(), "下一页")]',
         autopager: {
             pageElement: 'id("J_posts_list")/*',
@@ -3149,6 +3158,23 @@ var SITEINFO=[
         autopager: {
             pageElement: '//div[@id="gdt"]',
             relatedObj: true
+        }
+    },
+    {name: 'exhentai frontpage',
+        url: /^http:\/\/exhentai\.org\/(\?[^\/]+)?$/i,
+        exampleUrl: 'http://exhentai.org/?page=2',
+        nextLink: '//table[@class="ptt"]//a[text()=">"]',
+        autopager: {
+            pageElement: '//table[@class="ptt"]/..',
+            relatedObj: true
+        }
+    },
+    {name: 'Hentai Manga|Read free hentai xxx manga online',
+        url: /^http:\/\/hentai4manga\.com\//i,
+        exampleUrl: 'http://hentai4manga.com/',
+        nextLink: '//div[@class="pages"]/a[contains(text(), ">")]',
+        autopager: {
+            pageElement: 'id("innerContent")',
         }
     },
     {name: '1024社区',
