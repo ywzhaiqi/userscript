@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.7.6
+// @version        3.7.6.1
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @description    批量导出百度盘的下载链接
@@ -18,8 +18,6 @@
 // downloadURL     http://userscripts.org/scripts/source/162138.user.js
 
 // @homepageURL    https://greasyfork.org/scripts/294/
-// @updateURL      https://greasyfork.org/scripts/294/code.meta.js
-// @downloadURL    https://greasyfork.org/scripts/294/code.user.js
 // @require        http://code.jquery.com/jquery-2.1.1.min.js
 // 兼容 GM 1.x, 2.x
 // @require        https://greasyfork.org/scripts/2599/code/gm2_port_v102.js
@@ -190,13 +188,12 @@ var mHome = (function(){  // 个人主页
             fileList = [];
         
         // 不兼容于 GM 2.0+
-        // var nodeList = dataCenter.get('selectedItemList')
-        var nodes = $('.list-view-home .chked').map(function(i, node) { return node.parentNode.parentNode; })
+        var nodes = dataCenter.get('selectedItemList')
         $(nodes).each(function(i, div){
             var $div = $(div);
-            if ($div.attr('data-extname') === 'dir') return;
+            if ($div.data('extname') === 'dir') return;
 
-            var fs_id = $div.attr('data-id');
+            var fs_id = $div.data('id');
 
             fs_ids.push(fs_id);
 
@@ -248,6 +245,7 @@ var mHome = (function(){  // 个人主页
                 }
 
                 Toast.obtain.setVisible(false);
+                delete unsafeWindow.gm_pan_callback;
             };
 
         // 兼容 Greasemonkey 2.0+
@@ -456,13 +454,11 @@ var Pan = {
                 if (downInfo) {
                     Pan.addToYAAW(downInfo);
                 } else {
-                    var args = cloneInto({
+                    Utilities.useToast(cloneInto({
                         toastMode: disk.ui.Toast.MODE_LOADING,
                         msg: "正在获取链接，请等待",
                         sticky: false
-                    }, unsafeWindow);
-
-                    Utilities.useToast(args);
+                    }, unsafeWindow));
                 }
             })
             .insertAfter('#downFileButtom');
