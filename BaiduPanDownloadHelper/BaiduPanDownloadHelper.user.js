@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.7.6.1
+// @version        3.7.7
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @description    批量导出百度盘的下载链接
@@ -249,8 +249,9 @@ var mHome = (function(){  // 个人主页
             };
 
         // 兼容 Greasemonkey 2.0+
-        exportFunction(callback, unsafeWindow, {defineAs: "gm_pan_callback"});
-
+        exportFunction(callback, unsafeWindow, {
+            defineAs: "gm_pan_callback"
+        });
         commonService.getDlink(fidlist, type, unsafeWindow.gm_pan_callback);
     };
 
@@ -315,7 +316,12 @@ var Pan = {
         }
         else if (loc.indexOf('/share/link') != -1 || loc.indexOf('/s/') != -1) 
         {
-            pageType = document.getElementById('barCmdTransfer') ? 'shareDir' : 'shareOne';
+            var type = unsafeWindow.yunData.SHAREPAGETYPE;
+            if (type == 'multi_file') {
+                pageType = 'shareDir';
+            } else if (type == 'single_file_page') {
+                pageType = 'shareOne';
+            }
         } 
         else if (loc.indexOf('/share/home') != -1) 
         {
@@ -426,25 +432,34 @@ var Pan = {
 
         var downInfo = null;
 
-        // 获取链接，文件 viewshare_all.js，函数 _checkDownloadFile，2013-12-2
-        var url = "/share/download?channel=chunlei&clienttype=0&web=1" + "&uk=" + FileUtils.share_uk + "&shareid=" + FileUtils.share_id + "&timestamp=" + FileUtils.share_timestamp + "&sign=" + FileUtils.share_sign;
-        var data = { fid_list: "[" + disk.util.ViewShareUtils.fsId + "]" };
-        $.post(url, data, function(result) {
-            if (result && result.errno == 0 && result.dlink) {
-                $('#downFileButtom')
-                    .attr({
-                        "href": result.dlink
-                    })
-                    .find('b').css('color', 'red');
-                downInfo = {
-                    server_filename: unsafeWindow.server_filename,
-                    dlink: result.dlink
-                };
-            } else {
-                console.error(result);
-                document.getElementById('downFileButtom').click();
-            }
+        // 获取下载链接，函数 getDlinkShare 和 ajaxGetDlinkShare，2014-9-5
+        var yunData = unsafeWindow.yunData;
+
+        var dlinkService = require('common:widget/dlinkService/dlinkService.js');
+        var info = {
+            isForBatch: false,
+            list: yunData.FILEINFO,
+            product: "share",
+            share_id: yunData.SHARE_ID,
+            share_uk: yunData.SHARE_UK,
+            sign: yunData.SIGN,
+            timestamp: yunData.TIMESTAMP
+        };
+        var callback = function(result) {
+            downInfo = result.list[0];
+            // console.log(downInfo, result);
+
+            var link = document.getElementById('downFileButton');
+            link.setAttribute('href', downInfo.dlink);
+            link.children[1].style.color = 'red';
+            delete unsafeWindow.gm_pan_callback;
+        };
+
+        // 兼容 Greasemonkey 2.0+
+        exportFunction(callback, unsafeWindow, {
+            defineAs: "gm_pan_callback"
         });
+        dlinkService.getDlinkShare(cloneInto(info, unsafeWindow), unsafeWindow.gm_pan_callback);
 
         // 增加 YAAW 按钮
         $('<a class="new-dbtn" href="javascript:;" hidefocus="true">')
@@ -461,7 +476,7 @@ var Pan = {
                     }, unsafeWindow));
                 }
             })
-            .insertAfter('#downFileButtom');
+            .insertAfter('#downFileButton');
     },
     shareHomePageProcessor: function() {
         // http://yun.baidu.com/share/home?uk=53993635&view=share#category/type=0
