@@ -4,14 +4,8 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.3.8
+// @version      6.3.9
 // @homepageURL  https://greasyfork.org/scripts/293-super-preloaderplus-one
-// @updateURL    https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js
-// @downloadURL  https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js
-
-// homepageURL  https://userscripts.org/scripts/show/178900
-// downloadURL  https://userscripts.org/scripts/source/178900.user.js
-// updateURL    https://userscripts.org/scripts/source/178900.meta.js
 
 // @grant        GM_addStyle
 // @grant        GM_getValue

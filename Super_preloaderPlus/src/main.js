@@ -2544,13 +2544,96 @@ function gmCompatible() {
     };
 }
 
+// parseUri 1.2.2
+// (c) Steven Levithan <stevenlevithan.com>
+// MIT License
+var parseUri = function(str) {
+    var o = parseUri.options,
+        m = o.parser[o.strictMode ? "strict" : "loose"].exec(str),
+        uri = {},
+        i = 14;
+
+    while (i--) uri[o.key[i]] = m[i] || "";
+
+    uri[o.ds.name] = {};
+    uri[o.ds.name][0] = {};
+    uri[o.ds.name][0]['key'] = (uri.protocol ? uri.protocol : 'http') + '://' + uri.host + (uri.port ? ':' + uri.port : '') + '/';
+    uri[o.ds.name][0]['val'] = '/';
+    var i = 0,
+        tempsub = '/',
+        subs = uri[o.key[10]].substr(1).split('/');
+    for (var j = 1; j < (subs.length + 1); j++, i++) {
+        tempsub += tempsub === '/' ? subs[i] : '/' + subs[i];
+        if (subs[i]) {
+            uri[o.ds.name][j] = {};
+            uri[o.ds.name][j]['key'] = subs[i];
+            uri[o.ds.name][j]['val'] = tempsub;
+        }
+    }
+
+    uri[o.q.name] = {};
+    uri[o.key[12]].replace(o.q.parser, function($0, $1, $2) {
+        if ($1) uri[o.q.name][$1] = $2;
+    });
+    uri[o.aq.name] = {};
+    uri[o.key[13]].replace(o.aq.parser, function($0, $1, $2) {
+        if ($1) uri[o.aq.name][$1] = $2;
+    });
+
+    return uri;
+};
+parseUri.options = {
+    strictMode: false,
+    key: ["source", "protocol", "authority", "userInfo", "user", "password", "host", "port", "relative", "path", "directory", "file", "query", "anchor"],
+    q: {
+        name: "queryKey",
+        parser: /(?:^|&)([^&=]*)=?([^&]*)/g
+    },
+    aq: {
+        name: "anchorqueryKey",
+        parser: /(?:^|&)([^&=]*)=?([^&]*)/g
+    },
+    ds: {
+        name: "directorySub"
+    },
+    parser: {
+        strict: /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,
+        loose: /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/
+    }
+};
+
+
 // By lastDream2013 略加修改，原版只能用于 Firefox
 function getRalativePageStr(lastUrl, currentUrl, nextUrl) {
+    function getDigital(str) {
+        var num = str.replace(/^p/i, '');
+        return parseInt(num, 10);
+    }
+
     var getRalativePageNumArray = function (lasturl, url) {
         if (!lasturl || !url) {
             return [0, 0];
         }
 
+        // 新的方法
+        var lastQueryKeys = parseUri(lasturl).queryKey,
+            curQueryKeys = parseUri(url).queryKey,
+            name, lastNum, curNum;
+        for (name in curQueryKeys) {
+            if (!(name in lastQueryKeys)) continue;
+
+            lastNum = getDigital(lastQueryKeys[name]);
+            curNum = getDigital(curQueryKeys[name]);
+
+            if (isNaN(lastNum) || isNaN(curNum)) {
+                continue;
+            }
+
+            return [lastNum, curNum];
+        }
+
+
+        // 以前的 lastDream2013 的方式
         var lasturlarray = lasturl.split(/-|\.|\&|\/|=|#|\?/),
             urlarray = url.split(/-|\.|\&|\/|=|#|\?/),
             url_info,
@@ -2558,7 +2641,7 @@ function getRalativePageStr(lastUrl, currentUrl, nextUrl) {
         // 一些 url_info 为 p1,p2,p3 之类的
         var handleInfo = function(s) {
             if (s) {
-                return s.replace('p', '');
+                return s.replace(/^p/, '');
             }
             return s;
         };

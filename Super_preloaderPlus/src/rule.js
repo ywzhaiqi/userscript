@@ -283,6 +283,14 @@ var SITEINFO=[
             replaceE: '//div[@class="pagination"]',
         }
     },
+    {name: 'AOL 搜索',
+        url: '^http://(www\\.)aolsearch.com/search\\?.+?[?&]q=',
+        siteExample: 'http://www.aolsearch.com/search?q=test',
+        nextLink: '//a[span[@class="nextRes"][text()="Next"]]',
+        autopager: {
+            pageElement: '//*[@id="c"]/div'
+        }
+    },
     {name: "Google custom",
         url: /^https?:\/\/74\.125\.128\.147\/custom/i,
         nextLink: 'id("pnnext") | id("navbar navcnt nav")//td[span]/following-sibling::td[1]/a | id("nn")/parent::a',
