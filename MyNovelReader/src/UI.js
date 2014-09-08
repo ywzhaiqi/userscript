@@ -431,7 +431,8 @@ UI.skins["白底黑字".uiTrans()] = "body { color: black; background: white;}\
 UI.skins["夜间模式".uiTrans()] = "body { color: #939392; background: #2d2d2d; } #preferencesBtn { background: white; } #mynovelreader-content img { background-color: #c0c0c0; }";
 UI.skins["夜间模式1".uiTrans()] = "body { color: #679; background: black; } #preferencesBtn { background: white; }";
 UI.skins["夜间模式2".uiTrans()] = "body { color: #e3e3e3; background: #2d2d2d; } #preferencesBtn { background: white; }";
-UI.skins["夜间模式（多看）".uiTrans()] = "body { color: #3A5056; background: #101819; } #preferencesBtn { background: white; } #mynovelreader-content img { background-color: #c0c0c0; }";
+// UI.skins["夜间模式（多看）".uiTrans()] = "body { color: #3A5056; background: #101819; } #preferencesBtn { background: white; } #mynovelreader-content img { background-color: #c0c0c0; }";
+UI.skins["夜间模式（多看）".uiTrans()] = "body { color: #4A4A4A; background: #101819; } #preferencesBtn { background: white; } #mynovelreader-content img { background-color: #c0c0c0; }";
 UI.skins["橙色背景".uiTrans()] = "body { color: #24272c; background: #FEF0E1; }";
 UI.skins["绿色背景".uiTrans()] = "body { color: black; background: #d8e2c8; }";
 UI.skins["绿色背景2".uiTrans()] = "body { color: black; background: #CCE8CF; }";
@@ -749,7 +750,7 @@ var Res = {
                     </label>
                     <label>
                         字体
-                        <input type="textbox" id="font-family" style="width:250px;"/>
+                        <input type="textbox" id="font-family" style="min-width:200px;"/>
                     </label>
                     <br/><br/>
                     <label>

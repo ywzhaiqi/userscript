@@ -1,7 +1,8 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
-// @version        4.6.5.1
+// @name:zh-CN     小说阅读脚本
+// @version        4.6.6
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    shyangs
@@ -16,13 +17,7 @@
 // @grant          GM_setClipboard
 // @grant          GM_registerMenuCommand
 // @grant          unsafeWindow
-// homepageURL    https://userscripts.org/scripts/show/165951
-// updateURL      https://userscripts.org/scripts/source/165951.meta.js
-// downloadURL    https://userscripts.org/scripts/source/165951.user.js
-
 // @homepageURL    https://greasyfork.org/scripts/292/
-// @updateURL      https://greasyfork.org/scripts/292-my-novel-reader/code/My%20Novel%20Reader.meta.js
-// @downloadURL    https://greasyfork.org/scripts/292-my-novel-reader/code/My%20Novel%20Reader.user.js
 // @require        http://cdn.jsdelivr.net/jquery/1.9.1/jquery-1.9.1.min.js
 // @require        http://cdn.jsdelivr.net/underscorejs/1.6.0/underscore-min.js
 // @require        https://greasyfork.org/scripts/3053-keymaster-js/code/keymasterjs.js?version=8815
@@ -35,7 +30,7 @@
 // @include        http://www.qdmm.com/BookReader/*,*.aspx
 // @include        http://www.qdwenxue.com/BookReader/*,*.aspx
 // @include        http://chuangshi.qq.com/read/bookreader/*.html
-// @include        http://chuangshi.qq.com/*bk/*/*-m-*.html
+// @include        http://chuangshi.qq.com/*bk/*/*.html
 // @include        http://www.jjwxc.net/onebook.php?novelid=*
 // @include        http://book.zongheng.com/chapter/*/*.html
 // @include        http://www.xxsy.net/books/*/*.html
@@ -279,7 +274,7 @@ var Rule = {
     bookTitleSelector: ".h1title > .shuming > a[title], .chapter_nav > div:first > a:last",
 
     contentRemove: "script, iframe, font[color]",          // 内容移除选择器
-    contentReplace: /最新.?章节|百度搜索|无弹窗小说网|更新快无弹窗纯文字|高品质更新|\(百度搜.\)|全文字手打|“”&nbsp;看|无.弹.窗.小.说.网|追书网|〖∷∷无弹窗∷纯文字∷ 〗/g,
+    contentReplace: /最新.?章节|百度搜索|无弹窗小说网|更新快无弹窗纯文字|高品质更新|小说章节更新最快|\(百度搜.\)|全文字手打|“”&nbsp;看|无.弹.窗.小.说.网|追书网|〖∷∷无弹窗∷纯文字∷ 〗/g,
     removeLineRegExp: /<p>[　\s。;，！\.∷〖]*<\/p>/g,  // 移除只有一个字符的行
 
     // 以下不常改
@@ -384,50 +379,50 @@ Rule.specialSite = [
     {siteName: "创世中文网",
         url: "^http://chuangshi\\.qq\\.com/",
         titleReg: "(.*?)_(.*)_创世中文",
-        // contentSelector: ".bookreadercontent",
-        contentSelector: "#chaptercontainer",
-        // contentHandle: false,
-        // useiframe: true,
-        // mutationSelector: "#chaptercontainer",  // 内容生成监视器
-        // mutationChildCount: 1,
+        contentSelector: ".bookreadercontent",
+        // contentSelector: "#chaptercontainer",
+        contentHandle: false,
+        useiframe: true,
+        mutationSelector: "#chaptercontainer",  // 内容生成监视器
+        mutationChildCount: 1,
         timeout: 500,
         contentRemove: '> p:last',
-        contentPatch: function(fakeStub){
-            var $body = fakeStub.find('body');
-                html = $body.html(),
-                novel_showid = unsafeWindow.novel_showid,
-                _main = unsafeWindow.CS.page.bookReader.main;
+        // contentPatch: function(fakeStub){
+        //     var $body = fakeStub.find('body');
+        //         html = $body.html(),
+        //         novel_showid = unsafeWindow.novel_showid,
+        //         _main = unsafeWindow.CS.page.bookReader.main;
 
-            var m = html.match(/uuid\s*=\s*["'](\d+)["']/i);
-            if (!m) {
-                console.error('无法找到 uuid', html);
-                return;
-            }
-            var uuid = m[1];
+        //     var m = html.match(/uuid\s*=\s*["'](\d+)["']/i);
+        //     if (!m) {
+        //         console.error('无法找到 uuid', html);
+        //         return;
+        //     }
+        //     var uuid = m[1];
 
-            var preChapterInfo = _main.getPreChapterInfo(uuid),
-                nextChapterInfo = _main.getNextChapterInfo(uuid);
-                _pre_uuid = preChapterInfo ? preChapterInfo['uuid'] : 0;
-                _next_uuid = nextChapterInfo ? nextChapterInfo['uuid'] : 0;
+        //     var preChapterInfo = _main.getPreChapterInfo(uuid),
+        //         nextChapterInfo = _main.getNextChapterInfo(uuid);
+        //         _pre_uuid = preChapterInfo ? preChapterInfo['uuid'] : 0;
+        //         _next_uuid = nextChapterInfo ? nextChapterInfo['uuid'] : 0;
 
-            // 上下页
-            $('<a rel="prev">').attr('href', _getReadPageUrl(_pre_uuid)).prependTo($body);
-            $('<a rel="next">').attr('href', _getReadPageUrl(_next_uuid)).prependTo($body);
+        //     // 上下页
+        //     $('<a rel="prev">').attr('href', _getReadPageUrl(_pre_uuid)).prependTo($body);
+        //     $('<a rel="next">').attr('href', _getReadPageUrl(_next_uuid)).prependTo($body);
 
-            // 内容
-            var durl = 'http://chuangshi.qq.com/index.php/Bookreader/' + novel_showid +'/' + uuid;
-            fakeStub.find('body').append('<div id="content"></div>');
-            fakeStub.find('div#content').attr({
-                class: 'reader-ajax',
-                src: durl,
-                charset: 'GB2312'
-            });
+        //     // 内容
+        //     var durl = 'http://chuangshi.qq.com/index.php/Bookreader/' + novel_showid +'/' + uuid;
+        //     fakeStub.find('body').append('<div id="content"></div>');
+        //     fakeStub.find('div#content').attr({
+        //         class: 'reader-ajax',
+        //         src: durl,
+        //         charset: 'GB2312'
+        //     });
 
-            function _getReadPageUrl(uuid) {
-                if (!uuid) return 'javascript:;';
-                return window.location.href.replace(/(\d)+\.html/, uuid + '.html');
-            }
-        },
+        //     function _getReadPageUrl(uuid) {
+        //         if (!uuid) return 'javascript:;';
+        //         return window.location.href.replace(/(\d)+\.html/, uuid + '.html');
+        //     }
+        // },
     },
     {siteName: "晋江文学网",
         url: /^http:\/\/www\.jjwxc\.net\/onebook\.php\S*/,
@@ -560,6 +555,9 @@ Rule.specialSite = [
             'div lign="ener"&gt;|.*更多章节请到网址隆重推荐去除广告全文字小说阅读器',
             '起点中文网www.qidian.com欢迎广大书.*',
             '书迷楼最快更新.*',
+            '”小说“小说章节更新最快',
+            '更新最快最稳定',
+            '\\(.\\)RU',
             {'<p>\\?\\?': '<p>'},
         ],
         fixImage: true,
@@ -599,6 +597,7 @@ Rule.specialSite = [
             /〖百晓生∷.*〗|《?百晓生文学网》?|最快阅读小说大主宰，尽在百晓生文学网.*|ww.x.om|欢迎大家来到.*?bxs\.cc|百晓生阅读最新最全的小说.*|百晓生网不少字|站长推荐.*|文字首发|百.晓.生.|关闭.*广告.*|飘天文学|本站域名就是.*|\(.{0,5}小说更快更好.{0,5}\)|(请在)?百度搜索.*|一秒记住.*为您提供精彩小说阅读.|百晓生|¤本站网址：¤|\/\/&nbsp;访问下载txt小说\/\/◎◎|纯站点\\".*值得收藏的/ig,
             /文[学學][馆館]|www\.biquge\.cc|(http:\/\/)?www\.Bxs\.cc|(请牢记)?soudu．org/ig,
             /请搜索，小说更好更新更快!|最快文字更新无弹窗无广|\(即可找到本站\)|无广告看着就是爽!|更多全本txt小说请到下载|∷更新快∷∷纯文字∷/ig,
+            /永久网址，请牢记！/ig,
         ],
     },
     {siteName: "浩奇文学网",
@@ -637,6 +636,7 @@ Rule.specialSite = [
             "bb\\.king|【木&nbsp;鱼&nbsp;哥&nbsp;.*?】|【一秒钟记住本站：muyuge.com.*木鱼哥】":"",
             "——推荐阅读——[\\s\\S]+": "",
             "【 木鱼哥 ——更新最快，全文字首发】":"",
+            "div&gt;|&lt;－》": "",
         },
     },
     {siteName: "追书网",
@@ -774,7 +774,7 @@ Rule.specialSite = [
     {siteName: "热点",
         url: "^http://www\\.hotsk\\.com/Html/Book/\\d+/\\d+/\\d+\\.shtml",
         titleReg: "(.*?) 正文 (.*?)- 热点书库 -",
-        contentReplace: "\\(热点书库首发:www.hotsk.com\\)|www.zhuZhuDao.com .猪猪岛小说.|小说章节更新最快"
+        contentReplace: "\\(热点书库首发:www.hotsk.com\\)|www.zhuZhuDao.com .猪猪岛小说."
     },
     {siteName: "落秋中文",
         url: "^http://www\\.luoqiu\\.(com|net)/html/\\d+/\\d+/\\d+\\.html",
@@ -1357,26 +1357,26 @@ Rule.replace = {
 
     // === 双字替换 ===
     "暧m[eè][iì]":"暧昧",
-    "bàn\\s*fǎ":"办法", "不liáng":"不良", "b[ěe]i(\\s|&nbsp;)*j[īi]ng":"北京","半shen": "半身", "b[ìi]j[ìi]ng":"毕竟", "报(了?)jing":"报$1警", "bèi'pò":"被迫", "包yǎng":"包养", "(?:biǎo|婊\\\\?)子":"婊子", "biǎo\\s*xiàn\\s*":"表现",
+    "bàn\\s*fǎ":"办法", "bucuo":"不错", "不liáng":"不良", "b[ěe]i(\\s|&nbsp;)*j[īi]ng":"北京","半shen": "半身", "b[ìi]j[ìi]ng":"毕竟", "报(了?)jing":"报$1警", "bèi'pò":"被迫", "包yǎng":"包养", "(?:biǎo|婊\\\\?)子":"婊子", "biǎo\\s*xiàn\\s*":"表现",
     "ch[oō]ngd[oò]ng":"冲动", "chong物":"宠物", "cao(练|作)":"操$1", "出gui":"出轨", "缠mian": "缠绵", "成shu": "成熟", "(?:赤|chi)\\s*lu[oǒ]": "赤裸", "春guang": "春光", "chun风":"春风", "chuang伴":"床伴", "沉mi":"沉迷", "沉lun":"沉沦", "刺ji":"刺激", "chao红":"潮红", "初chun":"初春", "＂ｃｈｉ　ｌｕｏ＂":"赤裸",
     "dān\\s*xīn":"当心", "dang校": "党校", "da子": "鞑子", "大tui":"大腿", "dǎ\\s*suàn":"打算", "diao丝": "屌丝", "d[úu](?:\\s|&nbsp;|<br/>)*l[ìi]": "独立", "d[uú]\\s{0,2}c[áa]i":"独裁",  "d?[iì]f[āa]ng":"地方", "d[ìi]\\s*d[ūu]":"帝都", "di国":"帝国", "du[oò]落":"堕落", "坠luò":"坠落",
-    "f[ǎa]ngf[óo]":"仿佛", "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "f[èe]nn[ùu]":"愤怒",
+    "f[ǎa]ngf[óo]":"仿佛", "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "f[èe]nn[ùu]":"愤怒", "fǎn\\s*yīng":"反应",
     "gao潮": "高潮", "高氵朝":"高潮", "gāo\\s*xìng\\s*":"高兴", "干chai": "干柴", "勾yin":"勾引", "gu[oò]ch[ée]ng":"过程", "gu[āa]n\\s*x[iì]":"关系", "g[ǎa]nji[àa]o":"感觉", "国wu院":"国务院", "gù\\s*yì\\s*":"故意",
-    "hā\\s*hā\\s*":"哈哈", "hù士":"护士", "há'guó":"韩国", "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "h[ǎa]oxi[àa]ng":"好像", "hu[áa]ngs[èe]":"黄色", "皇d[ìi]":"皇帝", "昏昏yu睡":"昏昏欲睡", "回dang":"回荡", "huí\\s*qù\\s*":"回去",
+    "hā\\s*hā\\s*":"哈哈", "haode":"好的", "hù士":"护士", "há'guó":"韩国", "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "h[ǎa]oxi[àa]ng":"好像", "hu[áa]ngs[èe]":"黄色", "皇d[ìi]":"皇帝", "昏昏yu睡":"昏昏欲睡", "回dang":"回荡", "huí\\s*qù\\s*":"回去", "hé\\s*shì\\s*":"合适",
     "jian(臣|细)":"奸$1", "jiànmiàn":"见面", "jian货":"贱货", "jing察":"警察", "j[ìi]nháng":"进行", "jīng\\s*guò":"经过", "ji烈":"激烈", "j[iì](nv|女)": "妓女", "jirou": "鸡肉", "ji者":"记者", "jì\\s*xù\\s*":"继续", "ju花":"菊花","j[īi]动":"激动", "jili[èe]":"激烈", "肌r[òo]u":"肌肉","ji射":"激射", "ji[ēe]ch[uù]":"接触", "jiù\\s*shì":"就是", "j[ùu]li[èe]": "剧烈", "jǐng惕": "警惕", "节cao":"节操", "浸yin":"浸淫", "jù\\s*jué\\s*":"拒绝",
     "k[ěe]n[ée]ng": "可能", "开bao": "开苞",  "k[àa]o近": "靠近", "口wen":"口吻",
-    "ling辱": "凌辱", "luan蛋": "卵蛋", "脸sè": "脸色", "lu出":"露出", "流máng":"流氓", "lun理":"伦理",
-    "m[ǎa]ny[ìi]":"满意", "m[ǎa]sh[àa]ng":"马上", "m[ée]iy[oǒ]u":"没有", "mei国": "美国", "m[íi]ngb[áa]i":"明白", "迷huan": "迷幻", "mi茫":"迷茫", "m[íi]n\\s{0,2}zh[ǔu]": "民主", "迷jian": "迷奸", "mimi糊糊":"迷迷糊糊", "末(?:\\s|<br/?>)*ì":"末日", "面se":"面色", "mengmeng":"蒙蒙", 
+    "ling辱": "凌辱", "luan蛋": "卵蛋", "脸sè": "脸色", "lu出":"露出", "流máng":"流氓", "lun理":"伦理", "lì\\s*qì":"力气",
+    "m[ǎa]ny[ìi]":"满意", "m[ǎa]sh[àa]ng":"马上", "m[ée]iy[oǒ]u":"没有", "mei国": "美国", "m[íi]ngb[áa]i":"明白", "迷huan": "迷幻", "mi茫":"迷茫", "mó\\s*yàng":"模样", "m[íi]n\\s{0,2}zh[ǔu]": "民主", "迷jian": "迷奸", "mimi糊糊":"迷迷糊糊", "末(?:\\s|<br/?>)*ì":"末日", "面se":"面色", "mengmeng":"蒙蒙", 
     "nàme":"那么", "nǎo\\s*dài":"脑袋", "n[ée]ngg[oò]u":"能够", "nán\\s{0,2}hǎi": "那会", "内jian":"内奸", "[内內]y[iī]":"内衣", "内ku":"内裤",
     "pi[áa]o客":"嫖客", "p[áa]ngbi[āa]n":"旁边",
     "q[íi]gu[àa]i":"奇怪", "qing\\s*(ren|人)":"情人", "qin兽":"禽兽", "q[iī]ngch[uǔ]":"清楚", "què\\s*dìng":"确定", "球mi":"球迷", "青chun":"青春", "青lou":"青楼", "qiang[　\\s]*jian":"强奸",
-    "r[úu]gu[oǒ]":"如果", "r[oó]ngy[ìi]":"容易", "ru(房|白色)": "乳$1", "rén员":"人员", "rén形":"人形", "人chao":"人潮", 
-    "she(门|术|手|程|击)":"射$1", "sh[iì]ji[eè]":"世界", "sh[ií]ji[aā]n":"时间", "sh[ií]h[oò]u": "时候", "sh[ií]me":"什么", "si人":"私人", "shi女":"侍女", "shi身": "失身", "sh[ūu]j[ìi]":"书记", "shu女": "熟女", "shu[　\\s]?xiong":"酥胸", "(?:上|shang)chuang": "上床", "呻y[íi]n": "呻吟", "sh[ēe]ngzh[íi]": "生殖", "深gu": "深谷", "双xiu": "双修", "生r[ìi]": "生日", "si盐":"私盐", "shi卫":"侍卫", "si下":"私下", "sao扰":"骚扰", "ｓｈｕａｎｇ　ｆｅｎｇ":"双峰", 
+    "r[úu]gu[oǒ]":"如果", "r[oó]ngy[ìi]":"容易", "ru(房|白色)": "乳$1", "rén员":"人员", "rén形":"人形", "人chao":"人潮",  "renmen":"人名",
+    "she(门|术|手|程|击)":"射$1", "sudu":"速度", "shuijue":"睡觉", "shide":"是的", "sh[iì]ji[eè]":"世界", "sh[ií]ji[aā]n":"时间", "sh[ií]h[oò]u": "时候", "sh[ií]me":"什么", "si人":"私人", "shi女":"侍女", "shi身": "失身", "sh[ūu]j[ìi]":"书记", "shu女": "熟女", "shu[　\\s]?xiong":"酥胸", "(?:上|shang)chuang": "上床", "呻y[íi]n": "呻吟", "sh[ēe]ngzh[íi]": "生殖", "深gu": "深谷", "双xiu": "双修", "生r[ìi]": "生日", "si盐":"私盐", "shi卫":"侍卫", "si下":"私下", "sao扰":"骚扰", "ｓｈｕａｎｇ　ｆｅｎｇ":"双峰", 
     "t[uū]r[áa]n":"突然", "tiaojiao": "调教", "偷qing":"偷情", "推dao": "推倒", "脱guang": "脱光", "t[èe]bi[ée]":"特别", "t[ōo]nggu[òo]":"通过", "同ju":"同居", "tian来tian去":"舔来舔去",
-    "w[ēe]ixi[ée]":"威胁", "wèizh[ìi]":"位置", "wei员":"委员", "wèi\\s*dào\\s*":"味道",
+    "w[ēe]ixi[ée]":"威胁", "wèizh[ìi]":"位置", "wei员":"委员", "wèi\\s*dào\\s*":"味道", "wú\\s*nài":"无奈", "weilai":"未来", "wenti":"问题",
     "xiu长": "修长", "亵du": "亵渎", "xing福": "幸福", "小bo":"小波", "小niū":"小妞", "xiong([^a-z])":"胸$1", "小tui":"小腿", "xiàohuà":"笑话", "xiàn\\'zhì":"限制", "xiōng\\s*dì":"兄弟",
-    "yì\\s*wài\\s*":"意外", "yin(冷|暗|谋|险|沉|沟|癸派|后)":"阴$1", "y[iī]y[àa]ng":"一样", "y[īi]di[ǎa]n":"一点", "yī\\s*zhèn":"一阵", "y[ǐi]j[īi]ng":"已经", "疑huo":"疑惑", "yí\\s*huò":"疑惑", "影mi":"影迷",  "阳w[ěe]i": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "(?:you|诱)(?:惑|huo)": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人", "御yòng":"御用", "旖ni":"旖旎", "yu念":"欲念", "you敌深入":"诱敌深入", "影she":"影射", "牙qian":"牙签", "一yè情":"一夜情",
-    "z[iì]j[iǐ]": "自己","z[ìi](?:\\s|<br/?>|&nbsp;)*y[oó]u": "自由","zh[iī]d?[àa]u?o":"知道","zhì'fú":"制服", "zha药": "炸药", "zhan有": "占有", "zhè\\s*gè":"这个", "政f[ǔu]": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zong理":"总理", "zh[ōo]ngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]\\s*y[oò]u":"左右", "zhǔ\\s*dòng":"主动", "zh[oō]uw[ée]i":"周围", "中nan海":"中南海", "中j委":"中纪委", "中zu部":"中组部", "政zhi局":"政治局", "(昨|一|时|余)(?:<br/?>|&nbsp;|\\s)*ì":"$1日", "照she":"照射", "zhǔn\\s*bèi\\s*":"准备", 
+    "yì\\s*wài\\s*":"意外", "yin(冷|暗|谋|险|沉|沟|癸派|后)":"阴$1", "y[iī]y[àa]ng":"一样", "y[īi]di[ǎa]n":"一点", "yī\\s*zhèn":"一阵", "y[ǐi]j[īi]ng":"已经", "疑huo":"疑惑", "yí\\s*huò":"疑惑", "影mi":"影迷", "yin荡":"淫荡",  "阳w[ěe]i": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "(?:you|诱)(?:惑|huo)": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人", "youshi":"有事", "御yòng":"御用", "旖ni":"旖旎", "yu念":"欲念", "you敌深入":"诱敌深入", "影she":"影射", "牙qian":"牙签", "一yè情":"一夜情",
+    "z[iì]j[iǐ]": "自己","z[ìi](?:\\s|<br/?>|&nbsp;)*y[oó]u": "自由","zh[iī]d?[àa]u?o":"知道", "zixin":"自信", "zhì'fú":"制服", "zha药": "炸药", "zhan有": "占有", "zhè\\s*gè":"这个", "政f[ǔu]": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zong理":"总理", "zh[ōo]ngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]\\s*y[oò]u":"左右", "zhǔ\\s*dòng":"主动", "zh[oō]uw[ée]i":"周围", "中nan海":"中南海", "中j委":"中纪委", "中zu部":"中组部", "政zhi局":"政治局", "(昨|一|时|余)(?:<br/?>|&nbsp;|\\s)*ì":"$1日", "照she":"照射", "zhǔn\\s*bèi\\s*":"准备", 
 };
 
 // 单字替换，可能会误替换，所以需要特殊处理
@@ -1408,7 +1408,8 @@ Rule.replace = {
     };
 
     for (var prop in oneWordReplace) {
-        Rule.replace['([^a-z\\s])' + prop + '([^a-z\\s])'] = '$1' + oneWordReplace[prop] + '$2';
+        // Rule.replace['([^a-z\\s])' + prop + '([^a-z\\s])'] = '$1' + oneWordReplace[prop] + '$2';
+        Rule.replace['([^a-z\\s])' + prop + '(?![a-z\\s])'] = '$1' + oneWordReplace[prop];
     }
 
     var replaceOthers = {
@@ -2310,7 +2311,8 @@ UI.skins["白底黑字".uiTrans()] = "body { color: black; background: white;}\
 UI.skins["夜间模式".uiTrans()] = "body { color: #939392; background: #2d2d2d; } #preferencesBtn { background: white; } #mynovelreader-content img { background-color: #c0c0c0; }";
 UI.skins["夜间模式1".uiTrans()] = "body { color: #679; background: black; } #preferencesBtn { background: white; }";
 UI.skins["夜间模式2".uiTrans()] = "body { color: #e3e3e3; background: #2d2d2d; } #preferencesBtn { background: white; }";
-UI.skins["夜间模式（多看）".uiTrans()] = "body { color: #3A5056; background: #101819; } #preferencesBtn { background: white; } #mynovelreader-content img { background-color: #c0c0c0; }";
+// UI.skins["夜间模式（多看）".uiTrans()] = "body { color: #3A5056; background: #101819; } #preferencesBtn { background: white; } #mynovelreader-content img { background-color: #c0c0c0; }";
+UI.skins["夜间模式（多看）".uiTrans()] = "body { color: #4A4A4A; background: #101819; } #preferencesBtn { background: white; } #mynovelreader-content img { background-color: #c0c0c0; }";
 UI.skins["橙色背景".uiTrans()] = "body { color: #24272c; background: #FEF0E1; }";
 UI.skins["绿色背景".uiTrans()] = "body { color: black; background: #d8e2c8; }";
 UI.skins["绿色背景2".uiTrans()] = "body { color: black; background: #CCE8CF; }";
@@ -2628,7 +2630,7 @@ var Res = {
                     </label>
                     <label>
                         字体
-                        <input type="textbox" id="font-family" style="width:250px;"/>
+                        <input type="textbox" id="font-family" style="min-width:200px;"/>
                     </label>
                     <br/><br/>
                     <label>

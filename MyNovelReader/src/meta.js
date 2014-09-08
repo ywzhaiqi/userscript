@@ -1,6 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
+// @name:zh-CN     小说阅读脚本
 // @version        <%= pkg.version %>
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
@@ -16,13 +17,7 @@
 // @grant          GM_setClipboard
 // @grant          GM_registerMenuCommand
 // @grant          unsafeWindow
-// homepageURL    https://userscripts.org/scripts/show/165951
-// updateURL      https://userscripts.org/scripts/source/165951.meta.js
-// downloadURL    https://userscripts.org/scripts/source/165951.user.js
-
 // @homepageURL    https://greasyfork.org/scripts/292/
-// @updateURL      https://greasyfork.org/scripts/292-my-novel-reader/code/My%20Novel%20Reader.meta.js
-// @downloadURL    https://greasyfork.org/scripts/292-my-novel-reader/code/My%20Novel%20Reader.user.js
 // @require        http://cdn.jsdelivr.net/jquery/1.9.1/jquery-1.9.1.min.js
 // @require        http://cdn.jsdelivr.net/underscorejs/1.6.0/underscore-min.js
 // @require        https://greasyfork.org/scripts/3053-keymaster-js/code/keymasterjs.js?version=8815
@@ -35,7 +30,7 @@
 // @include        http://www.qdmm.com/BookReader/*,*.aspx
 // @include        http://www.qdwenxue.com/BookReader/*,*.aspx
 // @include        http://chuangshi.qq.com/read/bookreader/*.html
-// @include        http://chuangshi.qq.com/*bk/*/*-m-*.html
+// @include        http://chuangshi.qq.com/*bk/*/*.html
 // @include        http://www.jjwxc.net/onebook.php?novelid=*
 // @include        http://book.zongheng.com/chapter/*/*.html
 // @include        http://www.xxsy.net/books/*/*.html
