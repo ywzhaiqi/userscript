@@ -55,7 +55,7 @@ var prefs={
         s_duration: 333,        // 动画持续时长.(单位:毫秒);
     someValue: '',           // 显示在翻页导航最右边的一个小句子..-_-!!..Powered by Super_preloader 隐藏了
     DisableI: true,          // 只在顶层窗口加载JS..提升性能..如果开启了这项,那么DIExclude数组有效,里面的网页即使不在顶层窗口也会加载....
-    arrowKeyPage: false,     // 允许使用 左右方向键 翻页..
+    arrowKeyPage: true,      // 允许使用 左右方向键 翻页..
     sepStartN: 2,            // 翻页导航上的,从几开始计数.(貌似有人在意这个,所以弄个开关出来,反正简单.-_-!!)
 
     // 新增或修改的
