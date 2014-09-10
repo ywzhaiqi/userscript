@@ -4,7 +4,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.4.0
+// @version      6.4.1
 // @homepageURL  https://greasyfork.org/scripts/293-super-preloaderplus-one
 
 // @grant        GM_addStyle
@@ -6409,22 +6409,22 @@ function getRalativePageStr(lastUrl, currentUrl, nextUrl) {
             return [0, 0];
         }
 
-        // 新的方法
-        var lastQueryKeys = parseUri(lasturl).queryKey,
-            curQueryKeys = parseUri(url).queryKey,
-            name, lastNum, curNum;
-        for (name in curQueryKeys) {
-            if (!(name in lastQueryKeys)) continue;
+        // // 新的方法
+        // var lastQueryKeys = parseUri(lasturl).queryKey,
+        //     curQueryKeys = parseUri(url).queryKey,
+        //     name, lastNum, curNum;
+        // for (name in curQueryKeys) {
+        //     if (!(name in lastQueryKeys)) continue;
 
-            lastNum = getDigital(lastQueryKeys[name]);
-            curNum = getDigital(curQueryKeys[name]);
+        //     lastNum = getDigital(lastQueryKeys[name]);
+        //     curNum = getDigital(curQueryKeys[name]);
 
-            if (isNaN(lastNum) || isNaN(curNum)) {
-                continue;
-            }
+        //     if (isNaN(lastNum) || isNaN(curNum) || lastNum == curNum) {
+        //         continue;
+        //     }
 
-            return [lastNum, curNum];
-        }
+        //     return [lastNum, curNum];
+        // }
 
 
         // 以前的 lastDream2013 的方式
