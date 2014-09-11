@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.7.7
+// @version        3.7.8
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @description    批量导出百度盘的下载链接
@@ -175,6 +175,8 @@ var mHome = (function(){  // 个人主页
     var setMaxSize = function() {
         // firefox 自带开发工具搜索 @download
         // 可恶的百度，刚写好第二天就变了。需要提前加载 downloadProxyPcs。
+
+        var commonService = require("common:widget/commonService/commonService.js")
         commonService.getWidgets('common:widget/downloadProxyPcs/downloadProxyPcs.js', function () {
             var downloadManager = require("common:widget/downloadManager/downloadManager.js");
             downloadManager.SIZE_THRESHOLD =  Number.MAX_VALUE; 
@@ -286,7 +288,9 @@ var mHome = (function(){  // 个人主页
         // 修正添加后，放大状态可能错位的情况
         GM_addStyle('.module-aside .remaining{ top:auto !important; bottom: 5% !important; }');
 
-        setMaxSize();
+        setTimeout(function(){
+            injectScript(setMaxSize);
+        }, 2000)
     };
 
     return {
@@ -374,7 +378,7 @@ var Pan = {
         if (prefs.getRemoveYunGuanjia()) {
             unsafeWindow.navigator.__defineGetter__('platform', function(){ return ''; });
         }
-        // 去除大文件云管家限制，来自 http://userscripts.org:8080/scripts/show/159911
+        // 去除大文件云管家限制，来自 http://userscripts.org/scripts/show/159911
         if (disk && disk.util && disk.util.DownloadManager && disk.util.DownloadManager.SIZE_THRESHOLD) {
             disk.util.DownloadManager.SIZE_THRESHOLD = Number.MAX_VALUE;
         }
@@ -1308,6 +1312,19 @@ function getMStr(fn) {
     }
     
     return ret;
+}
+
+function injectScript(fnOrStr) {
+    if (typeof fnOrStr === 'function') {
+        fnOrStr = fnOrStr.toString();
+    }
+
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.textContent = '(' + fnOrStr + ')();';
+
+    document.body.appendChild(script);
+    document.body.removeChild(script);
 }
 
 Pan.init();
