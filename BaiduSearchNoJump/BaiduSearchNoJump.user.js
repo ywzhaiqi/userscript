@@ -24,6 +24,7 @@
 
 var locationHref = location.href;
 
+
 function decode(url, target){
     //  原方法，已失效
     // GM_xmlhttpRequest({
@@ -47,7 +48,7 @@ function decode(url, target){
         },
         onload: function(response) {
             var newUrl = response.finalUrl;
-            // console.log('111', newUrl);
+            // console.log('111', url, newUrl);
             target.setAttribute('href', newUrl);
         }
     });

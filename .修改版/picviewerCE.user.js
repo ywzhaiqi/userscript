@@ -19,6 +19,7 @@
 // @include        http*
 // match          *://*/*
 // @exclude       http://www.toodledo.com/tasks/*
+// @exclude       http*://maps.google.com*/*
 // ==/UserScript==
 
 ;(function(topObject,window,document,unsafeWindow){
