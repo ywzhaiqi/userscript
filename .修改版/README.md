@@ -68,10 +68,15 @@
 
 ### [searchenginejump.user.js](https://github.com/ywzhaiqi/userscript/blob/master/.%E4%BF%AE%E6%94%B9%E7%89%88/searchenginejump.user.js)
 
+[直接安装地址](https://raw.githubusercontent.com/ywzhaiqi/userscript/master/.%E4%BF%AE%E6%94%B9%E7%89%88/searchenginejump.user.js)
+
 - [searchEngineJump By NLF](http://userscripts.org/scripts/show/84970) 自用修改版。可改用 [SearchEngineJump_by_ted423](https://greasyfork.org/zh-CN/scripts/213-searchenginejump-by-ted423)，更加全面。
+- 简化了原版的结构
 - 修正 bing 因为改版失效的问题
 - 修改 @include 不为全局
-- 从 ted423 版中提取了一些新的搜索
+- 从 ted423 版中提取并添加了一些新的搜索
+- 增加了监视标题变化的功能，随着标题的变化，会重新插入。主要是对百度、Google 不刷新页面搜索的支持。
+- POST 的支持，来自 [POST 实现 - Greasy Forum](https://greasyfork.org/forum/discussion/1490/post-%E5%AE%9E%E7%8E%B0)
 
 ### [Youku_RSS.user.js](Youku_RSS.user.js)
 
