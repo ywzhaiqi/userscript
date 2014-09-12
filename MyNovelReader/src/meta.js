@@ -79,6 +79,7 @@
 // @include        http://www.6yzw.org/*/*.html
 // @include        http://www.daomengren.com/*/*.html
 // @include        http://muyuge.com/*/*.html
+// @include        http://www.muyuge.net/*/*.html
 // @include        http://bbs.vyming.com/novel-read-*-*.html
 // @include        http://www.9imw.com/novel-read-*-*.html
 // @include        http://www.23zw.com/olread/*/*/*.html

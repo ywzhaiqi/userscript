@@ -159,8 +159,12 @@ var App = {
         }
 
         if (App.site.startFilter) {
-            App.site.startFilter();
-            console.log('run startFilter function success');
+            try {
+                App.site.startFilter();
+                C.log('run startFilter function success');
+            } catch (ex) {
+                console.error('运行 startFilter function 错误', ex)
+            }
         }
 
         var parser = new Parser(App.site, document);

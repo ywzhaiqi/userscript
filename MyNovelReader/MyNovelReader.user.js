@@ -2,7 +2,7 @@
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
-// @version        4.6.6
+// @version        4.6.7
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    shyangs
@@ -79,6 +79,7 @@
 // @include        http://www.6yzw.org/*/*.html
 // @include        http://www.daomengren.com/*/*.html
 // @include        http://muyuge.com/*/*.html
+// @include        http://www.muyuge.net/*/*.html
 // @include        http://bbs.vyming.com/novel-read-*-*.html
 // @include        http://www.9imw.com/novel-read-*-*.html
 // @include        http://www.23zw.com/olread/*/*/*.html
@@ -405,7 +406,7 @@ Rule.specialSite = [
         //         _pre_uuid = preChapterInfo ? preChapterInfo['uuid'] : 0;
         //         _next_uuid = nextChapterInfo ? nextChapterInfo['uuid'] : 0;
 
-        //     // 上下页
+        //     上下页
         //     $('<a rel="prev">').attr('href', _getReadPageUrl(_pre_uuid)).prependTo($body);
         //     $('<a rel="next">').attr('href', _getReadPageUrl(_next_uuid)).prependTo($body);
 
@@ -555,7 +556,6 @@ Rule.specialSite = [
             'div lign="ener"&gt;|.*更多章节请到网址隆重推荐去除广告全文字小说阅读器',
             '起点中文网www.qidian.com欢迎广大书.*',
             '书迷楼最快更新.*',
-            '”小说“小说章节更新最快',
             '更新最快最稳定',
             '\\(.\\)RU',
             {'<p>\\?\\?': '<p>'},
@@ -620,7 +620,7 @@ Rule.specialSite = [
         }
     },
     {siteName: "木鱼哥",
-        url: /http:\/\/muyuge\.com\/\w+\/\d+\.html/,
+        url: /http:\/\/(www\.)?muyuge\.(com|net)\/\w+\/\d+\.html/,
         titleSelector: "#yueduye h1",
         bookTitleSelector: ".readerNav > li > a:last",
         indexSelector: ".readerFooterPage a[title='(快捷:回车键)']",
@@ -638,6 +638,9 @@ Rule.specialSite = [
             "【 木鱼哥 ——更新最快，全文字首发】":"",
             "div&gt;|&lt;－》": "",
         },
+        startFilter: function() {
+            clearInterval(unsafeWindow.show);
+        }
     },
     {siteName: "追书网",
         url: "^http://www\\.zhuishu\\.net/files/article/html/.*\\.html",
@@ -746,10 +749,9 @@ Rule.specialSite = [
     },
     {siteName: "万书吧",
         url: "http://www\\.wanshuba\\.com/Html/\\d+/\\d+/\\d+\\.html",
-        titleReg: "(.*?)/(.*?)-万书吧",
-        indexSelector: "#mulu",
-        prevSelector: "#previewpage",
-        nextSelector: "#papgbutton a:contains('手机下一章'), #nextpage",
+        titleReg: "(.*?),(.*?)-万书吧",
+        titlePos: 1,
+        contentSelector: ".yd_text2",
         contentReplace: [
             "\\[www.*?\\]",
             "\\(&nbsp;&nbsp;\\)",
@@ -794,6 +796,8 @@ Rule.specialSite = [
             "◆免费◆",
             "★百度搜索，免费阅读万本★|访问下载txt小说.百度搜.|免费电子书下载|\\(百度搜\\)|『文學吧x吧.』|¤本站网址：¤",
             "[☆★◆〓『【◎◇].*?(?:yunlaige|云 来 阁|ｙｕｎｌａｉｇｅ|免费看).*?[☆◆★〓』】◎◇]",
+            "【手机小说阅读&nbsp;m.】",
+            "BAIDU_CLB_fillSlot.*",
             "&nbsp;关闭</p>",
             "&nbsp;&nbsp;&nbsp;&nbsp;\\?",
             "\\[☆更.新.最.快☆无.弹.窗☆全.免.费\\]",
@@ -1013,13 +1017,17 @@ Rule.specialSite = [
     },
     {siteName: "给力文学小说阅读网",
         url: "^http://www\\.geiliwx\\.com/.*\\.shtml",
-        titleSelector: 'h1',
-        bookTitleSelector: '#breadCrumb>a:eq(1)',
+        titleReg: "-?(.*)_(.*)最新章节_给力",
+        titlePos: 1,
+        // titleSelector: 'h1',
+        // bookTitleSelector: '#breadCrumb>a:eq(1)',
         useiframe: true,
+        contentRemove: 'h1',
         contentReplace: [
             "（百度搜索给力文学网更新最快最稳定\\)",
             "给力文学网",
-            "看最快更新"
+            "看最快更新",
+            "\\.com"
         ]
     },
     // ============== 内容需要2次获取的 =========================
@@ -1332,6 +1340,7 @@ Rule.replace = {
     ".{2,4}中文网欢迎广大书友": "",
     "访问下载txt小说|◎雲來閣免费万本m.yunlaige.com◎":"",
     "〖∷更新快∷无弹窗∷纯文字∷.*?〗": "",
+    '”小说“小说章节更新最快': '',
     "fqXSw\\.com":"", "\\.5ｄｕ|\\.５du５\\.":"",
     "\\[\\]":"",
     "如果您觉得网不错就多多分享本站谢谢各位读者的支持": "",
@@ -1358,18 +1367,18 @@ Rule.replace = {
     // === 双字替换 ===
     "暧m[eè][iì]":"暧昧",
     "bàn\\s*fǎ":"办法", "bucuo":"不错", "不liáng":"不良", "b[ěe]i(\\s|&nbsp;)*j[īi]ng":"北京","半shen": "半身", "b[ìi]j[ìi]ng":"毕竟", "报(了?)jing":"报$1警", "bèi'pò":"被迫", "包yǎng":"包养", "(?:biǎo|婊\\\\?)子":"婊子", "biǎo\\s*xiàn\\s*":"表现",
-    "ch[oō]ngd[oò]ng":"冲动", "chong物":"宠物", "cao(练|作)":"操$1", "出gui":"出轨", "缠mian": "缠绵", "成shu": "成熟", "(?:赤|chi)\\s*lu[oǒ]": "赤裸", "春guang": "春光", "chun风":"春风", "chuang伴":"床伴", "沉mi":"沉迷", "沉lun":"沉沦", "刺ji":"刺激", "chao红":"潮红", "初chun":"初春", "＂ｃｈｉ　ｌｕｏ＂":"赤裸",
-    "dān\\s*xīn":"当心", "dang校": "党校", "da子": "鞑子", "大tui":"大腿", "dǎ\\s*suàn":"打算", "diao丝": "屌丝", "d[úu](?:\\s|&nbsp;|<br/>)*l[ìi]": "独立", "d[uú]\\s{0,2}c[áa]i":"独裁",  "d?[iì]f[āa]ng":"地方", "d[ìi]\\s*d[ūu]":"帝都", "di国":"帝国", "du[oò]落":"堕落", "坠luò":"坠落",
+    "chifan":"吃饭", "ch[oō]ngd[oò]ng":"冲动", "chong物":"宠物", "cao(练|作)":"操$1", "出gui":"出轨", "缠mian": "缠绵", "成shu": "成熟", "(?:赤|chi)\\s*lu[oǒ]": "赤裸", "春guang": "春光", "chun风":"春风", "chuang伴":"床伴", "沉mi":"沉迷", "沉lun":"沉沦", "刺ji":"刺激", "chao红":"潮红", "初chun":"初春", "＂ｃｈｉ　ｌｕｏ＂":"赤裸",
+    "dān\\s*xīn":"当心", "dang校": "党校", "da子": "鞑子", "大tui":"大腿", "dǎ\\s*suàn":"打算", "dengdai":"等待", "diao丝": "屌丝", "d[úu](?:\\s|&nbsp;|<br/>)*l[ìi]": "独立", "d[uú]\\s{0,2}c[áa]i":"独裁",  "d?[iì]f[āa]ng":"地方", "d[ìi]\\s*d[ūu]":"帝都", "di国":"帝国", "du[oò]落":"堕落", "坠luò":"坠落",
     "f[ǎa]ngf[óo]":"仿佛", "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "f[èe]nn[ùu]":"愤怒", "fǎn\\s*yīng":"反应",
-    "gao潮": "高潮", "高氵朝":"高潮", "gāo\\s*xìng\\s*":"高兴", "干chai": "干柴", "勾yin":"勾引", "gu[oò]ch[ée]ng":"过程", "gu[āa]n\\s*x[iì]":"关系", "g[ǎa]nji[àa]o":"感觉", "国wu院":"国务院", "gù\\s*yì\\s*":"故意",
+    "gao潮": "高潮", "高氵朝":"高潮", "gāo\\s*xìng\\s*":"高兴", "干chai": "干柴", "勾yin":"勾引", "gu[oò]ch[ée]ng":"过程", "gu[āa]n\\s*x[iì]":"关系", "g[ǎa]nji[àa]o":"感觉", "国wu院":"国务院", "gù\\s*yì\\s*":"故意", "guofen":"过分",
     "hā\\s*hā\\s*":"哈哈", "haode":"好的", "hù士":"护士", "há'guó":"韩国", "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "h[ǎa]oxi[àa]ng":"好像", "hu[áa]ngs[èe]":"黄色", "皇d[ìi]":"皇帝", "昏昏yu睡":"昏昏欲睡", "回dang":"回荡", "huí\\s*qù\\s*":"回去", "hé\\s*shì\\s*":"合适",
     "jian(臣|细)":"奸$1", "jiànmiàn":"见面", "jian货":"贱货", "jing察":"警察", "j[ìi]nháng":"进行", "jīng\\s*guò":"经过", "ji烈":"激烈", "j[iì](nv|女)": "妓女", "jirou": "鸡肉", "ji者":"记者", "jì\\s*xù\\s*":"继续", "ju花":"菊花","j[īi]动":"激动", "jili[èe]":"激烈", "肌r[òo]u":"肌肉","ji射":"激射", "ji[ēe]ch[uù]":"接触", "jiù\\s*shì":"就是", "j[ùu]li[èe]": "剧烈", "jǐng惕": "警惕", "节cao":"节操", "浸yin":"浸淫", "jù\\s*jué\\s*":"拒绝",
-    "k[ěe]n[ée]ng": "可能", "开bao": "开苞",  "k[àa]o近": "靠近", "口wen":"口吻",
+    "k[ěe]n[ée]ng": "可能", "开bao": "开苞",  "k[àa]o近": "靠近", "口wen":"口吻", "kankan":"看看",
     "ling辱": "凌辱", "luan蛋": "卵蛋", "脸sè": "脸色", "lu出":"露出", "流máng":"流氓", "lun理":"伦理", "lì\\s*qì":"力气",
     "m[ǎa]ny[ìi]":"满意", "m[ǎa]sh[àa]ng":"马上", "m[ée]iy[oǒ]u":"没有", "mei国": "美国", "m[íi]ngb[áa]i":"明白", "迷huan": "迷幻", "mi茫":"迷茫", "mó\\s*yàng":"模样", "m[íi]n\\s{0,2}zh[ǔu]": "民主", "迷jian": "迷奸", "mimi糊糊":"迷迷糊糊", "末(?:\\s|<br/?>)*ì":"末日", "面se":"面色", "mengmeng":"蒙蒙", 
-    "nàme":"那么", "nǎo\\s*dài":"脑袋", "n[ée]ngg[oò]u":"能够", "nán\\s{0,2}hǎi": "那会", "内jian":"内奸", "[内內]y[iī]":"内衣", "内ku":"内裤",
+    "nàme":"那么", "n[ǎa]o\\s*d[àa]i":"脑袋", "n[ée]ngg[oò]u":"能够", "nán\\s{0,2}hǎi": "那会", "内jian":"内奸", "[内內]y[iī]":"内衣", "内ku":"内裤",
     "pi[áa]o客":"嫖客", "p[áa]ngbi[āa]n":"旁边",
-    "q[íi]gu[àa]i":"奇怪", "qing\\s*(ren|人)":"情人", "qin兽":"禽兽", "q[iī]ngch[uǔ]":"清楚", "què\\s*dìng":"确定", "球mi":"球迷", "青chun":"青春", "青lou":"青楼", "qiang[　\\s]*jian":"强奸",
+    "q[íi]gu[àa]i":"奇怪", "qing\\s*(ren|人)":"情人", "qin兽":"禽兽", "q[iī]ngch[uǔ]":"清楚", "què\\s*dìng":"确定", "球mi":"球迷", "青chun":"青春", "青lou":"青楼", "qingkuang":"情况", "qiang[　\\s]*jian":"强奸",
     "r[úu]gu[oǒ]":"如果", "r[oó]ngy[ìi]":"容易", "ru(房|白色)": "乳$1", "rén员":"人员", "rén形":"人形", "人chao":"人潮",  "renmen":"人名",
     "she(门|术|手|程|击)":"射$1", "sudu":"速度", "shuijue":"睡觉", "shide":"是的", "sh[iì]ji[eè]":"世界", "sh[ií]ji[aā]n":"时间", "sh[ií]h[oò]u": "时候", "sh[ií]me":"什么", "si人":"私人", "shi女":"侍女", "shi身": "失身", "sh[ūu]j[ìi]":"书记", "shu女": "熟女", "shu[　\\s]?xiong":"酥胸", "(?:上|shang)chuang": "上床", "呻y[íi]n": "呻吟", "sh[ēe]ngzh[íi]": "生殖", "深gu": "深谷", "双xiu": "双修", "生r[ìi]": "生日", "si盐":"私盐", "shi卫":"侍卫", "si下":"私下", "sao扰":"骚扰", "ｓｈｕａｎｇ　ｆｅｎｇ":"双峰", 
     "t[uū]r[áa]n":"突然", "tiaojiao": "调教", "偷qing":"偷情", "推dao": "推倒", "脱guang": "脱光", "t[èe]bi[ée]":"特别", "t[ōo]nggu[òo]":"通过", "同ju":"同居", "tian来tian去":"舔来舔去",
@@ -3572,8 +3581,12 @@ var App = {
         }
 
         if (App.site.startFilter) {
-            App.site.startFilter();
-            console.log('run startFilter function success');
+            try {
+                App.site.startFilter();
+                C.log('run startFilter function success');
+            } catch (ex) {
+                console.error('运行 startFilter function 错误', ex)
+            }
         }
 
         var parser = new Parser(App.site, document);
