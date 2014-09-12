@@ -3,7 +3,7 @@
 // @name           searchEngineJumpModY
 // @author         NLF
 // @description    方便的在各个引擎之间跳转
-// @version        2014.09.11
+// @version        2014.09.12
 // version        4.0.1.0
 // @created        2011-7-2
 // @grant          none
@@ -1152,49 +1152,6 @@ function getElement(selector) {
 	};
 };
 
-function mousedownhandler(e) {
-	var target = e.target;
-
-	target = getElementByXPath('ancestor-or-self::a[contains(@class, "sej-engine")]', target);
-
-	// if (!target || target.className.indexOf('sej-engine') == -1) return;
-	if (!target || !this.contains(target)) return;
-
-	var value;
-	if (typeof iInput == 'function') {
-		value = iInput();
-	} else {
-		if (iInput.nodeName == 'INPUT') {
-			value = iInput.value;
-		} else {
-			value = iInput.textContent;
-		};
-	};
-
-	// 根据后代元素中是否存在 form 元素，判断提交方式并进行处理
-	// 如果没有 form 元素，将会使用 GET 方法提交；如果有，将会使用 POST 方法提交
-	var forms = target.getElementsByTagName('form');
-	if (forms.length == 0) { // 提交方式为 GET
-		// 处理编码
-		var encoding = target.getAttribute('encoding');
-		if (encoding == 'utf-8') {
-			value = encodeURIComponent(value);
-		} else if (encoding.indexOf('gb') == 0) {// 引擎接受gbk编码
-			if (pageEncoding.indexOf('gb') != 0) {// 如果当前页面也使用gbk编码的话，那么不需要再编码
-				value = toGBK(value);
-			};
-		};
-
-		// console.log(value);
-		target.href = target.getAttribute('url').replace(/%s/g, value); // 替换“全部”关键词
-	} else { // 提交方式为 POST
-		var inputs = target.getElementsByTagName('input');
-		for (var i = 0; i < inputs.length; i++) {
-			inputs[i].value = inputs[i].value.replace(/%s/g, value); // // 替换“全部”关键词
-		}
-	}
-};
-
 // iframe 禁止加载
 if (window.self != window.top) return;
 
@@ -1445,7 +1402,7 @@ function run() {
 	var pageEncoding = (document.characterSet || document.charset).toLowerCase();
 
 	// 创建dom
-	var aPattern = '<a onclick="$onclick$" href="" class="sej-engine"' + (prefs.openInNewTab ? ' target="_blank" ' : ' ') + 
+	var aPattern = '<a onclick="$onclick$" href="" class="sej-engine"' + (prefs.openInNewTab ? ' target="_blank" ' : ' ') +
 		'encoding="$encoding$" url="$url$"><img src="$favicon$" class="sej-engine-icon" />$form$$name$</a>';
 
 	container = document.createElement('sejspan');
@@ -1545,6 +1502,49 @@ function run() {
 		break;
 
 	};
+
+	function mousedownhandler(e) {
+		var target = e.target;
+
+		target = getElementByXPath('ancestor-or-self::a[contains(@class, "sej-engine")]', target);
+
+		// if (!target || target.className.indexOf('sej-engine') == -1) return;
+		if (!target || !this.contains(target)) return;
+
+		var value;
+		if (typeof iInput == 'function') {
+			value = iInput();
+		} else {
+			if (iInput.nodeName == 'INPUT') {
+				value = iInput.value;
+			} else {
+				value = iInput.textContent;
+			};
+		};
+
+		// 根据后代元素中是否存在 form 元素，判断提交方式并进行处理
+		// 如果没有 form 元素，将会使用 GET 方法提交；如果有，将会使用 POST 方法提交
+		var forms = target.getElementsByTagName('form');
+		if (forms.length == 0) { // 提交方式为 GET
+			// 处理编码
+			var encoding = target.getAttribute('encoding');
+			if (encoding == 'utf-8') {
+				value = encodeURIComponent(value);
+			} else if (encoding.indexOf('gb') == 0) {// 引擎接受gbk编码
+				if (pageEncoding.indexOf('gb') != 0) {// 如果当前页面也使用gbk编码的话，那么不需要再编码
+					value = toGBK(value);
+				};
+			};
+
+			// console.log(value);
+			target.href = target.getAttribute('url').replace(/%s/g, value); // 替换“全部”关键词
+		} else { // 提交方式为 POST
+			var inputs = target.getElementsByTagName('input');
+			for (var i = 0; i < inputs.length; i++) {
+				inputs[i].value = inputs[i].value.replace(/%s/g, value); // // 替换“全部”关键词
+			}
+		}
+	};
 }
 
 run();
@@ -1569,7 +1569,7 @@ function $(id) {
 function toRE(obj) {
     if (obj instanceof RegExp) {
         return obj;
-    } else if (obj instanceof Array) {  
+    } else if (obj instanceof Array) {
         return new RegExp(obj[0], obj[1]);
     } else {
         if (obj.search(/^wildc;/i) === 0) {
