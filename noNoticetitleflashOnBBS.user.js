@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             noNoticeTitleFlash
 // @name           No noticeTitleFlash on BBS
-// @version        1.1
+// @version        1.2
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @description    卡饭论坛去除标题栏闪烁提醒
@@ -16,9 +16,14 @@
 // @include       /https?:\/\/(?:www\.[^\/]+\/|[^\/]+\/(?:bbs\/)?)(?:2b\/)?(?:(?:thread)|(?:viewthread)|(?:showtopic)|(?:viewtopic))+/
 
 // @grant          none
-// @run-at         document-end
+// @run-at         document-start
 // @noframes
 // ==/UserScript==
 
 
-window.noticeTitleFlash = function(){};
+Object.defineProperty(window, 'noticeTitleFlash', {
+    get: function() {
+        return function(){};
+    },
+    set: function() {}
+});
