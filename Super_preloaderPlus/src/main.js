@@ -1362,7 +1362,7 @@ function init(window, document) {
                 setTimeout(fn, 199);
             };
             if (nextlink) {
-                debug('找到下一页链接:', nextlink);
+                // debug('找到下一页链接:', nextlink);
                 doc = win = null;
                 if (ipagesmode) {
                     if (SSS.a_useiframe) { //延时点,firefox,太急会卡-_-!

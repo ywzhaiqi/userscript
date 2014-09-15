@@ -1680,6 +1680,16 @@ var SITEINFO=[
             replaceE: '//div[@class="pagination"]'
         }
     },
+    // === art
+    {name: 'deviantART Gallery',
+        url: /^https?:\/\/\w+\.deviantart\.com\/gallery\//i,
+        exampleUrl: 'https://razielmb.deviantart.com/gallery/',
+        nextLink: '//li[@class="next"]/a',
+        autopager: {
+            pageElement: 'css;#gmi-ResourceStream',
+            relatedObj: true
+        }
+    },
     // === mm ===
     {name: 'Show妹子',
         url:/^http:\/\/www\.showmeizi\.com\/\w+\/\d+/i,

@@ -4,7 +4,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.4.1
+// @version      6.4.2
 // @homepageURL  https://greasyfork.org/scripts/293-super-preloaderplus-one
 
 // @grant        GM_addStyle
@@ -1717,6 +1717,16 @@ var SITEINFO=[
         autopager:{
             pageElement:'//div[@class="gametable"]/parent::div',
             replaceE: '//div[@class="pagination"]'
+        }
+    },
+    // === art
+    {name: 'deviantART Gallery',
+        url: /^https?:\/\/\w+\.deviantart\.com\/gallery\//i,
+        exampleUrl: 'https://razielmb.deviantart.com/gallery/',
+        nextLink: '//li[@class="next"]/a',
+        autopager: {
+            pageElement: 'css;#gmi-ResourceStream',
+            relatedObj: true
         }
     },
     // === mm ===
@@ -5156,7 +5166,7 @@ function init(window, document) {
                 setTimeout(fn, 199);
             };
             if (nextlink) {
-                debug('找到下一页链接:', nextlink);
+                // debug('找到下一页链接:', nextlink);
                 doc = win = null;
                 if (ipagesmode) {
                     if (SSS.a_useiframe) { //延时点,firefox,太急会卡-_-!
