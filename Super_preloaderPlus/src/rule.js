@@ -860,15 +860,7 @@ var SITEINFO=[
             pageElement: 'id("wrapmain")//ul[starts-with(@id, "post-")]',
         }
     },
-    {name: '杀价帮3C导购网—真实 客观 独立 自由',
-        url: /^http:\/\/www\.shajia\.cn\/article/i,
-        exampleUrl: 'http://www.shajia.cn/article_list.php',
-        nextLink: 'auto;',
-        autopager: {
-            pageElement: 'id("agreement")',
-        }
-    },
-    {name: ' 秒便宜论坛',
+    {name: '秒便宜论坛',
         url: /^http:\/\/bbs\.miaopy\.com\//i,
         exampleUrl: 'http://bbs.miaopy.com/activity/list-3.aspx',
         nextLink: 'auto;',
@@ -885,12 +877,30 @@ var SITEINFO=[
             pageElement: '//div[@class="searchResult"]',
         }
     },
-    {name: ' Yahoo!奇摩拍賣',
+    {name: 'Yahoo!奇摩拍賣',
         url: /^https:\/\/tw\.bid\.yahoo\.com\//i,
         exampleUrl: 'https://tw.bid.yahoo.com/tw/2092076277-category-leaf.html?.r=1408853888',
         nextLink: 'auto;',
         autopager: {
             pageElement: 'id("srp_sl_result")',
+        }
+    },
+    // 手机评测等
+    {name: '杀价帮3C导购网—真实 客观 独立 自由',
+        url: /^http:\/\/www\.shajia\.cn\/article/i,
+        exampleUrl: 'http://www.shajia.cn/article_list.php',
+        nextLink: 'auto;',
+        autopager: {
+            pageElement: 'id("agreement")',
+        }
+    },
+    {name: '机锋网',
+        url: /^http:\/\/www\.gfan\.com\/review\/\w+\.html/,
+        exampleUrl: 'http://www.gfan.com/review/2014091557751.html',
+        nextLink: 'auto;',
+        autopager: {
+            pageElement: '//div[@class="news-content"]',
+            relatedObj: true
         }
     },
 

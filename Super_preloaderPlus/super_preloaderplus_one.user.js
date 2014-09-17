@@ -4,7 +4,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.4.2
+// @version      6.4.3
 // @homepageURL  https://greasyfork.org/scripts/293-super-preloaderplus-one
 
 // @grant        GM_addStyle
@@ -899,15 +899,7 @@ var SITEINFO=[
             pageElement: 'id("wrapmain")//ul[starts-with(@id, "post-")]',
         }
     },
-    {name: '杀价帮3C导购网—真实 客观 独立 自由',
-        url: /^http:\/\/www\.shajia\.cn\/article/i,
-        exampleUrl: 'http://www.shajia.cn/article_list.php',
-        nextLink: 'auto;',
-        autopager: {
-            pageElement: 'id("agreement")',
-        }
-    },
-    {name: ' 秒便宜论坛',
+    {name: '秒便宜论坛',
         url: /^http:\/\/bbs\.miaopy\.com\//i,
         exampleUrl: 'http://bbs.miaopy.com/activity/list-3.aspx',
         nextLink: 'auto;',
@@ -924,12 +916,30 @@ var SITEINFO=[
             pageElement: '//div[@class="searchResult"]',
         }
     },
-    {name: ' Yahoo!奇摩拍賣',
+    {name: 'Yahoo!奇摩拍賣',
         url: /^https:\/\/tw\.bid\.yahoo\.com\//i,
         exampleUrl: 'https://tw.bid.yahoo.com/tw/2092076277-category-leaf.html?.r=1408853888',
         nextLink: 'auto;',
         autopager: {
             pageElement: 'id("srp_sl_result")',
+        }
+    },
+    // 手机评测等
+    {name: '杀价帮3C导购网—真实 客观 独立 自由',
+        url: /^http:\/\/www\.shajia\.cn\/article/i,
+        exampleUrl: 'http://www.shajia.cn/article_list.php',
+        nextLink: 'auto;',
+        autopager: {
+            pageElement: 'id("agreement")',
+        }
+    },
+    {name: '机锋网',
+        url: /^http:\/\/www\.gfan\.com\/review\/\w+\.html/,
+        exampleUrl: 'http://www.gfan.com/review/2014091557751.html',
+        nextLink: 'auto;',
+        autopager: {
+            pageElement: '//div[@class="news-content"]',
+            relatedObj: true
         }
     },
 
@@ -5726,7 +5736,6 @@ function init(window, document) {
         var alllinks = doc.links;
         var alllinksl = alllinks.length;
 
-
         var curLHref = cplink;
         var _nextlink;
         var _prelink;
@@ -5748,6 +5757,9 @@ function init(window, document) {
 
         function finalCheck(a, type) {
             var ahref = a.getAttribute('href'); //在chrome上当是非当前页面文档对象的时候直接用a.href访问,不返回href
+            if (ahref == '#') {
+                return null;
+            }
             ahref = _getFullHref(ahref); //从相对路径获取完全的href;
 
             //3个条件:http协议链接,非跳到当前页面的链接,非跨域

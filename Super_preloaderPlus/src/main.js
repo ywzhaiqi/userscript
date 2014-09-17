@@ -1922,7 +1922,6 @@ function init(window, document) {
         var alllinks = doc.links;
         var alllinksl = alllinks.length;
 
-
         var curLHref = cplink;
         var _nextlink;
         var _prelink;
@@ -1944,6 +1943,9 @@ function init(window, document) {
 
         function finalCheck(a, type) {
             var ahref = a.getAttribute('href'); //在chrome上当是非当前页面文档对象的时候直接用a.href访问,不返回href
+            if (ahref == '#') {
+                return null;
+            }
             ahref = _getFullHref(ahref); //从相对路径获取完全的href;
 
             //3个条件:http协议链接,非跳到当前页面的链接,非跨域
