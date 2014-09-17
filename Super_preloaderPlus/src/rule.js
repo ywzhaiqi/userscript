@@ -1,4 +1,3 @@
-
 // rule.js
 
 if (window.name === 'mynovelreader-iframe') {
@@ -3772,4 +3771,3 @@ var nextPageKey=[
 // 出在自动翻页信息附加显示真实相对页面信息，一般能智能识别出来。如果还有站点不能识别，可以把地址的特征字符串加到下面
 // 最好不要乱加，一些不规律的站点显示出来的数字也没有意义
 var REALPAGE_SITE_PATTERN = ['search?', 'search_', 'forum', 'thread'];
-

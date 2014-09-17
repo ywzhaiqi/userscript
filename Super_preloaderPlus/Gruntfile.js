@@ -1,9 +1,10 @@
 module.exports = function(grunt) {
 
     var concatOptions = {
-        banner: '(function() {',
-        footer: '})();',
-        separator: '//----------------------------------'
+        banner: '(function() {\n',
+        footer: '\n})();',
+        separator: '\n\n//----------------------------------\n',
+        process: true
     };
 
     grunt.initConfig({

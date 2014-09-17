@@ -4,7 +4,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.4.3
+// @version      6.4.4
 // @homepageURL  https://greasyfork.org/scripts/293-super-preloaderplus-one
 
 // @grant        GM_addStyle
@@ -36,6 +36,16 @@
 // @exclude      http://v.youku.com/*
 // @exclude      http://www.iqiyi.com/*
 // ==/UserScript==
+
+
+// 主要用于 chrome 原生下检查更新，也可用于手动检查更新
+var scriptInfo = {
+    version: '6.4.4',
+    updateTime: '2014/9/17',
+    homepageURL: 'https://greasyfork.org/scripts/293-super-preloaderplus-one',
+    downloadUrl: 'https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js',
+    metaUrl: 'https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js',
+};
 
 //----------------------------------
 // rule.js
@@ -3815,7 +3825,9 @@ var REALPAGE_SITE_PATTERN = ['search?', 'search_', 'forum', 'thread'];
 //----------------------------------
 // main.js
 
-// 引用console对象的部分函数.
+//------------------------下面的不要管他-----------------
+///////////////////////////////////////////////////////////////////
+
 var xbug = prefs.debug || GM_getValue("debug") || false;
 var C = console;
 var debug = xbug ? console.log.bind(console) : function() {};
@@ -3916,6 +3928,10 @@ var setup = function(){
     div.innerHTML = '\
         <div>Super_preloaderPlus_one 设置</div>\
             <ul>\
+                <li>当前版本为 <b>' + scriptInfo.version + ' </b>，上次更新时间为 <b>'+ scriptInfo.updateTime
+                    + '</b><button id="sp-prefs-checkUpdate" style="width:auto;">更新</button>\
+                    <a target="_blank" href="' + scriptInfo.homepageURL + '"/>脚本主页</a>\
+                </li>\
                 <li><input type="checkbox" id="sp-prefs-debug" /> 调试模式</li>\
                 <li><input type="checkbox" id="sp-prefs-dblclick_pause" /> 鼠标双击暂停翻页（默认为 Ctrl + 长按左键）</li>\
                 <li><input type="checkbox" id="sp-prefs-enableHistory" /> 添加下一页到历史记录</li>\
@@ -3956,6 +3972,7 @@ var setup = function(){
 
     on($('cancel'), 'click', close);
 
+    $('checkUpdate').onclick = checkUpdate();
     $('debug').checked = xbug;
     $('enableHistory').checked = prefs.enableHistory;
     $('dblclick_pause').checked = GM_getValue('dblclick_pause') || false;
@@ -3964,6 +3981,49 @@ var setup = function(){
     $('SITEINFO_D-a_force_enable').checked = SITEINFO_D.autopager.force_enable;
     $('custom_siteinfo').value = prefs.custom_siteinfo;
 };
+
+function checkUpdate() {
+    GM_xmlhttpRequest({
+        method: "GET",
+        url: scriptInfo.metaUrl,
+        onload: function(response) {
+            var txt = response.responseText;
+            var curVersion = scriptInfo.version;
+            var latestVersion = txt.match(/@\s*version\s*([\d\.]+)\s*/i);
+            if (latestVersion) {
+                latestVersion = latestVersion[1];
+            } else {
+                alert('解析版本号错误');
+                return;
+            }
+
+            //对比版本号
+            var needUpdate;
+            var latestVersion = latestVersion.split('.');
+            var lVLength = latestVersion.length;
+            var currentVersion = curVersion.split('.');
+            var cVLength = currentVersion.length;
+            var lV_x;
+            var cV_x;
+            for (var i = 0; i < lVLength; i++) {
+                lV_x = Number(latestVersion[i]);
+                cV_x = (i >= cVLength) ? 0 : Number(currentVersion[i]);
+                if (lV_x > cV_x) {
+                    needUpdate = true;
+                    break;
+                } else if (lV_x < cV_x) {
+                    break;
+                }
+            }
+
+            if (needUpdate) {
+                if (confirm('本脚本从版本 ' + scriptInfo.version + '  更新到了版本 ' + latestVersion + '.\n是否要打开脚本链接？')) {
+                    window.open(scriptInfo.downloadUrl);
+                }
+            }
+        }
+    });
+}
 
 
 function init(window, document) {
@@ -6331,6 +6391,7 @@ function gmCompatible() {
     if (typeof GM_getValue != "undefined" && GM_getValue("a", "b") !== undefined) {
         return;
     }
+
     GM_getValue = function(key, defaultValue) {
         var value = window.localStorage.getItem(key);
         if (value === null) value = defaultValue;
@@ -6342,82 +6403,27 @@ function gmCompatible() {
         window.localStorage.setItem(key, value);
     };
     GM_registerMenuCommand = function() {};
-    GM_xmlhttpRequest = function(opt) {
-        var req = new XMLHttpRequest();
-        req.open('GET', opt.url, true);
-        req.overrideMimeType(opt.overrideMimeType);
-        req.onreadystatechange = function (aEvt) {
-            if (req.readyState == 4) {
-                if (req.status == 200) {
-                    opt.onload(req);
+
+    // chrome 原生支持
+    if (typeof GM_xmlhttpRequest == 'undefined') {
+        GM_xmlhttpRequest = function(opt) {
+            var req = new XMLHttpRequest();
+            req.open('GET', opt.url, true);
+            req.overrideMimeType(opt.overrideMimeType);
+            req.onreadystatechange = function (aEvt) {
+                if (req.readyState == 4) {
+                    if (req.status == 200) {
+                        opt.onload(req);
+                    }
+                    else {
+                        opt.onerror();
+                    }
                 }
-                else {
-                    opt.onerror();
-                }
-            }
+            };
+            req.send(null);
         };
-        req.send(null);
-    };
+    }
 }
-
-// parseUri 1.2.2
-// (c) Steven Levithan <stevenlevithan.com>
-// MIT License
-var parseUri = function(str) {
-    var o = parseUri.options,
-        m = o.parser[o.strictMode ? "strict" : "loose"].exec(str),
-        uri = {},
-        i = 14;
-
-    while (i--) uri[o.key[i]] = m[i] || "";
-
-    uri[o.ds.name] = {};
-    uri[o.ds.name][0] = {};
-    uri[o.ds.name][0]['key'] = (uri.protocol ? uri.protocol : 'http') + '://' + uri.host + (uri.port ? ':' + uri.port : '') + '/';
-    uri[o.ds.name][0]['val'] = '/';
-    var i = 0,
-        tempsub = '/',
-        subs = uri[o.key[10]].substr(1).split('/');
-    for (var j = 1; j < (subs.length + 1); j++, i++) {
-        tempsub += tempsub === '/' ? subs[i] : '/' + subs[i];
-        if (subs[i]) {
-            uri[o.ds.name][j] = {};
-            uri[o.ds.name][j]['key'] = subs[i];
-            uri[o.ds.name][j]['val'] = tempsub;
-        }
-    }
-
-    uri[o.q.name] = {};
-    uri[o.key[12]].replace(o.q.parser, function($0, $1, $2) {
-        if ($1) uri[o.q.name][$1] = $2;
-    });
-    uri[o.aq.name] = {};
-    uri[o.key[13]].replace(o.aq.parser, function($0, $1, $2) {
-        if ($1) uri[o.aq.name][$1] = $2;
-    });
-
-    return uri;
-};
-parseUri.options = {
-    strictMode: false,
-    key: ["source", "protocol", "authority", "userInfo", "user", "password", "host", "port", "relative", "path", "directory", "file", "query", "anchor"],
-    q: {
-        name: "queryKey",
-        parser: /(?:^|&)([^&=]*)=?([^&]*)/g
-    },
-    aq: {
-        name: "anchorqueryKey",
-        parser: /(?:^|&)([^&=]*)=?([^&]*)/g
-    },
-    ds: {
-        name: "directorySub"
-    },
-    parser: {
-        strict: /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,
-        loose: /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/
-    }
-};
-
 
 // By lastDream2013 略加修改，原版只能用于 Firefox
 function getRalativePageStr(lastUrl, currentUrl, nextUrl) {
@@ -6431,25 +6437,6 @@ function getRalativePageStr(lastUrl, currentUrl, nextUrl) {
             return [0, 0];
         }
 
-        // // 新的方法
-        // var lastQueryKeys = parseUri(lasturl).queryKey,
-        //     curQueryKeys = parseUri(url).queryKey,
-        //     name, lastNum, curNum;
-        // for (name in curQueryKeys) {
-        //     if (!(name in lastQueryKeys)) continue;
-
-        //     lastNum = getDigital(lastQueryKeys[name]);
-        //     curNum = getDigital(curQueryKeys[name]);
-
-        //     if (isNaN(lastNum) || isNaN(curNum) || lastNum == curNum) {
-        //         continue;
-        //     }
-
-        //     return [lastNum, curNum];
-        // }
-
-
-        // 以前的 lastDream2013 的方式
         var lasturlarray = lasturl.split(/-|\.|\&|\/|=|#|\?/),
             urlarray = url.split(/-|\.|\&|\/|=|#|\?/),
             url_info,
@@ -6753,7 +6740,9 @@ function createDocumentByString(str) {  // string转为DOM
         doc = new DOMParser().parseFromString(str, 'text/html');
     } catch (ex) {}
 
-    if (doc) return doc;
+    if (doc) {
+        return doc;
+    }
 
     if (document.implementation.createHTMLDocument) {
         doc = document.implementation.createHTMLDocument('superPreloader');
@@ -6912,22 +6901,6 @@ function wildcardToRegExpStr(urlstr) {
     return "^" + reg + "$";
 }
 
-//修正一些网站的自动翻页..
-
-//     //修正天涯帖子内容页面的使用.强制拼接.的问题.
-//     if (/http:\/\/www\.tianya\.cn\/.+\/content\/.+/i.test(URL)) {
-//         var style = document.createElement('style');
-//         style.type = 'text/css';
-//         style.textContent = '\
-//          div.wrapper{\
-//              height:auto!important;\
-//          }\
-//      ';
-//         document.getElementsByTagName('head')[0].appendChild(style);
-//     }
-// })();
-
 
 SP.init();
-
 })();
