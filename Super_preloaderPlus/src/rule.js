@@ -61,19 +61,21 @@ var prefs={
     debug: GM_getValue('debug', false),
     enableHistory: GM_getValue('enableHistory', false),    // 把下一页链接添加到历史记录
     autoGetPreLink: false,   // 一开始不自动查找上一页链接，改为调用时再查找
-    custom_siteinfo: GM_getValue('custom_siteinfo') || '[]',
+    excludes: GM_getValue('excludes', ''),
+    custom_siteinfo: GM_getValue('custom_siteinfo', '[]'),
     lazyImgSrc: 'zoomfile|file|original|load-src|_src|imgsrc|real_src|src2|data-lazyload-src|data-ks-lazyload|data-lazyload|data-src|data-original|data-thumb|data-imageurl|data-defer-src|data-placeholder',
 };
 
-//黑名单,网站正则..
+// 黑名单,网站正则..
 var blackList=[
-    // ['中关村首页',false,/^http:\/\/www\.zol\.com\.cn\/(?:#.*)?$/i],
-    // ['Gmail', true, /mail\.google\.com/i],
-    // ['Google reader',true,/google\.com\/reader\//i],
-    // ['优酷视频播放页面',true,/http:\/\/v\.youku\.com\//i],
-
-    // ['underscorejs', true, /^http:\/\/underscorejs\.org\//i],
+    // 例子
+    // 'http://*.douban.com/*',
 ];
+
+blackList = blackList.concat(prefs.excludes.split(/[\n\r]+/).map(function(line) {
+    return line.trim();
+}));
+
 
 //在以下网站上允许在非顶层窗口上加载JS..比如猫扑之类的框架集网页.
 var DIExclude = [

@@ -94,7 +94,8 @@ var setup = function(){
         #sp-prefs-setup input, #sp-prefs-setup select { border:1px solid gray;padding:2px;background:white; }\
         #sp-prefs-setup li { margin:0;padding:6px 0;vertical-align:middle;background:#eee;border:0 }\
         #sp-prefs-setup button { width:150px;margin:0 10px;text-align:center; }\
-        #sp-prefs-custom_siteinfo { width:98%;height:100px;margin:3px 0; }\
+        #sp-prefs-setup textarea { width:98%; height:60px; margin:3px 0; }\
+        #sp-prefs-setup b { font-weight: bold; font-family: "微软雅黑", sans-serif; }\
     ');
 
     var div = d.createElement('div');
@@ -113,6 +114,9 @@ var setup = function(){
                 <li><input type="checkbox" id="sp-prefs-SITEINFO_D-useiframe" /> 在预读模式下，默认启用 iframe 方式</li>\
                 <li><input type="checkbox" id="sp-prefs-SITEINFO_D-a_enable" /> 默认启用自动翻页 </li>\
                 <li><input type="checkbox" id="sp-prefs-SITEINFO_D-a_force_enable" /> 自动翻页默认启用强制拼接</li>\
+                <li>自定义排除列表：\
+                    <div><textarea id="sp-prefs-excludes" placeholder="自定义排除列表，支持通配符。\n例如：http://*.douban.com/*"></textarea></div>\
+                </li>\
                 <li>自定义站点规则：\
                     <div><textarea id="sp-prefs-custom_siteinfo" placeholder="自定义站点规则"></textarea></div>\
                 </li>\
@@ -138,8 +142,9 @@ var setup = function(){
         debug = xbug ? console.log.bind(console) : function() {};
 
         GM_setValue('dblclick_pause', $('dblclick_pause').checked);
-
+        GM_setValue('excludes', prefs.excludes = $('excludes').value);
         GM_setValue('custom_siteinfo', prefs.custom_siteinfo = $('custom_siteinfo').value);
+
         SP.loadSetting();
 
         close();
@@ -147,14 +152,18 @@ var setup = function(){
 
     on($('cancel'), 'click', close);
 
-    $('checkUpdate').onclick = checkUpdate();
+    $('checkUpdate').onclick = checkUpdate;
     $('debug').checked = xbug;
     $('enableHistory').checked = prefs.enableHistory;
     $('dblclick_pause').checked = GM_getValue('dblclick_pause') || false;
     $('SITEINFO_D-useiframe').checked = SITEINFO_D.useiframe;
     $('SITEINFO_D-a_enable').checked = SITEINFO_D.autopager.enable;
     $('SITEINFO_D-a_force_enable').checked = SITEINFO_D.autopager.force_enable;
+    $('excludes').value = prefs.excludes;
     $('custom_siteinfo').value = prefs.custom_siteinfo;
+
+    // 打开设置自动检查更新
+    checkUpdate();
 };
 
 function checkUpdate() {
@@ -1663,11 +1672,10 @@ function init(window, document) {
 
     //执行开始..///////////////////
 
-    //分析黑名单
-    var item = _.find(blackList, function(x){ return x[1] && toRE(x[2]).test(url); });
-    if(item){
-        debug('匹配黑名单', item, 'js执行终止');
-        debug('全部过程耗时', new Date() - startTime, '毫秒');
+    // 分析黑名单
+    var blackList_re = new RegExp(blackList.map(wildcardToRegExpStr).join("|"));
+    if(blackList_re.test(url)){
+        debug('匹配黑名单，js执行终止');
         return;
     }
 
