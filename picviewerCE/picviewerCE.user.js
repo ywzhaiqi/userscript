@@ -1,9 +1,8 @@
 // ==UserScript==
 // @name           picViewer CE
-// @author         NLF
-// @modified       ywzhaiqi
+// @author         NLF && ywzhaiqi
 // @description    围观图（support （opera，firefox（GreaseMonkey），chrome） Latest Stable，IE9+）
-// @version        2014.7.30
+// @version        2014.9.18
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
@@ -16,8 +15,7 @@
 // homepage       http://userscripts.org/scripts/show/105741
 // downloadURL    https://userscripts.org/scripts/source/105741.user.js
 // updateURL      https://userscripts.org/scripts/source/105741.meta.js
-// @include        http*
-// match          *://*/*
+// @include       http*
 // @exclude       http://www.toodledo.com/tasks/*
 // @exclude       http*://maps.google.com*/*
 // ==/UserScript==
@@ -128,7 +126,7 @@
 			{sitename:"Bing 图片搜索",
 				siteExample:"http://cn.bing.com/images/search?q=%E7%BE%8E%E5%A5%B3",
 				enabled:true,
-				url:/^https?:\/\/[^.]*\.bing\.com\/images\//i,
+				url: /^https?:\/\/[^.]*\.bing\.com\/images\//i,
 				getImage:function(img, a){
 					if (!a) return;
 					var oldsrc=this.src;
@@ -136,6 +134,57 @@
 					var newsrc= $ ? $[1] : '';
 					if(newsrc!=oldsrc)return newsrc;
 				}
+			},
+			{siteName: "百度图片 - channel",
+				siteExample: "http://image.baidu.com/channel?c=%E7%BE%8E%E5%A5%B3&t=%E5%85%A8%E9%83%A8&s=0",
+				enabled: true,
+				url: /^https?:\/\/image\.baidu\.com\/channel\?/i,
+				getImage: function(img, a) {
+					var src = this.src;
+					var ret = src.replace(new RegExp("/w%3D310/sign=.*?/", 'i'), '/pic/item/');
+					if (ret != src) return ret;
+				}
+			},
+			{siteName: "百度图片搜索",
+				siteExample: "http://image.baidu.com/i?ie=utf-8&word=%E9%A3%8E%E6%99%AF&oq=%E9%A3%8E%E6%99",
+				enabled: true,
+				url: /^https?:\/\/image\.baidu\.com\/.*&word=/i,
+				getImage: function(img, a) {
+					if (!a) return;
+					var reg = /&objurl=(http.*?\.(?:jpg|jpeg|png|gif|bmp))$/i;
+					if (a.href.match(reg)) {
+						return decodeURIComponent(RegExp.$1);
+					}
+				}
+			},
+			// 自带的更好
+			// {sitename:"百度图片（详细页面）",
+			// 	enabled:true,
+			// 	url:/^http:\/\/image\.baidu\.com\/detail\//i,
+			// 	getImage:function(){
+			// 		var src=this.src;
+			// 		var ret=src.replace(/\/w%3D230\/sign=[^\/]+\//i, '/pic/item/');
+			// 		if(src==ret)return;//非缩略图
+			// 		return ret;
+			// 	},
+			// },
+			{sitename:"百度贴吧",
+				enabled:true,
+				url:/^https?:\/\/tieba\.baidu\.[^\/]+\//i,
+				getImage:function(img){
+					var src=img.src;
+					var reg=/^(http:\/\/imgsrc\.baidu\.com\/forum\/)ab(pic\/item\/[\w.]+)/i ;
+					var result=src.match(reg);
+					//帖子列表页面
+					if(result){//小图的时候
+						return result[1]+result[2];
+					}else{//小图点击之后的较大图，或者帖子内容页面的图片。
+						var prefix = 'http://imgsrc.baidu.com/forum/pic/item/';
+						var reg2 = /\/sign=\w+\/([\w.]+)$/;
+						var sign = src.match(reg2);
+						return  sign ? prefix + sign[1] : null;
+					};
+				},
 			},
 			{sitename:"豆瓣",
 				siteExample:"http://movie.douban.com/photos/photo/1000656155/",
@@ -232,24 +281,6 @@
 					};
 				},
 			},
-			{sitename:"百度贴吧",
-				enabled:true,
-				url:/^https?:\/\/tieba\.baidu\.[^\/]+\//i,
-				getImage:function(img){
-					var src=img.src;
-					var reg=/^(http:\/\/imgsrc\.baidu\.com\/forum\/)ab(pic\/item\/[\w.]+)/i ;
-					var result=src.match(reg);
-					//帖子列表页面
-					if(result){//小图的时候
-						return result[1]+result[2];
-					}else{//小图点击之后的较大图，或者帖子内容页面的图片。
-						var prefix = 'http://imgsrc.baidu.com/forum/pic/item/';
-						var reg2 = /\/sign=\w+\/([\w.]+)$/;
-						var sign = src.match(reg2);
-						return  sign ? prefix + sign[1] : null;
-					};
-				},
-			},
 			{sitename:"178.com",
 				enabled:true,
 				url:/^https?:\/\/(?:\w+\.)+178\.com\//i,
@@ -290,7 +321,16 @@
 				},
 			},
 
-			// 我添加的
+			{sitename:"淘宝搜索",
+				enabled:true,
+				url:/^http:\/\/[^\.]+\.taobao\.com\//i,
+				getImage:function(){
+					var src = this.src;
+					var ret = src.replace(new RegExp("((?:img\\d\\d\\.taobaocdn|g(?:[^.]*\\.?){1,2}?\\.alicdn)\\.com/)(?:img/|tps/http:\\//img\\d\\d+\\.taobaocdn\\.com/)?((?:imgextra|bao/uploaded)/i\\d+/[^!]+![^.]+\\.[^_]+)_.+", 'i'),
+						'$1/$2');
+					if (ret != src) return ret;
+				},
+			},
 			// {sitename: "Google plus",
 			// 	enabled: true,
 			// 	url: /^https?:\/\/plus\.google\.com/i,
@@ -307,33 +347,13 @@
 				enabled:true,
 				url:/^http:\/\/www\.yyets\.com\//i,
 				getImage:function(){
-					var src=this.src;
-					var ret=src.replace(new RegExp('(res\\.yyets\\.com/ftp/(?:attachment/)?\\d+/\\d+)/[ms]_(.*)', 'i'),'$1/$2');
-					if(src==ret)return;//非缩略图
+					var src = this.src;
+					var ret = src.replace(new RegExp('(res\\.yyets\\.com/ftp/(?:attachment/)?\\d+/\\d+)/[ms]_(.*)', 'i'), '$1/$2');
+					if (src == ret) return; //非缩略图
 					return ret;
 				},
 			},
-			{sitename:"淘宝搜索",
-				enabled:true,
-				url:/^http:\/\/[^\.]+\.taobao\.com\//i,
-				getImage:function(){
-					var src=this.src;
-					var ret=src.replace(new RegExp("((?:img\\d\\d\\.taobaocdn|g(?:[^.]*\\.?){1,2}?\\.alicdn)\\.com/)(?:img/|tps/http:\\//img\\d\\d+\\.taobaocdn\\.com/)?((?:imgextra|bao/uploaded)/i\\d+/[^!]+![^.]+\\.[^_]+)_.+", 'i'),
-							'$1/$2');
-					if(ret!=src)return ret;
-				},
-			},
-			// 自带的更好
-			// {sitename:"百度图片（详细页面）",
-			// 	enabled:true,
-			// 	url:/^http:\/\/image\.baidu\.com\/detail\//i,
-			// 	getImage:function(){
-			// 		var src=this.src;
-			// 		var ret=src.replace(/\/w%3D230\/sign=[^\/]+\//i, '/pic/item/');
-			// 		if(src==ret)return;//非缩略图
-			// 		return ret;
-			// 	},
-			// },
+			
 			{sitename: "天极网",
 				url: /^http:\/\/game\.yesky\.com\//i,
 				enabled: true,
@@ -354,7 +374,6 @@
 					if (ret!=src) return ret;
 				}
 			},
-
 			// 漫画站
 			{sitename: "nhentai",
 				url: /^http:\/\/nhentai\.net\/g\/\d+\//i,
@@ -413,7 +432,7 @@
 		//分享api；有需求的照着添加
 		//api项，请返回给一个{url:url,wSize:{w:,h:}}，脚本会自动调用window.open打开，如果不返回任何的话，脚本将不做任何其他事情。
 		//api的参数
-/* 		{
+		/*{
 			title
 			pic
 			url
@@ -563,13 +582,13 @@
 
 		//获取窗口大小.
 		function getWindowSize(){
-/*
-			//包含滚动条
-			return {
-				h:window.innerHeight,
-				w:window.innerWidth,
-			};
-*/
+			/*
+				//包含滚动条
+				return {
+					h:window.innerHeight,
+					w:window.innerWidth,
+				};
+			*/
 
 			//去除滚动条的窗口大小
 			var de=document.documentElement;
@@ -1372,10 +1391,8 @@
 								'<span class="pv-gallery-head-command-drop-list-item" data-command="scrollIntoView" title="滚动到当前图片所在的位置">定位到图片</span>'+
 								'<span class="pv-gallery-head-command-drop-list-item" data-command="enterCollection" title="查看所有收藏的图片">查看所有收藏</span>'+
 								'<span class="pv-gallery-head-command-drop-list-item" data-command="listAllInNewWindow" title="输出所有图片链接">输出所有图片链接</span>'+
-								'<span class="pv-gallery-head-command-drop-list-item" title="显示隐藏底部列表">'+
-									'<input id="pv-gallery-head-command-drop-list-item-showHideBottom" type="checkbox" checked="checked" />'+
-									'<label for="pv-gallery-head-command-drop-list-item-showHideBottom" data-command="showHideBottom">显示底部列表</label>'+
-								'</span>'+
+								'<span class="pv-gallery-head-command-drop-list-item" data-command="listAllInNewWindow" title="输出所有图片链接">输出所有图片链接</span>'+
+								'<span class="pv-gallery-head-command-drop-list-item" data-command="showHideBottom" title="显示底部列表">显示底部列表</span>'+
 							'</span>'+
 						'</span>'+
 
@@ -1727,7 +1744,7 @@
 						this.all=ret;
 						return ret;
 					},
-					listAllInNewWindow: function() {
+					listAllInNewWindow: function() {  // 导出所有图片到新窗口
 						var nodes = document.querySelectorAll('.pv-gallery-sidebar-thumb-container[data-src]');
 						var arr = [].map.call(nodes, function(node){
 							return '<tr><td><img src=' + node.dataset.src + ' /></td></tr>'
@@ -1989,13 +2006,13 @@
 							collection.listAllInNewWindow();
 							break;
 						case 'showHideBottom':
+							// 显示隐藏底部图片罗列栏
 							var imgContainer = document.querySelector('.pv-gallery-img-container-bottom'),
-								sidebar = document.querySelector('.pv-gallery-sidebar-container-bottom'),
-								isHidden = !(sidebar.style.visibility == 'hidden'),
-								input = document.getElementById('pv-gallery-head-command-drop-list-item-showHideBottom');
-							sidebar.style.visibility = isHidden ? 'hidden' : 'visible';
+								sidebarContainer = document.querySelector('.pv-gallery-sidebar-container-bottom'),
+								isHidden = !(sidebarContainer.style.visibility == 'hidden');
+							sidebarContainer.style.visibility = isHidden ? 'hidden' : 'visible';
+							// 修正下图片底部的高度
 							imgContainer.style.borderBottom = isHidden ? '0px' : '120px solid transparent';
-							input.checked = !isHidden;
 							break;
 						case 'enterCollection':{
 							//进入管理模式

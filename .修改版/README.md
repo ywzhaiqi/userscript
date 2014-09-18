@@ -52,14 +52,6 @@
 
 - 2014-7-29，dirtyacc 修正烂番茄 ApiKey。详见 http://bbs.kafan.cn/forum.php?mod=viewthread&tid=1759550
 
-### [picviewerCE.user.js](https://github.com/ywzhaiqi/userscript/blob/master/.%E4%BF%AE%E6%94%B9%E7%89%88/picviewerCE.user.js)
-
-- [picViewer By NLF](http://userscripts.org/scripts/show/105741) 修改版
-- 新增了几个站点的规则
-- 新增了几个库的命令
-    - 新窗口 `输出所有图片链接` （纯属测试）
-    - 显示隐藏底部列表。可配合 [Manga_OnlineViewer_CE.user.js][] 脚本。
-
 ### [quick-view-douban 修正版.user.js](https://github.com/ywzhaiqi/userscript/blob/master/.%E4%BF%AE%E6%94%B9%E7%89%88/quick-view-douban%20%E4%BF%AE%E6%AD%A3%E7%89%88.user.js)
 
 - [豆瓣快查 for Greasemonkey](http://userscripts.org/scripts/show/129416) 修改版。
