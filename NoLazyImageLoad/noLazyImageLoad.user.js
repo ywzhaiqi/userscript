@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         No Lazy Image load
 // @namespace    https://github.com/ywzhaiqi/
-// @version      0.1
+// @version      1.0
 // @description  取消图片的延迟加载
 // @include      http*
 // @grant        none
@@ -15,17 +15,48 @@ var lazyAttributes = [
     "data-cover", "data-original", "data-thumb", "data-imageurl",  "data-placeholder",
 ];
 
+// 转为 Object
+var lazyAttributesMap = {};
+lazyAttributes.forEach(function(name){
+    lazyAttributesMap[name] = true;
+});
+
 function noLazyNode(node) {
-    if (node.localName != 'img') return;
+    // if (node.localName != 'img') return;
 
-    lazyAttributes.some(function(attr) {
-        if (!node.hasAttribute(attr)) return;
-
-        var newSrc = node.getAttribute(attr);
-        if (node.src != newSrc) {
-            node.src = newSrc;
+    any(node.attributes, function(attr) {
+        if (attr.name in lazyAttributesMap) {
+            var newSrc = attr.value;
+            if (node.src != newSrc) {
+                // console.log('%s 被替换为 %s', node.src, newSrc);
+                node.src = newSrc;
+            }
+            return true;
         }
-        return true;
+    });
+}
+
+function any(c, fn) {
+    if (c.some) {
+        return c.some(fn);
+    }
+    if (typeof c.length === 'number') {
+        return Array.prototype.some.call(c, fn);
+    }
+    return Object.keys(c).some(function(k) {
+        return fn(c[k], k, c);
+    });
+}
+
+function map(c, fn) {
+    if (c.map) {
+        return c.map(fn);
+    }
+    if (typeof c.length === 'number') {
+        return Array.prototype.map.call(c, fn);
+    }
+    return Object.keys(c).map(function(k) {
+        return fn(c[k], k, c);
     });
 }
 
@@ -34,20 +65,23 @@ function addMutationObserver(selector, callback) {
     if (!watch) return;
 
     var observer = new MutationObserver(function(mutations){
-        mutations.forEach(function(x) {
-            if (x.addedNodes.length) {
-                callback(x.addedNodes);
-            }
+        mutations.forEach(function(m) {
+            map(m.addedNodes, function(node) {
+                if (node.nodeType == 1) {  // Element
+                    callback(node);
+                }
+            });
         });
     });
     observer.observe(watch, {childList: true, subtree: true});
 }
 
 function run() {
-    [].map.call(document.images, noLazyNode);
+    map(document.images, noLazyNode);
 
-    addMutationObserver('body', function(addedNodes) {
-        [].map.call(addedNodes, noLazyNode)
+    addMutationObserver('body', function(parent) {
+        var images = parent.querySelectorAll('img');
+        map(images, noLazyNode);
     });
 }
 
