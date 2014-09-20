@@ -2,7 +2,7 @@
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
-// @version        4.6.7
+// @version        4.6.8
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    shyangs
@@ -100,6 +100,7 @@
 // @include        http://www.ziyuge.com/*/*/*/*/*.html
 
 // 其它网站
+// @include        http://book.sfacg.com/Novel/*/*/*/
 // @include        http://www.yunlaige.com/html/*/*/*.html
 // @include        http://www.cfwx.net/files/article/html/*/*/*.html
 // @include        http://www.7dsw.com/book/*/*/*.html
@@ -274,7 +275,7 @@ var Rule = {
     // 书名。顶部章节导航的最后一个链接可能是书名。
     bookTitleSelector: ".h1title > .shuming > a[title], .chapter_nav > div:first > a:last",
 
-    contentRemove: "script, iframe, font[color]",          // 内容移除选择器
+    contentRemove: "script, iframe",          // 内容移除选择器
     contentReplace: /最新.?章节|百度搜索|无弹窗小说网|更新快无弹窗纯文字|高品质更新|小说章节更新最快|\(百度搜.\)|全文字手打|“”&nbsp;看|无.弹.窗.小.说.网|追书网|〖∷∷无弹窗∷纯文字∷ 〗/g,
     removeLineRegExp: /<p>[　\s。;，！\.∷〖]*<\/p>/g,  // 移除只有一个字符的行
 
@@ -586,6 +587,7 @@ Rule.specialSite = [
         contentReplace: [
             /一秒记住【】www.zaidu.cc，本站为您提供热门小说免费阅读。/ig,
             /（文&nbsp;學馆w&nbsp;ww.w&nbsp;xguan.c&nbsp;om）/ig,
+            /（百晓生更新最快最稳定\)/g,
             /\((?:&nbsp;)*(?:无弹窗)?全文阅读\)/ig,
             /\[<a.*?首发\[百晓生\] \S+/ig,
             /高速首发.*本章节是地址为/ig,
@@ -635,8 +637,9 @@ Rule.specialSite = [
             "<p>.*?无弹窗</p>":"",
             "bb\\.king|【木&nbsp;鱼&nbsp;哥&nbsp;.*?】|【一秒钟记住本站：muyuge.com.*木鱼哥】":"",
             "——推荐阅读——[\\s\\S]+": "",
-            "【 木鱼哥 ——更新最快，全文字首发】":"",
+            "【\\s*木\\s*鱼\\s*哥.*?】":"",
             "div&gt;|&lt;－》": "",
+            "\\(.pn. 平南\\)": "",
         },
         startFilter: function() {
             clearInterval(unsafeWindow.show);
@@ -801,6 +804,7 @@ Rule.specialSite = [
             "&nbsp;关闭</p>",
             "&nbsp;&nbsp;&nbsp;&nbsp;\\?",
             "\\[☆更.新.最.快☆无.弹.窗☆全.免.费\\]",
+            '\\(.*?平南文学网\\)',
             { "。\\.": "。" },
         ]
     },
@@ -820,6 +824,7 @@ Rule.specialSite = [
             "\\d楼[\\d\\-: ]+(?:&nbsp;)+ \\|(?:&nbsp;)+|吧主\\d+(?:&nbsp;)+|支持威武，嘎嘎！",
             "www，|&nbsp;\\\\|“梦”(&nbsp;| )*“小”(&nbsp;| )*(“说” )?“网”|“岛”(&nbsp;| )+“说”",
             /(百度搜索 )?本书名 \+ 盗梦人 看最快更新/ig,
+            "（首发）",
         ]
     },
     {siteName: "飞卢小说网",
@@ -918,6 +923,11 @@ Rule.specialSite = [
         url: "http://read\\.shuhaha\\.com/Html/Book/\\d+/\\d+/\\d+\\.html",
         titleSelector: "#htmltimu",
         bookTitleSelector: [".srcbox > a:nth-child(2)", /目录$/],
+    },
+    {siteName: "SF 轻小说",
+        url: '^http://book.sfacg.com/Novel/\\d+/\\d+/\\d+/',
+        titleReg: '(.*?)-(.*?)-.*',
+        contentSelector: '#ChapterBody',
     },
     
     // ================== 采用 iframe 方式获取的 ====================
@@ -1346,6 +1356,8 @@ Rule.replace = {
     "如果您觉得网不错就多多分享本站谢谢各位读者的支持": "",
     "全文字无广告|\\(看书窝&nbsp;看书窝&nbsp;无弹窗全文阅读\\)": "",
     "水印广告测试": "",
+    "\\(平南文学网\\)": "",
+    "\\(一秒记住小说界\\）":"",
     "uutxt\\.org": "",
     "3vbook\\.cn": "",
     "txt53712/": "",
