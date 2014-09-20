@@ -1,0 +1,15 @@
+{
+  "name": "picviewerCE",
+  "version": "2014.9.18",
+  "description": "围观图（support （opera，firefox（GreaseMonkey），chrome） Latest Stable，IE9+）",
+  "main": "picviewerCE.user.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^3.8.8",
+    "gulp-concat": "^2.4.1"
+  }
+}
