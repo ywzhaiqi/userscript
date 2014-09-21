@@ -2,7 +2,7 @@
 // @name           picViewer CE
 // @author         NLF && ywzhaiqi
 // @description    围观图（support （opera，firefox（GreaseMonkey），chrome） Latest Stable，IE9+）
-// @version        2014.9.20
+// @version        2014.9.21
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29

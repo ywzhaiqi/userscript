@@ -1,5 +1,5 @@
 
 ;(function(topObject,window,document,unsafeWindow){
-    'use strict';
+	'use strict';
 
-    function init(topObject,window,document,arrayFn,envir,storage,unsafeWindow){
+	function init(topObject,window,document,arrayFn,envir,storage,unsafeWindow){
