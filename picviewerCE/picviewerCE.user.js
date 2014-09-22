@@ -2,7 +2,7 @@
 // @name           picViewer CE
 // @author         NLF && ywzhaiqi
 // @description    围观图（support （opera，firefox（GreaseMonkey），chrome） Latest Stable，IE9+）
-// @version        2014.9.22
+// @version        2014.9.22.2
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
@@ -167,7 +167,7 @@
 						ret = src;
 					var pic = /\/w%3D\d+\/sign=.*?\//i;
 					if (pic.test(src)) {
-						ret = pic.replace(pic, '/pic/item/');
+						ret = src.replace(pic, '/pic/item/');
 					}
 
 					if (ret != src) {

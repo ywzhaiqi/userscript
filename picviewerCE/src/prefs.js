@@ -140,7 +140,7 @@
 						ret = src;
 					var pic = /\/w%3D\d+\/sign=.*?\//i;
 					if (pic.test(src)) {
-						ret = pic.replace(pic, '/pic/item/');
+						ret = src.replace(pic, '/pic/item/');
 					}
 
 					if (ret != src) {
