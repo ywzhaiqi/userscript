@@ -75,7 +75,7 @@
 
 		//各网站高级规则;
 		var siteInfo=[
-			{siteName:"google图片搜索",
+			{siteName: "google 图片搜索",
 				//网址例子.(方便测试.查看.之类的)
 				siteExample:"http://www.google.com.hk/search?q=firefox&tbm=isch",
 				//是否启用
@@ -99,8 +99,14 @@
 						return decodeURIComponent(RegExp.$1);
 					}
 				},
+
+				// ====== 我新增的 ======
+				// 自定义样式
+				css: '',
+				// 排除的图片正则
+				// exclude: /weixin_code\.png$/i,
 			},
-			{sitename:"Bing 图片搜索",
+			{sitename: "Bing 图片搜索",
 				siteExample:"http://cn.bing.com/images/search?q=%E7%BE%8E%E5%A5%B3",
 				enabled:true,
 				url: /^https?:\/\/[^.]*\.bing\.com\/images\//i,
@@ -112,7 +118,6 @@
 					if(newsrc!=oldsrc)return newsrc;
 				}
 			},
-
 			// 百度自身的全屏查看方式更加好，跟这个脚本的库查看类似。
 			{siteName: "百度图片搜索",
 				siteExample: "http://image.baidu.com/i?ie=utf-8&word=%E9%A3%8E%E6%99%AF&oq=%E9%A3%8E%E6%99",
@@ -131,9 +136,16 @@
 				enabled: true,
 				url: /^https?:\/\/image\.baidu\.com\/(?:channel|detail)/i,
 				getImage: function(img, a) {
-					var src = this.src;
-					var ret = src.replace(new RegExp("/w%3D\\d+/sign=.*?/", 'i'), '/pic/item/');
-					if (ret != src) return ret;
+					var src = this.src,
+						ret = src;
+					var pic = /\/w%3D\d+\/sign=.*?\//i;
+					if (pic.test(src)) {
+						ret = pic.replace(pic, '/pic/item/');
+					}
+
+					if (ret != src) {
+						return ret;
+					}
 				}
 			},
 			// 自带的更好
@@ -170,19 +182,30 @@
 				enabled:true,
 				url:/^https?:\/\/[^.]*\.douban\.com/i,
 				getImage:function(){
+					var oldsrc = this.src,
+						newsrc = oldsrc;
 					var pic = /\/view\/photo\/(?:photo|albumcover|albumicon|thumb)\/public\//i;
 					var movieCover = /\/view\/movie_poster_cover\/[si]pst\/public\//i;
-					
-					var oldsrc=this.src;
+					var bookCover = /\/view\/ark_article_cover\/cut\/public\//i;
+					var spic = /(img\d.douban.com)\/spic\//i
+
 					if (pic.test(oldsrc)) {
-						return oldsrc.replace(pic, '/view/photo/raw/public/');
+						newsrc = oldsrc.replace(pic, '/view/photo/raw/public/');
 					} else if (movieCover.test(oldsrc)) {
-						return oldsrc.replace(movieCover, '/view/photo/raw/public/');
+						newsrc = oldsrc.replace(movieCover, '/view/photo/raw/public/');
+					} else if (bookCover.test(oldsrc)) {
+						newsrc = oldsrc.replace(bookCover, '/view/ark_article_cover/retina/public/');
+					} else if (spic.test(oldsrc)) {
+						newsrc = oldsrc.replace(spic, '$1/mpic/');
+					}
+
+					if (newsrc != oldsrc) {
+						return newsrc;
 					}
 				}
 			},
-			{sitename:"deviantart",
-				siteExample:"http://www.deviantart.com",
+			{sitename: "deviantart",
+				siteExample: "http://www.deviantart.com",
 				enabled:true,
 				url:/^https?:\/\/[^.]*\.deviantart\.com/i,
 				getImage:function(){
@@ -191,35 +214,7 @@
 					return newsrc==oldsrc? '' : newsrc;
 				},
 			},
-			{sitename:"opera官方论坛",
-				siteExample:"http://bbs.operachina.com",
-				enabled:true,
-				url:/^http:\/\/bbs\.operachina\.com/i,
-				getImage:function(){
-					var src=this.src;
-					if(/file.php\?id=\d+$/i.test(src)){
-						return src+'&mode=view';
-					};
-				},
-			},
-			{sitename:"QQ微博",
-				siteExample:"http://t.qq.com/p/news",
-				enabled:true,
-				url:/^http:\/\/[^\/]*t\.qq\.com\//i,
-				getImage:function(img){
-					var pic=/(\.qpic\.cn\/mblogpic\/\w+)\/\d+/i;//图片
-					var head=/(\.qlogo\.cn\/mbloghead\/\w+)\/\d+/i;//头像.
-					var oldsrc=this.src;
-					var newsrc;
-					if(pic.test(oldsrc)){
-						newsrc=oldsrc.replace(pic,'$1/2000');
-						return newsrc==oldsrc? '' : newsrc;;
-					}else if(head.test(oldsrc)){
-						newsrc=oldsrc.replace(head,'$1/0');
-						return newsrc==oldsrc? '' : newsrc;;
-					};
-				},
-			},
+
 			{sitename:"新浪微博",
 				siteExample:"http://weibo.com/pub/?source=toptray",
 				enabled:true,
@@ -242,6 +237,24 @@
 					};
 				},
 			},
+			{sitename:"腾讯微博",
+				siteExample:"http://t.qq.com/p/news",
+				enabled:true,
+				url:/^http:\/\/[^\/]*t\.qq\.com\//i,
+				getImage:function(img){
+					var pic=/(\.qpic\.cn\/mblogpic\/\w+)\/\d+/i;//图片
+					var head=/(\.qlogo\.cn\/mbloghead\/\w+)\/\d+/i;//头像.
+					var oldsrc=this.src;
+					var newsrc;
+					if(pic.test(oldsrc)){
+						newsrc=oldsrc.replace(pic,'$1/2000');
+						return newsrc==oldsrc? '' : newsrc;;
+					}else if(head.test(oldsrc)){
+						newsrc=oldsrc.replace(head,'$1/0');
+						return newsrc==oldsrc? '' : newsrc;;
+					};
+				},
+			},
 			// 有些页面不行，需要通过 xhr 获取并查找图片
 			{sitename:"pixiv",
 				enabled:true,
@@ -254,6 +267,19 @@
 					};
 				},
 			},
+			{sitename: '花瓣网',
+				enabled: true,
+				url: /^https?:\/\/huaban\.com\//i,
+				getImage: function() {
+					var pic = /(.*img.hb.aicdn.com\/.*)_fw236$/i
+					if (this.src.match(pic)) {
+						return RegExp.$1 + '_fw658';
+					}
+				},
+				css: '.pin a.img .cover { display: none; }',
+				exclude: /weixin_code\.png$/i,
+			},
+
 			{sitename:"沪江碎碎",
 				enabled:true,
 				url:/^https?:\/\/([^.]+\.)*(?:yeshj\.com|hjenglish\.com|hujiang\.com)/i,
@@ -294,6 +320,17 @@
 					return ret!=src? ret : '';
 				},
 			},
+			// {sitename:"opera官方论坛",
+			// 	siteExample:"http://bbs.operachina.com",
+			// 	enabled:true,
+			// 	url:/^http:\/\/bbs\.operachina\.com/i,
+			// 	getImage:function(){
+			// 		var src=this.src;
+			// 		if(/file.php\?id=\d+$/i.test(src)){
+			// 			return src+'&mode=view';
+			// 		};
+			// 	},
+			// },
 			{sitename:"wiki百科",
 				enabled:true,
 				url:/^http:\/\/[^.]+.wikipedia.org\/wiki\/\w+/i,
@@ -358,6 +395,7 @@
 					if (ret!=src) return ret;
 				}
 			},
+
 			// 漫画站
 			{sitename: "nhentai",
 				url: /^http:\/\/nhentai\.net\/g\/\d+\//i,

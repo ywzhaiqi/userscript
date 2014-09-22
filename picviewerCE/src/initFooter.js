@@ -114,16 +114,17 @@
 		},
 	};
 
+	init2();
 
-	//DOMContentLoaded
-	if(document.readyState=='complete'){
-		init2();
-	}else{
-		document.addEventListener('DOMContentLoaded',function(){
-			window.removeEventListener('load',init2,true);
-			init2();
-		},true);
-		window.addEventListener('load',init2,true);
-	};
+	// //DOMContentLoaded
+	// if(document.readyState=='complete'){
+	// 	init2();
+	// }else{
+	// 	document.addEventListener('DOMContentLoaded',function(){
+	// 		window.removeEventListener('load',init2,true);
+	// 		init2();
+	// 	},true);
+	// 	window.addEventListener('load',init2,true);
+	// };
 
 })(this,window,document,(typeof unsafeWindow=='undefined'? window : unsafeWindow));

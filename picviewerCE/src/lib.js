@@ -1,3 +1,14 @@
+
+		function get(url, callback) {
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', url);
+			xhr.overrideMimeType('text/html; charset=' + document.characterSet);
+			xhr.onload = function() {
+				callback(xhr.responseText);
+			};
+			xhr.send(null);
+		}
+
 		//获取位置
 		function getContentClientRect(target){
 			var rect=target.getBoundingClientRect();

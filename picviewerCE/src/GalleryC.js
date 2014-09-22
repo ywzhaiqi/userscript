@@ -97,7 +97,7 @@
 								'<span class="pv-gallery-head-command-drop-list-item" data-command="openInNewWindow" title="新窗口打开图片">新窗口打开</span>'+
 								'<span class="pv-gallery-head-command-drop-list-item" data-command="scrollIntoView" title="滚动到当前图片所在的位置">定位到图片</span>'+
 								'<span class="pv-gallery-head-command-drop-list-item" data-command="enterCollection" title="查看所有收藏的图片">查看所有收藏</span>'+
-								'<span class="pv-gallery-head-command-drop-list-item" data-command="listAllInNewWindow" title="输出所有图片链接">输出所有图片链接</span>'+
+								'<span class="pv-gallery-head-command-drop-list-item" data-command="exportImages" title="导出所有图片的链接到新窗口">导出所有图片</span>'+
 								'<span class="pv-gallery-head-command-drop-list-item" data-command="showHideBottom" title="显示底部列表">显示底部列表</span>'+
 							'</span>'+
 						'</span>'+
@@ -450,13 +450,36 @@
 						this.all=ret;
 						return ret;
 					},
-					listAllInNewWindow: function() {  // 导出所有图片到新窗口
+					exportImages: function() {  // 导出所有图片到新窗口
 						var nodes = document.querySelectorAll('.pv-gallery-sidebar-thumb-container[data-src]');
 						var arr = [].map.call(nodes, function(node){
-							return '<tr><td><img src=' + node.dataset.src + ' /></td></tr>'
+							return '<div><img src=' + node.dataset.src + ' /></div>'
 						});
 
-						var html = '<table border=1 cellpadding=10>' + arr.join('\n') + '</table>'
+						var title = document.title;
+
+						var html = '\
+							<head>\
+								<title>' + title + ' 导出大图</title>\
+								<style>\
+									div {\
+										float: left;\
+										max-height: 180px;\
+										max-width: 320px;\
+										margin: 2px;\
+									}\
+									img {\
+										max-height: 180px;\
+										max-width: 320px;\
+									}\
+								</style>\
+							</head>\
+							<body>\
+								<p>【图片标题】：' + title + '</p>\
+								<p>【图片数量】：' + nodes.length + '</p>\
+						';
+						
+						html += arr.join('\n') + '</body>'
 						GM_openInTab('data:text/html;charset=utf-8,' + encodeURIComponent(html));
 					},
 					enter:function(){
@@ -708,8 +731,8 @@
 							};
 
 						}break;
-						case 'listAllInNewWindow':
-							collection.listAllInNewWindow();
+						case 'exportImages':
+							collection.exportImages();
 							break;
 						case 'showHideBottom':
 							// 显示隐藏底部图片罗列栏
@@ -1400,6 +1423,7 @@
 						'" data-type="' + data_i.type +
 						'" data-src="' + data_i.src +
 						'" data-thumb-src="' + data_i.imgSrc +
+						'" title="' + data_i.img.title +
 						'">'+
 						'<span class="pv-gallery-vertical-align-helper"></span>'+
 						'<span class="pv-gallery-sidebar-thumb-loading" title="正在读取中......"></span>'+

@@ -32,13 +32,30 @@
 			var src, type;
 
 			if(!src && matchedRule){//通过高级规则获取.
-				try{
-					src=matchedRule.getImage.call(img,img,imgPA);
-				}catch(err){
-					throwErrorInfo(err);
-				};
+				// 添加修正的样式
+				if (!matchedRule.cssAdded && matchedRule.css) {
+					var style = document.createElement('style');
+					style.type = 'text/css';
+					style.id = 'gm-picviewer-site-style';
+					style.textContent = matchedRule.css;
+					document.head.appendChild(style);
 
-				if(src)type='rule';
+					matchedRule.cssAdded = true;
+				}
+
+				// 排除
+				if (matchedRule.exclude && matchedRule.exclude.test(img.src)) {
+					return;
+				}
+				else {
+					try{
+						src=matchedRule.getImage.call(img,img,imgPA);
+					}catch(err){
+						throwErrorInfo(err);
+					};
+
+					if(src)type='rule';
+				}
 			};
 
 			if(!src && !base64Img){//遍历通配规则
