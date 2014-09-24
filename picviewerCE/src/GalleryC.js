@@ -4,9 +4,9 @@
 			this.init();
 		};
 
-
 		var gallery;
 		var galleryMode;
+
 		GalleryC.prototype={
 			init:function(){
 				this.addStyle();
@@ -97,8 +97,13 @@
 								'<span class="pv-gallery-head-command-drop-list-item" data-command="openInNewWindow" title="新窗口打开图片">新窗口打开</span>'+
 								'<span class="pv-gallery-head-command-drop-list-item" data-command="scrollIntoView" title="滚动到当前图片所在的位置">定位到图片</span>'+
 								'<span class="pv-gallery-head-command-drop-list-item" data-command="enterCollection" title="查看所有收藏的图片">查看所有收藏</span>'+
+								'<span class="pv-gallery-head-command-drop-list-item" data-command="reloadGalleryC" title="重新载入所有有效的图片">重载</span>'+
+								'<span class="pv-gallery-head-command-drop-list-item" title="最后一张图片时，滚动主窗口到最底部，然后自动重载库的图片（测试）">'+
+									'<input type="checkbox"  data-command="scrollToEndAndReload"/>'+
+									'<label data-command="scrollToEndAndReload">自动重载</label>'+
+								'</span>'+
 								'<span class="pv-gallery-head-command-drop-list-item" data-command="exportImages" title="导出所有图片的链接到新窗口">导出所有图片</span>'+
-								'<span class="pv-gallery-head-command-drop-list-item" data-command="showHideBottom" title="显示底部列表">显示底部列表</span>'+
+								'<span class="pv-gallery-head-command-drop-list-item" data-command="showHideBottom" title="显示缩略图栏">显示隐藏缩略图栏</span>'+
 							'</span>'+
 						'</span>'+
 
@@ -450,38 +455,6 @@
 						this.all=ret;
 						return ret;
 					},
-					exportImages: function() {  // 导出所有图片到新窗口
-						var nodes = document.querySelectorAll('.pv-gallery-sidebar-thumb-container[data-src]');
-						var arr = [].map.call(nodes, function(node){
-							return '<div><img src=' + node.dataset.src + ' /></div>'
-						});
-
-						var title = document.title;
-
-						var html = '\
-							<head>\
-								<title>' + title + ' 导出大图</title>\
-								<style>\
-									div {\
-										float: left;\
-										max-height: 180px;\
-										max-width: 320px;\
-										margin: 2px;\
-									}\
-									img {\
-										max-height: 180px;\
-										max-width: 320px;\
-									}\
-								</style>\
-							</head>\
-							<body>\
-								<p>【图片标题】：' + title + '</p>\
-								<p>【图片数量】：' + nodes.length + '</p>\
-						';
-						
-						html += arr.join('\n') + '</body>'
-						GM_openInTab('data:text/html;charset=utf-8,' + encodeURIComponent(html));
-					},
 					enter:function(){
 
 						if(this.all.length==0){
@@ -732,7 +705,40 @@
 
 						}break;
 						case 'exportImages':
-							collection.exportImages();
+							var exportImages = function () {  // 导出所有图片到新窗口
+								var nodes = document.querySelectorAll('.pv-gallery-sidebar-thumb-container[data-src]');
+								var arr = [].map.call(nodes, function(node){
+									return '<div><img src=' + node.dataset.src + ' /></div>'
+								});
+
+								var title = document.title;
+
+								var html = '\
+									<head>\
+										<title>' + title + ' 导出大图</title>\
+										<style>\
+											div {\
+												float: left;\
+												max-height: 180px;\
+												max-width: 320px;\
+												margin: 2px;\
+											}\
+											img {\
+												max-height: 180px;\
+												max-width: 320px;\
+											}\
+										</style>\
+									</head>\
+									<body>\
+										<p>【图片标题】：' + title + '</p>\
+										<p>【图片数量】：' + nodes.length + '</p>\
+								';
+
+								html += arr.join('\n') + '</body>'
+								GM_openInTab('data:text/html;charset=utf-8,' + encodeURIComponent(html));
+							};
+
+							exportImages();
 							break;
 						case 'showHideBottom':
 							// 显示隐藏底部图片罗列栏
@@ -741,7 +747,16 @@
 								isHidden = !(sidebarContainer.style.visibility == 'hidden');
 							sidebarContainer.style.visibility = isHidden ? 'hidden' : 'visible';
 							// 修正下图片底部的高度
-							imgContainer.style.borderBottom = isHidden ? '0px' : '120px solid transparent';
+							imgContainer.style.borderBottom = isHidden ? '0px' : prefs.gallery.sidebarSize + 'px solid transparent';
+							break;
+						case 'reloadGalleryC':
+							self.reload();
+							break;
+						case 'scrollToEndAndReload':
+							var checkbox = target.parentNode.firstChild;
+							checkbox.checked = !checkbox.checked;
+
+							prefs.gallery.autoScrollAndReload = checkbox.checked;
 							break;
 						case 'enterCollection':{
 							//进入管理模式
@@ -1369,7 +1384,7 @@
 			},
 
 
-			load:function(data,from){
+			load:function(data, from, reload){
 				if(this.shown || this.minimized){//只允许打开一个,请先关掉当前已经打开的库
 
 					if(from){//frame发送过来的数据。
@@ -1399,13 +1414,17 @@
 					},true);
 				};
 
-
-				this.clear();//还原对象的一些修改，以便复用。
-				this.show();
-
 				var unique=this.unique(data);
 				data=unique.data;
 				var index=unique.index;
+
+				if (reload && this.data.length >= data.length) {
+					alert('没有新增的图片');
+					return;
+				}
+
+				this.clear();//还原对象的一些修改，以便复用。
+				this.show(reload);
 
 				//console.log(data);
 
@@ -1418,16 +1437,16 @@
 				for(var i=0,ii=data.length;i<ii;i++){
 					data_i=data[i];
 					iStatisCopy[data_i.type].count++;
-					 spanMark +=
-					 '<span class="pv-gallery-sidebar-thumb-container'+
-						'" data-type="' + data_i.type +
-						'" data-src="' + data_i.src +
-						'" data-thumb-src="' + data_i.imgSrc +
-						'" title="' + data_i.img.title +
-						'">'+
-						'<span class="pv-gallery-vertical-align-helper"></span>'+
-						'<span class="pv-gallery-sidebar-thumb-loading" title="正在读取中......"></span>'+
-					'</span>';
+					spanMark +=
+						 '<span class="pv-gallery-sidebar-thumb-container'+
+							'" data-type="' + data_i.type +
+							'" data-src="' + data_i.src +
+							'" data-thumb-src="' + data_i.imgSrc +
+							'" title="' + data_i.img.title +
+							'">'+
+							'<span class="pv-gallery-vertical-align-helper"></span>'+
+							'<span class="pv-gallery-sidebar-thumb-loading" title="正在读取中......"></span>'+
+						'</span>';
 				};
 
 
@@ -1487,6 +1506,59 @@
 				//重置style;
 				this.thumbVisibleStyle.textContent='';
 			},
+			// --------- 我添加的部分 start ----------------
+			reload: function() {
+				// 函数在 LoadingAnimC 中
+				var data = this.getAllValidImgs();
+				// 设置当前选中的图片
+				data.target = {
+					src: this.selected.dataset.src
+				};
+
+				this.close(true);
+
+				this.load(data, null, true);
+			},
+			getAllValidImgs:function(){
+				var imgs = document.getElementsByTagName('img'),
+					container = document.querySelector('.pv-gallery-container'),
+					preloadContainer = document.querySelector('.pv-gallery-preloaded-img-container'),
+					validImgs = [];
+
+				arrayFn.forEach.call(imgs, function(img, index, imgs) {
+					// 排除库里面的图片
+					if (container.contains(img) || preloadContainer.contains(img)) return;
+
+					var result = findPic(img);
+					if (result) {
+						validImgs.push(result);
+					};
+				});
+				return validImgs;
+			},
+			scrollToEndAndReload: function() {
+				if (!prefs.gallery.autoScrollAndReload) {
+					return;
+				}
+
+				window.scrollTo(0, 99999);
+
+				// 滚动主窗口到最底部，然后自动重载库的图片，还有bug，有待进一步测试
+				window.removeEventListener('scroll', this.scrolled, false);
+				
+				var self = this;
+				this.scrolled = function() {
+					clearTimeout(self.reloadTimeout);
+					self.reloadTimeout = setTimeout(function(){
+						window.removeEventListener('scroll', self.scrolled, false);
+						self.reload();
+					}, 500);
+				};
+
+				window.addEventListener('scroll', this.scrolled, false);
+			},
+			// --------- 我添加的部分 end ----------------
+
 			unique:function(data){
 				var imgSrc=data.target.src;
 
@@ -1524,31 +1596,37 @@
 					index:index,
 				};
 			},
-			show:function(){
+			show:function(reload){
 				this.shown=true;
 				galleryMode=true;
-				var des=document.documentElement.style;
-				this.deOverflow={
-					x:des.overflowX,
-					y:des.overflowY,
-				};
-				des.overflow='hidden';
-				this.gallery.style.display='';
-				this.gallery.focus();
-				window.addEventListener('resize',this._resizeHandler,true);
+
+				if (!reload) {
+					var des=document.documentElement.style;
+					this.deOverflow={
+						x:des.overflowX,
+						y:des.overflowY,
+					};
+					des.overflow='hidden';
+					this.gallery.style.display='';
+					this.gallery.focus();
+					window.addEventListener('resize',this._resizeHandler,true);
+				}
 			},
-			close:function(){
+			close:function(reload){
 				this.shown=false;
 				this.minimized=false;
-				galleryMode=false;
-				this.gallery.blur();
-				this.gallery.style.display='none';
-				var des=document.documentElement.style;
-				des.overflowX=this.deOverflow.x;
-				des.overflowY=this.deOverflow.y;
-				this.slideShow.exit();
-				this.collection.exit();
-				window.removeEventListener('resize',this._resizeHandler,true);
+
+				if (!reload) {
+					galleryMode=false;
+					this.gallery.blur();
+					this.gallery.style.display='none';
+					var des=document.documentElement.style;
+					des.overflowX=this.deOverflow.x;
+					des.overflowY=this.deOverflow.y;
+					this.slideShow.exit();
+					this.collection.exit();
+					window.removeEventListener('resize',this._resizeHandler,true);
+				}
 			},
 			runOnce:function(){//运行一次来获取某些数据。
 				var thumbSpanCS=getComputedStyle(this.selected);
@@ -1638,6 +1716,8 @@
 				}else{
 					icns.display='none';
 					scns.display='none';
+
+					this.scrollToEndAndReload();
 				};
 
 				//上一张的箭头
@@ -1706,6 +1786,10 @@
 					.pv-gallery-container span{\
 						-moz-box-sizing: border-box;\
 						box-sizing: border-box;\
+						line-height: 1.6;\
+					}\
+					.pv-gallery-container * {\
+						font-size: 14px;\
 					}\
 					/*点击还原的工具条*/\
 					.pv-gallery-maximize-trigger{\
@@ -1751,7 +1835,7 @@
 						border-bottom:1px solid #333333;\
 						text-align:right;\
 						line-height:0;\
-						font-size:14px;\
+						font-size: 14px;\
 						color:#757575;\
 						padding-right:42px;\
 					}\
@@ -1866,7 +1950,7 @@
 						display:none;\
 						box-shadow:0 0 3px #808080;\
 						background-color:#272727;\
-						line-height:1.6;\
+						line-height: 1.6;\
 						text-align:left;\
 						padding:10px;\
 						color:#ccc;\

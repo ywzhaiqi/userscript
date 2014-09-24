@@ -48,35 +48,35 @@
 				';
 				container.className='pv-pic-window-container';
 				container.innerHTML=
-									'<span class="pv-pic-window-rotate-indicator">'+
-										'<span class="pv-pic-window-rotate-indicator-pointer"></span>'+
-									'</span>'+
-									'<span class="pv-pic-window-rotate-overlayer"></span>'+
-									'<span class="pv-pic-window-toolbar" unselectable="on">'+
-										'<span class="pv-pic-window-tb-hand pv-pic-window-tb-tool" title="抓手"></span>'+
-										'<span class="pv-pic-window-tb-tool-badge-container pv-pic-window-tb-tool-extend-menu-container">'+
-											'<span class="pv-pic-window-tb-rotate pv-pic-window-tb-tool" title="旋转"></span>'+
-											'<span class="pv-pic-window-tb-tool-badge">0</span>'+
-											'<span class="pv-pic-window-tb-tool-extend-menu pv-pic-window-tb-tool-extend-menu-rotate">'+
-												'<span class="pv-pic-window-tb-tool-extend-menu-item">0</span>'+
-												'<span class="pv-pic-window-tb-tool-extend-menu-item">+90</span>'+
-												'<span class="pv-pic-window-tb-tool-extend-menu-item">-90</span>'+
-											'</span>'+
-										'</span>'+
-										'<span class="pv-pic-window-tb-tool-badge-container pv-pic-window-tb-tool-extend-menu-container">'+
-											'<span class="pv-pic-window-tb-zoom pv-pic-window-tb-tool" title="缩放"></span>'+
-											'<span class="pv-pic-window-tb-tool-badge">0</span>'+
-											'<span class="pv-pic-window-tb-tool-extend-menu pv-pic-window-tb-tool-extend-menu-zoom">'+
-												'<span class="pv-pic-window-tb-tool-extend-menu-item">1</span>'+
-												'<span class="pv-pic-window-tb-tool-extend-menu-item">+0.1</span>'+
-												'<span class="pv-pic-window-tb-tool-extend-menu-item">-0.1</span>'+
-											'</span>'+
-										'</span>'+
-										'<span class="pv-pic-window-tb-flip-horizontal pv-pic-window-tb-command" title="水平翻转"></span>'+
-										'<span class="pv-pic-window-tb-flip-vertical pv-pic-window-tb-command" title="垂直翻转"></span>'+
-									'</span>'+
-									'<span class="pv-pic-window-close"></span>'+
-									'<span class="pv-pic-window-range"></span>';
+					'<span class="pv-pic-window-rotate-indicator">'+
+						'<span class="pv-pic-window-rotate-indicator-pointer"></span>'+
+					'</span>'+
+					'<span class="pv-pic-window-rotate-overlayer"></span>'+
+					'<span class="pv-pic-window-toolbar" unselectable="on">'+
+						'<span class="pv-pic-window-tb-hand pv-pic-window-tb-tool" title="抓手"></span>'+
+						'<span class="pv-pic-window-tb-tool-badge-container pv-pic-window-tb-tool-extend-menu-container">'+
+							'<span class="pv-pic-window-tb-rotate pv-pic-window-tb-tool" title="旋转"></span>'+
+							'<span class="pv-pic-window-tb-tool-badge">0</span>'+
+							'<span class="pv-pic-window-tb-tool-extend-menu pv-pic-window-tb-tool-extend-menu-rotate">'+
+								'<span class="pv-pic-window-tb-tool-extend-menu-item">0</span>'+
+								'<span class="pv-pic-window-tb-tool-extend-menu-item">+90</span>'+
+								'<span class="pv-pic-window-tb-tool-extend-menu-item">-90</span>'+
+							'</span>'+
+						'</span>'+
+						'<span class="pv-pic-window-tb-tool-badge-container pv-pic-window-tb-tool-extend-menu-container">'+
+							'<span class="pv-pic-window-tb-zoom pv-pic-window-tb-tool" title="缩放"></span>'+
+							'<span class="pv-pic-window-tb-tool-badge">0</span>'+
+							'<span class="pv-pic-window-tb-tool-extend-menu pv-pic-window-tb-tool-extend-menu-zoom">'+
+								'<span class="pv-pic-window-tb-tool-extend-menu-item">1</span>'+
+								'<span class="pv-pic-window-tb-tool-extend-menu-item">+0.1</span>'+
+								'<span class="pv-pic-window-tb-tool-extend-menu-item">-0.1</span>'+
+							'</span>'+
+						'</span>'+
+						'<span class="pv-pic-window-tb-flip-horizontal pv-pic-window-tb-command" title="水平翻转"></span>'+
+						'<span class="pv-pic-window-tb-flip-vertical pv-pic-window-tb-command" title="垂直翻转"></span>'+
+					'</span>'+
+					'<span class="pv-pic-window-close"></span>'+
+					'<span class="pv-pic-window-range"></span>';
 
 				container.insertBefore(img,container.firstChild);
 

@@ -34,10 +34,12 @@
 			gallery:{//图库相关设定
 				fitToScreen:true,//图片适应屏幕(适应方式为contain，非cover).
 				sidebarPosition:'bottom',//'top' 'right' 'bottom' 'left'  四个可能值
-				sidebarSize:120,//侧栏的高（如果是水平放置）或者宽（如果是垂直放置）
+				sidebarSize: 120,//侧栏的高（如果是水平放置）或者宽（如果是垂直放置）
 				transition:true,//大图片区的动画。
 				preload:true,//对附近的图片进行预读。
 				max:5,//最多预读多少张（前后各多少张）
+
+				autoScrollAndReload: false, // 最后一张图片时，滚动主窗口到最底部，然后自动重载库的图片。还有bug，有待进一步测试
 			},
 
 			imgWindow:{//图片窗相关设置
@@ -75,7 +77,7 @@
 
 		//各网站高级规则;
 		var siteInfo=[
-			{siteName: "google 图片搜索",
+			{sitename: "google 图片搜索",
 				//网址例子.(方便测试.查看.之类的)
 				siteExample:"http://www.google.com.hk/search?q=firefox&tbm=isch",
 				//是否启用
@@ -119,7 +121,7 @@
 				}
 			},
 			// 百度自身的全屏查看方式更加好，跟这个脚本的库查看类似。
-			{siteName: "百度图片搜索",
+			{sitename: "百度图片搜索",
 				siteExample: "http://image.baidu.com/i?ie=utf-8&word=%E9%A3%8E%E6%99%AF&oq=%E9%A3%8E%E6%99",
 				enabled: true,
 				url: /^https?:\/\/image\.baidu\.com\/.*&word=/i,
@@ -131,17 +133,15 @@
 					}
 				}
 			},
-			{siteName: "百度图片 - channel/detail",
+			{sitename: "百度图片 - channel/detail",
 				siteExample: "http://image.baidu.com/channel?c=%E7%BE%8E%E5%A5%B3&t=%E5%85%A8%E9%83%A8&s=0",
 				enabled: true,
 				url: /^https?:\/\/image\.baidu\.com\/(?:channel|detail)/i,
 				getImage: function(img, a) {
 					var src = this.src,
 						ret = src;
-					var pic = /\/w%3D\d+\/sign=.*?\//i;
-					if (pic.test(src)) {
-						ret = src.replace(pic, '/pic/item/');
-					}
+					var pic = new RegExp("(hiphotos|imgsrc)\\.baidu\\.com/(.+?)/.+?([0-9a-f]{40})");
+					ret = src.replace(pic, '$1.baidu.com/$2/pic/item/$3');
 
 					if (ret != src) {
 						return ret;
@@ -199,22 +199,9 @@
 						newsrc = oldsrc.replace(spic, '$1/mpic/');
 					}
 
-					if (newsrc != oldsrc) {
-						return newsrc;
-					}
+					return newsrc == oldsrc ? null : newsrc;
 				}
 			},
-			{sitename: "deviantart",
-				siteExample: "http://www.deviantart.com",
-				enabled:true,
-				url:/^https?:\/\/[^.]*\.deviantart\.com/i,
-				getImage:function(){
-					var oldsrc=this.src;
-					var newsrc=oldsrc.replace(/(http:\/\/[^\/]+\/fs\d+\/)200H\/(.*)/i,'$1$2');
-					return newsrc==oldsrc? '' : newsrc;
-				},
-			},
-
 			{sitename:"新浪微博",
 				siteExample:"http://weibo.com/pub/?source=toptray",
 				enabled:true,
@@ -255,16 +242,24 @@
 					};
 				},
 			},
-			// 有些页面不行，需要通过 xhr 获取并查找图片
-			{sitename:"pixiv",
+			{sitename:"淘宝搜索",
 				enabled:true,
-				url:/^http:\/\/www\.pixiv\.net/i,
-				getImage:function(img){
+				url:/^http:\/\/[^\.]+\.taobao\.com\//i,
+				getImage:function(){
+					var src = this.src;
+					var ret = src.replace(new RegExp("((?:img\\d\\d\\.taobaocdn|g(?:[^.]*\\.?){1,2}?\\.alicdn)\\.com/)(?:img/|tps/http:\\//img\\d\\d+\\.taobaocdn\\.com/)?((?:imgextra|bao/uploaded)/i\\d+/[^!]+![^.]+\\.[^_]+)_.+", 'i'),
+						'$1/$2');
+					if (ret != src) return ret;
+				},
+			},
+			{sitename: "deviantart",
+				siteExample: "http://www.deviantart.com",
+				enabled:true,
+				url:/^https?:\/\/[^.]*\.deviantart\.com/i,
+				getImage:function(){
 					var oldsrc=this.src;
-					var reg=/^(https?:\/\/i\d.pixiv.net\/img128\/img\/.+)\/(\d+)_[m|s](\.\w{2,5})$/i
-					if(reg.test(oldsrc)){
-						return oldsrc.replace(reg,'$1$2');
-					};
+					var newsrc=oldsrc.replace(/(http:\/\/[^\/]+\/fs\d+\/)200H\/(.*)/i,'$1$2');
+					return newsrc==oldsrc? '' : newsrc;
 				},
 			},
 			{sitename: '花瓣网',
@@ -279,7 +274,41 @@
 				css: '.pin a.img .cover { display: none; }',
 				exclude: /weixin_code\.png$/i,
 			},
+			// 其它
+			{sitename:"wiki百科",
+				enabled:true,
+				url:/^http:\/\/[^.]+.wikipedia.org\/wiki\/\w+/i,
+				getImage:function(){
+					var src=this.src;
+					var ret=src.replace('/thumb/','/');
+					if(src==ret)return;//非缩略图
+					return (ret.match(/(https?:\/\/.*)\/\d+px-.*/) || [])[1];
+				},
+			},
+			{sitename: "cnbeta",
+				enabled: true,
+				url: /^https?:\/\/www.cnbeta.com\//i,
+				getImage: function() {
+					var oldsrc = this.src,
+						newsrc = oldsrc;
+					// http://static.cnbetacdn.com/newsimg/2014/0922/19_1411376098.png_180x132.png
+					if (oldsrc.match(/(static.cnbetacdn.com\/.+)_\d+x\d+\.\w{2,4}$/)) {
+						newsrc = 'http://' + RegExp.$1;
+					}
 
+					return newsrc == oldsrc ? null : newsrc;
+				}
+			},
+			{sitename:"人人影视",
+				enabled:true,
+				url:/^http:\/\/www\.yyets\.com\//i,
+				getImage:function(){
+					var src = this.src;
+					var ret = src.replace(new RegExp('(res\\.yyets\\.com/ftp/(?:attachment/)?\\d+/\\d+)/[ms]_(.*)', 'i'), '$1/$2');
+					if (src == ret) return; //非缩略图
+					return ret;
+				},
+			},
 			{sitename:"沪江碎碎",
 				enabled:true,
 				url:/^https?:\/\/([^.]+\.)*(?:yeshj\.com|hjenglish\.com|hujiang\.com)/i,
@@ -291,6 +320,19 @@
 					};
 				},
 			},
+			{sitename: '大众点评',
+				siteExample: 'http://www.dianping.com/shop/17873296/photos',
+				url: /^https?:\/\/www.dianping.com\/shop/i,
+				getImage: function() {
+					var oldsrc = this.src,
+						newsrc;
+					var pic = /(.+?dpfile\.com\/.+)\(240c180\)\/(thumb\..+)/;
+					newsrc = oldsrc.replace(pic, '$1(700x700)/$2');
+
+					return newsrc == oldsrc ? null : newsrc;
+				}
+			},
+			// 游戏
 			{sitename:"178.com",
 				enabled:true,
 				url:/^https?:\/\/(?:\w+\.)+178\.com\//i,
@@ -305,6 +347,38 @@
 					return (a.href.match(reg) || [])[1];
 				},
 			},
+			{sitename: "天极网",
+				url: /^http:\/\/game\.yesky\.com\//i,
+				enabled: true,
+				siteExample: "http://game.yesky.com/tupian/165/37968665.shtml",
+				getImage: function() {
+					var src = this.src;
+					var ret = src.replace(/_\d+x\d+\.([a-z]+)$/i, '.$1');
+					if (ret!=src) return ret;
+				}
+			},
+			{sitename: "超级玩家",
+				url: /^http:\/\/dota2\.sgamer\.com\/albums\//i,
+				enabled: true,
+				siteExample: "http://dota2.sgamer.com/albums/201407/8263_330866.html",
+				getImage: function() {
+					var src = this.src;
+					var ret = src.replace(/\/s([^\.\/]+\.[a-z]+$)/i, '/$1');
+					if (ret!=src) return ret;
+				}
+			},
+			// 漫画站
+			{sitename: "nhentai",
+				url: /^http:\/\/nhentai\.net\/g\/\d+\//i,
+				enabled: true,
+				siteExample: "http://nhentai.net/g/113475/",
+				getImage: function() {
+					var src = this.src;
+					var ret = src.replace(/\/(\d+)t(\.[a-z]+)$/i, '/$1$2');
+					if (ret!=src) return ret;
+				}
+			},
+			// 论坛
 			{sitename:"极限主题社区",
 				enabled:true,
 				url:/^https?:\/\/bbs\.themex\.net\/.+/i,
@@ -331,25 +405,23 @@
 			// 		};
 			// 	},
 			// },
-			{sitename:"wiki百科",
-				enabled:true,
-				url:/^http:\/\/[^.]+.wikipedia.org\/wiki\/\w+/i,
-				getImage:function(){
-					var src=this.src;
-					var ret=src.replace('/thumb/','/');
-					if(src==ret)return;//非缩略图
-					return (ret.match(/(https?:\/\/.*)\/\d+px-.*/) || [])[1];
-				},
-			},
 
-			{sitename:"淘宝搜索",
+			// ------------------------- 需要 xhr 获取的 --------------------------------
+			// 有些页面不行，需要 xhr 获取
+			{sitename:"pixiv",
 				enabled:true,
-				url:/^http:\/\/[^\.]+\.taobao\.com\//i,
-				getImage:function(){
-					var src = this.src;
-					var ret = src.replace(new RegExp("((?:img\\d\\d\\.taobaocdn|g(?:[^.]*\\.?){1,2}?\\.alicdn)\\.com/)(?:img/|tps/http:\\//img\\d\\d+\\.taobaocdn\\.com/)?((?:imgextra|bao/uploaded)/i\\d+/[^!]+![^.]+\\.[^_]+)_.+", 'i'),
-						'$1/$2');
-					if (ret != src) return ret;
+				url:/^http:\/\/www\.pixiv\.net/i,
+				getImage:function(img){
+					var oldsrc = this.src,
+						newsrc = oldsrc;
+					var reg = /(pixiv.net\/img\d+\/img\/.+\/\d+)_[ms]\.(\w{2,5})$/i;
+					if (reg.test(oldsrc)) {
+						newsrc = oldsrc.replace(reg, '$1.$2');
+					}
+					// 这里的链接需要 xhr 获取？
+					// http://www.pixiv.net/member_illust.php?id=341433
+
+					return newsrc == oldsrc ? null : newsrc;
 				},
 			},
 			// {sitename: "Google plus",
@@ -364,49 +436,13 @@
 			//      //lh6.googleusercontent.com/-sLCbDrGjLug/Ue3kLooLKZI/AAAAAAAAXkk/1PKW5XBQBzM/w325-h415-no/a.jpg
 			//  },
 			// },
-			{sitename:"人人影视",
-				enabled:true,
-				url:/^http:\/\/www\.yyets\.com\//i,
-				getImage:function(){
-					var src = this.src;
-					var ret = src.replace(new RegExp('(res\\.yyets\\.com/ftp/(?:attachment/)?\\d+/\\d+)/[ms]_(.*)', 'i'), '$1/$2');
-					if (src == ret) return; //非缩略图
-					return ret;
-				},
-			},
-			
-			{sitename: "天极网",
-				url: /^http:\/\/game\.yesky\.com\//i,
-				enabled: true,
-				siteExample: "http://game.yesky.com/tupian/165/37968665.shtml",
-				getImage: function() {
-					var src = this.src;
-					var ret = src.replace(/_\d+x\d+\.([a-z]+)$/i, '.$1');
-					if (ret!=src) return ret;
-				}
-			},
-			{sitename: "超级玩家",
-				url: /^http:\/\/dota2\.sgamer\.com\/albums\//i,
-				enabled: true,
-				siteExample: "http://dota2.sgamer.com/albums/201407/8263_330866.html",
-				getImage: function() {
-					var src = this.src;
-					var ret = src.replace(/\/s([^\.\/]+\.[a-z]+$)/i, '/$1');
-					if (ret!=src) return ret;
-				}
-			},
-
-			// 漫画站
-			{sitename: "nhentai",
-				url: /^http:\/\/nhentai\.net\/g\/\d+\//i,
-				enabled: true,
-				siteExample: "http://nhentai.net/g/113475/",
-				getImage: function() {
-					var src = this.src;
-					var ret = src.replace(/\/(\d+)t(\.[a-z]+)$/i, '/$1$2');
-					if (ret!=src) return ret;
-				}
-			},
+			// {sitename: '优酷电视剧',
+			// 	siteExample: 'http://www.youku.com/v_olist/c_97.html',
+			// 	url: /^https?:\/\/www.youku.com\/v_olist\//,
+			// 	getImage: function() {
+			// 		// {"r":"www\\.youku\\.com\\/show_page\\/id_.*\\.html","q":".baseinfo > .thumb > img"}
+			// 	}
+			// },
 		];
 
 		//通配型规则,无视站点.

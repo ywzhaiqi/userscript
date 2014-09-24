@@ -21,7 +21,8 @@
 
 			if(typeof matchedRule=='undefined'){//找到符合站点的高级规则,并缓存.
 				matchedRule=siteInfo._find(function(site,index,array){
-					if(site.enabled && site.url && site.url.test(URL)){
+					// if(site.enabled && site.url && site.url.test(URL)){
+					if(site.url && site.url.test(URL)){
 						return true;
 					};
 				});
@@ -46,8 +47,7 @@
 				// 排除
 				if (matchedRule.exclude && matchedRule.exclude.test(img.src)) {
 					return;
-				}
-				else {
+				} else {
 					try{
 						src=matchedRule.getImage.call(img,img,imgPA);
 					}catch(err){
