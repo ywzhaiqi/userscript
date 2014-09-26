@@ -1,6 +1,6 @@
 网页
-    Google, http://www.google.com.hk/search?q=%s&ie=utf-8&safe=off
-    wen.lu, https://wen.lu/search?q=%s&hl=zh-CN&safe=off&ie=utf-8, www.google.com.hk
+    Google, https://www.google.com.hk/search?q=%s&ie=utf-8&safe=off
+    // wen.lu, https://wen.lu/search?q=%s&hl=zh-CN&safe=off&ie=utf-8, www.google.com.hk
     百度, http://www.baidu.com/s?wd=%s&ie=utf-8
     必应, http://cn.bing.com/search?q=%s
     360, http://www.so.com/s?ie=utf-8&q=%s
@@ -10,7 +10,7 @@
     // DuckDuckGo, https://duckduckgo.com/?q=%s&kl=cn-zh
     // Wolfram, http://www.wolframalpha.com/input/?i=%s
 图片-pixiv
-    Google, http://www.google.com.hk/search?q=%s&tbm=isch
+    Google, https://www.google.com.hk/search?q=%s&tbm=isch
     百度, http://image.baidu.cn/i?ie=utf-8&word=%s
     // 360, http://image.so.com/i?ie=utf-8&q=%s&src=tab_web
     // 必应, http://cn.bing.com/images/search?q=%s
@@ -65,7 +65,7 @@
     豆丁文档, http://www.docin.com/search.do?searchcat=2&searchType_banner=p&nkey=%s
     // 爱问共享, http://ishare.iask.sina.com.cn/search.php?key=%s, gbk
     百度知道, http://zhidao.baidu.com/search?word=%s
-    Google 学术, http://scholar.google.com/scholar?hl=zh-CN&q=%s&btnG=&lr=%s
+    Google 学术, https://scholar.google.com/scholar?hl=zh-CN&q=%s&btnG=&lr=%s
     维普，http://lib.cqvip.com/zk/search.aspx
         - E: (Keyword_C=%s+Title_C=%s), H: 题名或关键词=%s 与 范围=全部期刊
     开发--百度百科
@@ -92,7 +92,7 @@
     天猫, http://list.tmall.com/search_product.htm?q=%s&type=p
     京东, http://search.jd.com/Search?keyword=%s&enc=utf-8
     苏宁, http://search.suning.com/%s/
-    国美, http://www.gome.com.cn/search?question=%s, http://www.gome.com.cn/ec/homeus/favicon.ico
+    国美, http://www.gome.com.cn/search?question=%s
     当当, http://search.dangdang.com/search.php?key=%s, gbk
     亚马逊, http://www.amazon.cn/s/ref=nb_sb_noss?field-keywords=%s
     其它--购物

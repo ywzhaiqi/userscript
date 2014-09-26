@@ -5,7 +5,10 @@ var debug = prefs.debug ? console.debug.bind(console) : function() {};
 
 
 function getFaviconUrl(url) {
-    return 'http://g.etfv.co/' + url;
+    return 'http://api.byi.pw/favicon?url=' + url;
+ 
+    // return 'http://g.etfv.co/' + url;
+
     // var uri = parseUri(url);
     // return uri.protocol + '://' + uri.host + '/favicons.ico';
 }

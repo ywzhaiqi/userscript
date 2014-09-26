@@ -1,6 +1,6 @@
 {
   "name": "searchEngineJumpCE",
-  "version": "4.1.0.0",
+  "version": "4.1.0.1",
   "description": "方便的在各个引擎之间跳转（仅适用于 Greasemonkey 或 Tampermonkey 或暴力猴）。",
   "main": "gulpfile.js",
   "directories": {

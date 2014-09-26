@@ -6,7 +6,7 @@ function parseDataStr(str, skipCommentLine) {
     }
 
     // 提前处理下特殊的 post 方式
-    str = str.replace(/[\n\r]+\s*-/g, '_POST_');
+    str = str.replace(/[\n\r]+[\s\/]*-/g, '_POST_');
 
     var parseArgs = function(str) {
         var arr = str.replace(/，/g, ', ').split(/\s*, \s*/);

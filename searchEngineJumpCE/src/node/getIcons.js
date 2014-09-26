@@ -23,32 +23,22 @@ var i2b = function (url, callback) {
 
 
 var getFavicon = function(host, index, hosts) {
-    var url = 'https://www.google.com/s2/favicons?domain=' + host;
+	var url = 'http://api.byi.pw/favicon?url=' + host;
+    // var url = 'https://www.google.com/s2/favicons?domain=' + host;
+    // var url = 'http://g.etfv.co/http://' + host;
+
     return new Promise(function(resolve, reject) {
         i2b(url, function(base64){
             resolve(base64);
             if (base64) {
-                // console.log('已完成第 ' + (index + 1) + ' 个，共 ' + hosts.length + ' 个，域名是：' + host);
+                console.log('获取图标成功 %s', url);
             } else {
-                console.log('无法获取图标', url);
+                console.log('无法获取图标 %s', url);
             }
         });
     })
 };
 
-var getFavicon2 = function(host, index, hosts) {
-    var url = 'http://g.etfv.co/http://' + host;
-    return new Promise(function(resolve, reject) {
-        i2b(url, function(base64){
-            resolve(base64);
-            if (base64) {
-                console.log('已完成第 ' + (index + 1) + ' 个，共 ' + hosts.length + ' 个，域名是：' + host);
-            } else {
-                console.log('无法获取图标', url);
-            }
-        });
-    })
-};
 
 // 筛选或排序
 function sortIconData(data, hosts) {
