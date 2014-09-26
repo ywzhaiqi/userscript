@@ -1,0 +1,24 @@
+{
+  "name": "searchEnglineJumpCE",
+  "version": "4.1.0.0",
+  "description": "方便的在各个引擎之间跳转（仅适用于 Greasemonkey 或 Tampermonkey 或暴力猴）。",
+  "main": "gulpfile.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "es6-promise": "^1.0.0",
+    "gulp": "^3.8.8",
+    "gulp-concat": "^2.4.1",
+    "gulp-jsbeautify": "^0.1.1",
+    "gulp-replace": "^0.4.0",
+    "gulp-template": "^1.1.0",
+    "request": "^2.42.0"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "author": "ywzhaiqi",
+  "license": "ISC"
+}
