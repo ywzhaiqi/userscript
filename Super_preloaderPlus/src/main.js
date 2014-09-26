@@ -106,7 +106,7 @@ var setup = function(){
             <ul>\
                 <li>当前版本为 <b>' + scriptInfo.version + ' </b>，上次更新时间为 <b>'+ scriptInfo.updateTime
                     + '</b><button id="sp-prefs-checkUpdate" style="width:auto;">更新</button>\
-                    <a target="_blank" href="' + scriptInfo.homepageURL + '"/>脚本主页</a>\
+                    <a id="sp-prefs-homepageURL" target="_blank" href="' + scriptInfo.homepageURL + '"/>脚本主页</a>\
                 </li>\
                 <li><input type="checkbox" id="sp-prefs-debug" /> 调试模式</li>\
                 <li><input type="checkbox" id="sp-prefs-dblclick_pause" /> 鼠标双击暂停翻页（默认为 Ctrl + 长按左键）</li>\
@@ -166,7 +166,12 @@ var setup = function(){
     checkUpdate();
 };
 
+var isUpdating = true;
 function checkUpdate() {
+    if (isUpdating) {
+        return;
+    }
+
     GM_xmlhttpRequest({
         method: "GET",
         url: scriptInfo.metaUrl,
@@ -201,10 +206,11 @@ function checkUpdate() {
             }
 
             if (needUpdate) {
-                if (confirm('本脚本从版本 ' + scriptInfo.version + '  更新到了版本 ' + latestVersion + '.\n是否要打开脚本链接？')) {
-                    window.open(scriptInfo.downloadUrl);
-                }
+                alert('本脚本从版本 ' + scriptInfo.version + '  更新到了版本 ' + latestVersion + '.\n请点击脚本主页进行安装');
+                document.getElementById("sp-prefs-homepageURL").boxShadow = '0 0 2px 2px #FF5555';
             }
+
+            isUpdating = false;
         }
     });
 }

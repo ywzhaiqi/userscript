@@ -121,7 +121,7 @@ var SITEINFO_D={
 //高优先级规则,第一个是教程.
 var SITEINFO=[
     {name: 'Google搜索',                                                                                                                               //站点名字...(可选)
-        url: '^https?://(www|encrypted)\\.google(stable)?\\..{2,9}/(webhp|search|#|$|\\?)',   // 站点正则...(~~必须~~)
+        url: '^https?://(?:(?:www|encrypted)\\.google(?:stable)?\\..{2,9}|wen\\.lu)/(?:webhp|search|#|$|\\?)',   // 站点正则...(~~必须~~)
         //url:'wildc;http://www.google.com.hk/search*',
         siteExample:'http://www.google.com',                                                                                                //站点实例...(可选)
         enable:true,                                                                                                                                            //启用.(总开关)(可选)
@@ -291,6 +291,22 @@ var SITEINFO=[
         autopager: {
             pageElement: '//*[@id="c"]/div'
         }
+    },
+    {name: '谷搜客',
+       url: /^https?:\/\/gusouk\.com\/search/i,
+       siteExample: 'http://gusouk.com/search?q=firefox',
+       nextLink: 'auto;',
+       autopager: {
+           pageElement: '//div[@class="search_result"]'
+       }
+    },
+    {name: 'tmd123搜索',  // www.tmd123.com
+       url: /^https?:\/\/54\.64\.24\.234\/search/i,
+       siteExample: 'http://54.64.24.234/search/?q=firefox',
+       nextLink: 'auto;',
+       autopager: {
+           pageElement: '//div[@class="search_result"]'
+       }
     },
     {name: "Google custom",
         url: /^https?:\/\/74\.125\.128\.147\/custom/i,

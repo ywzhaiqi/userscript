@@ -4,7 +4,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.4.5
+// @version      6.4.6
 // @homepageURL  https://greasyfork.org/scripts/293-super-preloaderplus-one
 
 // @grant        GM_addStyle
@@ -40,8 +40,8 @@
 
 // 主要用于 chrome 原生下检查更新，也可用于手动检查更新
 var scriptInfo = {
-    version: '6.4.5',
-    updateTime: '2014/9/18',
+    version: '6.4.6',
+    updateTime: '2014/9/26',
     homepageURL: 'https://greasyfork.org/scripts/293-super-preloaderplus-one',
     downloadUrl: 'https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js',
     metaUrl: 'https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js',
@@ -171,7 +171,7 @@ var SITEINFO_D={
 //高优先级规则,第一个是教程.
 var SITEINFO=[
     {name: 'Google搜索',                                                                                                                               //站点名字...(可选)
-        url: '^https?://(www|encrypted)\\.google(stable)?\\..{2,9}/(webhp|search|#|$|\\?)',   // 站点正则...(~~必须~~)
+        url: '^https?://(?:(?:www|encrypted)\\.google(?:stable)?\\..{2,9}|wen\\.lu)/(?:webhp|search|#|$|\\?)',   // 站点正则...(~~必须~~)
         //url:'wildc;http://www.google.com.hk/search*',
         siteExample:'http://www.google.com',                                                                                                //站点实例...(可选)
         enable:true,                                                                                                                                            //启用.(总开关)(可选)
@@ -341,6 +341,22 @@ var SITEINFO=[
         autopager: {
             pageElement: '//*[@id="c"]/div'
         }
+    },
+    {name: '谷搜客',
+       url: /^https?:\/\/gusouk\.com\/search/i,
+       siteExample: 'http://gusouk.com/search?q=firefox',
+       nextLink: 'auto;',
+       autopager: {
+           pageElement: '//div[@class="search_result"]'
+       }
+    },
+    {name: 'tmd123搜索',  // www.tmd123.com
+       url: /^https?:\/\/54\.64\.24\.234\/search/i,
+       siteExample: 'http://54.64.24.234/search/?q=firefox',
+       nextLink: 'auto;',
+       autopager: {
+           pageElement: '//div[@class="search_result"]'
+       }
     },
     {name: "Google custom",
         url: /^https?:\/\/74\.125\.128\.147\/custom/i,
@@ -3933,7 +3949,7 @@ var setup = function(){
             <ul>\
                 <li>当前版本为 <b>' + scriptInfo.version + ' </b>，上次更新时间为 <b>'+ scriptInfo.updateTime
                     + '</b><button id="sp-prefs-checkUpdate" style="width:auto;">更新</button>\
-                    <a target="_blank" href="' + scriptInfo.homepageURL + '"/>脚本主页</a>\
+                    <a id="sp-prefs-homepageURL" target="_blank" href="' + scriptInfo.homepageURL + '"/>脚本主页</a>\
                 </li>\
                 <li><input type="checkbox" id="sp-prefs-debug" /> 调试模式</li>\
                 <li><input type="checkbox" id="sp-prefs-dblclick_pause" /> 鼠标双击暂停翻页（默认为 Ctrl + 长按左键）</li>\
@@ -3993,7 +4009,12 @@ var setup = function(){
     checkUpdate();
 };
 
+var isUpdating = true;
 function checkUpdate() {
+    if (isUpdating) {
+        return;
+    }
+
     GM_xmlhttpRequest({
         method: "GET",
         url: scriptInfo.metaUrl,
@@ -4028,10 +4049,11 @@ function checkUpdate() {
             }
 
             if (needUpdate) {
-                if (confirm('本脚本从版本 ' + scriptInfo.version + '  更新到了版本 ' + latestVersion + '.\n是否要打开脚本链接？')) {
-                    window.open(scriptInfo.downloadUrl);
-                }
+                alert('本脚本从版本 ' + scriptInfo.version + '  更新到了版本 ' + latestVersion + '.\n请点击脚本主页进行安装');
+                document.getElementById("sp-prefs-homepageURL").boxShadow = '0 0 2px 2px #FF5555';
             }
+
+            isUpdating = false;
         }
     });
 }
