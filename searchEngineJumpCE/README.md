@@ -1,4 +1,4 @@
-searchEnglineJumpCE.user.js
+searchEngineJumpCE.user.js
 ===========================
 
 基于 [searchEngineJump By NLF](http://userscripts.org/scripts/show/84970) 修改增强简化。仅适用于 Greasemonkey 或 Tampermonkey 或暴力猴。
