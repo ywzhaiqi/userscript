@@ -138,7 +138,7 @@ var prefs = {
  */
 var engineListDataStr = getMStr(function(){/*
 网页
-    Google, http://www.google.com.hk/search?q=%s&ie=utf-8&safe=off
+    Google, https://www.google.com.hk/search?q=%s&ie=utf-8&safe=off
     wen.lu, https://wen.lu/search?q=%s&hl=zh-CN&safe=off&ie=utf-8, www.google.com.hk
     百度, http://www.baidu.com/s?wd=%s&ie=utf-8
     必应, http://cn.bing.com/search?q=%s
@@ -163,14 +163,14 @@ var engineListDataStr = getMStr(function(){/*
 音乐-音悦Tai
 	Songtaste, http://www.songtaste.com/search.php?keyword=%s, gbk
     百度音乐, http://music.baidu.com/search?ie=utf-8&oe=utf-8&key=%s
-    360音乐, http://s.music.so.com/s?ie=utf-8&q=%s, http://www.so.com/favicon.ico
+    360音乐, http://s.music.so.com/s?ie=utf-8&q=%s, data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAB6klEQVQ4jaXOz2oTURQG8Ltv7vEZAl1Jsm3VZO7ccdqNlK4sBFd9k0IoCD5BaRYKVtRi5l8zmZTY0o5NoVuhI9KFRbGpLaSkDYEk1s/FnTGDC6l64bf5zncPhxlhRjdDOph5dwt/wwzpwAgzOjN3eXsmJPwLc5e3mblD+B/M3CaklVq3sfPNweWwg8thB60zH4/28/i9l2D3m4TEYmsKF4NzPP34GAvNHBaaOVQ+lHExOMdiawrpboIZmwRjkyAbhL1THyuHSyg6HJqnFB2O1aiMvVMfsqG6acxoEIwGQfcJ/VEP88Ek9BqHDAgyIOg1jrl6Fv1RD7qvumlM1gmyThAex9Wwi/lgEtJXmawTpE+YC7LoDjoQHh/nMSZ9VRIux/YXGyuHS5A1lUmfIGuE1aiMt5/fQLh8nMeYrKmScAkP6zmc9b+iEpVR2sqjtJVHJSpjeD1QFzgcST/B9A2CvkEQHqFocTxws/A/reGkd4yT3jGeRU+QvKthF8JT/QTTPUJCOIRilaOwznHvdewVx/Ra5teS/qgH4Y7/MN0lpAmHoFkErcpjhMI6x/TzDK5/fEfl/TI0a9xnwlGf/kSz1ZI7LzK4+5JDs8YzJhzevumSYlVdJ+wk521WsCZmhU1Hwo4HN3dUsCZmfwKCejnLHZeJTwAAAABJRU5ErkJggg==
     // 搜狗音乐, http://mp3.sogou.com/music.so?query=%s, gbk
     天天动听, http://www.dongting.com/#a=searchlist&q=%s
     一听, http://so.1ting.com/all.do?q=%s
     音悦Tai, http://so.yinyuetai.com/mv?keyword=%s
     虾米音乐, http://www.xiami.com/search?key=%s
     酷我音乐, http://sou.kuwo.cn/ws/NSearch?key=%s
-    雷电音乐, http://www.leidian.com/s?q=%s&ie=utf-8&t=music
+    雷电音乐, http://www.leidian.com/s?q=%s&ie=utf-8&t=music, data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABoUlEQVQ4jZWTMU/bQBiG8698n0sb23cWEQKhAqnYmkhUbKVNGdsFCfojqMSA2BFDO/IP2pGtvhShS9yzc+c0OFYqvR1QUF07iA7vcp/u0em5721ERC3JSPXJRSVLTzHs9arn5EIyUhFRqyEZKdPeRt59VcptZwfF6Rmmn05w29mpzE17G5KRavTJRbbcQibCUuzzDfy2Fvb9BxguKvNsuYU+ubgD/HuZC0wuLjCbzTB6vVcPEOEDgN1dFNMpiqJA8rIL+z8AI0L8+voNeZ4jz3Pojc3HA6wIYY8+YjKZLMz48vIeWAGYzS1kSmE8Htcm0xq6/eLeSQlgucDo8xcYYxYmPj6Gbnr1LzBc4GfTw82TJVyTi2ty8YMR0sEAaZpCX11hIEKMAl7vwHKBUcCR+AESz0fi+RiurkFrDa011N4bJJ5fErrwG+dCdaeLOI6hzs8RP2tW9uFhABeI3/YwiCKotXWkfvD4RZo7GR4cQB0elcRVAJKRSmrohgvE7/ah/QDmL3HzJH5wVybpOCt1dZaM8N1hiBwGWVd1cm+k46z8AR1jqQDjb6yiAAAAAElFTkSuQmCC
     网易云音乐, http://music.163.com/#/search/m/?s=%s
     百度歌词, http://music.baidu.com/search/lrc?key=%s
 视频
@@ -179,7 +179,7 @@ var engineListDataStr = getMStr(function(){/*
     百度视频, http://v.baidu.com/v?word=%s&ie=utf-8
     acfan, http://www.acfun.tv/search.aspx#query=%s
     bilibili, http://www.bilibili.tv/search?keyword=%s
-    迅雷看看, http://search.kankan.com/search.php?keyword=%s
+    迅雷看看, http://search.kankan.com/search.php?keyword=%s, data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAADIUlEQVQ4jX2SfUyUBRzHvyBBjHMneKbNzpTUZtOyLXUFIW3h3MzcKqZttbFenZWzNTcHMpGXkztwolYovqAoWDjf1jHSIHChYrwccIfPPc/g4HY8z3N3wJ0ded0d6Lc/KDaT/P7/+fxeAQAfNcxNNnS+dXC/7b3TxjsfmPZ1bNpc3rh0PmozZ2h7nMlp0tiyPCWgy2tqisF/s+7q3IRDwmdWs1LIBkcKLdJa2mxvULy9+L7YmPijoXnL67pOYW2SwLxMOWw6MRbZWtzv004J3r298f0Cxy7mCCk8J8zhyW4dd/0W2553bWblxSuaFucPGGw5vyj/1cbq1egY/0krRUJb3BHrF9LImklB545TWdI2bhPW87j4AnMtTwc+aYp/5t8C504m6cWCWENfaZwxs974PFrHW2EPcblr3P+hK7gGb/cY2jZIOdxs38p8KYPbOxZ3PTIngDvZsct7K55YucpsTsb1yCiEEOfYghZkCCeG0vrKmSqW8WPpK2ZZ0lunEzyUS8Gq6BsB4lYwgNeEy+5XHGYuFBuYIlbzza5sa2YtZjxWUOWpR72PuHB3FCuERvuKwR5qxAHOkwTqb173La2p0f0vXCbvjTrrIc6MEIc9d7Gwt61umcvLaPEeY8U/GPermzHfOjIeAUsVHUqUM1FH/oGLVGoOyF2YbbEWLVHCjBMjhC3MqOY/idIh8xRY4k7AATULJrUfR4eJ0z6iQCUMClfXDH8ObauUkSxPUCdFiI4wcStMVAwTRrkF+9VamNR+HPYSZ/1ExSixRyH2uTmzTLWmVw48CVztTtAP/DXw0uDEJNwcIa7cI773EuVeospHnPITRg+RIxNFKmFUJvSFjrSpLp+1+r/Z6LnPBe0Roi5MXAoR1WPEUT9R4iVylUm4UGF0sULtbmnnQ/v5+qYrfpMz2LZDecCnfg4RlWPEIR9R5CF2y0TOEGMKFcaXyNRk2/OnvU6B3b3onb6A+KXzAVN/CXL+sVEmmtycVaxydpmbiaVOn26v8Olj/yO97vd5L17rLU+94fW8fHmE+iMyk0x9Lk1u93fane3PTcf8DU66zKoIw+cZAAAAAElFTkSuQmCC
     网易公开课, http://c.open.163.com/search/search.htm?referered=http%3A%2F%2Fopen.163.com%2F&query=%s#/search/all
     youtube, http://www.youtube.com/results?search_query=%s
     视频站--搜库
@@ -231,7 +231,7 @@ var engineListDataStr = getMStr(function(){/*
     天猫, http://list.tmall.com/search_product.htm?q=%s&type=p
     京东, http://search.jd.com/Search?keyword=%s&enc=utf-8
     苏宁, http://search.suning.com/%s/
-    国美, http://www.gome.com.cn/search?question=%s, http://www.gome.com.cn/ec/homeus/favicon.ico
+    国美, http://www.gome.com.cn/search?question=%s, data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAADN0lEQVQ4jSXQy2scBQDH8d/MbDbZZN+bjXlYoVgPFQxKjC1STA+CL/RiBVEPHiSKpj2IosUWD0JAsC301B4EzaGHgniRUoWiNMWoGA+V1qTrvmZ2Z2Zf2UeyyZrX10P/gg98VFKCbF8cz4jS0DA5I4UbGMVXnFwgiW8k8IwojlJUlcAzIpQ0yprGcK0o8qw4FaWoKY2tAXxFKSpOxUzSUJCKAjSMPorDY9TSB6jJpGJFsBXHNgeRo0Eq5jC+kaakCOXgEF4ggqt+WhokP30cLl5iL2vTW1omPzODI+GbfVTNGKoqidMXx9YgZSNOYSBEWcJJPEhr7hP2uy1qux3cvz3Kf+VYee9dygpSsJLkNYpqSuApQdUYoWYlqMgiOxSlNT9Plz2K3Q1++/xTbh96jLvDByikR6kZYVwN4QeTyDb68TSCHRi7L8ukefYs0MNxytw48TplhVgzhC3hSjjBGG2FWZOQYw5QDIyQN+J4RoDGiy9Ds4HTqPPDK29RVJCa+vAnn6D+zizrH31G5fIlvIvncMcfQVVFyZlh6gpQ6g+z9+0CXWDpyvcU3nyb8slTZI6+wPrlBeh12Ol2AXCvXaPw9DHkaRjbCGGbFt7RGSjbrG9tkru1SObqd1Sv/8hONk+vUKB962foQfWPZVwdpG4IubKoWEG848+zu/g7++xhZ4t4f2bo5Tyav/xE4eOT/JOcoDXzHBubFe6cPoOrUfJmCLUG0vhzp+hubVAB2IdO9h4rF77EmX6SskKUrSje1DH2Fq+zwzaZ106wGoxRUxqVHp9if6vBTr1N59cl9tbb3F5a5ubDR/g3KKqHJ2l9Mc9WqcB2e5N2vcPqU0dYV4yslUDNUJrOG7P4z75EYXyC3fMX2N6CbMaldeMmrKzSy9yh8sFpOue+pubaOFPTeIrRUAJ5RoSCTHyZ5CT8RAzv/Vma31zhv4WrbMzNUXnoEEXTonH+K1qbHe5NTuIogmMmkR1I0dEgjsL4gRRZU5QCIjdkUg32kzXEpiGqptj58Ax+IYv76GFaSpENxFDJCuEpgac0vh6gpAk6StBSGFv3o/Iax9YAzYOTeM+8Sik2xJqSlMwI/wMcUn3cK+PMRQAAAABJRU5ErkJggg==
     当当, http://search.dangdang.com/search.php?key=%s, gbk
     亚马逊, http://www.amazon.cn/s/ref=nb_sb_noss?field-keywords=%s
     其它--购物
@@ -268,8 +268,8 @@ var engineListDataStr = getMStr(function(){/*
     绿软联盟, http://www.xdowns.com/i.asp?q=%s, gbk
     绿软家园, http://www.downg.com/search.asp?action=s&sType=ResName&catalog=&keyword=%s, gbk
     创e下载园, http://www.7edown.com/query.asp?q=%s, gbk
-    西西软件, http://so.cr173.com/?keyword=%s, gbk, http://www.cr173.com/favicon.ico
-    pc6下载站, http://so.pc6.com/?keyword=%s, gbk, http://www.pc6.com/favicon.ico
+    西西软件, http://so.cr173.com/?keyword=%s, gbk, data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAB9klEQVQ4jWNgGAUooGC/gUDNfiOf2j16EWXb9dQZGBgYHBoYWHK32WoR1Nxz1K545ln3D9nb1X44Ljfc67tWd1ftPuUzVVsUt1RvdF+GV/OUk55Vt9/v/h+6ye6W5XxLDZi4w1IDg7I9Kq+T1joswam5Zqe64rmXy391H3P7E7TC2Ahd3maFQaj9AqvFDAwMDGmb1UTKdyr11++RX5yzUTHGoYGBhaH1kHrpupsF/2MXKp7AZoFDAwOLQwMDi8N8BY6MzWpmpTtUUhr3KQVX71S4F7lSLYCh6YDKwpaDGv+DuhRmYDOgdLtiaNgm/ffOqw2fOK40sI7borXSeaHO+eDlWoYMDAwMDLX7lDeW71H7Hz5RcTYOXzKGbTR4k7Zd+3/qZvVo67nqvCqTVNjhsoV71Dtydmr+j12i9sx4JgMrNgMydmi9Kd6t/itlo6I4hmzsJnXFuK06P8PX6/4PWqReg6GggYGpYq/au+Ldau9DVzEwY3VjyHqd4tBNBv9DVmr/DV+iMSlhtZZtyjpVzfytmq5N+5W3tx1S/l+1T+V70kZ1XhzeZGAwX2ji779O71LGFrV/RZuU/xdsVPqfslnlacQGrRL3FQb+7isM/H1X6BkxMDAw4jSEgYGBQW+2uYzVElNT0wXW2iWLSrhDV4VidzYUAADa9LS0UGU18wAAAABJRU5ErkJggg==
+    pc6下载站, http://so.pc6.com/?keyword=%s, gbk, data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACQUlEQVQ4ja2RX2hSURzHf+BTMHraYg89xR6CvQQHosZkDBn4oA9BKxhjWNlg65+RDyExgmoIyYhGsJMs7KEFNza3iUM0uk5nThku3JwtEy3lOu7SXe9Vr9vL6elczAx62BcOh9/v/Pj8zu/7AzgOpYqH3d68bPDmZUNkv67LletdzTWcyLXrPSbn/ZDN9hdgLl2dGAoIJUtM9I+HxeQlViC+vDxC33meb7u4aFgDjEiP0xBoCbDERD+NX+9Wph7FJB+N9R6TEzAiHQ5NIf5r92xLwL1IeTO2L/dF+br2TkTcer4lvQcAwNvzRsCInLD3SOtcHLX0YC5dnRhkBdkYErLGkJC1xqUPfKXSyTCMqsOhKQBGZDnN6v5pYvMIVMtpVgcYEcCInHJo9ug9uTH78L8Ad9esUxTQfP6AJEpy7ydOHmoGDLjGVgAjol68wbozQe2XQqL75uqTGeVHjUoKR8j5o2ZKlORemlMvGf2AEfHmPvfRHMMwqpNv1CXAiHAi1w4AAIHC4eVBVpCfxaWFK/4D6dvB0TkAgH7XqA8wIu5MUNvYjPqRKuZPAwCAeaO8vpCtmQEAVvdqV5PCEQIAGA9MTgNGxBx+YVXG5b930bUqxNsRcduTk40AADvF2gUKcGeCWlr89uvSsDsT1J6fHwkDRuQa+9iuAF4lqzMPouXoR04evh4Scq6f9VsNRnqaN3DmnT6V4flOBcDzfNvLHcluiYn+2VTNxjCMqtE066bDPOAaW+l3jfoskemninnHod9asVv3rmSJ4QAAAABJRU5ErkJggg==
     卡饭论坛, http://bds.kafan.cn/cse/search?q=%s&s=15563968344970452529
 翻译
     google翻译, http://translate.google.com.hk/?q=%s
