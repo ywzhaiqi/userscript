@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         No Lazy Image load
 // @namespace    https://github.com/ywzhaiqi/
-// @version      1.0
+// @version      1.1
 // @description  取消图片的延迟加载
 // @include      http*
 // @grant        none
@@ -22,8 +22,6 @@ lazyAttributes.forEach(function(name){
 });
 
 function noLazyNode(node) {
-    // if (node.localName != 'img') return;
-
     any(node.attributes, function(attr) {
         if (attr.name in lazyAttributesMap) {
             var newSrc = attr.value;
@@ -67,7 +65,7 @@ function addMutationObserver(selector, callback) {
     var observer = new MutationObserver(function(mutations){
         mutations.forEach(function(m) {
             map(m.addedNodes, function(node) {
-                if (node.nodeType == 1) {  // Element
+                if (node.nodeType == Node.ELEMENT_NODE) {
                     callback(node);
                 }
             });
@@ -81,7 +79,9 @@ function run() {
 
     addMutationObserver('body', function(parent) {
         var images = parent.querySelectorAll('img');
-        map(images, noLazyNode);
+        if (images) {
+        	map(images, noLazyNode);
+        }
     });
 }
 

@@ -1,4 +1,8 @@
+iconData.json
+blankIcon.txt
+
 node_modules
+bower_components
 tmp/
 *.sublime-workspace
 *.cache
