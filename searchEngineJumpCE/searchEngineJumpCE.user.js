@@ -149,7 +149,7 @@ var engineListDataStr = getMStr(function(){/*
     // DuckDuckGo, https://duckduckgo.com/?q=%s&kl=cn-zh
     // Wolfram, http://www.wolframalpha.com/input/?i=%s
 图片-pixiv
-    Google, http://www.google.com.hk/search?q=%s&tbm=isch
+    Google, https://www.google.com.hk/search?q=%s&tbm=isch
     百度, http://image.baidu.cn/i?ie=utf-8&word=%s
     // 360, http://image.so.com/i?ie=utf-8&q=%s&src=tab_web
     // 必应, http://cn.bing.com/images/search?q=%s
@@ -204,7 +204,7 @@ var engineListDataStr = getMStr(function(){/*
     豆丁文档, http://www.docin.com/search.do?searchcat=2&searchType_banner=p&nkey=%s
     // 爱问共享, http://ishare.iask.sina.com.cn/search.php?key=%s, gbk
     百度知道, http://zhidao.baidu.com/search?word=%s
-    Google 学术, http://scholar.google.com/scholar?hl=zh-CN&q=%s&btnG=&lr=%s
+    Google 学术, https://scholar.google.com/scholar?hl=zh-CN&q=%s&btnG=&lr=%s
     维普，http://lib.cqvip.com/zk/search.aspx
         - E: (Keyword_C=%s+Title_C=%s), H: 题名或关键词=%s 与 范围=全部期刊
     开发--百度百科
@@ -272,7 +272,7 @@ var engineListDataStr = getMStr(function(){/*
     pc6下载站, http://so.pc6.com/?keyword=%s, gbk, data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACQUlEQVQ4ja2RX2hSURzHf+BTMHraYg89xR6CvQQHosZkDBn4oA9BKxhjWNlg65+RDyExgmoIyYhGsJMs7KEFNza3iUM0uk5nThku3JwtEy3lOu7SXe9Vr9vL6elczAx62BcOh9/v/Pj8zu/7AzgOpYqH3d68bPDmZUNkv67LletdzTWcyLXrPSbn/ZDN9hdgLl2dGAoIJUtM9I+HxeQlViC+vDxC33meb7u4aFgDjEiP0xBoCbDERD+NX+9Wph7FJB+N9R6TEzAiHQ5NIf5r92xLwL1IeTO2L/dF+br2TkTcer4lvQcAwNvzRsCInLD3SOtcHLX0YC5dnRhkBdkYErLGkJC1xqUPfKXSyTCMqsOhKQBGZDnN6v5pYvMIVMtpVgcYEcCInHJo9ug9uTH78L8Ad9esUxTQfP6AJEpy7ydOHmoGDLjGVgAjol68wbozQe2XQqL75uqTGeVHjUoKR8j5o2ZKlORemlMvGf2AEfHmPvfRHMMwqpNv1CXAiHAi1w4AAIHC4eVBVpCfxaWFK/4D6dvB0TkAgH7XqA8wIu5MUNvYjPqRKuZPAwCAeaO8vpCtmQEAVvdqV5PCEQIAGA9MTgNGxBx+YVXG5b930bUqxNsRcduTk40AADvF2gUKcGeCWlr89uvSsDsT1J6fHwkDRuQa+9iuAF4lqzMPouXoR04evh4Scq6f9VsNRnqaN3DmnT6V4flOBcDzfNvLHcluiYn+2VTNxjCMqtE066bDPOAaW+l3jfoskemninnHod9asVv3rmSJ4QAAAABJRU5ErkJggg==
     卡饭论坛, http://bds.kafan.cn/cse/search?q=%s&s=15563968344970452529
 翻译
-    google翻译, http://translate.google.com.hk/?q=%s
+    google翻译, http://translate.google.cn/?q=%s
     百度翻译, http://fanyi.baidu.com/#auto/zh/%s
     有道翻译, http://fanyi.youdao.com/translate?i=%s
     bing 翻译, http://www.bing.com/translator/?&text=%s&from=&to=zh-chs
