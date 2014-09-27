@@ -40,10 +40,17 @@
 				max:5,//最多预读多少张（前后各多少张）
 
 				autoScrollAndReload: false, // 最后一张图片时，滚动主窗口到最底部，然后自动重载库的图片。还有bug，有待进一步测试
+				keys: {
+					enabled: true,
+					actual: 'a',  //  当出现悬浮条时按下 `a` 打开原图
+					current: 'c',
+					magnifier: 'm',
+					gallery: 'g',
+				}
 			},
 
 			imgWindow:{//图片窗相关设置
-				fitToScreen:false,//适应屏幕,并且水平垂直居中(适应方式为contain，非cover).
+				fitToScreen: false,//适应屏幕,并且水平垂直居中(适应方式为contain，非cover).
 				syncSelectedTool:true,//同步当前选择的工具，如果开了多个图片窗口，其中修改一个会反映到其他的上面。
 				defaultTool:'hand',//"hand","rotate","zoom";打开窗口的时候默认选择的工具
 				close:{//关闭的方式

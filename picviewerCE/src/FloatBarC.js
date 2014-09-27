@@ -24,10 +24,10 @@
 
 				arrayFn.forEach.call(this.children,function(child,index){
 					var titleMap={
-						actual:'查看原始',
-						gallery:'查看库',
-						current:'查看当前',
-						magnifier:'放大镜',
+						actual:'查看原始(A)',
+						gallery:'查看库(G)',
+						current:'查看当前(C)',
+						magnifier:'放大镜(M)',
 					};
 					var buttonName=prefs.floatBar.butonOrder[index];
 					buttons[buttonName]=child;
@@ -275,13 +275,13 @@
 				},100);
 			},
 			open:function(e,buttonType){
-				var waitImgLoad=e.ctrlKey? !prefs.waitImgLoad : prefs.waitImgLoad;//按住ctrl取反向值
-				var openInTopWindow=e.shiftKey? !prefs.framesPicOpenInTopWindow : prefs.framesPicOpenInTopWindow;//按住shift取反向值
+				var waitImgLoad = e && e.ctrlKey ? !prefs.waitImgLoad : prefs.waitImgLoad; //按住ctrl取反向值
+				var openInTopWindow = e && e.shiftKey ? !prefs.framesPicOpenInTopWindow : prefs.framesPicOpenInTopWindow; //按住shift取反向值
 
-				if(!waitImgLoad && buttonType=='magnifier' && !envir.chrome){//非chrome的background-image需要全部载入后才能显示出来
-					waitImgLoad=true;
+				if (!waitImgLoad && buttonType == 'magnifier' && !envir.chrome) { //非chrome的background-image需要全部载入后才能显示出来
+					waitImgLoad = true;
 				};
-				new LoadingAnimC(this.data,buttonType,waitImgLoad,openInTopWindow);
+				new LoadingAnimC(this.data, buttonType, waitImgLoad, openInTopWindow);
 			},
 		};
 

@@ -5,9 +5,15 @@ picviewerCE.user.js
 
 ## 修改说明
 
+- 修正了原脚本在 chrome 下会加载 2 次的 bug。
 - 修改了默认的设置
-    - 修改为**双击**关闭图片窗口，还可用 esc 键关闭。
+    - 改为**双击**关闭图片窗口，还可用 esc 键关闭。
 - 新增了几个查看大图的站点规则
+- 新增按键
+    - 当出现悬浮条时按下 `a` 键打开原图（actual）
+    - 当出现悬浮条时按下 `c` 键打开当前图片（current）
+    - 当出现悬浮条时按下 `m` 键打开放大镜（magnifier）
+    - 当出现悬浮条时按下 `g` 键打开库（gallery）
 - 新增了几个库的命令
     - 重载。跟下面的自动重载类同，这是手动重载。
     - `导出所有图片到新窗口`
@@ -35,13 +41,3 @@ picviewerCE.user.js
     if (galleryBtn) {
         galleryBtn.click();
     }
-
-### chrome 的鼠标手势实现
-
-思路：使用外部鼠标手势软件调用按键执行 js 代码。
-
-步骤
-
-1. 先用 [Shortcut Manager](https://chrome.google.com/webstore/detail/mgjjeipcdnnjhgodgjpfkffcejoljijf) 定义 2 个按键。js 代码要舍弃前 2 行，例如：
-    ![chrome_shortkey_manager_1](img/chrome_shortkey_manager_1.png)
-2. 然后用 WGestures 或 StrokeIt 或 StrokesPlus 等软件发送按键。

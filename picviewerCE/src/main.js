@@ -336,3 +336,21 @@
 		};
 
 		document.addEventListener('mouseover',globalMouseoverHandler,true);
+
+		// 注册按键
+		if (prefs.gallery.keys.enabled) {
+			document.addEventListener('keydown', function(event) {
+				if (floatBar && floatBar.shown) {
+					var key = String.fromCharCode(event.keyCode).toLowerCase();
+
+					['actual', 'current', 'magnifier','gallery'].some(function(action) {
+						if (key == prefs.gallery.keys[action]) {
+							floatBar.open(null, action);
+							event.stopPropagation();
+							event.preventDefault();
+							return true;
+						}
+					})
+				}
+			}, true);
+		}

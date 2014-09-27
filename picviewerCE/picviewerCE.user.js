@@ -2,14 +2,14 @@
 // @name           picViewer CE
 // @author         NLF && ywzhaiqi
 // @description    NLF 的围观图修改版
-// @version        2014.9.24.1
+// @version        2014.9.27.1
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
 // @grant          GM_getValue
 // @grant          GM_setValue
 // @grant          GM_openInTab
-// @run-at         document-start
+// @run-at         document-end
 // @namespace      http://userscripts.org/users/NLF
 // @homepage       https://github.com/ywzhaiqi/userscript/tree/master/picviewerCE
 // homepage       http://userscripts.org/scripts/show/105741
@@ -20,6 +20,7 @@
 // @exclude       http*://maps.google.com*/*
 // ==/UserScript==
 
+// 原脚本的 document-start 会在 chrome 下加载 2 次
 
 ;(function(topObject,window,document,unsafeWindow){
 	'use strict';
@@ -67,10 +68,17 @@
 				max:5,//最多预读多少张（前后各多少张）
 
 				autoScrollAndReload: false, // 最后一张图片时，滚动主窗口到最底部，然后自动重载库的图片。还有bug，有待进一步测试
+				keys: {
+					enabled: true,
+					actual: 'a',  //  当出现悬浮条时按下 `a` 打开原图
+					current: 'c',
+					magnifier: 'm',
+					gallery: 'g',
+				}
 			},
 
 			imgWindow:{//图片窗相关设置
-				fitToScreen:false,//适应屏幕,并且水平垂直居中(适应方式为contain，非cover).
+				fitToScreen: false,//适应屏幕,并且水平垂直居中(适应方式为contain，非cover).
 				syncSelectedTool:true,//同步当前选择的工具，如果开了多个图片窗口，其中修改一个会反映到其他的上面。
 				defaultTool:'hand',//"hand","rotate","zoom";打开窗口的时候默认选择的工具
 				close:{//关闭的方式
@@ -6210,10 +6218,10 @@
 
 				arrayFn.forEach.call(this.children,function(child,index){
 					var titleMap={
-						actual:'查看原始',
-						gallery:'查看库',
-						current:'查看当前',
-						magnifier:'放大镜',
+						actual:'查看原始(A)',
+						gallery:'查看库(G)',
+						current:'查看当前(C)',
+						magnifier:'放大镜(M)',
 					};
 					var buttonName=prefs.floatBar.butonOrder[index];
 					buttons[buttonName]=child;
@@ -6461,13 +6469,13 @@
 				},100);
 			},
 			open:function(e,buttonType){
-				var waitImgLoad=e.ctrlKey? !prefs.waitImgLoad : prefs.waitImgLoad;//按住ctrl取反向值
-				var openInTopWindow=e.shiftKey? !prefs.framesPicOpenInTopWindow : prefs.framesPicOpenInTopWindow;//按住shift取反向值
+				var waitImgLoad = e && e.ctrlKey ? !prefs.waitImgLoad : prefs.waitImgLoad; //按住ctrl取反向值
+				var openInTopWindow = e && e.shiftKey ? !prefs.framesPicOpenInTopWindow : prefs.framesPicOpenInTopWindow; //按住shift取反向值
 
-				if(!waitImgLoad && buttonType=='magnifier' && !envir.chrome){//非chrome的background-image需要全部载入后才能显示出来
-					waitImgLoad=true;
+				if (!waitImgLoad && buttonType == 'magnifier' && !envir.chrome) { //非chrome的background-image需要全部载入后才能显示出来
+					waitImgLoad = true;
 				};
-				new LoadingAnimC(this.data,buttonType,waitImgLoad,openInTopWindow);
+				new LoadingAnimC(this.data, buttonType, waitImgLoad, openInTopWindow);
 			},
 		};
 
@@ -6811,6 +6819,24 @@
 
 		document.addEventListener('mouseover',globalMouseoverHandler,true);
 
+		// 注册按键
+		if (prefs.gallery.keys.enabled) {
+			document.addEventListener('keydown', function(event) {
+				if (floatBar && floatBar.shown) {
+					var key = String.fromCharCode(event.keyCode).toLowerCase();
+
+					['actual', 'current', 'magnifier','gallery'].some(function(action) {
+						if (key == prefs.gallery.keys[action]) {
+							floatBar.open(null, action);
+							event.stopPropagation();
+							event.preventDefault();
+							return true;
+						}
+					})
+				}
+			}, true);
+		}
+
 	};
 
 	function init2(){
@@ -6927,15 +6953,6 @@
 		},
 	};
 
-	//DOMContentLoaded
-	if(document.readyState=='complete'){
-		init2();
-	}else{
-		document.addEventListener('DOMContentLoaded',function(){
-			window.removeEventListener('load',init2,true);
-			init2();
-		},true);
-		window.addEventListener('load',init2,true);
-	};
+	init2();
 
 })(this,window,document,(typeof unsafeWindow=='undefined'? window : unsafeWindow));
