@@ -1,15 +1,17 @@
 // ==UserScript==
 // @name           picViewer CE
 // @author         NLF && ywzhaiqi
-// @description    NLF 的围观图修改版
-// @version        2014.9.27.1
+// @description    NLF 的围观图修改版。
+// @version        2014.9.27.2
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
+
 // @grant          GM_getValue
 // @grant          GM_setValue
 // @grant          GM_openInTab
 // @run-at         document-end
+
 // @namespace      http://userscripts.org/users/NLF
 // @homepage       https://github.com/ywzhaiqi/userscript/tree/master/picviewerCE
 // homepage       http://userscripts.org/scripts/show/105741
@@ -1381,7 +1383,8 @@
 					support=getSupported();
 				};
 
-				if(support[type]){
+				// chrome 30+ 虽然支持 mouseenter，但是存在问题
+				if(support[type] && !(type == 'mouseenter' && window.chrome)){
 					ele.addEventListener(type,fn,false);//mouseleave,enter不冒泡
 				}else{
 					ele.addEventListener(map[type],function(e){
