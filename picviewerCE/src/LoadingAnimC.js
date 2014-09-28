@@ -131,6 +131,8 @@
 			},
 			error:function(img,e){
 				this.loadingAnim.classList.add('pv-loading-container_error');
+				console.error('picviewer CE 载入大图错误：%o', this.data);
+
 				var self=this;
 				setTimeout(function(){
 					self.remove();

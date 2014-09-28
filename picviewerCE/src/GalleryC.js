@@ -97,13 +97,14 @@
 								'<span class="pv-gallery-head-command-drop-list-item" data-command="openInNewWindow" title="新窗口打开图片">新窗口打开</span>'+
 								'<span class="pv-gallery-head-command-drop-list-item" data-command="scrollIntoView" title="滚动到当前图片所在的位置">定位到图片</span>'+
 								'<span class="pv-gallery-head-command-drop-list-item" data-command="enterCollection" title="查看所有收藏的图片">查看所有收藏</span>'+
-								'<span class="pv-gallery-head-command-drop-list-item" data-command="reloadGalleryC" title="重新载入所有有效的图片">重载</span>'+
+								'<span class="pv-gallery-head-command-drop-list-item" data-command="exportImages" title="导出所有图片的链接到新窗口">导出所有图片</span>'+
+								'<span class="pv-gallery-head-command-drop-list-item" data-command="reloadGalleryC" title="重新载入所有有效的图片">手动重载</span>'+
 								'<span class="pv-gallery-head-command-drop-list-item" title="最后一张图片时，滚动主窗口到最底部，然后自动重载库的图片（测试）">'+
 									'<input type="checkbox"  data-command="scrollToEndAndReload"/>'+
 									'<label data-command="scrollToEndAndReload">自动重载</label>'+
 								'</span>'+
-								'<span class="pv-gallery-head-command-drop-list-item" data-command="exportImages" title="导出所有图片的链接到新窗口">导出所有图片</span>'+
-								'<span class="pv-gallery-head-command-drop-list-item" data-command="showHideBottom" title="显示缩略图栏">显示隐藏缩略图栏</span>'+
+								'<span class="pv-gallery-head-command-drop-list-item" data-command="showHideBottom" title="显示或隐藏缩略图栏">切换缩略图栏</span>'+
+								'<span id="pv-gallery-fullscreenbtn" class="pv-gallery-head-command-drop-list-item" data-command="fullScreen">进入全屏</span>'+
 							'</span>'+
 						'</span>'+
 
@@ -758,6 +759,19 @@
 
 							prefs.gallery.autoScrollAndReload = checkbox.checked;
 							break;
+						case 'fullScreen':
+							if (target.classList.contains('fullscreenbtn')) {
+								if (cancelFullScreen()) return;
+								target.textContent = '进入全屏';
+								target.classList.remove('fullscreenbtn');
+								return;
+							}
+
+							if (launchFullScreen(document.documentElement)) return;
+							target.classList.toggle('fullscreenbtn');
+							target.textContent = '退出全屏';
+							target.classList.add('fullscreenbtn');
+							break;
 						case 'enterCollection':{
 							//进入管理模式
 							collection.enter();
@@ -769,6 +783,21 @@
 					};
 				},true);
 
+				// 监视全屏的变化
+				function fullScreenChanged() {
+					if (!document.fullscreenElement && // alternative standard method
+						!document.mozFullScreenElement &&
+						!document.webkitFullscreenElement &&
+						!document.msFullscreenElement) {
+
+						var btn = document.getElementById("pv-gallery-fullscreenbtn");
+						btn.textContent = '进入全屏';
+						btn.removeClass('fullscreenbtn');
+					}
+				}
+				document.addEventListener('webkitfullscreenchange', fullScreenChanged, false);
+				document.addEventListener('mozfullscreenchange', fullScreenChanged, false);
+				document.addEventListener('fullscreenchange', fullScreenChanged, false);
 
 				//生成分享的下拉列表
 				var shareMark='';
@@ -1983,6 +2012,9 @@
 					}\
 					.pv-gallery-head-command-drop-list-item > * {\
 						vertical-align:middle;\
+					}\
+					.pv-gallery-head-command-drop-list-item label {\
+						font-weight: normal;\
 					}\
 					.pv-gallery-head-command-drop-list-item:hover{\
 						background-color:#404040;\

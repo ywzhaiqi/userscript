@@ -40,8 +40,9 @@
 				max:5,//最多预读多少张（前后各多少张）
 
 				autoScrollAndReload: false, // 最后一张图片时，滚动主窗口到最底部，然后自动重载库的图片。还有bug，有待进一步测试
+				// 按键
+				keysEnabled: true,
 				keys: {
-					enabled: true,
 					actual: 'a',  //  当出现悬浮条时按下 `a` 打开原图
 					current: 'c',
 					magnifier: 'm',
@@ -306,16 +307,6 @@
 					return newsrc == oldsrc ? null : newsrc;
 				}
 			},
-			{sitename:"人人影视",
-				enabled:true,
-				url:/^http:\/\/www\.yyets\.com\//i,
-				getImage:function(){
-					var src = this.src;
-					var ret = src.replace(new RegExp('(res\\.yyets\\.com/ftp/(?:attachment/)?\\d+/\\d+)/[ms]_(.*)', 'i'), '$1/$2');
-					if (src == ret) return; //非缩略图
-					return ret;
-				},
-			},
 			{sitename:"沪江碎碎",
 				enabled:true,
 				url:/^https?:\/\/([^.]+\.)*(?:yeshj\.com|hjenglish\.com|hujiang\.com)/i,
@@ -339,6 +330,29 @@
 					return newsrc == oldsrc ? null : newsrc;
 				}
 			},
+
+			// ------------------------- 视频 --------------------------------
+			{sitename: "人人影视",
+				enabled: true,
+				url: /^http:\/\/www\.yyets\.com\//i,
+				getImage: function() {
+					var src = this.src;
+					var ret = src.replace(new RegExp('(res\\.yyets\\.com/ftp/(?:attachment/)?\\d+/\\d+)/[ms]_(.*)', 'i'), '$1/$2');
+					if (src == ret) return; //非缩略图
+					return ret;
+				},
+			},
+			{sitename: 'trakt.tv',
+				url: /^http:\/\/trakt\.tv\//i,
+				siteExample: 'http://trakt.tv/shows',
+				getImage: function() {
+					var oldsrc = this.src;
+					if (oldsrc.match(/(.*\/images\/posters\/\d+)-(?:300|138)\.jpg\?(\d+)$/)) {
+						return RegExp.$1 + '.jpg?' + RegExp.$2;
+					}
+				}
+			},
+
 			// 游戏
 			{sitename:"178.com",
 				enabled:true,
@@ -412,6 +426,19 @@
 			// 		};
 			// 	},
 			// },
+
+			// ------------------------- 特殊的需要修正 --------------------------------
+			{sitename: 'github 修正',
+				url: /^https?:\/\/github\.com\//i,
+				clikToOpen: {
+					enabled: true,
+					preventDefault: true,
+					type: 'actual',
+				},
+				getImage: function() {
+					return this.src;
+				}
+			},
 
 			// ------------------------- 需要 xhr 获取的 --------------------------------
 			// 有些页面不行，需要 xhr 获取

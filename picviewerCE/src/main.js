@@ -338,12 +338,12 @@
 		document.addEventListener('mouseover',globalMouseoverHandler,true);
 
 		// 注册按键
-		if (prefs.gallery.keys.enabled) {
+		if (prefs.gallery.keys.keysEnabled) {
 			document.addEventListener('keydown', function(event) {
 				if (floatBar && floatBar.shown) {
 					var key = String.fromCharCode(event.keyCode).toLowerCase();
 
-					['actual', 'current', 'magnifier','gallery'].some(function(action) {
+					Object.keys(prefs.gallery.keys).some(function(action) {
 						if (key == prefs.gallery.keys[action]) {
 							floatBar.open(null, action);
 							event.stopPropagation();

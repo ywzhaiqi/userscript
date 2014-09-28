@@ -2,7 +2,7 @@
 // @name           picViewer CE
 // @author         NLF && ywzhaiqi
 // @description    NLF 的围观图修改版。
-// @version        2014.9.27.2
+// @version        2014.9.28.1
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29

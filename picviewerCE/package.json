@@ -1,6 +1,6 @@
 {
   "name": "picviewerCE",
-  "version": "2014.9.18",
+  "version": "2014.9.28.1",
   "description": "围观图（support （opera，firefox（GreaseMonkey），chrome） Latest Stable，IE9+）",
   "main": "picviewerCE.user.js",
   "scripts": {
