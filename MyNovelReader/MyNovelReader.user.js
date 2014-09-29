@@ -2,7 +2,7 @@
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
-// @version        4.6.9
+// @version        4.7.0
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    shyangs
@@ -1652,7 +1652,7 @@ var Config = {
         if (this._quietModeKey) {
             return this._quietModeKey;
         }
-        this._quietModeKey = GM_getValue('quietModeKey', 'q');
+        this._quietModeKey = GM_getValue('quietModeKey') || 'q';
 
         return this._quietModeKey;
     },
@@ -1666,7 +1666,7 @@ var Config = {
         if (this._openPreferencesKey) {
             return this._openPreferencesKey;
         }
-        this._openPreferencesKey = GM_getValue('open_preferences_key', 's');
+        this._openPreferencesKey = GM_getValue('open_preferences_key') || 's';
 
         return this._openPreferencesKey;
     },
@@ -1681,7 +1681,7 @@ var Config = {
         if (this._hideMenuListKey) {
             return this._hideMenuListKey;
         }
-        this._hideMenuListKey = GM_getValue('hide_menulist_key', 'c');
+        this._hideMenuListKey = GM_getValue('hide_menulist_key') || 'c';
 
         return this._hideMenuListKey;
     },
