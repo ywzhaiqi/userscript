@@ -188,7 +188,9 @@ var Config = {
         if (this._quietModeKey) {
             return this._quietModeKey;
         }
-        return this._quietModeKey = GM_getValue('quietModeKey', 'q');
+        this._quietModeKey = GM_getValue('quietModeKey', 'q');
+
+        return this._quietModeKey;
     },
     set quietModeKey(keyCode) {
         this._quietModeKey = keyCode;
@@ -200,7 +202,9 @@ var Config = {
         if (this._openPreferencesKey) {
             return this._openPreferencesKey;
         }
-        return this._openPreferencesKey = GM_getValue('open_preferences_key') || 's';
+        this._openPreferencesKey = GM_getValue('open_preferences_key', 's');
+
+        return this._openPreferencesKey;
     },
     set openPreferencesKey(keyCode) {
         this._openPreferencesKey = keyCode;
@@ -213,7 +217,9 @@ var Config = {
         if (this._hideMenuListKey) {
             return this._hideMenuListKey;
         }
-        return this._hideMenuListKey = GM_getValue('hide_menulist_key') || 'c';
+        this._hideMenuListKey = GM_getValue('hide_menulist_key', 'c');
+
+        return this._hideMenuListKey;
     },
     set hideMenuListKey(key) {
         this._hideMenuListKey = key;

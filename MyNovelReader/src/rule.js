@@ -334,6 +334,7 @@ Rule.specialSite = [
     {siteName: "百晓生",
         url: /^http:\/\/www\.bxs\.cc\/\d+\/\d+\.html$/,
         titleReg: /(.*?)\d*,(.*)/,
+        contentRemove: 'a',
         contentReplace: [
             /一秒记住【】www.zaidu.cc，本站为您提供热门小说免费阅读。/ig,
             /（文&nbsp;學馆w&nbsp;ww.w&nbsp;xguan.c&nbsp;om）/ig,
@@ -590,7 +591,7 @@ Rule.specialSite = [
         contentRemove: "> *:not(#con_imginfo, #content)",
         contentReplace: "飞卢小说网 b.faloo.com 欢迎广大书友光临阅读，最新、最快、最火的连载作品尽在飞卢小说网！",
         contentPatch: function(fakeStub){
-            fakeStub.find("#content").find(".p_gonggao").remove()
+            fakeStub.find("#content").find(".p_gonggao").remove();
             // fakeStub.find("#con_imginfo").prependTo("#content");
         }
     },

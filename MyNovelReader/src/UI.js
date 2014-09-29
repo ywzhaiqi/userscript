@@ -199,7 +199,7 @@ var UI = {
         UI.preferencesLoadHandler();
     },
     _loadBlocker: function() {
-        if (UI.$blocker == null) {
+        if (UI.$blocker === null) {
             UI.$blocker = $('<div>').attr({
                 id: 'uil_blocker',
                 style: 'position:fixed;top:0px;left:0px;right:0px;bottom:0px;background-color:#000;opacity:0.5;z-index:10000;'
@@ -298,6 +298,7 @@ var UI = {
         });
     },
     preferencesClickHandler: function(target){
+    	var key;
         switch (target.id) {
             case 'close_button':
                 UI.preferencesCloseHandler();
@@ -327,21 +328,21 @@ var UI = {
             case 'hide-footer-nav':
                 break;
             case 'quietModeKey':
-                var key = prompt('请输入打开设置的快捷键：'.uiTrans(), Config.quietModeKey);
+                key = prompt('请输入打开设置的快捷键：'.uiTrans(), Config.quietModeKey);
                 if (key) {
                     Config.quietModeKey = key;
                     $(target).val(key);
                 }
                 break;
             case 'openPreferencesKey':
-                var key = prompt('请输入打开设置的快捷键：'.uiTrans(), Config.openPreferencesKey);
+                key = prompt('请输入打开设置的快捷键：'.uiTrans(), Config.openPreferencesKey);
                 if (key) {
                     Config.openPreferencesKey = key;
                     $(target).val(key);
                 }
                 break;
             case 'setHideMenuListKey':
-                var key = prompt('请输入切换左侧章节列表的快捷键：'.uiTrans(), Config.hideMenuListKey);
+                key = prompt('请输入切换左侧章节列表的快捷键：'.uiTrans(), Config.hideMenuListKey);
                 if (key) {
                     Config.hideMenuListKey = key;
                     $(target).val(key);
@@ -349,7 +350,7 @@ var UI = {
                 break;
             // case 'saveAsTxt':
             //     Download.saveAsTxt();
-                break;
+            //     break;
             default:
                 break;
         }
@@ -365,7 +366,7 @@ var UI = {
 
         var form = document.getElementById('preferences');
 
-        Config.setDisableAutoLaunch(form.elements.namedItem("disable-auto-launch").checked)
+        Config.setDisableAutoLaunch(form.elements.namedItem("disable-auto-launch").checked);
 
         Config.cn2tw = $form.find("#enable-cn2tw").get(0).checked;
         Config.booklink_enable = $form.find("#booklink-enable").get(0).checked;

@@ -104,7 +104,7 @@ Parser.prototype = {
         // 标题间增加一个空格，不准确，已注释
         chapterTitle = chapterTitle
                 .replace(Rule.titleReplace, "")
-                .trim()
+                .trim();
                 // .replace(/(第?\S+?[章节卷回])(.*)/, "$1 $2");
 
         // if (info.trimBookTitle !== false) {
@@ -172,7 +172,7 @@ Parser.prototype = {
         var _headings = $doc.find(_main_selector);
         // 加上 second selector 并去除包含的
         $doc.find(_second_selector).each(function(){
-            if($(this).find(_main_selector).length == 0){
+            if($(this).find(_main_selector).length === 0){
                 _headings.push(this);
             }
         });
@@ -295,7 +295,7 @@ Parser.prototype = {
                 overrideMimeType: "text/html;charset=" + charset,
                 onload: function(res){
                     var text = res.responseText;
-                    if (text.indexOf('{"CID":') == 0) {  // 创世中文
+                    if (text.indexOf('{"CID":') === 0) {  // 创世中文
                         text = JSON.parse(text).Content;
                         text = $('<div>').html(text).find('.bookreadercontent').html();
                     } else {
@@ -353,7 +353,7 @@ Parser.prototype = {
         if(this.chapterTitle && Rule.titleRegExp.test(this.chapterTitle)){
             try {
                 var reg = this.chapterTitle.replace(/[()\[\]{}|+.,^$?\\*]/g, "\\$&")
-                        .replace(/\s+/g, '\\s*')
+                        .replace(/\s+/g, '\\s*');
                 reg = new RegExp(reg, 'ig');
                 text = text.replace(reg, "");
                 C.log('去除内容中的标题', reg);
@@ -461,10 +461,10 @@ Parser.prototype = {
             case _.isString(replaceRule):
                 var regexp = new RegExp(replaceRule, 'ig');
                 text = text.replace(regexp, '');
-                break
+                break;
             case _.isArray(replaceRule):
                 replaceRule.forEach(function(r){
-                    text = self.replaceText(text, r)
+                    text = self.replaceText(text, r);
                 });
                 break;
             case _.isObject(replaceRule):
@@ -612,11 +612,11 @@ Parser.prototype = {
         }
 
         switch(true){
-            case url == '':
+            case url === '':
             case Rule.nextUrlIgnore.test(url):
-            case url == this.indexUrl:
-            case url == this.prevUrl:
-            case url == this.curPageUrl:
+            case url === this.indexUrl:
+            case url === this.prevUrl:
+            case url === this.curPageUrl:
             case Rule.nextUrlCompare.test(this.prevUrl) && !Rule.nextUrlCompare.test(url):
                 return false;
             default:
@@ -652,7 +652,7 @@ Parser.prototype = {
             href = href.getAttribute('href');
         }
 
-        if (href.indexOf('http://') == 0) {
+        if (href.indexOf('http://') === 0) {
             return href;
         }
 

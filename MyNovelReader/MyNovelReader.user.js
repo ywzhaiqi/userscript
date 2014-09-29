@@ -2,7 +2,7 @@
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
-// @version        4.6.8
+// @version        4.6.9
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    shyangs
@@ -585,6 +585,7 @@ Rule.specialSite = [
     {siteName: "百晓生",
         url: /^http:\/\/www\.bxs\.cc\/\d+\/\d+\.html$/,
         titleReg: /(.*?)\d*,(.*)/,
+        contentRemove: 'a',
         contentReplace: [
             /一秒记住【】www.zaidu.cc，本站为您提供热门小说免费阅读。/ig,
             /（文&nbsp;學馆w&nbsp;ww.w&nbsp;xguan.c&nbsp;om）/ig,
@@ -841,7 +842,7 @@ Rule.specialSite = [
         contentRemove: "> *:not(#con_imginfo, #content)",
         contentReplace: "飞卢小说网 b.faloo.com 欢迎广大书友光临阅读，最新、最快、最火的连载作品尽在飞卢小说网！",
         contentPatch: function(fakeStub){
-            fakeStub.find("#content").find(".p_gonggao").remove()
+            fakeStub.find("#content").find(".p_gonggao").remove();
             // fakeStub.find("#con_imginfo").prependTo("#content");
         }
     },
@@ -1651,7 +1652,9 @@ var Config = {
         if (this._quietModeKey) {
             return this._quietModeKey;
         }
-        return this._quietModeKey = GM_getValue('quietModeKey', 'q');
+        this._quietModeKey = GM_getValue('quietModeKey', 'q');
+
+        return this._quietModeKey;
     },
     set quietModeKey(keyCode) {
         this._quietModeKey = keyCode;
@@ -1663,7 +1666,9 @@ var Config = {
         if (this._openPreferencesKey) {
             return this._openPreferencesKey;
         }
-        return this._openPreferencesKey = GM_getValue('open_preferences_key') || 's';
+        this._openPreferencesKey = GM_getValue('open_preferences_key', 's');
+
+        return this._openPreferencesKey;
     },
     set openPreferencesKey(keyCode) {
         this._openPreferencesKey = keyCode;
@@ -1676,7 +1681,9 @@ var Config = {
         if (this._hideMenuListKey) {
             return this._hideMenuListKey;
         }
-        return this._hideMenuListKey = GM_getValue('hide_menulist_key') || 'c';
+        this._hideMenuListKey = GM_getValue('hide_menulist_key', 'c');
+
+        return this._hideMenuListKey;
     },
     set hideMenuListKey(key) {
         this._hideMenuListKey = key;
@@ -1866,10 +1873,26 @@ function getUrlHost(url) {
     return a.host;
 }
 
+$.nano = function(template, data) {
+    return template.replace(/\{([\w\.]*)\}/g, function(str, key) {
+        var keys = key.split("."),
+            v = data[keys.shift()];
+        for (var i = 0, l = keys.length; i < l; i++) v = v[keys[i]];
+        return (typeof v !== "undefined" && v !== null) ? v : "";
+    });
+};
+
+// jQuery text 完全匹配. e.g. a:econtains('最新章节')
+$.expr[":"].econtains = function(obj, index, meta, stack) {
+    return (obj.textContent || obj.innerText || $(obj).text() || "").toLowerCase() == meta[3].toLowerCase();
+};
+
+/* jshint ignore: start */
+
 function $x(aXPath, aContext) {
     var nodes = [];
     var doc = document;
-    var aContext = aContext || doc;
+    aContext = aContext || doc;
 
     try {
         var results = doc.evaluate(aXPath, aContext, null,
@@ -1889,25 +1912,13 @@ Function.prototype.getMStr = function() {  // 多行String
     return lines;
 };
 
-$.nano = function(template, data) {
-    return template.replace(/\{([\w\.]*)\}/g, function(str, key) {
-        var keys = key.split("."),
-            v = data[keys.shift()];
-        for (var i = 0, l = keys.length; i < l; i++) v = v[keys[i]];
-        return (typeof v !== "undefined" && v !== null) ? v : "";
-    });
-};
-
-// jQuery text 完全匹配. e.g. a:econtains('最新章节')
-$.expr[":"].econtains = function(obj, index, meta, stack) {
-    return (obj.textContent || obj.innerText || $(obj).text() || "").toLowerCase() == meta[3].toLowerCase();
-};
 
 /*
  * jQuery Easing v1.3 - http://gsgd.co.uk/sandbox/jquery/easing/
  */
 jQuery.easing.jswing=jQuery.easing.swing,jQuery.extend(jQuery.easing,{def:"easeOutQuad",swing:function(a,b,c,d,e){return jQuery.easing[jQuery.easing.def](a,b,c,d,e)},easeInQuad:function(a,b,c,d,e){return d*(b/=e)*b+c},easeOutQuad:function(a,b,c,d,e){return-d*(b/=e)*(b-2)+c},easeInOutQuad:function(a,b,c,d,e){return(b/=e/2)<1?d/2*b*b+c:-d/2*(--b*(b-2)-1)+c},easeInCubic:function(a,b,c,d,e){return d*(b/=e)*b*b+c},easeOutCubic:function(a,b,c,d,e){return d*((b=b/e-1)*b*b+1)+c},easeInOutCubic:function(a,b,c,d,e){return(b/=e/2)<1?d/2*b*b*b+c:d/2*((b-=2)*b*b+2)+c},easeInQuart:function(a,b,c,d,e){return d*(b/=e)*b*b*b+c},easeOutQuart:function(a,b,c,d,e){return-d*((b=b/e-1)*b*b*b-1)+c},easeInOutQuart:function(a,b,c,d,e){return(b/=e/2)<1?d/2*b*b*b*b+c:-d/2*((b-=2)*b*b*b-2)+c},easeInQuint:function(a,b,c,d,e){return d*(b/=e)*b*b*b*b+c},easeOutQuint:function(a,b,c,d,e){return d*((b=b/e-1)*b*b*b*b+1)+c},easeInOutQuint:function(a,b,c,d,e){return(b/=e/2)<1?d/2*b*b*b*b*b+c:d/2*((b-=2)*b*b*b*b+2)+c},easeInSine:function(a,b,c,d,e){return-d*Math.cos(b/e*(Math.PI/2))+d+c},easeOutSine:function(a,b,c,d,e){return d*Math.sin(b/e*(Math.PI/2))+c},easeInOutSine:function(a,b,c,d,e){return-d/2*(Math.cos(Math.PI*b/e)-1)+c},easeInExpo:function(a,b,c,d,e){return 0==b?c:d*Math.pow(2,10*(b/e-1))+c},easeOutExpo:function(a,b,c,d,e){return b==e?c+d:d*(-Math.pow(2,-10*b/e)+1)+c},easeInOutExpo:function(a,b,c,d,e){return 0==b?c:b==e?c+d:(b/=e/2)<1?d/2*Math.pow(2,10*(b-1))+c:d/2*(-Math.pow(2,-10*--b)+2)+c},easeInCirc:function(a,b,c,d,e){return-d*(Math.sqrt(1-(b/=e)*b)-1)+c},easeOutCirc:function(a,b,c,d,e){return d*Math.sqrt(1-(b=b/e-1)*b)+c},easeInOutCirc:function(a,b,c,d,e){return(b/=e/2)<1?-d/2*(Math.sqrt(1-b*b)-1)+c:d/2*(Math.sqrt(1-(b-=2)*b)+1)+c},easeInElastic:function(a,b,c,d,e){var f=1.70158,g=0,h=d;return 0==b?c:1==(b/=e)?c+d:(g||(g=.3*e),h<Math.abs(d)?(h=d,f=g/4):f=g/(2*Math.PI)*Math.asin(d/h),-(h*Math.pow(2,10*(b-=1))*Math.sin((b*e-f)*2*Math.PI/g))+c)},easeOutElastic:function(a,b,c,d,e){var f=1.70158,g=0,h=d;return 0==b?c:1==(b/=e)?c+d:(g||(g=.3*e),h<Math.abs(d)?(h=d,f=g/4):f=g/(2*Math.PI)*Math.asin(d/h),h*Math.pow(2,-10*b)*Math.sin((b*e-f)*2*Math.PI/g)+d+c)},easeInOutElastic:function(a,b,c,d,e){var f=1.70158,g=0,h=d;return 0==b?c:2==(b/=e/2)?c+d:(g||(g=e*.3*1.5),h<Math.abs(d)?(h=d,f=g/4):f=g/(2*Math.PI)*Math.asin(d/h),1>b?-.5*h*Math.pow(2,10*(b-=1))*Math.sin((b*e-f)*2*Math.PI/g)+c:.5*h*Math.pow(2,-10*(b-=1))*Math.sin((b*e-f)*2*Math.PI/g)+d+c)},easeInBack:function(a,b,c,d,e,f){return void 0==f&&(f=1.70158),d*(b/=e)*b*((f+1)*b-f)+c},easeOutBack:function(a,b,c,d,e,f){return void 0==f&&(f=1.70158),d*((b=b/e-1)*b*((f+1)*b+f)+1)+c},easeInOutBack:function(a,b,c,d,e,f){return void 0==f&&(f=1.70158),(b/=e/2)<1?d/2*b*b*(((f*=1.525)+1)*b-f)+c:d/2*((b-=2)*b*(((f*=1.525)+1)*b+f)+2)+c},easeInBounce:function(a,b,c,d,e){return d-jQuery.easing.easeOutBounce(a,e-b,0,d,e)+c},easeOutBounce:function(a,b,c,d,e){return(b/=e)<1/2.75?d*7.5625*b*b+c:2/2.75>b?d*(7.5625*(b-=1.5/2.75)*b+.75)+c:2.5/2.75>b?d*(7.5625*(b-=2.25/2.75)*b+.9375)+c:d*(7.5625*(b-=2.625/2.75)*b+.984375)+c},easeInOutBounce:function(a,b,c,d,e){return e/2>b?.5*jQuery.easing.easeInBounce(a,2*b,0,d,e)+c:.5*jQuery.easing.easeOutBounce(a,2*b-e,0,d,e)+.5*d+c}});
 
+/* jshint ignore: end */
 
 var UI = {
     tpl_footer_nav: '\
@@ -2109,7 +2120,7 @@ var UI = {
         UI.preferencesLoadHandler();
     },
     _loadBlocker: function() {
-        if (UI.$blocker == null) {
+        if (UI.$blocker === null) {
             UI.$blocker = $('<div>').attr({
                 id: 'uil_blocker',
                 style: 'position:fixed;top:0px;left:0px;right:0px;bottom:0px;background-color:#000;opacity:0.5;z-index:10000;'
@@ -2208,6 +2219,7 @@ var UI = {
         });
     },
     preferencesClickHandler: function(target){
+    	var key;
         switch (target.id) {
             case 'close_button':
                 UI.preferencesCloseHandler();
@@ -2237,21 +2249,21 @@ var UI = {
             case 'hide-footer-nav':
                 break;
             case 'quietModeKey':
-                var key = prompt('请输入打开设置的快捷键：'.uiTrans(), Config.quietModeKey);
+                key = prompt('请输入打开设置的快捷键：'.uiTrans(), Config.quietModeKey);
                 if (key) {
                     Config.quietModeKey = key;
                     $(target).val(key);
                 }
                 break;
             case 'openPreferencesKey':
-                var key = prompt('请输入打开设置的快捷键：'.uiTrans(), Config.openPreferencesKey);
+                key = prompt('请输入打开设置的快捷键：'.uiTrans(), Config.openPreferencesKey);
                 if (key) {
                     Config.openPreferencesKey = key;
                     $(target).val(key);
                 }
                 break;
             case 'setHideMenuListKey':
-                var key = prompt('请输入切换左侧章节列表的快捷键：'.uiTrans(), Config.hideMenuListKey);
+                key = prompt('请输入切换左侧章节列表的快捷键：'.uiTrans(), Config.hideMenuListKey);
                 if (key) {
                     Config.hideMenuListKey = key;
                     $(target).val(key);
@@ -2259,7 +2271,7 @@ var UI = {
                 break;
             // case 'saveAsTxt':
             //     Download.saveAsTxt();
-                break;
+            //     break;
             default:
                 break;
         }
@@ -2275,7 +2287,7 @@ var UI = {
 
         var form = document.getElementById('preferences');
 
-        Config.setDisableAutoLaunch(form.elements.namedItem("disable-auto-launch").checked)
+        Config.setDisableAutoLaunch(form.elements.namedItem("disable-auto-launch").checked);
 
         Config.cn2tw = $form.find("#enable-cn2tw").get(0).checked;
         Config.booklink_enable = $form.find("#booklink-enable").get(0).checked;
@@ -2875,7 +2887,7 @@ Parser.prototype = {
         // 标题间增加一个空格，不准确，已注释
         chapterTitle = chapterTitle
                 .replace(Rule.titleReplace, "")
-                .trim()
+                .trim();
                 // .replace(/(第?\S+?[章节卷回])(.*)/, "$1 $2");
 
         // if (info.trimBookTitle !== false) {
@@ -2943,7 +2955,7 @@ Parser.prototype = {
         var _headings = $doc.find(_main_selector);
         // 加上 second selector 并去除包含的
         $doc.find(_second_selector).each(function(){
-            if($(this).find(_main_selector).length == 0){
+            if($(this).find(_main_selector).length === 0){
                 _headings.push(this);
             }
         });
@@ -3066,7 +3078,7 @@ Parser.prototype = {
                 overrideMimeType: "text/html;charset=" + charset,
                 onload: function(res){
                     var text = res.responseText;
-                    if (text.indexOf('{"CID":') == 0) {  // 创世中文
+                    if (text.indexOf('{"CID":') === 0) {  // 创世中文
                         text = JSON.parse(text).Content;
                         text = $('<div>').html(text).find('.bookreadercontent').html();
                     } else {
@@ -3124,7 +3136,7 @@ Parser.prototype = {
         if(this.chapterTitle && Rule.titleRegExp.test(this.chapterTitle)){
             try {
                 var reg = this.chapterTitle.replace(/[()\[\]{}|+.,^$?\\*]/g, "\\$&")
-                        .replace(/\s+/g, '\\s*')
+                        .replace(/\s+/g, '\\s*');
                 reg = new RegExp(reg, 'ig');
                 text = text.replace(reg, "");
                 C.log('去除内容中的标题', reg);
@@ -3232,10 +3244,10 @@ Parser.prototype = {
             case _.isString(replaceRule):
                 var regexp = new RegExp(replaceRule, 'ig');
                 text = text.replace(regexp, '');
-                break
+                break;
             case _.isArray(replaceRule):
                 replaceRule.forEach(function(r){
-                    text = self.replaceText(text, r)
+                    text = self.replaceText(text, r);
                 });
                 break;
             case _.isObject(replaceRule):
@@ -3383,11 +3395,11 @@ Parser.prototype = {
         }
 
         switch(true){
-            case url == '':
+            case url === '':
             case Rule.nextUrlIgnore.test(url):
-            case url == this.indexUrl:
-            case url == this.prevUrl:
-            case url == this.curPageUrl:
+            case url === this.indexUrl:
+            case url === this.prevUrl:
+            case url === this.curPageUrl:
             case Rule.nextUrlCompare.test(this.prevUrl) && !Rule.nextUrlCompare.test(url):
                 return false;
             default:
@@ -3423,7 +3435,7 @@ Parser.prototype = {
             href = href.getAttribute('href');
         }
 
-        if (href.indexOf('http://') == 0) {
+        if (href.indexOf('http://') === 0) {
             return href;
         }
 
@@ -3494,7 +3506,7 @@ var App = {
         try {
             customRules = eval(Config.customSiteinfo);
         } catch (e) {
-            console.error('载入自定义站点配置错误', e)
+            console.error('载入自定义站点配置错误', e);
         }
         if (_.isArray(customRules)) {
             Rule.customRules = customRules;
@@ -3568,7 +3580,7 @@ var App = {
         var target = $(doc).find(selector)[0];
         if (target) {
             var childCount = App.site.mutationChildCount;
-            if (childCount == undefined || target.children.length <= childCount) {
+            if (childCount === undefined || target.children.length <= childCount) {
                 shouldAdd = true;
             }
         }
@@ -3606,7 +3618,7 @@ var App = {
                 App.site.startFilter();
                 C.log('run startFilter function success');
             } catch (ex) {
-                console.error('运行 startFilter function 错误', ex)
+                console.error('运行 startFilter function 错误', ex);
             }
         }
 
@@ -3694,18 +3706,18 @@ var App = {
         doc.onclick = doc.ondblclick = doc.onselectstart = doc.oncontextmenu = doc.onmousedown = doc.onkeydown = function() {
             return true;
         };
-        with (document.wrappedJSObject || document) {
-            onmouseup = null;
-            onmousedown = null;
-            oncontextmenu = null;
-        }
+
+        doc = document.wrappedJSObject || document;
+        doc.onmouseup = null;
+        doc.onmousedown = null;
+        doc.oncontextmenu = null;
+
         var arAllElements = document.getElementsByTagName('*');
         for (var i = arAllElements.length - 1; i >= 0; i--) {
             var elmOne = arAllElements[i];
-            with(elmOne.wrappedJSObject || elmOne) {
-                onmouseup = null;
-                onmousedown = null;
-            }
+            elmOne = elmOne.wrappedJSObject || elmOne;
+            elmOne.onmouseup = null;
+            elmOne.onmousedown = null;
         }
 
         $(document).unbind("keypress");
@@ -3786,7 +3798,7 @@ var App = {
                 .append(newPage);
 
             if (!Config.hide_footer_nav) {
-                chapter.append($.nano(UI.tpl_footer_nav, parser))
+                chapter.append($.nano(UI.tpl_footer_nav, parser));
             }
 
         } else {
@@ -3799,7 +3811,7 @@ var App = {
                 .appendTo(App.$content);
 
             if (!Config.hide_footer_nav) {
-                chapter.append($.nano(UI.tpl_footer_nav, parser))
+                chapter.append($.nano(UI.tpl_footer_nav, parser));
             }
 
             // App.fixImageFloats(chapter.get(0));
@@ -4117,7 +4129,7 @@ var App = {
             App.scroll();
 
             // 预读图片
-            var existSRC = {}
+            var existSRC = {};
             $(App.tmpDoc).find('img').each(function() {
                 var isrc = $(this).attr('src');
                 if (!isrc || existSRC[isrc]) {
@@ -4235,7 +4247,7 @@ var BookLinkMe = {
 
 
         $('<a>')
-            .attr({ href: 'javascript:void(0)', title: '一键打开所有未读链接', style: 'width:auto;' })
+            .attr({ title: '一键打开所有未读链接', style: 'width:auto;' })
             .click(openAllUnreadLinks)
             .append($('<img src="me.png" style="max-width: 20px;">'))
             .appendTo($parent);

@@ -51,7 +51,7 @@ var App = {
         try {
             customRules = eval(Config.customSiteinfo);
         } catch (e) {
-            console.error('载入自定义站点配置错误', e)
+            console.error('载入自定义站点配置错误', e);
         }
         if (_.isArray(customRules)) {
             Rule.customRules = customRules;
@@ -125,7 +125,7 @@ var App = {
         var target = $(doc).find(selector)[0];
         if (target) {
             var childCount = App.site.mutationChildCount;
-            if (childCount == undefined || target.children.length <= childCount) {
+            if (childCount === undefined || target.children.length <= childCount) {
                 shouldAdd = true;
             }
         }
@@ -163,7 +163,7 @@ var App = {
                 App.site.startFilter();
                 C.log('run startFilter function success');
             } catch (ex) {
-                console.error('运行 startFilter function 错误', ex)
+                console.error('运行 startFilter function 错误', ex);
             }
         }
 
@@ -251,18 +251,18 @@ var App = {
         doc.onclick = doc.ondblclick = doc.onselectstart = doc.oncontextmenu = doc.onmousedown = doc.onkeydown = function() {
             return true;
         };
-        with (document.wrappedJSObject || document) {
-            onmouseup = null;
-            onmousedown = null;
-            oncontextmenu = null;
-        }
+
+        doc = document.wrappedJSObject || document;
+        doc.onmouseup = null;
+        doc.onmousedown = null;
+        doc.oncontextmenu = null;
+
         var arAllElements = document.getElementsByTagName('*');
         for (var i = arAllElements.length - 1; i >= 0; i--) {
             var elmOne = arAllElements[i];
-            with(elmOne.wrappedJSObject || elmOne) {
-                onmouseup = null;
-                onmousedown = null;
-            }
+            elmOne = elmOne.wrappedJSObject || elmOne;
+            elmOne.onmouseup = null;
+            elmOne.onmousedown = null;
         }
 
         $(document).unbind("keypress");
@@ -343,7 +343,7 @@ var App = {
                 .append(newPage);
 
             if (!Config.hide_footer_nav) {
-                chapter.append($.nano(UI.tpl_footer_nav, parser))
+                chapter.append($.nano(UI.tpl_footer_nav, parser));
             }
 
         } else {
@@ -356,7 +356,7 @@ var App = {
                 .appendTo(App.$content);
 
             if (!Config.hide_footer_nav) {
-                chapter.append($.nano(UI.tpl_footer_nav, parser))
+                chapter.append($.nano(UI.tpl_footer_nav, parser));
             }
 
             // App.fixImageFloats(chapter.get(0));
@@ -674,7 +674,7 @@ var App = {
             App.scroll();
 
             // 预读图片
-            var existSRC = {}
+            var existSRC = {};
             $(App.tmpDoc).find('img').each(function() {
                 var isrc = $(this).attr('src');
                 if (!isrc || existSRC[isrc]) {
@@ -792,7 +792,7 @@ var BookLinkMe = {
 
 
         $('<a>')
-            .attr({ href: 'javascript:void(0)', title: '一键打开所有未读链接', style: 'width:auto;' })
+            .attr({ title: '一键打开所有未读链接', style: 'width:auto;' })
             .click(openAllUnreadLinks)
             .append($('<img src="me.png" style="max-width: 20px;">'))
             .appendTo($parent);
