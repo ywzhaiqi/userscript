@@ -17,8 +17,8 @@
 // @grant          GM_registerMenuCommand
 // @grant          unsafeWindow
 // @homepageURL    https://greasyfork.org/scripts/292/
-// @require        http://cdn.jsdelivr.net/jquery/1.9.1/jquery-1.9.1.min.js
-// @require        http://cdn.jsdelivr.net/underscorejs/1.6.0/underscore-min.js
+// @require        http://cdn.staticfile.org/jquery/2.1.1/jquery.min.js
+// @require        http://cdn.staticfile.org/underscore.js/1.7.0/underscore-min.js
 // @require        https://greasyfork.org/scripts/3053-keymaster-js/code/keymasterjs.js?version=8815
 // @require        https://greasyfork.org/scripts/2672-meihua-cn2tw/code/Meihua_cn2tw.js?version=7375
 // @resource fontawesomeWoff http://libs.baidu.com/fontawesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3
