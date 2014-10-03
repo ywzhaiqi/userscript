@@ -1,10 +1,9 @@
 // ==UserScript==
-// @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           小说阅读脚本
 // @version        <%= pkg.version %>
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
-// @contributor    shyangs
+// @contributor    Roger Au, shyangs
 // @description    小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
 // @license        GPL version 3
 // @grant          GM_xmlhttpRequest
@@ -19,7 +18,7 @@
 // @homepageURL    https://greasyfork.org/scripts/292/
 // @require        http://cdn.staticfile.org/jquery/2.1.1/jquery.min.js
 // @require        http://cdn.staticfile.org/underscore.js/1.7.0/underscore-min.js
-// @require        https://greasyfork.org/scripts/3053-keymaster-js/code/keymasterjs.js?version=8815
+// @require        http://cdn.staticfile.org/keymaster/1.6.1/keymaster.min.js
 // @require        https://greasyfork.org/scripts/2672-meihua-cn2tw/code/Meihua_cn2tw.js?version=7375
 // @resource fontawesomeWoff http://libs.baidu.com/fontawesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3
 

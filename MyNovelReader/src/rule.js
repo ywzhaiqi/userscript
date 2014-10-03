@@ -8,7 +8,7 @@ var Rule = {
     nextSelector: "a[rel='next'], a:contains('下一页'), a:contains('下一章'), a:contains('下一节'), a:contains('下页')",
     prevSelector: "a[rel='prev'], a:contains('上一页'), a:contains('上一章'), a:contains('上一节'), a:contains('上页')",
     // 忽略的下一页链接，匹配 href
-    nextUrlIgnore: /index|list|last|end|BuyChapterUnLogin|BookReader\/vip,|^javascript:|book\.zongheng\.com\/readmore|\/0\.html$|www\.shumilou\.com\/to-n-[a-z]+-\d+\.html/i,
+    nextUrlIgnore: /(?:\/(?:index|list|last|end))|BuyChapterUnLogin|BookReader\/vip,|^javascript:|book\.zongheng\.com\/readmore|\/0\.html$|www\.shumilou\.com\/to-n-[a-z]+-\d+\.html/i,
     nextUrlCompare: /\/\d+(_\d+)?\.html?$|\/wcxs-\d+-\d+\/$|chapter-\d+\.html$/i,  // 忽略的下一页链接（特殊），跟上一页比较
 
     // 按顺序匹配，匹配到则停止。econtains 完全相等
@@ -326,7 +326,7 @@ Rule.specialSite = [
         titleReg: /(.*?)最新章节,(.*?)-.*/,
         fixImage: true,
         contentReplace: {
-            "&lt;冰火#中文.*|冰火中文&nbsp;(www.)?binhuo.com(?:【首发】|)|冰.火.中文|绿色小说|lvsexs|冰火中文.": "",
+            "&lt;冰火#中文.*|冰火中文&nbsp;(www.)?binhuo.com(?:【首发】|)|冰.火.中文|绿色小说|lvsexs|冰火中文": "",
             "LU5.ｃｏM|lU５.com|LU5.com":"",
             "([^/])www\\.binhuo\\.com(?:\\.com|)": "$1",
             "\\(.*?平南文学网\\)": "",

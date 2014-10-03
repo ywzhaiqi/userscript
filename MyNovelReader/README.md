@@ -25,7 +25,7 @@
  - 通过 `grunt` 命令合并生成 MyNovelReader.user.js 文件。
  - 通过 `grunt watch` 命令监视文件变化并自动生成。
  - 通过 `grunt getincludes` 命令提取 meta.js 中的 include 域名
- - windows 可通过 `mklink MyNovelReader.user.js FILEPATH` 命令创建符号链接，实现修改后 Greasemonkey 自动生效。
+ - windows 可通过 `mklink /H MyNovelReader.user.js FILEPATH` 命令创建硬链接，实现修改后 Greasemonkey 自动生效。
  - [新手上路 - Grunt 中文社区](http://www.gruntjs.org/docs/getting-started.html)
 
 ### 说明
@@ -54,7 +54,6 @@ Opera 12 的暴力猴旧版本有个问题，请更新至新版。
 - 手打吧、泡书吧、17k、[16K](http://www.16kbook.org/)、看下、青帝、侠客等
 - [落秋中文](http://www.luoqiu.net/)、[吾读小说网](http://www.5du5.com/)、[平凡文学网](http://www.wtcxs.com/)
 - 其它小说站点
-- 百度贴吧：可通过手动书签的方式调用。
 
 ### 特性
 

@@ -1,10 +1,9 @@
 // ==UserScript==
-// @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           小说阅读脚本
-// @version        4.7.2
+// @version        4.7.3
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
-// @contributor    shyangs
+// @contributor    Roger Au, shyangs
 // @description    小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
 // @license        GPL version 3
 // @grant          GM_xmlhttpRequest
@@ -19,7 +18,7 @@
 // @homepageURL    https://greasyfork.org/scripts/292/
 // @require        http://cdn.staticfile.org/jquery/2.1.1/jquery.min.js
 // @require        http://cdn.staticfile.org/underscore.js/1.7.0/underscore-min.js
-// @require        https://greasyfork.org/scripts/3053-keymaster-js/code/keymasterjs.js?version=8815
+// @require        http://cdn.staticfile.org/keymaster/1.6.1/keymaster.min.js
 // @require        https://greasyfork.org/scripts/2672-meihua-cn2tw/code/Meihua_cn2tw.js?version=7375
 // @resource fontawesomeWoff http://libs.baidu.com/fontawesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3
 
@@ -258,7 +257,7 @@ var Rule = {
     nextSelector: "a[rel='next'], a:contains('下一页'), a:contains('下一章'), a:contains('下一节'), a:contains('下页')",
     prevSelector: "a[rel='prev'], a:contains('上一页'), a:contains('上一章'), a:contains('上一节'), a:contains('上页')",
     // 忽略的下一页链接，匹配 href
-    nextUrlIgnore: /index|list|last|end|BuyChapterUnLogin|BookReader\/vip,|^javascript:|book\.zongheng\.com\/readmore|\/0\.html$|www\.shumilou\.com\/to-n-[a-z]+-\d+\.html/i,
+    nextUrlIgnore: /(?:\/(?:index|list|last|end))|BuyChapterUnLogin|BookReader\/vip,|^javascript:|book\.zongheng\.com\/readmore|\/0\.html$|www\.shumilou\.com\/to-n-[a-z]+-\d+\.html/i,
     nextUrlCompare: /\/\d+(_\d+)?\.html?$|\/wcxs-\d+-\d+\/$|chapter-\d+\.html$/i,  // 忽略的下一页链接（特殊），跟上一页比较
 
     // 按顺序匹配，匹配到则停止。econtains 完全相等
@@ -576,7 +575,7 @@ Rule.specialSite = [
         titleReg: /(.*?)最新章节,(.*?)-.*/,
         fixImage: true,
         contentReplace: {
-            "&lt;冰火#中文.*|冰火中文&nbsp;(www.)?binhuo.com(?:【首发】|)|冰.火.中文|绿色小说|lvsexs|冰火中文.": "",
+            "&lt;冰火#中文.*|冰火中文&nbsp;(www.)?binhuo.com(?:【首发】|)|冰.火.中文|绿色小说|lvsexs|冰火中文": "",
             "LU5.ｃｏM|lU５.com|LU5.com":"",
             "([^/])www\\.binhuo\\.com(?:\\.com|)": "$1",
             "\\(.*?平南文学网\\)": "",
@@ -3955,10 +3954,10 @@ var App = {
         });
     },
     copyCurTitle: function() {
-        var title = $(App.curFocusElement).find(".title").text()
-            .replace(/第?\S+章/, "").trim();
-
         if (Config.copyCurTitle) {
+            var title = $(App.curFocusElement).find(".title").text()
+                .replace(/第?\S+章/, "").trim();
+
             GM_setClipboard(title, "text");
         }
     },
