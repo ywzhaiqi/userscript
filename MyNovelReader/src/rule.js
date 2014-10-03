@@ -219,6 +219,10 @@ Rule.specialSite = [
             fakeStub.find(".bgtop > h1 > span").remove();
         }
     },
+    // {siteName: "磨铁",
+    // 	url: 'http://www.motie.com/book/\\d+_\\d+',
+    // 	contentSelector: '.page-content'
+    // },
 
     {siteName: "百度贴吧（手动启用）",
         enable: false,
@@ -226,7 +230,7 @@ Rule.specialSite = [
         titleSelector: "h1.core_title_txt",
         bookTitleSelector: ".card_title_fname",
         nextSelector: false,
-        indexSelector: false,
+        indexSelector: 'a.card_title_fname',
         prevSelector: false,
 
         contentSelector: "#j_p_postlist",
@@ -556,7 +560,7 @@ Rule.specialSite = [
             "&nbsp;&nbsp;&nbsp;&nbsp;\\?",
             "\\[☆更.新.最.快☆无.弹.窗☆全.免.费\\]",
             '\\(.*?平南文学网\\)',
-            '｛首发｝',
+            '｛首发｝|【首发】',
             { "。\\.": "。" },
         ]
     },
@@ -791,7 +795,8 @@ Rule.specialSite = [
             "（百度搜索给力文学网更新最快最稳定\\)",
             "给力文学网",
             "看最快更新",
-            "\\.com"
+            "\\.com",
+            "BAIDU_CLB_fillSlot\\(.*",
         ]
     },
     // ============== 内容需要2次获取的 =========================
@@ -1117,8 +1122,7 @@ Rule.replace = {
     "比奇提示：如何快速搜自己要找的书籍":"",  "《百度书名\\+比奇》即可快速直达":"",
     "\\(一秒记住小说界\\）":"",
     "\\*一秒记住\\*": "",
-    "uutxt\\.org": "",
-    "3vbook\\.cn": "",
+    "uutxt\\.org|3vbook\\.cn|www\\.qbwx\\.com|WWw\\.YaNkuai\\.com": "",
     "txt53712/": "",
     "\xa0{4,12}":"\xa0\xa0\xa0\xa0\xa0\xa0\xa0",
 

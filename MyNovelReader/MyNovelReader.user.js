@@ -1,8 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
-// @name           My Novel Reader
-// @name:zh-CN     小说阅读脚本
-// @version        4.7.0
+// @name           小说阅读脚本
+// @version        4.7.1
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    shyangs
@@ -470,6 +469,10 @@ Rule.specialSite = [
             fakeStub.find(".bgtop > h1 > span").remove();
         }
     },
+    // {siteName: "磨铁",
+    // 	url: 'http://www.motie.com/book/\\d+_\\d+',
+    // 	contentSelector: '.page-content'
+    // },
 
     {siteName: "百度贴吧（手动启用）",
         enable: false,
@@ -477,7 +480,7 @@ Rule.specialSite = [
         titleSelector: "h1.core_title_txt",
         bookTitleSelector: ".card_title_fname",
         nextSelector: false,
-        indexSelector: false,
+        indexSelector: 'a.card_title_fname',
         prevSelector: false,
 
         contentSelector: "#j_p_postlist",
@@ -807,7 +810,7 @@ Rule.specialSite = [
             "&nbsp;&nbsp;&nbsp;&nbsp;\\?",
             "\\[☆更.新.最.快☆无.弹.窗☆全.免.费\\]",
             '\\(.*?平南文学网\\)',
-            '｛首发｝',
+            '｛首发｝|【首发】',
             { "。\\.": "。" },
         ]
     },
@@ -1042,7 +1045,8 @@ Rule.specialSite = [
             "（百度搜索给力文学网更新最快最稳定\\)",
             "给力文学网",
             "看最快更新",
-            "\\.com"
+            "\\.com",
+            "BAIDU_CLB_fillSlot\\(.*",
         ]
     },
     // ============== 内容需要2次获取的 =========================
@@ -1368,8 +1372,7 @@ Rule.replace = {
     "比奇提示：如何快速搜自己要找的书籍":"",  "《百度书名\\+比奇》即可快速直达":"",
     "\\(一秒记住小说界\\）":"",
     "\\*一秒记住\\*": "",
-    "uutxt\\.org": "",
-    "3vbook\\.cn": "",
+    "uutxt\\.org|3vbook\\.cn|www\\.qbwx\\.com|WWw\\.YaNkuai\\.com": "",
     "txt53712/": "",
     "\xa0{4,12}":"\xa0\xa0\xa0\xa0\xa0\xa0\xa0",
 
@@ -3888,13 +3891,15 @@ var App = {
         GM_registerMenuCommand("小说阅读脚本设置".uiTrans(), UI.preferencesShow.bind(UI));
     },
     registerKeys: function() {
-        key('enter', function() {
+        key('enter', function(event) {
             App.openUrl(App.indexUrl, "主页链接没有找到".uiTrans());
             App.copyCurTitle();
-            return false;
+
+            event.stopPropagation();
+            event.preventDefault();
         });
 
-        key('left', function() {
+        key('left', function(event) {
             var scrollTop = $(window).scrollTop();
             if (scrollTop === 0) {
                 location.href = App.prevUrl;
@@ -4247,7 +4252,7 @@ var BookLinkMe = {
 
 
         $('<a>')
-            .attr({ title: '一键打开所有未读链接', style: 'width:auto;' })
+            .attr({ href: 'javascript:;', title: '一键打开所有未读链接', style: 'width:auto;' })
             .click(openAllUnreadLinks)
             .append($('<img src="me.png" style="max-width: 20px;">'))
             .appendTo($parent);

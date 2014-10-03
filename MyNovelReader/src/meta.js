@@ -1,7 +1,6 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
-// @name           My Novel Reader
-// @name:zh-CN     小说阅读脚本
+// @name           小说阅读脚本
 // @version        <%= pkg.version %>
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi

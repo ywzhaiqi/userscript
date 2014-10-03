@@ -433,13 +433,15 @@ var App = {
         GM_registerMenuCommand("小说阅读脚本设置".uiTrans(), UI.preferencesShow.bind(UI));
     },
     registerKeys: function() {
-        key('enter', function() {
+        key('enter', function(event) {
             App.openUrl(App.indexUrl, "主页链接没有找到".uiTrans());
             App.copyCurTitle();
-            return false;
+
+            event.stopPropagation();
+            event.preventDefault();
         });
 
-        key('left', function() {
+        key('left', function(event) {
             var scrollTop = $(window).scrollTop();
             if (scrollTop === 0) {
                 location.href = App.prevUrl;
@@ -792,7 +794,7 @@ var BookLinkMe = {
 
 
         $('<a>')
-            .attr({ title: '一键打开所有未读链接', style: 'width:auto;' })
+            .attr({ href: 'javascript:;', title: '一键打开所有未读链接', style: 'width:auto;' })
             .click(openAllUnreadLinks)
             .append($('<img src="me.png" style="max-width: 20px;">'))
             .appendTo($parent);
