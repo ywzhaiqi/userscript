@@ -56,14 +56,14 @@ Parser.prototype = {
     },
     getAll: function(callback){
 
-        C.group('开始获取标题');
-        this.getTitles();
-        C.groupEnd();
-
         C.group('开始获取链接');
         this.getPrevUrl();
         this.getIndexUrl();
         this.getNextUrl();
+        C.groupEnd();
+
+        C.group('开始获取标题');
+        this.getTitles();
         C.groupEnd();
 
         this.getContent(callback);

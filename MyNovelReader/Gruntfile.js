@@ -1,31 +1,48 @@
 module.exports = function(grunt) {
 
+    function readRes(filename) {
+        var str = grunt.file.read('./src/res/' + filename, { encoding: 'utf-8' });
+        return str.replace(/[\n\r]+/g, '\\n');
+    }
+
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+        res: {
+            get mainCss() {
+                return readRes('main.css');
+            },
+            get preferencesHTML() {
+                return readRes('preferences.html');
+            },
+            get preferencesCSS() {
+                return readRes('preferences.css');
+            }
+        },
+
         jshint: {
             files: ['Gruntfile.js', 'src/**/*.js'],
             options: {
                 'browser': true,
                 'node': true,
-        		'multistr': true,
-        		'evil': true,
-        		'globals': {
-        			'GM_addStyle': true,
-        			'GM_getValue': true,
-        			'GM_setValue': true,
-        			'GM_xmlhttpRequest': true,
-        			'GM_openInTab': true,
-        			'GM_setClipboard': true,
-        			'GM_registerMenuCommand': true
-        		}
+                'multistr': true,
+                'evil': true,
+                'globals': {
+                    'GM_addStyle': true,
+                    'GM_getValue': true,
+                    'GM_setValue': true,
+                    'GM_xmlhttpRequest': true,
+                    'GM_openInTab': true,
+                    'GM_setClipboard': true,
+                    'GM_registerMenuCommand': true
+                }
             }
         },
         concat: {
             dist: {
                 options: {
-			        separator: '\n',
-			        process: true
-			    },
+                    separator: '\n',
+                    process: true
+                },
                 src: ['src/meta.js', 'src/header.js', 'src/rule.js', 'src/config.js', 'src/lang.js',
                     'src/lib.js', 'src/UI.js', 'src/parser.js', 'src/main.js'],
                 dest: '<%= pkg.name %>.user.js'

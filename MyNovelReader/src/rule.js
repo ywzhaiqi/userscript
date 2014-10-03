@@ -440,7 +440,7 @@ Rule.specialSite = [
         url: /^http:\/\/\S+\.17k\.com\/chapter\/\S+\/\d+\.html$/,
         titleReg: /(.*?)-(.*?)-.*/,
         contentSelector: "#chapterContent",
-        contentRemove: "#authorSpenk, .like_box, #hotRecommend, .ct0416, .recent_read, div[style]"
+        contentRemove: "#authorSpenk, .like_box, #hotRecommend, .ct0416, .recent_read, div[style], #miniVoteBox"
     },
     {siteName: "看下文学",
         url: "^http://www\\.kanxia\\.net/k/\\d*/\\d+/\\d+\\.html$",

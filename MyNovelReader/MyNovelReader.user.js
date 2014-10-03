@@ -689,7 +689,7 @@ Rule.specialSite = [
         url: /^http:\/\/\S+\.17k\.com\/chapter\/\S+\/\d+\.html$/,
         titleReg: /(.*?)-(.*?)-.*/,
         contentSelector: "#chapterContent",
-        contentRemove: "#authorSpenk, .like_box, #hotRecommend, .ct0416, .recent_read, div[style]"
+        contentRemove: "#authorSpenk, .like_box, #hotRecommend, .ct0416, .recent_read, div[style], #miniVoteBox"
     },
     {siteName: "看下文学",
         url: "^http://www\\.kanxia\\.net/k/\\d*/\\d+/\\d+\\.html$",
@@ -2221,7 +2221,7 @@ var UI = {
         });
     },
     preferencesClickHandler: function(target){
-    	var key;
+        var key;
         switch (target.id) {
             case 'close_button':
                 UI.preferencesCloseHandler();
@@ -2373,413 +2373,13 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 }
 
 var Res = {
-    CSS_MAIN: function() {
-        /*
-        @font-face {
-            font-family: "FontAwesome";
-            src: url({fontawesomeWoff});
-            font-weight: normal;
-            font-style: normal;
-        }
-        body > a { display:none !important; }
-        .hidden {
-            display: none;
-        }
-        .quiet-mode {
-            display: none;
-        }
-        body {
-            background: #F3F2EE;
-            color: #1F0909;
-            padding: 0px;
-            margin: 0px;
-            font-family: "Microsoft YaHei UI", 微软雅黑, 新宋体, 宋体, arial;
-        }
-        a { color: #065488; }
-        a:link { text-decoration: none; }
-        #mynovelreader-content {
-            width: {content_width};
-            font-size: {font_size};
-            font-family: {font_family};
-            line-height: {text_line_height};
-            margin-left:auto;
-            margin-right:auto;
-            padding-bottom: 15px;
-        }
-        article {
-            margin-top: 55px;
-            word-wrap: break-word;
-        }
-        article h1 {
-            clear: both;
-            line-height: 50px;
-            font-size: {title_font_size};
-            font-weight: normal;
-            margin: 25px -20px;
-            padding: 0 20px 10px;
-            border-bottom: 1px solid rgba(0,0,0,.25);
-            font-weight: normal;
-            text-transform: none;
-        }
-        .chapter-footer-nav {
-            text-align:center;
-            font-size:0.9em;
-            margin:-10px 0px 30px 0px;
-        }
-        #loading {
-            color: white;
-            text-align: center;
-            font: 12px "微软雅黑", "宋体", "Times New Roman", "Verdana";
-            margin-top: 20px;
-            margin-left: auto;
-            margin-right: auto;
-            width: 376px;
-            height: 32px;
-            line-height: 32px;
-            border-radius: 20px;
-            border: 1px solid #666;
-            background-color: #333;
-        }
-        #loading img {
-            vertical-align: middle;
-        }
-        #loading a {
-            color: white;
-        }
-        #preferencesBtn{
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            z-index: 1597;
-        }
-        #alert {
-            position: fixed;
-            z-index: 100;
-            float: auto;
-            width: auto;
-            height: auto;
-            top: 10px;
-            left: 500px;
-            background: rgba(215, 240, 253, 0.65);
-            color: #2d7091;
-            border: 1px solid rgba(45,112,145,0.3);
-            border-radius: 4px;
-            text-shadow: 0 1px 0 #fff;
-        }
-        #alert p {
-            font-size: 13px;
-            margin: 6px;
-        }
-        img.blockImage {clear: both;float: none;display: block;margin-left: auto;margin-right: auto;}
-        #menu-bar {
-            border: solid rgba(0, 100, 255, .9);
-            border-width: 3px 2px 3px 0px;
-            position: fixed;
-            left: 0px;
-            top: 40%;
-            height: 100px;
-            width: 2px;
-            z-index: 199;
-            {menu-bar-hidden}
-        }
-        #menu {
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            z-index: 100;
-            width: 270px;
-            max-width: 100%;
-            background: #333;
-            overflow-y: auto;
-        }
-        #menu:after {
-            content: "";
-            display: block;
-            position: absolute;
-            top: 46px;
-            bottom: 0;
-            right: 0;
-            width: 1px;
-            background: rgba(0,0,0,0.6);
-            box-shadow: 0 0 5px 2px rgba(0,0,0,0.6);
-        }
-        #header{
-            color: #777;
-            margin-top: 0;
-            border-top: 1px solid rgba(0,0,0,0.3);
-            background: #404040;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
-            text-shadow: 0 1px 0 rgba(0,0,0,0.5);
-            padding: 10px 12px;
-            text-transform: uppercase;
-            font-weight: bold;
-            font-size: 20px;
-        }
-        #header a {
-            color: #777777;
-        }
-        #divider {
-            position: relative;
-            z-index: 300;
-            border-top: 1px solid rgba(255,255,255,0.01);
-            border-bottom: 1px solid rgba(0,0,0,0.3);
-            margin: 0;
-            height: 4px;
-            background: rgba(0,0,0,0.2);
-            box-shadow: 0 1px 0 rgba(255,255,255,0.05), inset 0 1px 3px rgba(0,0,0,0.3);
-        }
-        #chapter-list {
-            position: relative;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            z-index: 200;
-            margin: 0;
-            padding: 0;
-            cursor: pointer;
-            list-style: none;
-            overflow-y: auto;
-        }
-        .chapter {
-            list-style: none;
-        }
-        .chapter:last-child {
-            border-bottom: 1px solid rgba(0,0,0,0.3);
-            box-shadow: 0 1px 0 rgba(255,255,255,0.05);
-        }
-        .chapter div {
-            color: #ccc;
-            font-size: 15px;
-            padding: 8px 20px;
-            border-top: 1px solid rgba(0,0,0,0.3);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
-            text-shadow: 0 1px 0 rgba(0,0,0,0.5);
-            display: block;
-            text-decoration: none;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
-            cursor: pointer;
-        }
-        .chapter div:before {
-            content: "\f105";
-            width: 20px;
-            margin-left: -10px;
-            float: left;
-            font-family: "FontAwesome";
-            text-align: center;
-        }
-        .chapter div:hover {
-            background: #404040;
-            color: #fff;
-            outline: 0;
-        }
-        .chapter.active div {
-            background: #1a1a1a;
-            color: #fff;
-            font-size: 16px;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
-        }
-        ::-webkit-scrollbar {
-            height: 9px !important;
-            width: 9px !important;
-        }
-        ::-webkit-scrollbar-thumb {
-            background-color: #7D7D7D !important;
-            border-radius: 3px !important;
-        }
-        ::-webkit-scrollbar-track-piece {
-            background-color: rgba(0,0,0,.25) !important;
-        }
-         */
-    }.getMStr().replace('{fontawesomeWoff}', fontawesomeWoff),
-    preferencesHTML: function(){
-        /*
-        <form id="preferences" name="preferences">
-            <div id="setting_table1">
-                <span id="top-buttons">
-                    <input title="部分选项需要刷新页面才能生效" id="save_button" value="√ 确认" type="button">
-                    <input title="取消本次设定，所有选项还原" id="close_button" value="X 取消" type="button">
-                </span>
-                <div class="form-row">
-                    <label>
-                        界面语言<select id="lang">
-                        </select>
-                    </label>
-                    <label title="将小说网页文本转换为繁体。\n\n注意：内置的繁简转换表，只收录了简单的单字转换，启用本功能后，如有错误转换的情形，请利用脚本的自订字词取代规则来修正。\n例如：「千里之外」，会错误转换成「千里之外」，你可以加入规则「千里之外=千里之外」来自行修正。">
-                        <input type="checkbox" id="enable-cn2tw" name="enable-cn2tw"/>网页：转繁体
-                    </label>
-                    <label id="quietMode" class="right" title="隐藏其他，只保留正文，适用于全屏状态下">
-                        <input class="key" type="button" id="quietModeKey"/>安静模式
-                    </label>
-                </div>
-                <div class="form-row">
-                    <label title="不影响 booklink.me 的启用">
-                        <input type="checkbox" id="disable-auto-launch" name="disable-auto-launch"/>强制手动启用
-                    </label>
-                    <label title="booklink.me 点击的网站强制启用">
-                        <input type="checkbox" id="booklink-enable" name="booklink-enable"/>booklink 自动启用
-                    </label>
-                    <label>
-                        <input type="checkbox" id="debug" name="debug"/>调试模式
-                    </label>
-                    <a href="https://greasyfork.org/scripts/292-my-novel-reader/feedback" target="_blank">反馈地址</a>
-                </div>
-                <div class="form-row">
-                    <label title="图片章节用夜间模式没法看，这个选项在启动时会自动切换到缺省皮肤">
-                        <input type="checkbox" id="pic-nightmode-check" name="pic-nightmode-check"/>
-                        夜间模式的图片章节检测
-                    </label>
-                    <label>
-                        <input type="checkbox" id="copyCurTitle"/>
-                        打开目录复制当前标题
-                    </label>
-                </div>
-                <div class="form-row">
-                    <label title="通过快捷键切换">
-                        <input type="checkbox" id="hide-menu-list"/>隐藏左侧章节列表
-                    </label>
-                    <label>
-                        <input type="checkbox" id="hide-footer-nav"/>隐藏底部导航栏
-                    </label>
-                </div>
-                <div class="form-row">
-                    <label>
-                        <input type="checkbox" id="hide-menu-bar"/>隐藏左侧导航条
-                    </label>
-                    <input class="key" type="button" id="setHideMenuListKey" />
-                    <label title="通过快捷键切换或在 Greasemonkey 用户脚本命令处打开设置窗口">
-                        <input type="checkbox" id="hide-preferences-button"/>隐藏设置按钮
-                    </label>
-                    <input class="key" type="button" id="openPreferencesKey"/>
-                </div>
-                <div class="form-row">
-                    <label>
-                        距离底部
-                        <input type="textbox" id="remain-height" name="remain-height" size="5"/>
-                        px 加载下一页
-                    </label>
-                    <label>
-                        <input type="checkbox" id="add-nextpage-to-history"/>添加下一页到历史记录
-                    </label>
-                    <label>
-                        <input type="checkbox" id="enable-dblclick-pause"/>双击暂停翻页
-                    </label>
-                </div>
-                <div class="form-row">
-                    <label>
-                        <select id="skin">
-                        </select>
-                    </label>
-                    <label>
-                        字体
-                        <input type="textbox" id="font-family" style="min-width:200px;"/>
-                    </label>
-                    <br/><br/>
-                    <label>
-                        字体大小
-                        <input type="textbox" id="font-size" name="font-size" size="6"/>
-                    </label>
-                    <label>
-                        行高
-                        <input type="textbox" id="text_line_height" size="6"/>
-                    </label>
-                    <label>
-                        行宽
-                        <input type="textbox" id="content_width" size="6"/>
-                    </label>
-                </div>
-                <div class="form-row">
-                    <div class="prefs_title">自定义样式</div>
-                    <textarea id="extra_css" class="prefs_textarea" placeholder="自定义样式"></textarea>
-                </div>
-            </div>
-            <div id="setting_table2">
-                <div class="form-row" title="详见脚本代码的 Rule.specialSite">
-                    <div class="prefs_title">自定义站点规则</div>
-                    <textarea id="custom_siteinfo" class="prefs_textarea" placeholder="自定义站点规则" />
-                </div>
-                <div class="form-row" title="一行一个，每行的第一个 = 为分隔符。\n需要刷新页面生效">
-                    <div class="prefs_title">自定义替换规则</div>
-                    <textarea id="custom_replace_rules" class="prefs_textarea" placeholder="b[āà]ng=棒" />
-                </div>
-            </div>
-        </form>
-         */
-    }.getMStr().uiTrans().replace(/\\n/g, '\n'),
-    preferencesCSS: function(){
-        /*
-        .body {
-             color:#333;
-             margin: 0 auto;
-             background: white;
-             padding: 10px;
-             height: 420px;
-             overflow-y: auto;
-         }
-         #top-buttons {
-             background: none repeat scroll 0% 0% rgb(255, 255, 255);
-             display: block;
-             position: absolute;
-             top: -35px;
-             border-right: 12px solid rgb(224, 224, 224);
-             border-top: 12px solid rgb(224, 224, 224);
-             border-left: 12px solid rgb(224, 224, 224);
-             text-align: center;
-         }
-         input {
-             font-size: 12px;
-             margin-right: 3px;
-             vertical-align: middle;
-         }
-         .form-row {
-             overflow: hidden;
-             padding: 8px 12px;
-             margin-top: 3px;
-             font-size: 11px;
-         }
-         .form-row label {
-             padding-right: 10px;
-         }
-         .form-row input {
-             vertical-align: middle;
-             margin-top: 0px;
-         }
-         textarea, .form-row input {
-             padding: 2px 4px;
-             border: 1px solid #e5e5e5;
-             background: #fff;
-             border-radius: 4px;
-             color: #666;
-             -webkit-transition: all linear .2s;
-             transition: all linear .2s;
-         }
-         textarea {
-             width: 100%;
-             overflow: auto;
-             vertical-align: top;
-         }
-         textarea:focus, input:focus {
-             border-color: #99baca;
-             outline: 0;
-             background: #f5fbfe;
-             color: #666;
-         }
-         .prefs_title {
-             font-size: 12px;
-             font-weight: bold;
-         }
-         .prefs_textarea {
-             font-size: 12px;
-             margin-top: 5px;
-             height: 100px;
-         }
-         .right {
-            float: right;
-         }
-         */
-    }.getMStr(),
+    CSS_MAIN: '@font-face {\n    font-family: "FontAwesome";\n    src: url({fontawesomeWoff});\n    font-weight: normal;\n    font-style: normal;\n}\nbody > a { display:none !important; }\n.hidden {\n    display: none;\n}\n.quiet-mode {\n    display: none;\n}\nbody {\n    background: #F3F2EE;\n    color: #1F0909;\n    padding: 0px;\n    margin: 0px;\n    font-family: "Microsoft YaHei UI", 微软雅黑, 新宋体, 宋体, arial;\n}\na { color: #065488; }\na:link { text-decoration: none; }\n#mynovelreader-content {\n    width: {content_width};\n    font-size: {font_size};\n    font-family: {font_family};\n    line-height: {text_line_height};\n    margin-left:auto;\n    margin-right:auto;\n    padding-bottom: 15px;\n}\narticle {\n    margin-top: 55px;\n    word-wrap: break-word;\n}\narticle h1 {\n    clear: both;\n    line-height: 50px;\n    font-size: {title_font_size};\n    font-weight: normal;\n    margin: 25px -20px;\n    padding: 0 20px 10px;\n    border-bottom: 1px solid rgba(0,0,0,.25);\n    font-weight: normal;\n    text-transform: none;\n}\n.chapter-footer-nav {\n    text-align:center;\n    font-size:0.9em;\n    margin:-10px 0px 30px 0px;\n}\n#loading {\n    color: white;\n    text-align: center;\n    font: 12px "微软雅黑", "宋体", "Times New Roman", "Verdana";\n    margin-top: 20px;\n    margin-left: auto;\n    margin-right: auto;\n    width: 376px;\n    height: 32px;\n    line-height: 32px;\n    border-radius: 20px;\n    border: 1px solid #666;\n    background-color: #333;\n}\n#loading img {\n    vertical-align: middle;\n}\n#loading a {\n    color: white;\n}\n#preferencesBtn{\n    position: fixed;\n    top: 10px;\n    right: 10px;\n    z-index: 1597;\n}\n#alert {\n    position: fixed;\n    z-index: 100;\n    float: auto;\n    width: auto;\n    height: auto;\n    top: 10px;\n    left: 500px;\n    background: rgba(215, 240, 253, 0.65);\n    color: #2d7091;\n    border: 1px solid rgba(45,112,145,0.3);\n    border-radius: 4px;\n    text-shadow: 0 1px 0 #fff;\n}\n#alert p {\n    font-size: 13px;\n    margin: 6px;\n}\nimg.blockImage {clear: both;float: none;display: block;margin-left: auto;margin-right: auto;}\n#menu-bar {\n    border: solid rgba(0, 100, 255, .9);\n    border-width: 3px 2px 3px 0px;\n    position: fixed;\n    left: 0px;\n    top: 40%;\n    height: 100px;\n    width: 2px;\n    z-index: 199;\n    {menu-bar-hidden}\n}\n#menu {\n    position: fixed;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    z-index: 100;\n    width: 270px;\n    max-width: 100%;\n    background: #333;\n    overflow-y: auto;\n}\n#menu:after {\n    content: "";\n    display: block;\n    position: absolute;\n    top: 46px;\n    bottom: 0;\n    right: 0;\n    width: 1px;\n    background: rgba(0,0,0,0.6);\n    box-shadow: 0 0 5px 2px rgba(0,0,0,0.6);\n}\n#header{\n    color: #777;\n    margin-top: 0;\n    border-top: 1px solid rgba(0,0,0,0.3);\n    background: #404040;\n    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);\n    text-shadow: 0 1px 0 rgba(0,0,0,0.5);\n    padding: 10px 12px;\n    text-transform: uppercase;\n    font-weight: bold;\n    font-size: 20px;\n}\n#header a {\n    color: #777777;\n}\n#divider {\n    position: relative;\n    z-index: 300;\n    border-top: 1px solid rgba(255,255,255,0.01);\n    border-bottom: 1px solid rgba(0,0,0,0.3);\n    margin: 0;\n    height: 4px;\n    background: rgba(0,0,0,0.2);\n    box-shadow: 0 1px 0 rgba(255,255,255,0.05), inset 0 1px 3px rgba(0,0,0,0.3);\n}\n#chapter-list {\n    position: relative;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    z-index: 200;\n    margin: 0;\n    padding: 0;\n    cursor: pointer;\n    list-style: none;\n    overflow-y: auto;\n}\n.chapter {\n    list-style: none;\n}\n.chapter:last-child {\n    border-bottom: 1px solid rgba(0,0,0,0.3);\n    box-shadow: 0 1px 0 rgba(255,255,255,0.05);\n}\n.chapter div {\n    color: #ccc;\n    font-size: 15px;\n    padding: 8px 20px;\n    border-top: 1px solid rgba(0,0,0,0.3);\n    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);\n    text-shadow: 0 1px 0 rgba(0,0,0,0.5);\n    display: block;\n    text-decoration: none;\n    text-overflow: ellipsis;\n    overflow: hidden;\n    white-space: nowrap;\n    cursor: pointer;\n}\n.chapter div:before {\n    content: "\f105";\n    width: 20px;\n    margin-left: -10px;\n    float: left;\n    font-family: "FontAwesome" !important;\n    text-align: center;\n}\n.chapter div:hover {\n    background: #404040;\n    color: #fff;\n    outline: 0;\n}\n.chapter.active div {\n    background: #1a1a1a;\n    color: #fff;\n    font-size: 16px;\n    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);\n}\n::-webkit-scrollbar {\n    height: 9px !important;\n    width: 9px !important;\n}\n::-webkit-scrollbar-thumb {\n    background-color: #7D7D7D !important;\n    border-radius: 3px !important;\n}\n::-webkit-scrollbar-track-piece {\n    background-color: rgba(0,0,0,.25) !important;\n}'
+        .replace('{fontawesomeWoff}', fontawesomeWoff),
+
+    preferencesHTML: '<form id="preferences" name="preferences">\n    <div id="setting_table1">\n        <span id="top-buttons">\n            <input title="部分选项需要刷新页面才能生效" id="save_button" value="√ 确认" type="button">\n            <input title="取消本次设定，所有选项还原" id="close_button" value="X 取消" type="button">\n        </span>\n        <div class="form-row">\n            <label>\n                界面语言<select id="lang">\n                </select>\n            </label>\n            <label title="将小说网页文本转换为繁体。\n\n注意：内置的繁简转换表，只收录了简单的单字转换，启用本功能后，如有错误转换的情形，请利用脚本的自订字词取代规则来修正。\n例如：「千里之外」，会错误转换成「千里之外」，你可以加入规则「千里之外=千里之外」来自行修正。">\n                <input type="checkbox" id="enable-cn2tw" name="enable-cn2tw"/>网页：转繁体\n            </label>\n            <label id="quietMode" class="right" title="隐藏其他，只保留正文，适用于全屏状态下">\n                <input class="key" type="button" id="quietModeKey"/>安静模式\n            </label>\n        </div>\n        <div class="form-row">\n            <label title="不影响 booklink.me 的启用">\n                <input type="checkbox" id="disable-auto-launch" name="disable-auto-launch"/>强制手动启用\n            </label>\n            <label title="booklink.me 点击的网站强制启用">\n                <input type="checkbox" id="booklink-enable" name="booklink-enable"/>booklink 自动启用\n            </label>\n            <label>\n                <input type="checkbox" id="debug" name="debug"/>调试模式\n            </label>\n            <a href="https://greasyfork.org/scripts/292-my-novel-reader/feedback" target="_blank">反馈地址</a>\n        </div>\n        <div class="form-row">\n            <label title="图片章节用夜间模式没法看，这个选项在启动时会自动切换到缺省皮肤">\n                <input type="checkbox" id="pic-nightmode-check" name="pic-nightmode-check"/>\n                夜间模式的图片章节检测\n            </label>\n            <label>\n                <input type="checkbox" id="copyCurTitle"/>\n                打开目录复制当前标题\n            </label>\n        </div>\n        <div class="form-row">\n            <label title="通过快捷键切换">\n                <input type="checkbox" id="hide-menu-list"/>隐藏左侧章节列表\n            </label>\n            <label>\n                <input type="checkbox" id="hide-footer-nav"/>隐藏底部导航栏\n            </label>\n        </div>\n        <div class="form-row">\n            <label>\n                <input type="checkbox" id="hide-menu-bar"/>隐藏左侧导航条\n            </label>\n            <input class="key" type="button" id="setHideMenuListKey" />\n            <label title="通过快捷键切换或在 Greasemonkey 用户脚本命令处打开设置窗口">\n                <input type="checkbox" id="hide-preferences-button"/>隐藏设置按钮\n            </label>\n            <input class="key" type="button" id="openPreferencesKey"/>\n        </div>\n        <div class="form-row">\n            <label>\n                距离底部\n                <input type="textbox" id="remain-height" name="remain-height" size="5"/>\n                px 加载下一页\n            </label>\n            <label>\n                <input type="checkbox" id="add-nextpage-to-history"/>添加下一页到历史记录\n            </label>\n            <label>\n                <input type="checkbox" id="enable-dblclick-pause"/>双击暂停翻页\n            </label>\n        </div>\n        <div class="form-row">\n            <label>\n                <select id="skin">\n                </select>\n            </label>\n            <label>\n                字体\n                <input type="textbox" id="font-family" style="min-width:200px;"/>\n            </label>\n            <br/><br/>\n            <label>\n                字体大小\n                <input type="textbox" id="font-size" name="font-size" size="6"/>\n            </label>\n            <label>\n                行高\n                <input type="textbox" id="text_line_height" size="6"/>\n            </label>\n            <label>\n                行宽\n                <input type="textbox" id="content_width" size="6"/>\n            </label>\n        </div>\n        <div class="form-row">\n            <div class="prefs_title">自定义样式</div>\n            <textarea id="extra_css" class="prefs_textarea" placeholder="自定义样式"></textarea>\n        </div>\n    </div>\n    <div id="setting_table2">\n        <div class="form-row" title="详见脚本代码的 Rule.specialSite">\n            <div class="prefs_title">自定义站点规则</div>\n            <textarea id="custom_siteinfo" class="prefs_textarea" placeholder="自定义站点规则" />\n        </div>\n        <div class="form-row" title="一行一个，每行的第一个 = 为分隔符。\n需要刷新页面生效">\n            <div class="prefs_title">自定义替换规则</div>\n            <textarea id="custom_replace_rules" class="prefs_textarea" placeholder="b[āà]ng=棒" />\n        </div>\n    </div>\n</form>'
+        .uiTrans().replace(/\\n/g, '\n'),
+
+    preferencesCSS: '.body {\n     color:#333;\n     margin: 0 auto;\n     background: white;\n     padding: 10px;\n     height: 420px;\n     overflow-y: auto;\n }\n #top-buttons {\n     background: none repeat scroll 0% 0% rgb(255, 255, 255);\n     display: block;\n     position: absolute;\n     top: -35px;\n     border-right: 12px solid rgb(224, 224, 224);\n     border-top: 12px solid rgb(224, 224, 224);\n     border-left: 12px solid rgb(224, 224, 224);\n     text-align: center;\n }\n input {\n     font-size: 12px;\n     margin-right: 3px;\n     vertical-align: middle;\n }\n .form-row {\n     overflow: hidden;\n     padding: 8px 12px;\n     margin-top: 3px;\n     font-size: 11px;\n }\n .form-row label {\n     padding-right: 10px;\n }\n .form-row input {\n     vertical-align: middle;\n     margin-top: 0px;\n }\n textarea, .form-row input {\n     padding: 2px 4px;\n     border: 1px solid #e5e5e5;\n     background: #fff;\n     border-radius: 4px;\n     color: #666;\n     -webkit-transition: all linear .2s;\n     transition: all linear .2s;\n }\n textarea {\n     width: 100%;\n     overflow: auto;\n     vertical-align: top;\n }\n textarea:focus, input:focus {\n     border-color: #99baca;\n     outline: 0;\n     background: #f5fbfe;\n     color: #666;\n }\n .prefs_title {\n     font-size: 12px;\n     font-weight: bold;\n }\n .prefs_textarea {\n     font-size: 12px;\n     margin-top: 5px;\n     height: 100px;\n }\n .right {\n    float: right;\n }',
 };
 
 
@@ -2841,14 +2441,14 @@ Parser.prototype = {
     },
     getAll: function(callback){
 
-        C.group('开始获取标题');
-        this.getTitles();
-        C.groupEnd();
-
         C.group('开始获取链接');
         this.getPrevUrl();
         this.getIndexUrl();
         this.getNextUrl();
+        C.groupEnd();
+
+        C.group('开始获取标题');
+        this.getTitles();
         C.groupEnd();
 
         this.getContent(callback);
@@ -3592,14 +3192,17 @@ var App = {
                 var nodeAdded = mutations.some(function(x) {
                     return x.addedNodes.length > 0;
                 });
+
                 if (nodeAdded) {
                     observer.disconnect();
                     callback();
                 }
             });
+
             observer.observe(target, {
                 childList: true
             });
+
             C.log("添加 MutationObserve 成功：", selector);
         } else {
             callback();
@@ -3759,6 +3362,7 @@ var App = {
         // 再次移除其它不相关的，起点，纵横中文有时候有问题
         var clean = function() {
             $('body > *:not("#container, .readerbtn, #reader_preferences, #uil_blocker,iframe[name=\'mynovelreader-iframe\']")').remove();
+            $('link[rel="stylesheet"]').remove();
         };
 
         setTimeout(clean, 2000);

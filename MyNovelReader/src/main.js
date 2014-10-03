@@ -135,14 +135,17 @@ var App = {
                 var nodeAdded = mutations.some(function(x) {
                     return x.addedNodes.length > 0;
                 });
+
                 if (nodeAdded) {
                     observer.disconnect();
                     callback();
                 }
             });
+
             observer.observe(target, {
                 childList: true
             });
+
             C.log("添加 MutationObserve 成功：", selector);
         } else {
             callback();
@@ -302,6 +305,7 @@ var App = {
         // 再次移除其它不相关的，起点，纵横中文有时候有问题
         var clean = function() {
             $('body > *:not("#container, .readerbtn, #reader_preferences, #uil_blocker,iframe[name=\'mynovelreader-iframe\']")').remove();
+            $('link[rel="stylesheet"]').remove();
         };
 
         setTimeout(clean, 2000);

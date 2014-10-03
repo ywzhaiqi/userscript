@@ -1,0 +1,110 @@
+<form id="preferences" name="preferences">
+    <div id="setting_table1">
+        <span id="top-buttons">
+            <input title="部分选项需要刷新页面才能生效" id="save_button" value="√ 确认" type="button">
+            <input title="取消本次设定，所有选项还原" id="close_button" value="X 取消" type="button">
+        </span>
+        <div class="form-row">
+            <label>
+                界面语言<select id="lang">
+                </select>
+            </label>
+            <label title="将小说网页文本转换为繁体。\n\n注意：内置的繁简转换表，只收录了简单的单字转换，启用本功能后，如有错误转换的情形，请利用脚本的自订字词取代规则来修正。\n例如：「千里之外」，会错误转换成「千里之外」，你可以加入规则「千里之外=千里之外」来自行修正。">
+                <input type="checkbox" id="enable-cn2tw" name="enable-cn2tw"/>网页：转繁体
+            </label>
+            <label id="quietMode" class="right" title="隐藏其他，只保留正文，适用于全屏状态下">
+                <input class="key" type="button" id="quietModeKey"/>安静模式
+            </label>
+        </div>
+        <div class="form-row">
+            <label title="不影响 booklink.me 的启用">
+                <input type="checkbox" id="disable-auto-launch" name="disable-auto-launch"/>强制手动启用
+            </label>
+            <label title="booklink.me 点击的网站强制启用">
+                <input type="checkbox" id="booklink-enable" name="booklink-enable"/>booklink 自动启用
+            </label>
+            <label>
+                <input type="checkbox" id="debug" name="debug"/>调试模式
+            </label>
+            <a href="https://greasyfork.org/scripts/292-my-novel-reader/feedback" target="_blank">反馈地址</a>
+        </div>
+        <div class="form-row">
+            <label title="图片章节用夜间模式没法看，这个选项在启动时会自动切换到缺省皮肤">
+                <input type="checkbox" id="pic-nightmode-check" name="pic-nightmode-check"/>
+                夜间模式的图片章节检测
+            </label>
+            <label>
+                <input type="checkbox" id="copyCurTitle"/>
+                打开目录复制当前标题
+            </label>
+        </div>
+        <div class="form-row">
+            <label title="通过快捷键切换">
+                <input type="checkbox" id="hide-menu-list"/>隐藏左侧章节列表
+            </label>
+            <label>
+                <input type="checkbox" id="hide-footer-nav"/>隐藏底部导航栏
+            </label>
+        </div>
+        <div class="form-row">
+            <label>
+                <input type="checkbox" id="hide-menu-bar"/>隐藏左侧导航条
+            </label>
+            <input class="key" type="button" id="setHideMenuListKey" />
+            <label title="通过快捷键切换或在 Greasemonkey 用户脚本命令处打开设置窗口">
+                <input type="checkbox" id="hide-preferences-button"/>隐藏设置按钮
+            </label>
+            <input class="key" type="button" id="openPreferencesKey"/>
+        </div>
+        <div class="form-row">
+            <label>
+                距离底部
+                <input type="textbox" id="remain-height" name="remain-height" size="5"/>
+                px 加载下一页
+            </label>
+            <label>
+                <input type="checkbox" id="add-nextpage-to-history"/>添加下一页到历史记录
+            </label>
+            <label>
+                <input type="checkbox" id="enable-dblclick-pause"/>双击暂停翻页
+            </label>
+        </div>
+        <div class="form-row">
+            <label>
+                <select id="skin">
+                </select>
+            </label>
+            <label>
+                字体
+                <input type="textbox" id="font-family" style="min-width:200px;"/>
+            </label>
+            <br/><br/>
+            <label>
+                字体大小
+                <input type="textbox" id="font-size" name="font-size" size="6"/>
+            </label>
+            <label>
+                行高
+                <input type="textbox" id="text_line_height" size="6"/>
+            </label>
+            <label>
+                行宽
+                <input type="textbox" id="content_width" size="6"/>
+            </label>
+        </div>
+        <div class="form-row">
+            <div class="prefs_title">自定义样式</div>
+            <textarea id="extra_css" class="prefs_textarea" placeholder="自定义样式"></textarea>
+        </div>
+    </div>
+    <div id="setting_table2">
+        <div class="form-row" title="详见脚本代码的 Rule.specialSite">
+            <div class="prefs_title">自定义站点规则</div>
+            <textarea id="custom_siteinfo" class="prefs_textarea" placeholder="自定义站点规则" />
+        </div>
+        <div class="form-row" title="一行一个，每行的第一个 = 为分隔符。\n需要刷新页面生效">
+            <div class="prefs_title">自定义替换规则</div>
+            <textarea id="custom_replace_rules" class="prefs_textarea" placeholder="b[āà]ng=棒" />
+        </div>
+    </div>
+</form>
