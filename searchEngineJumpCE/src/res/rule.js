@@ -332,6 +332,8 @@ var rules = [
         style: "\
            border-top: 1px solid #E7E7E7;\
            border-bottom: 1px solid #E7E7E7;\
+           width: 980px;\
+           margin: 0 auto;\
         ",
         insertIntoDoc: {
            keyword: 'css;#search-keyword',
@@ -872,7 +874,7 @@ var rules = [
         ",
         insertIntoDoc: {
             keyword: 'css;#top-search-wd',
-            target: 'css;#nav-menu',
+            target: 'css;head',
             where: 'beforeBegin',
         },
     },

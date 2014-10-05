@@ -26,6 +26,13 @@
         color: #120886 !important;
         transition: background-color 0.15s ease-in-out;
     }
+    a.sej-engine.only-icon {
+	    margin-left: 3px;
+	    margin-right: 3px;
+    }
+    a.sej-engine.only-icon > span {
+    	display: none;
+    }
     a.sej-engine:visited, a.sej-engine:visited *, a.sej-engine:active, a.sej-engine:active *{
         color: #120886 !important;
     }

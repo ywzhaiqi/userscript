@@ -36,13 +36,13 @@
     百度歌词, http://music.baidu.com/search/lrc?key=%s
 视频
     搜库, http://www.soku.com/v?keyword=%s
-    google视频, https://www.google.com/search?q=%s&safe=off&hl=zh-CN&tbm=vid
+    // google视频, https://www.google.com/search?q=%s&safe=off&hl=zh-CN&tbm=vid
     百度视频, http://v.baidu.com/v?word=%s&ie=utf-8
-    acfan, http://www.acfun.tv/search.aspx#query=%s
     bilibili, http://www.bilibili.tv/search?keyword=%s
-    迅雷看看, http://search.kankan.com/search.php?keyword=%s
-    网易公开课, http://c.open.163.com/search/search.htm?referered=http%3A%2F%2Fopen.163.com%2F&query=%s#/search/all
+    acfan, http://www.acfun.tv/search.aspx#query=%s
+    人人影视, http://www.yyets.com/search/index?keyword=%s
     youtube, http://www.youtube.com/results?search_query=%s
+    vimeo, http://vimeo.com/search?q=%s
     视频站--搜库
         优酷, http://www.soku.com/search_video/q_%s, www.youku.com
         奇艺, http://so.iqiyi.com/so/q_%s
@@ -53,6 +53,7 @@
         新浪, http://video.sina.com.cn/search/noresult.php?k=%s
         56 视频, http://so.56.com/video/%s/?
         ku6 视频, http://so.ku6.com/search?q=%s&ie=utf-8&oe=utf-8
+        迅雷看看, http://search.kankan.com/search.php?keyword=%s
         niconico, http://www.nicovideo.jp/search/%s
 知识-2
     百度百科, http://baike.baidu.com/search/word?pic=1&sug=1&word=%s
@@ -65,6 +66,7 @@
     豆丁文档, http://www.docin.com/search.do?searchcat=2&searchType_banner=p&nkey=%s
     // 爱问共享, http://ishare.iask.sina.com.cn/search.php?key=%s, gbk
     百度知道, http://zhidao.baidu.com/search?word=%s
+    网易公开课, http://c.open.163.com/search/search.htm?query=%s#/search/all
     Google 学术, https://scholar.google.com/scholar?hl=zh-CN&q=%s&btnG=&lr=%s
     维普，http://lib.cqvip.com/zk/search.aspx
         - E: (Keyword_C=%s+Title_C=%s), H: 题名或关键词=%s 与 范围=全部期刊
@@ -108,7 +110,6 @@
     VeryCD, http://www.verycd.com/search/folders/%s
     射手字幕, http://www.shooter.cn/search/%s
     影视--下载搜索
-        人人影视, http://www.yyets.com/search/index?keyword=%s
         丫丫下载站, http://www.yayaxz.com/search/%s
         天天美剧, http://www.ttmeiju.com/search.php?keyword=%s&range=0&mozcharset=gbk
         极影动漫, http://bt.ktxp.com/search.php?keyword=%s

@@ -343,9 +343,9 @@ function addContainer(iTarget, iInput) {
     };
 
     // 插入后调整下，如果变成两行，隐藏文字
-    if (prefs.hideEnglineLabel == 2 || (prefs.AutoHideEnglineLabel == 1 && container.clientHeight / container.children[1].clientHeight > 2)) {
+    if (prefs.hideEnglineLabel == 2 || (prefs.hideEnglineLabel == 1 && container.clientHeight / container.children[1].clientHeight > 2)) {
         [].forEach.call(document.querySelectorAll('#sej-container > a[class="sej-engine"] > span'), function(link) {
-            link.style.display = 'none';
+        	link.parentNode.classList.add('only-icon');
         });
     }
 
@@ -418,6 +418,15 @@ function run() {
         }
         addContainer(iTarget, iInput);
     }
+}
+
+function remove() {
+	var elems = document.querySelectorAll('#sej-container, sejspan.sej-drop-list');
+	if (!elems) return;
+
+	[].forEach.call(elems, function(elem) {
+		elem.parentNode.removeChild(elem);
+	});
 }
 
 
