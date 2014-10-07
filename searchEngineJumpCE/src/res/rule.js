@@ -1,22 +1,6 @@
 // 根据规则把搜索引擎列表插入到指定网站
 // 以下数据来自原版和 ted423 的版本
 var rules = [
-	// 由于更改了 google网页搜索的 url，所以一定要这个放在前面
-	{name: "谷歌图片",
-	    url: /^https?:\/\/\w{2,10}\.google(?:\.\D{1,3}){1,2}\/search\?(.*tbs=sbi)|(.*tbm=isch)/,
-	    enabled: true,
-	    engineList: "image",
-	    style: '\
-	        border-top:1px solid #ccc;\
-	        border-bottom:1px solid #ccc;\
-	        ',
-	    insertIntoDoc: {
-	        keyword: 'css;input[name=q]',
-	        target: 'css;#top_nav',
-	        where: 'beforeBegin'
-	    }
-	},
-
     // 网页
     // /////////////第一个可以当模板看
     {name: "google网页搜索",// 你要加载的网站的名字(方便自己查找)
@@ -24,7 +8,7 @@ var rules = [
         enabled: true,
         // 在哪个网站上加载,正则.
         // url: /^https?:\/\/www\.google(?:\.[A-z]{2,3}){1,2}\/[^?]+\?(?:&?q=|(?:[^#](?!&tbm=))+?&q=)(?:.(?!&tbm=))*$/,
-        url: /^https?:\/\/(www|encrypted)\.google(stable)?\..{2,9}\/(webhp|search|#|$|\?)/,
+        url: /^https?:\/\/(www|encrypted)\.google(stable)?\..{2,9}\/(webhp|search|#|$|\?)(?:.(?!&tbm=))*$/,
         // 是否要监视标题的变化
         mutationTitle: true,
         // 加载哪个类型的列表:
@@ -666,6 +650,20 @@ var rules = [
     },
 
     // 图片
+    {name: "谷歌图片",
+        url: /^https?:\/\/\w{2,10}\.google(?:\.\D{1,3}){1,2}\/search\?(.*tbs=sbi)|(.*tbm=isch)/,
+        enabled: true,
+        engineList: "image",
+        style: '\
+            border-top:1px solid #ccc;\
+            border-bottom:1px solid #ccc;\
+            ',
+        insertIntoDoc: {
+            keyword: 'css;input[name=q]',
+            target: 'css;#top_nav',
+            where: 'beforeBegin'
+        }
+    },
     {name: "百度图片",
         url: /^https?:\/\/image\.baidu\.c(om|n)\/i/,
         enabled: true,

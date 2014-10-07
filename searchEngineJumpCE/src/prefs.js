@@ -5,7 +5,7 @@ function loadPrefs() {
     prefs.openInNewTab = GM_getValue('openInNewTab', prefs.openInNewTab);
     prefs.debug = GM_getValue('debug', prefs.debug);
     prefs.hideEnglineLabel = GM_getValue('hideEnglineLabel', prefs.hideEnglineLabel);
-    engineListDataStr = GM_getValue('engineList', engineListDataStr);
+    engineListDataStr = GM_getValue('engineList') || engineListDataStr;
 }
 
 function openPrefs(){

@@ -33,7 +33,7 @@ function parseDataStr(str, skipCommentLine) {
             if (skipCommentLine) {
                 return;
             } else {
-                line = line.replace(/^\/\/\s*/);
+                line = line.replace(/^\/\/\s*/, '');
             }
         }
 

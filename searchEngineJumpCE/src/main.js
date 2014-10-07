@@ -168,6 +168,7 @@ function addContainer(iTarget, iInput) {
     var dropLists = [];
     var AllEngineList = parseDataStr(engineListDataStr);
     var isFirstDropList = true;
+    var isMatched = false;  // 当前搜索只匹配一次
 
     Object.keys(AllEngineList).forEach(function (categoryStr) {
         var categoryArr = categoryStr.split('-');
@@ -182,7 +183,6 @@ function addContainer(iTarget, iInput) {
         var engines = [];
 
         var engineList = AllEngineList[categoryStr];
-        var isMatched = false;
         engineList.forEach(function (engine) {
             if (matchedRule.engineList && !isMatched && toRE(matchedRule.url).test(engine.url)) { // 去掉跳转到当前引擎的引擎
                 isMatched = true;

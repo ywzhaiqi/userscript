@@ -22,7 +22,7 @@
     deviantART, http://www.deviantart.com/?q=%s
     jpg4, http://img.jpg4.info/index.php?feed=%s
 音乐-音悦Tai
-	Songtaste, http://www.songtaste.com/search.php?keyword=%s, gbk
+    Songtaste, http://www.songtaste.com/search.php?keyword=%s, gbk
     百度音乐, http://music.baidu.com/search?ie=utf-8&oe=utf-8&key=%s
     360音乐, http://s.music.so.com/s?ie=utf-8&q=%s, http://www.so.com/favicon.ico
     // 搜狗音乐, http://mp3.sogou.com/music.so?query=%s, gbk
@@ -34,7 +34,8 @@
     雷电音乐, http://www.leidian.com/s?q=%s&ie=utf-8&t=music
     网易云音乐, http://music.163.com/#/search/m/?s=%s
     百度歌词, http://music.baidu.com/search/lrc?key=%s
-视频
+视频-搜库
+    豆瓣电影, http://movie.douban.com/subject_search?search_text=%s&cat=1002, www.douban.com
     搜库, http://www.soku.com/v?keyword=%s
     // google视频, https://www.google.com/search?q=%s&safe=off&hl=zh-CN&tbm=vid
     百度视频, http://v.baidu.com/v?word=%s&ie=utf-8
@@ -43,7 +44,8 @@
     人人影视, http://www.yyets.com/search/index?keyword=%s
     youtube, http://www.youtube.com/results?search_query=%s
     vimeo, http://vimeo.com/search?q=%s
-    视频站--搜库
+    时光网, http://search.mtime.com/search/?q=%s
+    视频站--豆瓣电影
         优酷, http://www.soku.com/search_video/q_%s, www.youku.com
         奇艺, http://so.iqiyi.com/so/q_%s
         乐视, http://so.letv.com/s?wd=%s

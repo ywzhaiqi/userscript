@@ -81,3 +81,11 @@ gulp.task('geticon', function() {
 
     getIcons(Object.keys(hostMap), FILE.ICON_DATA)
 });
+
+// 转换字符串数据为 JSON 数据
+gulp.task('convert', function() {
+	var parser = require('./src/parse.js');
+
+	var englineList = parser.parseDataStr(config.siteDataStr, false);
+	fs.writeFileSync('src/res/siteData.json', JSON.stringify(englineList))
+})

@@ -4,7 +4,7 @@
 // @author         NLF && ywzhaiqi
 // @contributor    ted423
 // @description    方便的在各个引擎之间跳转。NLF 修改版，仅适用于 Greasemonkey 或 Tampermonkey 或暴力猴。
-// @version        4.1.1.0
+// @version        4.1.1.1
 // version        4.0.1.0
 // @created        2011-7-2
 // @namespace      http://userscripts.org/users/NLF
@@ -22,8 +22,7 @@
 // @run-at         document-end
 // @noframes
 
-// @include        /^https?:\/\/\w{2,10}\.google(?:\.\D{1,3}){1,2}\/search\?(.*tbs=sbi)|(.*tbm=isch)/
-// @include        /^https?:\/\/(www|encrypted)\.google(stable)?\..{2,9}\/(webhp|search|#|$|\?)/
+// @include        /^https?:\/\/(www|encrypted)\.google(stable)?\..{2,9}\/(webhp|search|#|$|\?)(?:.(?!&tbm=))*$/
 // @include        /^https?:\/\/wen\.lu\//
 // @include        /^https?:\/\/www\.baidu\.com\/(?:s|baidu|)/
 // @include        /^https?:\/\/[^.]*\.bing\.com\/search/
@@ -60,6 +59,7 @@
 // @include        /^https?:\/\/so\.1ting\.com\//
 // @include        /^https?:\/\/www\.songtaste\.com\/search/
 // @include        /^https?:\/\/www\.xiami\.com\/search/
+// @include        /^https?:\/\/\w{2,10}\.google(?:\.\D{1,3}){1,2}\/search\?(.*tbs=sbi)|(.*tbm=isch)/
 // @include        /^https?:\/\/image\.baidu\.c(om|n)\/i/
 // @include        /^https?:\/\/\image\.so\.com\/i\?/
 // @include        /^https?:\/\/.*\.bing\.com\/images\/search/
@@ -171,7 +171,7 @@ var engineListDataStr = getMStr(function(){/*
     deviantART, http://www.deviantart.com/?q=%s
     jpg4, http://img.jpg4.info/index.php?feed=%s
 音乐-音悦Tai
-	Songtaste, http://www.songtaste.com/search.php?keyword=%s, gbk
+    Songtaste, http://www.songtaste.com/search.php?keyword=%s, gbk
     百度音乐, http://music.baidu.com/search?ie=utf-8&oe=utf-8&key=%s
     360音乐, http://s.music.so.com/s?ie=utf-8&q=%s, http://www.so.com/favicon.ico
     // 搜狗音乐, http://mp3.sogou.com/music.so?query=%s, gbk
@@ -183,7 +183,8 @@ var engineListDataStr = getMStr(function(){/*
     雷电音乐, http://www.leidian.com/s?q=%s&ie=utf-8&t=music
     网易云音乐, http://music.163.com/#/search/m/?s=%s
     百度歌词, http://music.baidu.com/search/lrc?key=%s
-视频
+视频-搜库
+    豆瓣电影, http://movie.douban.com/subject_search?search_text=%s&cat=1002, www.douban.com
     搜库, http://www.soku.com/v?keyword=%s
     // google视频, https://www.google.com/search?q=%s&safe=off&hl=zh-CN&tbm=vid
     百度视频, http://v.baidu.com/v?word=%s&ie=utf-8
@@ -192,7 +193,8 @@ var engineListDataStr = getMStr(function(){/*
     人人影视, http://www.yyets.com/search/index?keyword=%s
     youtube, http://www.youtube.com/results?search_query=%s
     vimeo, http://vimeo.com/search?q=%s
-    视频站--搜库
+    时光网, http://search.mtime.com/search/?q=%s
+    视频站--豆瓣电影
         优酷, http://www.soku.com/search_video/q_%s, www.youku.com
         奇艺, http://so.iqiyi.com/so/q_%s
         乐视, http://so.letv.com/s?wd=%s
@@ -325,22 +327,6 @@ function isTheSameCategory(c1, c2) {
 // 根据规则把搜索引擎列表插入到指定网站
 // 以下数据来自原版和 ted423 的版本
 var rules = [
-	// 由于更改了 google网页搜索的 url，所以一定要这个放在前面
-	{name: "谷歌图片",
-	    url: /^https?:\/\/\w{2,10}\.google(?:\.\D{1,3}){1,2}\/search\?(.*tbs=sbi)|(.*tbm=isch)/,
-	    enabled: true,
-	    engineList: "image",
-	    style: '\
-	        border-top:1px solid #ccc;\
-	        border-bottom:1px solid #ccc;\
-	        ',
-	    insertIntoDoc: {
-	        keyword: 'css;input[name=q]',
-	        target: 'css;#top_nav',
-	        where: 'beforeBegin'
-	    }
-	},
-
     // 网页
     // /////////////第一个可以当模板看
     {name: "google网页搜索",// 你要加载的网站的名字(方便自己查找)
@@ -348,7 +334,7 @@ var rules = [
         enabled: true,
         // 在哪个网站上加载,正则.
         // url: /^https?:\/\/www\.google(?:\.[A-z]{2,3}){1,2}\/[^?]+\?(?:&?q=|(?:[^#](?!&tbm=))+?&q=)(?:.(?!&tbm=))*$/,
-        url: /^https?:\/\/(www|encrypted)\.google(stable)?\..{2,9}\/(webhp|search|#|$|\?)/,
+        url: /^https?:\/\/(www|encrypted)\.google(stable)?\..{2,9}\/(webhp|search|#|$|\?)(?:.(?!&tbm=))*$/,
         // 是否要监视标题的变化
         mutationTitle: true,
         // 加载哪个类型的列表:
@@ -990,6 +976,20 @@ var rules = [
     },
 
     // 图片
+    {name: "谷歌图片",
+        url: /^https?:\/\/\w{2,10}\.google(?:\.\D{1,3}){1,2}\/search\?(.*tbs=sbi)|(.*tbm=isch)/,
+        enabled: true,
+        engineList: "image",
+        style: '\
+            border-top:1px solid #ccc;\
+            border-bottom:1px solid #ccc;\
+            ',
+        insertIntoDoc: {
+            keyword: 'css;input[name=q]',
+            target: 'css;#top_nav',
+            where: 'beforeBegin'
+        }
+    },
     {name: "百度图片",
         url: /^https?:\/\/image\.baidu\.c(om|n)\/i/,
         enabled: true,
@@ -2025,7 +2025,7 @@ function loadPrefs() {
     prefs.openInNewTab = GM_getValue('openInNewTab', prefs.openInNewTab);
     prefs.debug = GM_getValue('debug', prefs.debug);
     prefs.hideEnglineLabel = GM_getValue('hideEnglineLabel', prefs.hideEnglineLabel);
-    engineListDataStr = GM_getValue('engineList', engineListDataStr);
+    engineListDataStr = GM_getValue('engineList') || engineListDataStr;
 }
 
 function openPrefs(){
@@ -2413,7 +2413,7 @@ function parseDataStr(str, skipCommentLine) {
             if (skipCommentLine) {
                 return;
             } else {
-                line = line.replace(/^\/\/\s*/);
+                line = line.replace(/^\/\/\s*/, '');
             }
         }
 
@@ -2707,6 +2707,7 @@ function addContainer(iTarget, iInput) {
     var dropLists = [];
     var AllEngineList = parseDataStr(engineListDataStr);
     var isFirstDropList = true;
+    var isMatched = false;  // 当前搜索只匹配一次
 
     Object.keys(AllEngineList).forEach(function (categoryStr) {
         var categoryArr = categoryStr.split('-');
@@ -2721,7 +2722,6 @@ function addContainer(iTarget, iInput) {
         var engines = [];
 
         var engineList = AllEngineList[categoryStr];
-        var isMatched = false;
         engineList.forEach(function (engine) {
             if (matchedRule.engineList && !isMatched && toRE(matchedRule.url).test(engine.url)) { // 去掉跳转到当前引擎的引擎
                 isMatched = true;
