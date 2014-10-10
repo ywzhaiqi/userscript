@@ -23,15 +23,10 @@ var App = {
         };
         exportFunction(readx, unsafeWindow, {defineAs: "readx"});
 
-
         App.loadCustomSetting();
         App.site = App.getCurSiteInfo();
-        // // 百度贴吧不好判断，手动调用 readx 启用
-        // if (App.site.enable === false && !document.referrer.match(/booklink\.me/)) {
-        //     return;
-        // }
-
         var autoLaunch = App.isAutoLaunch();
+
         if (autoLaunch === -1) {
             return;
         } else if (autoLaunch) {
@@ -174,7 +169,7 @@ var App = {
         var hasContent = !!parser.hasContent();
         if (hasContent) {
             document.body.setAttribute("name", "MyNovelReader");
-            App.parsedPages[window.location.href.replace(/\/$/, '')] = true;
+            App.parsedPages[window.location.href] = true;
             parser.getAll(function(parser) {
                 App.processPage(parser);
             });
@@ -183,8 +178,9 @@ var App = {
         }
     },
     processPage: function(parser) {
+        // 对 Document 进行处理
+        document.body.innerHTML = '';
         App.prepDocument();
-
         App.initDocument(parser);
 
         // cache vars
@@ -279,27 +275,7 @@ var App = {
     initDocument: function(parser) {
         document.title = parser.docTitle;
         window.name = "MyNovelReader";
-        document.body.innerHTML = $.nano('\
-            <div id="container">\
-                <div id="menu-bar" title="点击显示隐藏章节列表"></div>\
-                <div id="menu">\
-                    <div id="header" title="打开目录">\
-                        <a href="{indexUrl}" target="_blank">{bookTitle}</a>\
-                    </div>\
-                    <div id="divider"></div>\
-                    <ul id="chapter-list" title="左键滚动，中键打开链接（无阅读模式）">\
-                    </ul>\
-                </div>\
-                <div id="mynovelreader-content"></div>\
-                <div id="loading" style="display:none"></div>\
-                <div id="preferencesBtn">\
-                    <img style="width:16px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAABwklEQVRIibVVzWrCQBAeQk/bdk+bm0aWDQEPHtwVahdavLU9aw6KAQ+SQ86Sa19Aqu0T9NafSw8ttOgr1CewUB9CBL3Yy26x1qRp0A8GhsnO9yUzmxmAhKjX68cAMAeAufK3C875FQAsAWCp/O3CsqyhFlB+Oti2/cAYewrD8FDHarXahWEYUy1gGMbUdd1z/TwMw0PG2JNt2/ex5IyxR02CEJpIKbuEkJGOrRshZCSl7CKEJjrGGHuIFMjlcs9RZElNcWxGEAQHGONxWnKM8TgIgoPYMkkpL9MKqNx4xNX8LyOEvMeSq5uxMZlz3vN9v+D7foFz3os6V61Wz36QNhqNUyHENaV0CACLTUnFYvF6/WVUbJPIglI6FELctFqtMiT59Ha7TdcFVCxJ6XYs0Gw2T1SJBlsq0ZxSOhBC3Hied/QjSTUoqsn9lSb3o879avI61FXbzTUFACiXy7v70Tqdzj7G+COtwJ+jIpPJvKYl12ZZ1kucwJs+iBD6lFJ2TdOMHB2mab7/a1xXKpW9fD5/6zjO3erCcV33PMnCcRwnfuHEYXVlZrPZQWqiKJRKpe8Bt5Ol73leCQBmADBTfiJ8AebTYCRbI3BUAAAAAElFTkSuQmCC"/>\
-                </div>\
-                <div id="alert" style="display: none;">\
-                    <p id="App-notice"></p>\
-                </div>\
-            </div>\
-        '.uiTrans(), parser);
+        document.body.innerHTML = $.nano(<%= res.mainHtml %>.uiTrans(), parser);
     },
     cleanAgain: function() {
         // 再次移除其它不相关的，起点，纵横中文有时候有问题

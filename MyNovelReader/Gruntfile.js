@@ -1,21 +1,28 @@
 module.exports = function(grunt) {
 
-    function readRes(filename) {
+    function readResource(filename) {
         var str = grunt.file.read('./src/res/' + filename, { encoding: 'utf-8' });
-        return str.replace(/[\n\r]+/g, '\\n');
+        return "'" +
+                str.replace(/\\/g, '\\\\')
+                  .replace(/[\n\r]+/g, '\\n')
+                  .replace(/'/g, "\\'") +
+                  "'";
     }
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         res: {
             get mainCss() {
-                return readRes('main.css');
+                return readResource('main.css');
+            },
+            get mainHtml() {
+                return readResource('main.html');
             },
             get preferencesHTML() {
-                return readRes('preferences.html');
+                return readResource('preferences.html');
             },
             get preferencesCSS() {
-                return readRes('preferences.css');
+                return readResource('preferences.css');
             }
         },
 

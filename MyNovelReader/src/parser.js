@@ -2,15 +2,16 @@
 function Parser(){
     this.init.apply(this, arguments);
 }
+
 Parser.prototype = {
     constructor: Parser,
 
-    init: function (info, doc, curPageUrl) {
+    init: function (info, doc) {
         this.info = info || {};
         this.doc = doc;
         this.$doc = $(doc);
-        this.curPageUrl = curPageUrl || doc.URL;
-        this.curPageHost = getUrlHost(this.curPageUrl);  // 当前页的 host，后面用到
+        this.curPageUrl = doc.URL;
+        this._curPageHost = getUrlHost(this.curPageUrl);  // 当前页的 host，后面用到
 
         // 设置初始值
         this.isTheEnd = false;
@@ -238,7 +239,7 @@ Parser.prototype = {
 
             C.groupEnd();
         });
-        
+
         // 找到分数最高的值
         var topScoreTitle,
             score_tmp = 0;
@@ -344,7 +345,7 @@ Parser.prototype = {
         text = text.replace(/<\/p><p>/g, "</p>\n<p>");
 
         // GM_setClipboard(text);
-        
+
         if (info.contentReplace) {
             text = this.replaceText(text, info.contentReplace);
         }
@@ -452,25 +453,25 @@ Parser.prototype = {
         }
         return text;
     },
-    replaceText: function(text, replaceRule){
+    replaceText: function(text, rule){
         var self = this;
         switch(true) {
-            case _.isRegExp(replaceRule):
-                text = text.replace(replaceRule, '');
+            case _.isRegExp(rule):
+                text = text.replace(rule, '');
                 break;
-            case _.isString(replaceRule):
-                var regexp = new RegExp(replaceRule, 'ig');
+            case _.isString(rule):
+                var regexp = new RegExp(rule, 'ig');
                 text = text.replace(regexp, '');
                 break;
-            case _.isArray(replaceRule):
-                replaceRule.forEach(function(r){
+            case _.isArray(rule):
+                rule.forEach(function(r){
                     text = self.replaceText(text, r);
                 });
                 break;
-            case _.isObject(replaceRule):
+            case _.isObject(rule):
                 var key;
-                for(key in replaceRule){
-                    text = text.replace(new RegExp(key, "ig"), replaceRule[key]);
+                for(key in rule){
+                    text = text.replace(new RegExp(key, "ig"), rule[key]);
                 }
                 break;
         }
@@ -663,8 +664,8 @@ Parser.prototype = {
         a.href = href;
 
         // 检测 host 是否和 当前页的一致
-        if (a.host != this.curPageHost) {
-            a.host = this.curPageHost;
+        if (a.host != this._curPageHost) {
+            a.host = this._curPageHost;
         }
 
         return a.href;

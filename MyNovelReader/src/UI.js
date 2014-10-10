@@ -18,6 +18,12 @@ var UI = {
 
         UI.fixMobile();
 
+        // 初始变量
+        UI.$menu = $('#menu');
+        UI.$menuBar = $('#menu-bar');
+        UI.$content = $('#mynovelreader-content');
+        UI.$preferencesBtn = $('#preferencesBtn');
+
         // 初始化是否隐藏
         if(Config.hide_footer_nav){
             UI.hideFooterNavStyle(true);
@@ -61,23 +67,23 @@ var UI = {
         }
 
         if(hidden){
-            App.$menu.addClass('hidden');
-            App.$content.css("margin-left", "");
+            UI.$menu.addClass('hidden');
+            UI.$content.css("margin-left", "");
         }else{
-            App.$menu.removeClass('hidden');
-            App.$content.css("margin-left", "320px");
+            UI.$menu.removeClass('hidden');
+            UI.$content.css("margin-left", "320px");
         }
         UI.menu_list_hiddden = hidden;
     },
     hidePreferencesButton: function(hidden) {
         hidden = _.isUndefined(hidden) ? Config.hide_preferences_button : hidden;
-        
-        App.$preferencesBtn.toggle(!hidden);
+
+        UI.$preferencesBtn.toggle(!hidden);
     },
     hideMenuBar: function(hidden) {
         hidden = _.isUndefined(hidden) ? Config.menu_bar_hidden : hidden;
-        
-        App.$menuBar.toggle(!hidden);
+
+        UI.$menuBar.toggle(!hidden);
     },
     refreshSkinStyle: function(skin_name, isFirst){
         var style = $("#skin_style");
@@ -113,6 +119,7 @@ var UI = {
 
         if (this.$_quietStyle) {
             this.$_quietStyle.remove();
+            this.$_quietStyle = null;
         }
 
         if (this._isQuietMode) {
@@ -202,8 +209,8 @@ var UI = {
         if (UI.$blocker === null) {
             UI.$blocker = $('<div>').attr({
                 id: 'uil_blocker',
-                style: 'position:fixed;top:0px;left:0px;right:0px;bottom:0px;background-color:#000;opacity:0.5;z-index:10000;'
-            }).appendTo($('body'));
+                style: 'position:fixed;top:0px;left:0px;right:0px;bottom:0px;background-color:#000;opacity:0.5;z-index:100000;'
+            }).appendTo('body');
         }
     },
     hide: function(){
@@ -267,18 +274,18 @@ var UI = {
                 case "font-size":
                     var titleFontSize = UI.calcTitleFontSize(this.value);
                     if(titleFontSize) {
-                        App.$content.css("font-size", this.value);
-                        App.$content.find("h1").css("font-size", titleFontSize);
+                        UI.$content.css("font-size", this.value);
+                        UI.$content.find("h1").css("font-size", titleFontSize);
                     }
                     break;
                 case "font-family":
-                    App.$content.css("font-family", this.value);
+                    UI.$content.css("font-family", this.value);
                     break;
                 case "content_width":
-                    App.$content.css("width", this.value);
+                    UI.$content.css("width", this.value);
                     break;
                 case "text_line_height":
-                    App.$content.css("line-height", this.value);
+                    UI.$content.css("line-height", this.value);
                     break;
                 default:
                     break;
@@ -356,8 +363,8 @@ var UI = {
         }
     },
     preferencesCloseHandler: function(){
-        // App.$content.removeAttr("style");
-        App.$content.find("h1").css("font-size", "");
+        // UI.$content.removeAttr("style");
+        UI.$content.find("h1").css("font-size", "");
 
         UI.hide();
     },
@@ -383,7 +390,7 @@ var UI = {
         UI.refreshSkinStyle(skinName);
 
         Config.font_family = $form.find("#font-family").get(0).value;
-        App.$content.css("font-family", Config.font_family);
+        UI.$content.css("font-family", Config.font_family);
 
         Config.font_size = $form.find("#font-size").get(0).value;
         Config.text_line_height = $form.find("#text_line_height").get(0).value;
@@ -450,12 +457,12 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 }
 
 var Res = {
-    CSS_MAIN: '<%= res.mainCss %>'
+    CSS_MAIN: <%= res.mainCss %>
         .replace('{fontawesomeWoff}', fontawesomeWoff),
 
-    preferencesHTML: '<%= res.preferencesHTML %>'
+    preferencesHTML: <%= res.preferencesHTML %>
         .uiTrans().replace(/\\n/g, '\n'),
 
-    preferencesCSS: '<%= res.preferencesCSS %>',
+    preferencesCSS: <%= res.preferencesCSS %>,
 };
 

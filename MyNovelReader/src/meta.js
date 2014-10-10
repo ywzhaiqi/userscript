@@ -1,10 +1,13 @@
 // ==UserScript==
-// @name           小说阅读脚本
+// @id             mynovelreader@ywzhaiqi@gmail.com
+// @name           My Novel Reader
+// @name:zh-CN     小说阅读脚本
 // @version        <%= pkg.version %>
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs
 // @description    小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
+// @description:zh-CN  小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
 // @license        GPL version 3
 // @grant          GM_xmlhttpRequest
 // @grant          GM_addStyle
