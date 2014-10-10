@@ -8,7 +8,7 @@ var Rule = {
     nextSelector: "a[rel='next'], a:contains('下一页'), a:contains('下一章'), a:contains('下一节'), a:contains('下页')",
     prevSelector: "a[rel='prev'], a:contains('上一页'), a:contains('上一章'), a:contains('上一节'), a:contains('上页')",
     // 忽略的下一页链接，匹配 href
-    nextUrlIgnore: /(?:(?:index|list|last|end)\.)|BuyChapterUnLogin|BookReader\/vip,|^javascript:|book\.zongheng\.com\/readmore|\/0\.html$|www\.shumilou\.com\/to-n-[a-z]+-\d+\.html/i,
+    nextUrlIgnore: /(?:(?:index|list|last|LastPage|end)\.)|BuyChapterUnLogin|BookReader\/vip,|^javascript:|book\.zongheng\.com\/readmore|\/0\.html$|www\.shumilou\.com\/to-n-[a-z]+-\d+\.html/i,
     nextUrlCompare: /\/\d+(_\d+)?\.html?$|\/wcxs-\d+-\d+\/$|chapter-\d+\.html$/i,  // 忽略的下一页链接（特殊），跟上一页比较
 
     // 按顺序匹配，匹配到则停止。econtains 完全相等
@@ -1113,6 +1113,7 @@ Rule.replace = {
     "〖∷更新快∷无弹窗∷纯文字∷.*?〗": "",
     '”小说“小说章节更新最快': '',
     '如果觉得好看，请把本站网址推荐给您的朋友吧！': '',
+    '本站手机网址：&nbsp;&nbsp;请互相通知向您QQ群【微博/微信】论坛贴吧推荐宣传介绍!': '',
     "fqXSw\\.com":"", "\\.5ｄｕ|\\.５du５\\.":"",
     "\\[\\]":"",
     "如果您觉得网不错就多多分享本站谢谢各位读者的支持": "",
@@ -1120,8 +1121,7 @@ Rule.replace = {
     "水印广告测试": "",
     "\\(平南文学网\\)":"",  "讀蕶蕶尐說網":"",
     "比奇提示：如何快速搜自己要找的书籍":"",  "《百度书名\\+比奇》即可快速直达":"",
-    "\\(一秒记住小说界\\）":"",
-    "\\*一秒记住\\*": "",
+    "\\(一秒记住小说界\\）|\\*一秒记住\\*":"",
     "uutxt\\.org|3vbook\\.cn|www\\.qbwx\\.com|WWw\\.YaNkuai\\.com|www\\.btzw\\.com": "",
     "txt53712/": "",
     "\xa0{4,12}":"\xa0\xa0\xa0\xa0\xa0\xa0\xa0",

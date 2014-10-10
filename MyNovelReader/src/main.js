@@ -673,7 +673,9 @@ var App = {
     },
     loaded: function(doc) {
         var parser = new Parser(App.site, doc, App.curPageUrl);
-        parser.getAll(App.addNextPage);
+        parser.getAll(function() {
+            App.addNextPage(parser);
+        });
         App.tmpDoc = null;
     },
     addNextPage: function(parser) {
@@ -700,7 +702,9 @@ var App = {
         } else {
             App.removeListener();
 
-            App.$loading.html("错误：没有找到下一页的内容，使用右键翻到下一页".uiTrans()).show();
+            App.$loading.html('<a href="' + App.curPageUrl + '">错误：没有找到下一页的内容。点击打开下一页链接。</a>'
+                    .uiTrans())
+                .show();
         }
 
         App.working = false;

@@ -6,11 +6,11 @@ function Parser(){
 Parser.prototype = {
     constructor: Parser,
 
-    init: function (info, doc) {
+    init: function (info, doc, curPageUrl) {
         this.info = info || {};
         this.doc = doc;
         this.$doc = $(doc);
-        this.curPageUrl = doc.URL;
+        this.curPageUrl = curPageUrl || doc.URL;
         this._curPageHost = getUrlHost(this.curPageUrl);  // 当前页的 host，后面用到
 
         // 设置初始值
@@ -279,7 +279,10 @@ Parser.prototype = {
             this.hasContent();
         }
 
-        if (this.$content.size() <= 0) return;
+        if (this.$content.size() <= 0) {
+            callback(this);
+            return;
+        }
 
         // 特殊处理，例如起点
         var self = this;
