@@ -372,7 +372,11 @@ Parser.prototype = {
             text = this.convert2tw(text);
         }
 
-        text = this.contentCustomReplace(text);
+        try {
+            text = this.contentCustomReplace(text);
+        } catch(ex) {
+            console.error('自定义替换错误', ex);
+        }
 
         // 采用 DOM 方式进行处理
         var $div = $("<div>").html(text);
