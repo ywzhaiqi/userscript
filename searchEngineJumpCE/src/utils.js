@@ -3,20 +3,6 @@
 
 var debug = prefs.debug ? console.debug.bind(console) : function() {};
 
-
-function getFaviconUrl(url) {
-    return 'http://api.byi.pw/favicon?url=' + url;
- 
-    // return 'http://g.etfv.co/' + url;
-
-    // var uri = parseUri(url);
-    // return uri.protocol + '://' + uri.host + '/favicons.ico';
-}
-
-function getFaviconUrl2(url) {
-    return 'http://www.google.com/s2/favicons?domain=' + parseUri(url).host;
-}
-
 // var iconUrl = 'http://www.google.com/s2/favicons?domain=www.google.com';
 // getImageBase64(iconUrl);
 function imageUrlToBase64(iconUrl, callback) {

@@ -7,8 +7,11 @@ var fs = require('fs');
 var FILE = {
     MAIN_CSS: './src/res/main.css',
     RULE: './src/res/rule.js',
-    SITE_DATA: './src/res/siteData.js',
-    SITE_DATA_SIMPLE: './src/res/siteData_simple.js',
+    SITE_DATA: {
+        my: './src/res/siteData_my.js',
+        simple: './src/res/siteData_simple.js',
+        wenke: './src/res/siteData_wenke.js',
+    },
     ICON_DATA: './src/res/iconData.json',
 };
 
@@ -21,15 +24,21 @@ var config = (function() {
         }
     });
 
-    Object.defineProperty(pkg, 'siteDataStr', {
+    Object.defineProperty(pkg, 'siteDataStr_my', {
         get: function() {
-            return fs.readFileSync(FILE.SITE_DATA, 'utf-8');
+            return fs.readFileSync(FILE.SITE_DATA.my, 'utf-8');
         }
     });
 
     Object.defineProperty(pkg, 'siteDataStr_simple', {
         get: function() {
-            return fs.readFileSync(FILE.SITE_DATA_SIMPLE, 'utf-8');
+            return fs.readFileSync(FILE.SITE_DATA.simple, 'utf-8');
+        }
+    });
+
+    Object.defineProperty(pkg, 'siteDataStr_wenke', {
+        get: function() {
+            return fs.readFileSync(FILE.SITE_DATA.wenke, 'utf-8');
         }
     });
 
@@ -71,28 +80,40 @@ gulp.task('geticon', function() {
     var parser = require('./src/parse.js');
     var getIcons = require('./src/node/getIcons.js').run;
 
-    var englineList = parser.parseDataStr(config.siteDataStr, false);
-
     var hostMap = {};
-    Object.keys(englineList).forEach(function(category) {
-        englineList[category].forEach(function(engline) {
-            var host = parser.parseUri(engline.url).host;
-            hostMap[host] = true;
 
-            if (engline.favicon && !engline.favicon.match(/^data:/)) {
-                host = parser.parseUri(engline.favicon).host;
+    var getHosts = function(str) {
+        var englineList = parser.parseDataStr(str, {
+            commentLine: true,
+            iconType: 0
+        });
+
+        Object.keys(englineList).forEach(function(category) {
+            englineList[category].forEach(function(engine) {
+                var host = parser.parseUri(engine.url).host;
                 hostMap[host] = true;
-            }
-        })
+
+                if (engine.favicon && !engine.favicon.match(/^data:/)) {
+                    host = parser.parseUri(engine.favicon).host;
+                    hostMap[host] = true;
+                }
+            })
+        });
+    };
+
+    Object.keys(FILE.SITE_DATA).forEach(function(key) {
+        getHosts(config['siteDataStr_' + key]);
     });
 
-    getIcons(Object.keys(hostMap), FILE.ICON_DATA)
+    getIcons(hostMap, FILE.ICON_DATA);
 });
 
 // 转换字符串数据为 JSON 数据
-gulp.task('convert', function() {
-	var parser = require('./src/parse.js');
+// gulp.task('convert', function() {
+// 	var parser = require('./src/parse.js');
 
-	var englineList = parser.parseDataStr(config.siteDataStr, false);
-	fs.writeFileSync('src/res/siteData.json', JSON.stringify(englineList))
-})
+// 	var englineList = parser.parseDataStr(config.siteDataStr, {
+//         commentLine: true,
+//     });
+// 	fs.writeFileSync('src/res/siteData.json', JSON.stringify(englineList))
+// })

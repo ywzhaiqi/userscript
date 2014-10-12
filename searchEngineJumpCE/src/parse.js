@@ -1,9 +1,6 @@
 
-// 转换文本数据为 englineList 对象
-function parseDataStr(str, skipCommentLine) {
-    if (typeof skipCommentLine == 'undefined') {
-        skipCommentLine = true;
-    }
+// 转换文本数据为 engineList 对象
+function parseDataStr(str, opt) {
 
     // 提前处理下特殊的 post 方式
     str = str.replace(/[\n\r]+[\s\/]*-\s*(\S)+:/g, '_POST_ $1:');
@@ -29,21 +26,21 @@ function parseDataStr(str, skipCommentLine) {
             return;
         }
 
-        if (line.indexOf('//') == 0) {  // 注释行
-            if (skipCommentLine) {
-                return;
-            } else {
+        if (line.indexOf('//') == 0) {
+            if (opt.commentLine) {  // 包含注释行
                 line = line.replace(/^\/\/\s*/, '');
+            } else {
+                return;
             }
         }
 
-        var engline = {};
+        var engine = {};
 
         if (line.indexOf('_POST_') != -1) {
-            engline.method = 'POST';
+            engine.method = 'POST';
             var two = line.split(/\s*_POST_\s*/);
             line = two[0];
-            engline.args = parseArgs(two[1]);
+            engine.args = parseArgs(two[1]);
         }
 
         var arr = line.replace(/，/g, ', ').split(/\s*, \s*/);
@@ -51,58 +48,73 @@ function parseDataStr(str, skipCommentLine) {
             return line;
         }
 
-        engline.name = arr[0];
-        engline.url = arr[1];
-        engline.host = parseUri(engline.url).host;
+        engine.name = arr[0];
+        engine.url = arr[1];
+        engine.host = parseUri(engine.url).host;
 
         // 处理编码和图标
         if (arr[2] && isEncoding(arr[2])) {
-            engline.encoding = arr[2];
-            engline.favicon = arr[3];
+            engine.encoding = arr[2];
+            engine.favicon = arr[3];
         } else {
-            engline.favicon = arr[2];
+            engine.favicon = arr[2];
         }
 
         if (typeof ICON_DATA != 'undefined') {
-            if (!engline.favicon) {  // 不存在尝试通过链接的域名获取
-                engline.favicon = ICON_DATA[engline.host];
-            } else if (engline.favicon.indexOf('data:image') == 0) {  // base64 图标
+            if (!engine.favicon) {  // 不存在尝试通过链接的域名获取
+                engine.favicon = ICON_DATA[engine.host];
+            } else if (engine.favicon.indexOf('data:image') == 0) {  // base64 图标
 
-            } else if (engline.favicon.indexOf('http') == 0) {  // 在线图标
-                engline.favicon = ICON_DATA[parseUri(engline.favicon).host] || engline.favicon;
+            } else if (engine.favicon.indexOf('http') == 0) {  // 在线图标
+                engine.favicon = ICON_DATA[parseUri(engine.favicon).host] || engine.favicon;
             } else {  // 域名
-                engline.favicon = ICON_DATA[engline.favicon];
+                engine.favicon = ICON_DATA[engine.favicon] || getFaviconUrl(engine.favicon, opt.iconType);
             }
         }
 
-        if (!engline.favicon) {
-            engline.favicon = getFaviconUrl(engline.url);
+        if (!engine.favicon) {
+            engine.favicon = getFaviconUrl(engine.url, opt.iconType);
         }
 
-        return engline;
+        return engine;
     };
 
     var list = {},
         type;
 
     str.split(/[\n\r]+/).forEach(function(line){
-        var engline = parseLine(line);
-        if (!engline) {
+        var engine = parseLine(line);
+        if (!engine) {
             return;
         }
 
-        if (typeof engline === 'string') {
+        if (typeof engine === 'string') {
             type = line.trim();
             list[type] = [];
         } else {
-            // engline.type = type;
-            list[type].push(engline);
+            // engine.type = type;
+            list[type].push(engine);
         }
     });
 
     return list;
 }
 
+function getFaviconUrl(url, type) {
+    switch(type) {
+        case 0:
+            return url;
+        case 1:
+            return 'http://g.etfv.co/' + url;
+        case 2:
+            return 'http://www.google.com/s2/favicons?domain=' + parseUri(url).host;
+        case 3:
+            var uri = parseUri(url);
+            return uri.protocol + '://' + uri.host + '/favicons.ico';
+        default:
+            return 'http://api.byi.pw/favicon?url=' + url;
+    }
+}
 
 // parseUri 1.2.2
 // (c) Steven Levithan <stevenlevithan.com>

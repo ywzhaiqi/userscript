@@ -22,10 +22,12 @@ var i2b = function (url, callback) {
 };
 
 
+var BLANK_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsSAAALEgHS3X78AAACiElEQVQ4EaVTzU8TURCf2tJuS7tQtlRb6UKBIkQwkRRSEzkQgyEc6lkOKgcOph78Y+CgjXjDs2i44FXY9AMTlQRUELZapVlouy3d7kKtb0Zr0MSLTvL2zb75eL838xtTvV6H/xELBptMJojeXLCXyobnyog4YhzXYvmCFi6qVSfaeRdXdrfaU1areV5KykmX06rcvzumjY/1ggkR3Jh+bNf1mr8v1D5bLuvR3qDgFbvbBJYIrE1mCIoCrKxsHuzK+Rzvsi29+6DEbTZz9unijEYI8ObBgXOzlcrx9OAlXyDYKUCzwwrDQx1wVDGg089Dt+gR3mxmhcUnaWeoxwMbm/vzDFzmDEKMMNhquRqduT1KwXiGt0vre6iSeAUHNDE0d26NBtAXY9BACQyjFusKuL2Ry+IPb/Y9ZglwuVscdHaknUChqLF/O4jn3V5dP4mhgRJgwSYm+gV0Oi3XrvYB30yvhGa7BS70eGFHPoTJyQHhMK+F0ZesRVVznvXw5Ixv7/C10moEo6OZXbWvlFAF9FVZDOqEABUMRIkMd8GnLwVWg9/RkJF9sA4oDfYQAuzzjqzwvnaRUFxn/X2ZlmGLXAE7AL52B4xHgqAUqrC1nSNuoJkQtLkdqReszz/9aRvq90NOKdOS1nch8TpL555WDp49f3uAMXhACRjD5j4ykuCtf5PP7Fm1b0DIsl/VHGezzP1KwOiZQobFF9YyjSRYQETRENSlVzI8iK9mWlzckpSSCQHVALmN9Az1euDho9Xo8vKGd2rqooA8yBcrwHgCqYR0kMkWci08t/R+W4ljDCanWTg9TJGwGNaNk3vYZ7VUdeKsYJGFNkfSzjXNrSX20s4/h6kB81/271ghG17l+rPTAAAAAElFTkSuQmCC';
+
 var getFavicon = function(host, index, hosts) {
-	var url = 'http://api.byi.pw/favicon?url=' + host;
+    var url = 'http://g.etfv.co/http://' + host;
+	// var url = 'http://api.byi.pw/favicon?url=' + host;
     // var url = 'https://www.google.com/s2/favicons?domain=' + host;
-    // var url = 'http://g.etfv.co/http://' + host;
 
     return new Promise(function(resolve, reject) {
         i2b(url, function(base64){
@@ -50,9 +52,8 @@ function sortIconData(data, hosts) {
     return obj;
 }
 
-exports.run = function(oHosts, ICON_DATA_FILE) {
+exports.run = function(oHostMap, ICON_DATA_FILE) {
     var BLANK_ICON_DATA_FILE = './src/res/blankIcon.txt';
-    var BLANK_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsSAAALEgHS3X78AAACiElEQVQ4EaVTzU8TURCf2tJuS7tQtlRb6UKBIkQwkRRSEzkQgyEc6lkOKgcOph78Y+CgjXjDs2i44FXY9AMTlQRUELZapVlouy3d7kKtb0Zr0MSLTvL2zb75eL838xtTvV6H/xELBptMJojeXLCXyobnyog4YhzXYvmCFi6qVSfaeRdXdrfaU1areV5KykmX06rcvzumjY/1ggkR3Jh+bNf1mr8v1D5bLuvR3qDgFbvbBJYIrE1mCIoCrKxsHuzK+Rzvsi29+6DEbTZz9unijEYI8ObBgXOzlcrx9OAlXyDYKUCzwwrDQx1wVDGg089Dt+gR3mxmhcUnaWeoxwMbm/vzDFzmDEKMMNhquRqduT1KwXiGt0vre6iSeAUHNDE0d26NBtAXY9BACQyjFusKuL2Ry+IPb/Y9ZglwuVscdHaknUChqLF/O4jn3V5dP4mhgRJgwSYm+gV0Oi3XrvYB30yvhGa7BS70eGFHPoTJyQHhMK+F0ZesRVVznvXw5Ixv7/C10moEo6OZXbWvlFAF9FVZDOqEABUMRIkMd8GnLwVWg9/RkJF9sA4oDfYQAuzzjqzwvnaRUFxn/X2ZlmGLXAE7AL52B4xHgqAUqrC1nSNuoJkQtLkdqReszz/9aRvq90NOKdOS1nch8TpL555WDp49f3uAMXhACRjD5j4ykuCtf5PP7Fm1b0DIsl/VHGezzP1KwOiZQobFF9YyjSRYQETRENSlVzI8iK9mWlzckpSSCQHVALmN9Az1euDho9Xo8vKGd2rqooA8yBcrwHgCqYR0kMkWci08t/R+W4ljDCanWTg9TJGwGNaNk3vYZ7VUdeKsYJGFNkfSzjXNrSX20s4/h6kB81/271ghG17l+rPTAAAAAElFTkSuQmCC';
 
     // 读取以前获取的
     try {
@@ -62,9 +63,18 @@ exports.run = function(oHosts, ICON_DATA_FILE) {
         var data = {};
     }
 
+    var oHosts = Object.keys(oHostMap);
+
     // 找出不存在的 host
     var moreHosts = oHosts.filter(function(host){
         return !(host in data);
+    });
+
+    // 删除不需要的
+    Object.keys(data).forEach(function(host) {
+        if (!(host in oHostMap)) {
+            delete data[host];
+        }
     });
 
     var finish = function(blankHosts) {
@@ -72,10 +82,8 @@ exports.run = function(oHosts, ICON_DATA_FILE) {
         var str = JSON.stringify(sortIconData(data, oHosts));
         fs.writeFileSync(ICON_DATA_FILE, str);
 
-        if (blankHosts.length) {
-            console.log('共有 %s 个空白图标，已写入文件 %s', blankHosts.length, BLANK_ICON_DATA_FILE);
-            fs.writeFile(BLANK_ICON_DATA_FILE, blankHosts.join('\n'));
-        }
+        console.log('共有 %s 个空白图标，已写入文件 %s', blankHosts.length, BLANK_ICON_DATA_FILE);
+        fs.writeFile(BLANK_ICON_DATA_FILE, blankHosts.join('\n'));
     };
 
     if (moreHosts.length === 0) {

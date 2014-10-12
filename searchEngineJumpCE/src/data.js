@@ -28,11 +28,15 @@ var engineListData = {};
 engineListData.custom = '';
 
 engineListData.normal = getMStr(function(){/*
-<%= siteDataStr %>
+<%= siteDataStr_my %>
 */});
 
 engineListData.simple = getMStr(function(){/*
 <%= siteDataStr_simple %>
+*/});
+
+engineListData.wenke = getMStr(function(){/*
+<%= siteDataStr_wenke %>
 */});
 
 

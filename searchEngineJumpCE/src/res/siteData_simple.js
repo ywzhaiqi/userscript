@@ -7,7 +7,7 @@
     搜狗, http://www.sogou.com/web?query=%s,
 视频-youtube
     搜库, http://www.soku.com/v?keyword=%s
-    奇艺, http://so.iqiyi.com/so/q_%s, http://www.qiyipic.com/common/images/logo.ico
+    奇艺, http://so.iqiyi.com/so/q_%s
     乐视, http://so.letv.com/s?wd=%s,
     腾讯, http://v.qq.com/search.html?ms_key=%s
     搜狐, http://so.tv.sohu.com/mts?wd=%s,
@@ -16,14 +16,14 @@
     youtube, https://www.youtube.com/results?search_query=%s,
 音乐-5
     百度音乐, http://music.baidu.com/search?ie=utf-8&oe=utf-8&key=%s
-    天天动听, http://www.dongting.com/#a=searchlist&q=%s, http://lib.ttdtweb.com/favicon.ico
+    天天动听, http://www.dongting.com/#a=searchlist&q=%srestartAP
     一听, http://so.1ting.com/all.do?q=%s
     虾米音乐, http://www.xiami.com/search?key=%s
     音悦Tai, http://so.yinyuetai.com/mv?keyword=%s
     搜狗音乐, http://mp3.sogou.com/music.so?query=%s
     酷我音乐, http://sou.kuwo.cn/ws/NSearch?key=%s
-    网易云音乐, http://music.163.com/#/search/m/?s=%s, http://s1.music.126.net/music.ico?v1
-    歌词, http://music.baidu.com/search/lrc?key=%s, http://music.baidu.com/static/images/favicon.ico
+    网易云音乐, http://music.163.com/#/search/m/?s=%s
+    歌词, http://music.baidu.com/search/lrc?key=%srestartAP
 图片-flickr
     google图片, https://www.google.com/search?q=%s&safe=off&hl=zh-CN&tbm=isch
     百度图片, http://image.baidu.com/i?ie=utf-8&word=%s
@@ -32,7 +32,7 @@
     picsearch, http://cn.picsearch.com/index.cgi?q=%s
     deviantART, http://www.deviantart.com/?q=%s,
     jpg4, http://img.jpg4.info/index.php?feed=%s,
-    easyicon, http://www.easyicon.net/iconsearch/%s/, http://cdn-img.easyicon.net/favicon.ico
+    easyicon, http://www.easyicon.net/iconsearch/%s/restartAP
 知识-3
     百度百科, http://baike.baidu.com/search/word?pic=1&sug=1&word=%s
     知乎, http://www.zhihu.com/search?q=%s
@@ -52,13 +52,13 @@
 购物
     一淘, http://s.etao.com/search?q=%s
     惠惠, http://www.huihui.cn/search?q=%s
-    易迅, http://searchex.yixun.com/html?charset=utf-8&as=1&key=%s, http://www.yixun.com/favicon.ico
+    易迅, http://searchex.yixun.com/html?charset=utf-8&as=1&key=%srestartAP
     360购物, http://s.mall.360.cn/search.html?query=%s
-    淘宝, http://s.taobao.com/search?q=%s, http://www.taobao.com/favicon.ico
+    淘宝, http://s.taobao.com/search?q=%srestartAP
     天猫, http://list.tmall.com/search_product.htm?q=%s&type=p, gbk
-    京东, http://search.jd.com/Search?keyword=%s&enc=utf-8, http://www.jd.com/favicon.ico
-    苏宁, http://search.suning.com/%s/, http://www.suning.com/favicon.ico
-    当当, http://search.dangdang.com/search.php?key=%s, gbk, http://www.dangdang.com/favicon.ico
+    京东, http://search.jd.com/Search?keyword=%s&enc=utf-8restartAP
+    苏宁, http://search.suning.com/%s/restartAP
+    当当, http://search.dangdang.com/search.php?key=%s, gbkrestartAP
     亚马逊, http://www.amazon.cn/s/ref=nb_sb_noss?field-keywords=%s
 下载-2
     我乐盘, http://www.56pan.com/s.php?q=%s&wp=0,
@@ -67,7 +67,7 @@
     射手字幕, http://www.shooter.cn/search/%s
     ed2000, http://www.ed2000.com/FileList.asp?SearchWord=%s,
     simpledCD, http://simplecd.me/search/entry/?query=%s,
-    种子快搜, http://www.searchbt.net/btsearch.php?query=%s, http://www.searchbt.net/images/favicon.ico
+    种子快搜, http://www.searchbt.net/btsearch.php?query=%srestartAP
     下载搜索, https://www.google.com/cse?q=%s&newwindow=1&cx=006100883259189159113%3Atwgohm0sz8q
 翻译
     google翻译, https://translate.google.com/?q=%s
@@ -76,5 +76,5 @@
     爱词霸, http://www.iciba.com/%s
     海词, http://dict.cn/%s
     沪江日语, http://dict.hjenglish.com/jp/jc/%s
-    百度词典, http://dict.baidu.com/s?wd=%s&ie=utf-8&oe=utf-8, http://dict.baidu.com/static/img/favicon.ico
+    百度词典, http://dict.baidu.com/s?wd=%s&ie=utf-8&oe=utf-8restartAP
     汉典, http://www.zdic.net/search/?q=%s

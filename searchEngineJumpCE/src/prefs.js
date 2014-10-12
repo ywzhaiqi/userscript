@@ -64,6 +64,7 @@ function openPrefs(){
                     <option value="custom">用户版本</option>\
                     <option value="normal">作者版本</option>\
                     <option value="simple">简单版本</option>\
+                    <option value="wenke">文科版本</option>\
                 </select>\
                 <a style="margin-left: 20px;" target="_blank" href="https://greasyfork.org/zh-CN/scripts/5316/feedback" title="通过反馈给作者加入你的版本">加入你的版本？</a>\
             </li>\
