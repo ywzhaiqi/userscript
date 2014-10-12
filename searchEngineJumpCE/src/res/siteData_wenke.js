@@ -103,7 +103,7 @@ BT
     krugle, http://opensearch.krugle.org/document/search/#query=%s
     知乎, http://www.zhihu.com/search?q=%s
 火狐
-    mozillaZine, http://www.google.com/cse?cx=003258325049489668794%3Aru2dpahviq8&q=%s
+    mozillaZine, http://www.google.com/cse?cx=003258325049489668794%3Aru2dpahviq8&q=%s, kb.mozillazine.org
     附件组件, https://addons.mozilla.org/zh-CN/firefox/search/?q=%s
     火狐社区, http://mozilla.com.cn/search/?q=%s
     userscripts镜像, http://webextender.net/scripts/search?q=%s
