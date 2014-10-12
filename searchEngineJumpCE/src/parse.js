@@ -6,7 +6,7 @@ function parseDataStr(str, skipCommentLine) {
     }
 
     // 提前处理下特殊的 post 方式
-    str = str.replace(/[\n\r]+[\s\/]*-/g, '_POST_');
+    str = str.replace(/[\n\r]+[\s\/]*-\s*(\S)+:/g, '_POST_ $1:');
 
     var parseArgs = function(str) {
         var arr = str.replace(/，/g, ', ').split(/\s*, \s*/);
@@ -64,8 +64,19 @@ function parseDataStr(str, skipCommentLine) {
         }
 
         if (typeof ICON_DATA != 'undefined') {
-            // engline.favicon 可能为几种情况：base64 图标、在线图标、域名
-            engline.favicon = ICON_DATA[engline.favicon] || engline.favicon || ICON_DATA[engline.host] || getFaviconUrl(engline.url);
+            if (!engline.favicon) {  // 不存在尝试通过链接的域名获取
+                engline.favicon = ICON_DATA[engline.host];
+            } else if (engline.favicon.indexOf('data:image') == 0) {  // base64 图标
+
+            } else if (engline.favicon.indexOf('http') == 0) {  // 在线图标
+                engline.favicon = ICON_DATA[parseUri(engline.favicon).host] || engline.favicon;
+            } else {  // 域名
+                engline.favicon = ICON_DATA[engline.favicon];
+            }
+        }
+
+        if (!engline.favicon) {
+            engline.favicon = getFaviconUrl(engline.url);
         }
 
         return engline;

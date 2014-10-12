@@ -151,18 +151,17 @@ function addContainer(iTarget, iInput) {
 
     // 创建dom
     var aPattern = '<a href="" class="sej-engine"' + (prefs.openInNewTab ? ' target="_blank" ' : ' ') +
-        'encoding="$encoding$" url="$url$" onclick="$onclick$" title="$title$">' + 
+        'encoding="$encoding$" url="$url$" onclick="$onclick$" title="$title$">' +
         '<img src="$favicon$" class="sej-engine-icon" />$form$<span>$name$</span></a>';
 
     var container = document.createElement('sejspan');
     container.id = 'sej-container';
 
     container.addEventListener('mousedown', mousedownhandler, true);
-    // container.addEventListener('mouseover', mousedownhandler, true);
 
     // container.style.cssText = 'margin: 0 auto; max-width: 1100px;';
     if (matchedRule.style) {
-        container.style.cssText += matchedRule.style;
+        container.style.cssText = matchedRule.style;
     }
 
     var dropLists = [];
@@ -259,7 +258,7 @@ function addContainer(iTarget, iInput) {
             }
 
             dropLists.push({
-                a: a, 
+                a: a,
                 dropList: dropList
             });
         };
@@ -299,14 +298,14 @@ function addContainer(iTarget, iInput) {
             a.removeAttribute('data-horizontal');
 
             // 插入到第一个类别前面
-            ins = container.querySelector('a.sej-engine.first');
+            // ins = container.querySelector('a.sej-engine.first');
+            ins = container.querySelector('a.sej-engine:not(.sej-drop-list-trigger)');
             ins.parentNode.insertBefore(a, ins);
         }
 
         document.body.appendChild(dropList);
 
         dropList.addEventListener('mousedown', mousedownhandler, true);
-        // dropList.addEventListener('mouseover', mousedownhandler, true);
 
         new DropDownList(a, dropList);
     });
@@ -316,7 +315,7 @@ function addContainer(iTarget, iInput) {
 	configBtn.innerHTML = '<img class="sej-engine-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABbklEQVQ4jZWSu0oDURCGp9BCLcRCAzFGsjvzHwyoWbMzYKWdErBREQQLG/F90qW1y5sEfYGgTyBewBtRiYlFdkPibowOnGrn+883Z5bo95ogKk+O6RkNQ6wFsbbvry38iWAOD5mDIhGRSHjgYF0H64qE50REhUKw7FhPRsC6B9GOE31z0GYM94/YtYM99wL1NBEArC8CepcAk+fF80qSauGgV70m/YRoTURLzEERElYh1nKwLsRuEqDnlWcd6xFEOw7WBewiYShhNbYA9CyfX50b+GhPg5rMtpl8o6A42AOxdiazNhOp28NwgG79DBDR0vBb6Ec2W54mIqJcLjcFhBWIfkWK9eQIWhtY63EfHm6yRqwHaJ053Ga2TcAuHPQzurmZugHPK+cd9H78GvVVZGMlEcBsO9EIjxBrxOP0jLQD6CXEbuMRUi2AsOL7G0xE5Hzd7d8a/b5LS0FWRPdT4ZSacLBniL4zB/N/hf5d3635oJ6ZNLU9AAAAAElFTkSuQmCC" />';
 	configBtn.onclick = openPrefs;
 	container.appendChild(configBtn);
- 
+
     // 插入到文档中
     switch (matchedRule.insertIntoDoc.where.toLowerCase()) {
         case 'beforebegin' :
@@ -406,6 +405,9 @@ function run() {
         debug('不存在插入的位置或匹配的输入框', iTarget, iInput);
         return;
     }
+
+    // 根据搜索列表的类型得到数据
+    engineListDataStr = engineListData[prefs.engineListDataType] || engineListData.normal;
 
     addGlobalStyle();
 

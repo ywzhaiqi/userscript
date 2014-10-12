@@ -33,6 +33,9 @@
     a.sej-engine.only-icon > span {
     	display: none;
     }
+    a.sej-engine:link, a.sej-engine:visited{
+        text-decoration: none;
+    }
     a.sej-engine:visited, a.sej-engine:visited *, a.sej-engine:active, a.sej-engine:active *{
         color: #120886 !important;
     }

@@ -8,6 +8,7 @@ var FILE = {
     MAIN_CSS: './src/res/main.css',
     RULE: './src/res/rule.js',
     SITE_DATA: './src/res/siteData.js',
+    SITE_DATA_SIMPLE: './src/res/siteData_simple.js',
     ICON_DATA: './src/res/iconData.json',
 };
 
@@ -23,6 +24,12 @@ var config = (function() {
     Object.defineProperty(pkg, 'siteDataStr', {
         get: function() {
             return fs.readFileSync(FILE.SITE_DATA, 'utf-8');
+        }
+    });
+
+    Object.defineProperty(pkg, 'siteDataStr_simple', {
+        get: function() {
+            return fs.readFileSync(FILE.SITE_DATA_SIMPLE, 'utf-8');
         }
     });
 

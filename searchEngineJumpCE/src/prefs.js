@@ -5,7 +5,9 @@ function loadPrefs() {
     prefs.openInNewTab = GM_getValue('openInNewTab', prefs.openInNewTab);
     prefs.debug = GM_getValue('debug', prefs.debug);
     prefs.hideEnglineLabel = GM_getValue('hideEnglineLabel', prefs.hideEnglineLabel);
-    engineListDataStr = GM_getValue('engineList') || engineListDataStr;
+    prefs.engineListDataType = GM_getValue('engineListDataType', prefs.engineListDataType);
+
+    engineListData.custom = GM_getValue('engineList') || '';
 }
 
 function openPrefs(){
@@ -31,7 +33,7 @@ function openPrefs(){
         #sej-prefs-setup button { padding: 1px 6px; font-size: 12px; margin-right: 3px; }\
         #sej-prefs-setup #top-buttons{background:none repeat scroll 0 0 #fff;display:block;position:absolute;top:-35px;border-right:12px solid #e0e0e0;border-top:12px solid #e0e0e0;border-left:12px solid #e0e0e0;text-align:center}\
         #sej-prefs-setup img { display: initial; }\
-        #sej-prefs-minitip { position: absolute; background: #ff9; border: 1px solid #F96; padding: 10px; left: -400px; top: 160px; right: 570px; }\
+        #sej-prefs-minitip { position: absolute; background: #ff9; border: 1px solid #F96; padding: 10px; left: -400px; top: 200px; right: 570px; }\
         #sej-prefs-minitip p { margin: 5px 5px; }\
         #sej-prefs-minitip span { color: green; }\
     ');
@@ -49,17 +51,26 @@ function openPrefs(){
             <li><input type="checkbox" id="sej-prefs-openInNewTab" /> 在新页面打开</li>\
             <li><input type="checkbox" id="sej-prefs-debug" /> 调试模式</li>\
             <li>\
-                是否隐藏前几个搜索的文字部分\
+                前几个搜索的文字部分：\
                 <select id="sej-prefs-hideEnglineLabel" >\
                     <option value="0">不隐藏</option>\
                     <option value="1">根据高度自行判断</option>\
                     <option value="2">隐藏</option>\
                 </select>\
             </li>\
+            <li>\
+                搜索列表版本：\
+                <select id="sej-prefs-engineListDataType" >\
+                    <option value="custom">用户版本</option>\
+                    <option value="normal">作者版本</option>\
+                    <option value="simple">简单版本</option>\
+                </select>\
+                <a style="margin-left: 20px;" target="_blank" href="https://greasyfork.org/zh-CN/scripts/5316/feedback" title="通过反馈给作者加入你的版本">加入你的版本？</a>\
+            </li>\
             <li>自定义搜索列表：\
                 <img id="sej-prefs-engineList-tip" class="minitipicon" src="data:image/gif;base64,R0lGODlhDAAMAKIAALGXVv////7+/dPGn+zm1bqjadHDm/r49CH5BAAAAAAALAAAAAAMAAwAQAM1GCFkVYYIRYC9uFm1gzXC0HHAIBQYaRXBIQLkcCguZslBBXu7RaApHgCSsoFevdtk0XhElgkAOw==" />\
                 <div>\
-                    <textarea id="sej-prefs-engineList" style="height: 400px;"></textarea>\
+                    <textarea id="sej-prefs-engineList" style="height: 350px;"></textarea>\
                 </div>\
             </li>\
         </ul>\
@@ -68,6 +79,9 @@ function openPrefs(){
         </div>\
     ';
     div = null;
+
+    var sel_engineListType = $('engineListDataType'),
+        txt_engineList = $('engineList');
 
     var close = function() {
         if (styleNode) {
@@ -81,7 +95,11 @@ function openPrefs(){
         GM_setValue('openInNewTab', prefs.openInNewTab = !!$('openInNewTab').checked);
         GM_setValue('debug', prefs.debug = !!$('debug').checked);
         GM_setValue('hideEnglineLabel', prefs.hideEnglineLabel = $('hideEnglineLabel').value);
-        GM_setValue('engineList', engineListDataStr = $('engineList').value);
+        GM_setValue('engineListDataType', prefs.engineListDataType = sel_engineListType.value);
+
+        if (sel_engineListType.value == 'custom') {
+            GM_setValue('engineList', engineListData.custom = txt_engineList.value);
+        }
 
         // 刷新工具条
         remove();
@@ -97,8 +115,14 @@ function openPrefs(){
         minitip.style.display = (minitip.style.display == 'block') ? 'none' : 'block';
     };
 
+    sel_engineListType.onchange = function() {
+        txt_engineList.value = engineListData[sel_engineListType.value].trim();
+    };
+
     $('debug').checked = prefs.debug;
     $('openInNewTab').checked = prefs.openInNewTab;
     $('hideEnglineLabel').value = prefs.hideEnglineLabel;
-    $('engineList').value = engineListDataStr.trim();
+    sel_engineListType.value = prefs.engineListDataType;
+
+    txt_engineList.value = engineListData[prefs.engineListDataType].trim();
 };

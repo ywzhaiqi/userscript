@@ -63,15 +63,16 @@
     维基(en), http://en.wikipedia.org/wiki/%s
     知乎, http://www.zhihu.com/search?q=%s
     互动百科, http://so.baike.com/s/doc/%s
-    萌娘百科, http://zh.moegirl.org/index.php?search=%s
-    百度文库, http://wenku.baidu.com/search?word=%s&ie=utf-8
-    豆丁文档, http://www.docin.com/search.do?searchcat=2&searchType_banner=p&nkey=%s
-    // 爱问共享, http://ishare.iask.sina.com.cn/search.php?key=%s, gbk
-    百度知道, http://zhidao.baidu.com/search?word=%s
-    网易公开课, http://c.open.163.com/search/search.htm?query=%s#/search/all
-    Google 学术, https://scholar.google.com/scholar?hl=zh-CN&q=%s&btnG=&lr=%s
-    维普，http://lib.cqvip.com/zk/search.aspx
-        - E: (Keyword_C=%s+Title_C=%s), H: 题名或关键词=%s 与 范围=全部期刊
+    // 萌娘百科, http://zh.moegirl.org/index.php?search=%s
+    文库-豆丁文档-百度百科
+        百度文库, http://wenku.baidu.com/search?word=%s&ie=utf-8
+        豆丁文档, http://www.docin.com/search.do?searchcat=2&searchType_banner=p&nkey=%s
+        // 爱问共享, http://ishare.iask.sina.com.cn/search.php?key=%s, gbk
+        百度知道, http://zhidao.baidu.com/search?word=%s
+        网易公开课, http://c.open.163.com/search/search.htm?query=%s#/search/all
+        Google 学术, https://scholar.google.com/scholar?hl=zh-CN&q=%s&btnG=&lr=%s
+        维普，http://lib.cqvip.com/zk/search.aspx
+            - E: (Keyword_C=%s+Title_C=%s), H: 题名或关键词=%s 与 范围=全部期刊
     开发--百度百科
         stackoverflow, http://stackoverflow.com/search?q=%s
         MDN, https://developer.mozilla.org/en-US/search?q=%s
@@ -122,7 +123,7 @@
         海盗湾, https://kickass.to/usearch/%s/
         btspread, http://www.btspread.com/search/%s
         torrentkitty, http://www.torrentkitty.org/search/%s
-        BTDigg, https://btdigg.org/search?q=%s   
+        BTDigg, https://btdigg.org/search?q=%s
 软件
     Firefox 附加组件, https://addons.mozilla.org/zh-cn/firefox/search/?q=%s
     Chrome 应用商店, https://chrome.google.com/webstore/search-extensions/%s?hl=zh-CN

@@ -236,14 +236,11 @@ var rules = [
         enabled: true,
         engineList: "知识",
         style: '\
-              position:absolute;\
-              width:90px;\
-              top:180px;\
-              right: 2%;\
+            margin-bottom: 8px;\
         ',
         insertIntoDoc: {
             keyword: 'css;input#kw',
-            target: 'css;body',
+            target: 'css;#body',
             where: 'beforeBegin'
         }
     },
@@ -252,15 +249,16 @@ var rules = [
         enabled: true,
         engineList: "知识",
         style: '\
-              text-align;center;\
-              border-bottom:1px solid #D9E1F7;\
+            text-align;center;\
+            border-bottom:1px solid #D9E1F7;\
+            text-align: center;\
         ',
         insertIntoDoc: {
             keyword: 'css;input#q',
             target: 'css;.zu-top',
             where: 'afterEnd'
         },
-        stylish: '.sej-engine > img {padding-bottom: 3px;}'
+        // stylish: '.sej-engine > img {padding-bottom: 3px;}'
     },
     {name: "百度文库",
         url: /^https?:\/\/wenku\.baidu\.com\/search\?/,
@@ -1062,7 +1060,7 @@ var rules = [
         enabled: true,
         engineList: "shopping",
         style: "\
-           margin:0 auto;\
+           text-align: center;\
            background-color:#FFFFFF;\
         ",
         insertIntoDoc: {

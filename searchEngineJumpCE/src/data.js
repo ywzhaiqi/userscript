@@ -23,10 +23,20 @@ function introduceToHtml() {
 			.replace(/"(.*?)"/g, '<span>$1</span>')
 }
 
+var engineListData = {};
 
-var engineListDataStr = getMStr(function(){/*
+engineListData.custom = '';
+
+engineListData.normal = getMStr(function(){/*
 <%= siteDataStr %>
 */});
+
+engineListData.simple = getMStr(function(){/*
+<%= siteDataStr_simple %>
+*/});
+
+
+var engineListDataStr = '';
 
 
 // rules 和 engineList 的对应
