@@ -4,7 +4,7 @@
 // @author         NLF && ywzhaiqi
 // @contributor    ted423
 // @description    方便的在各个引擎之间跳转。自定义搜索列表的 NLF 修改版。
-// @version        4.1.3.0
+// @version        4.1.3.1
 // version        4.0.1.0
 // @created        2011-7-2
 // @namespace      http://userscripts.org/users/NLF
@@ -572,7 +572,7 @@ var rules = [
         style: '\
            border-bottom: 1px solid #E5E5E5;\
            border-top: 1px solid #E5E5E5;\
-           text-align: center;\
+           padding-left: 135px;\
         ',
 
         // 插入文档,相关
@@ -603,7 +603,7 @@ var rules = [
         style: '\
             border-bottom: 1px solid #E5E5E5;\
             border-top: 1px solid #E5E5E5;\
-            text-align: center;\
+            padding-left: 135px;\
             ',
         insertIntoDoc: {
             keyword: '//input[@name="q"]',
@@ -620,7 +620,7 @@ var rules = [
         style: '\
            border-top:1px solid #D9E1F7;\
            border-bottom:1px solid #D9E1F7;\
-           text-align: center;\
+           padding-left: 138px;\
         ',
         insertIntoDoc: {
            keyword: function() {
@@ -2488,6 +2488,9 @@ function toGBK(str) {
 
 // 转换文本数据为 engineList 对象
 function parseDataStr(str, opt) {
+    if (typeof opt == 'undefined') {
+        opt = {};
+    }
 
     // 提前处理下特殊的 post 方式
     str = str.replace(/[\n\r]+[\s\/]*-\s*(\S)+:/g, '_POST_ $1:');
@@ -3010,11 +3013,19 @@ function addContainer(iTarget, iInput) {
 
     };
 
+    var isTwoLine = container.clientHeight / container.children[1].clientHeight > 2;
+
     // 插入后调整下，如果变成两行，隐藏文字
-    if (prefs.hideEnglineLabel == 2 || (prefs.hideEnglineLabel == 1 && container.clientHeight / container.children[1].clientHeight > 2)) {
+    if (prefs.hideEnglineLabel == 2 || (prefs.hideEnglineLabel == 1 && isTwoLine)) {
         [].forEach.call(document.querySelectorAll('#sej-container > a[class="sej-engine"] > span'), function(link) {
         	link.parentNode.classList.add('only-icon');
         });
+
+        // 取消前面的距离并居中
+        if (isTwoLine) {
+            container.style.paddingLeft = '';
+            container.style.textAlign = 'center';
+        }
     }
 
     function mousedownhandler(e) {

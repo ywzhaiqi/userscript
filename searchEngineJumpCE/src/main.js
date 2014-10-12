@@ -341,11 +341,19 @@ function addContainer(iTarget, iInput) {
 
     };
 
+    var isTwoLine = container.clientHeight / container.children[1].clientHeight > 2;
+
     // 插入后调整下，如果变成两行，隐藏文字
-    if (prefs.hideEnglineLabel == 2 || (prefs.hideEnglineLabel == 1 && container.clientHeight / container.children[1].clientHeight > 2)) {
+    if (prefs.hideEnglineLabel == 2 || (prefs.hideEnglineLabel == 1 && isTwoLine)) {
         [].forEach.call(document.querySelectorAll('#sej-container > a[class="sej-engine"] > span'), function(link) {
         	link.parentNode.classList.add('only-icon');
         });
+
+        // 取消前面的距离并居中
+        if (isTwoLine) {
+            container.style.paddingLeft = '';
+            container.style.textAlign = 'center';
+        }
     }
 
     function mousedownhandler(e) {

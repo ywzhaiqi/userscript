@@ -18,7 +18,7 @@ var rules = [
         style: '\
            border-bottom: 1px solid #E5E5E5;\
            border-top: 1px solid #E5E5E5;\
-           text-align: center;\
+           padding-left: 135px;\
         ',
 
         // 插入文档,相关
@@ -49,7 +49,7 @@ var rules = [
         style: '\
             border-bottom: 1px solid #E5E5E5;\
             border-top: 1px solid #E5E5E5;\
-            text-align: center;\
+            padding-left: 135px;\
             ',
         insertIntoDoc: {
             keyword: '//input[@name="q"]',
@@ -66,7 +66,7 @@ var rules = [
         style: '\
            border-top:1px solid #D9E1F7;\
            border-bottom:1px solid #D9E1F7;\
-           text-align: center;\
+           padding-left: 138px;\
         ',
         insertIntoDoc: {
            keyword: function() {

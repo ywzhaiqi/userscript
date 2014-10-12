@@ -1,6 +1,9 @@
 
 // 转换文本数据为 engineList 对象
 function parseDataStr(str, opt) {
+    if (typeof opt == 'undefined') {
+        opt = {};
+    }
 
     // 提前处理下特殊的 post 方式
     str = str.replace(/[\n\r]+[\s\/]*-\s*(\S)+:/g, '_POST_ $1:');
