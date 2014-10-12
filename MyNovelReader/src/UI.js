@@ -193,25 +193,23 @@ var UI = {
             return;
         }
 
-        this._loadBlocker();
+        UI._loadBlocker();
 
         UI.$prefs = $('<div id="reader_preferences">')
-            .css('cssText', 'position:fixed; top:12%; left:30%; width:500px; z-index:30000;')
+            .css('cssText', 'position:fixed; top:12%; left:30%; width:500px; z-index:300000;')
             .append(
                 $('<style>').text(Res.preferencesCSS))
             .append(
                 $('<div class="body">').html(Res.preferencesHTML))
-            .appendTo("body");
+            .appendTo('body');
 
         UI.preferencesLoadHandler();
     },
     _loadBlocker: function() {
-        if (UI.$blocker === null) {
-            UI.$blocker = $('<div>').attr({
-                id: 'uil_blocker',
-                style: 'position:fixed;top:0px;left:0px;right:0px;bottom:0px;background-color:#000;opacity:0.5;z-index:100000;'
-            }).appendTo('body');
-        }
+        UI.$blocker = $('<div>').attr({
+            id: 'uil_blocker',
+            style: 'position:fixed;top:0px;left:0px;right:0px;bottom:0px;background-color:#000;opacity:0.5;z-index:100000;'
+        }).appendTo('body');
     },
     hide: function(){
         if(UI.$prefs) UI.$prefs.remove();
@@ -425,7 +423,7 @@ var UI = {
 
         UI.noticeDivto = setTimeout(function(){
             $noticeDiv.fadeOut(500);
-        },1666);
+        }, 1666);
 
         return $noticeDiv;
     }
@@ -465,4 +463,3 @@ var Res = {
 
     preferencesCSS: <%= res.preferencesCSS %>,
 };
-

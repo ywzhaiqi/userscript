@@ -2,7 +2,7 @@
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
-// @version        4.7.6
+// @version        4.7.7
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs
@@ -55,7 +55,7 @@
 // @include        http://www.ranwen.cc/*/*/*/*.html
 // @include        http://www.ranwen.net/files/article/*/*/*.html
 // @include        http://www.64mi.com/*/*/*/*.html
-// @include        http://www.bxs.cc/*/*.html
+// @include        http://www.bxs.cc/*/*.html*
 // @include        http://www.laishuwu.com/html/*/*/*.html
 // @include        http://www.binhuo.com/html/*/*/*.html
 // @include        http://www.haoqi99.com/haoqi99/*/*/*.shtml
@@ -84,6 +84,7 @@
 // @include        http://bbs.vyming.com/novel-read-*-*.html
 // @include        http://www.9imw.com/novel-read-*-*.html
 // @include        http://www.23zw.com/olread/*/*/*.html
+// @include        http://www.50zw.com/book_*/*.html
 
 // www.sodu.so
 // @include        http://www.jiaodu8.com/*/*/*/*.html
@@ -236,6 +237,7 @@
 // @run-at         document-end
 // ==/UserScript==
 
+
 var isChrome = !!window.chrome;
 var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
 
@@ -273,7 +275,7 @@ var Rule = {
         ".novel_content", ".readmain_inner", ".noveltext", ".booktext",
         "#contentTxt", "#oldtext", "#a_content", "#contents", "#content2", "#content", ".content"],
 
-    // 书名。顶部章节导航的最后一个链接可能是书名。
+    // (测试)尝试查找书名。顶部章节导航的最后一个链接可能是书名。
     bookTitleSelector: ".h1title > .shuming > a[title], .chapter_nav > div:first > a:last",
 
     contentRemove: "script, iframe",          // 内容移除选择器
@@ -588,7 +590,7 @@ Rule.specialSite = [
         }
     },
     {siteName: "百晓生",
-        url: /^http:\/\/www\.bxs\.cc\/\d+\/\d+\.html$/,
+        url: /^http:\/\/www\.bxs\.cc\/\d+\/\d+\.html/,
         titleReg: /(.*?)\d*,(.*)/,
         contentRemove: 'a',
         contentReplace: [
@@ -1413,6 +1415,8 @@ Rule.replace = {
     "xiu长": "修长", "亵du": "亵渎", "xing福": "幸福", "小bo":"小波", "小niū":"小妞", "xiong([^a-z])":"胸$1", "小tui":"小腿", "xiàohuà":"笑话", "xiàn\\'zhì":"限制", "xiōng\\s*dì":"兄弟",
     "yì\\s*wài\\s*":"意外", "yin(冷|暗|谋|险|沉|沟|癸派|后)":"阴$1", "y[iī]y[àa]ng":"一样", "y[īi]di[ǎa]n":"一点", "yī\\s*zhèn":"一阵", "y[ǐi]j[īi]ng":"已经", "疑huo":"疑惑", "yí\\s*huò":"疑惑", "影mi":"影迷", "yin荡":"淫荡", "yin贼":"淫贼", "阳w[ěe]i": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "(?:you|诱)(?:惑|huo)": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人", "youshi":"有事", "御yòng":"御用", "旖ni":"旖旎", "yu念":"欲念", "you敌深入":"诱敌深入", "影she":"影射", "牙qian":"牙签", "一yè情":"一夜情",
     "z[iì]j[iǐ]": "自己","z[ìi](?:\\s|<br/?>|&nbsp;)*y[oó]u": "自由","zh[iī]d?[àa]u?o":"知道", "zixin":"自信", "zhì'fú":"制服", "zha药": "炸药", "zhan有": "占有", "zhè\\s*gè":"这个", "政f[ǔu]": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zong理":"总理", "zh[ōo]ngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]\\s*y[oò]u":"左右", "zhǔ\\s*dòng":"主动", "zh[oō]uw[ée]i":"周围", "中nan海":"中南海", "中j委":"中纪委", "中zu部":"中组部", "政zhi局":"政治局", "(昨|一|时|余)(?:<br/?>|&nbsp;|\\s)*ì":"$1日", "照she":"照射", "zhǔn\\s*bèi\\s*":"准备",
+
+    "</p>\\n<p>\\s*ì":"日",
 };
 
 // 单字替换，可能会误替换，所以需要特殊处理
@@ -1431,7 +1435,7 @@ Rule.replace = {
         "nǎi": "奶", "nèn": "嫩", "niào": "尿", "niē": "捏", "nòng": "弄", "nǚ": "女",
         "pào": "炮", "piàn": "片",
         "qiāng": "枪", "qíng": "情", "qīn": "亲", "qiú": "求", "quán": "全",
-        "rén":"人", "rì": "日",  "</p>\\n<p>\\s*ì":"日", "rǔ": "乳",
+        "rén":"人", "rì": "日", "rǔ": "乳",
         "sāo":"骚", "sǎo": "骚", "sè": "色",  "shā": "杀", "shēn":"呻", "shén":"神", "shè": "射", "shǐ": "屎", "shì": "侍", "sǐ": "死", "sī": "私", "shǔn": "吮", "sǔn": "吮", "sū": "酥",
         "tān":"贪", "tiǎn": "舔", "tǐng":"挺", "tǐ": "体", "tǒng": "捅", "tōu": "偷", "tou": "偷", "tuǐ": "腿", "tūn": "吞", "tún": "臀", "tiáo":"调", "tài":"态",
         "wēn": "温", "wěn": "吻",
@@ -1444,7 +1448,6 @@ Rule.replace = {
     };
 
     for (var prop in oneWordReplace) {
-        // Rule.replace['([^a-z\\s])' + prop + '([^a-z\\s])'] = '$1' + oneWordReplace[prop] + '$2';
         Rule.replace['([^a-z\\s])' + prop + '(?![a-z\\s])'] = '$1' + oneWordReplace[prop];
     }
 
@@ -1748,6 +1751,7 @@ var uiTrans = {
     "缺省皮肤": "預設佈景",
     "暗色皮肤": "暗色佈景",
     "夜间模式": "夜間模式",
+    "夜间模式1": "夜間模式1",
     "夜间模式2": "夜間模式2",
     "橙色背景": "橙色背景",
     "绿色背景": "綠色背景",
@@ -2120,25 +2124,23 @@ var UI = {
             return;
         }
 
-        this._loadBlocker();
+        UI._loadBlocker();
 
         UI.$prefs = $('<div id="reader_preferences">')
-            .css('cssText', 'position:fixed; top:12%; left:30%; width:500px; z-index:30000;')
+            .css('cssText', 'position:fixed; top:12%; left:30%; width:500px; z-index:300000;')
             .append(
                 $('<style>').text(Res.preferencesCSS))
             .append(
                 $('<div class="body">').html(Res.preferencesHTML))
-            .appendTo("body");
+            .appendTo('body');
 
         UI.preferencesLoadHandler();
     },
     _loadBlocker: function() {
-        if (UI.$blocker === null) {
-            UI.$blocker = $('<div>').attr({
-                id: 'uil_blocker',
-                style: 'position:fixed;top:0px;left:0px;right:0px;bottom:0px;background-color:#000;opacity:0.5;z-index:100000;'
-            }).appendTo('body');
-        }
+        UI.$blocker = $('<div>').attr({
+            id: 'uil_blocker',
+            style: 'position:fixed;top:0px;left:0px;right:0px;bottom:0px;background-color:#000;opacity:0.5;z-index:100000;'
+        }).appendTo('body');
     },
     hide: function(){
         if(UI.$prefs) UI.$prefs.remove();
@@ -2352,7 +2354,7 @@ var UI = {
 
         UI.noticeDivto = setTimeout(function(){
             $noticeDiv.fadeOut(500);
-        },1666);
+        }, 1666);
 
         return $noticeDiv;
     }
@@ -2392,7 +2394,6 @@ var Res = {
 
     preferencesCSS: '.body {\n     color:#333;\n     margin: 0 auto;\n     background: white;\n     padding: 10px;\n     height: 420px;\n     overflow-y: auto;\n }\n #top-buttons {\n     background: none repeat scroll 0% 0% rgb(255, 255, 255);\n     display: block;\n     position: absolute;\n     top: -35px;\n     border-right: 12px solid rgb(224, 224, 224);\n     border-top: 12px solid rgb(224, 224, 224);\n     border-left: 12px solid rgb(224, 224, 224);\n     text-align: center;\n }\n input {\n     font-size: 12px;\n     margin-right: 3px;\n     vertical-align: middle;\n }\n .form-row {\n     overflow: hidden;\n     padding: 8px 12px;\n     margin-top: 3px;\n     font-size: 11px;\n }\n .form-row label {\n     padding-right: 10px;\n }\n .form-row input {\n     vertical-align: middle;\n     margin-top: 0px;\n }\n textarea, .form-row input {\n     padding: 2px 4px;\n     border: 1px solid #e5e5e5;\n     background: #fff;\n     border-radius: 4px;\n     color: #666;\n     -webkit-transition: all linear .2s;\n     transition: all linear .2s;\n }\n textarea {\n     width: 100%;\n     overflow: auto;\n     vertical-align: top;\n }\n textarea:focus, input:focus {\n     border-color: #99baca;\n     outline: 0;\n     background: #f5fbfe;\n     color: #666;\n }\n .prefs_title {\n     font-size: 12px;\n     font-weight: bold;\n }\n .prefs_textarea {\n     font-size: 12px;\n     margin-top: 5px;\n     height: 100px;\n }\n .right {\n    float: right;\n }',
 };
-
 
 
 function Parser(){
@@ -3447,7 +3448,7 @@ var App = {
         // 内容滚动
         var throttled = _.throttle(App.scroll, 100);
         $(window).scroll(throttled);
- 
+
         App.registerKeys();
 
         if (Config.dblclickPause) {

@@ -370,7 +370,7 @@ var App = {
         // 内容滚动
         var throttled = _.throttle(App.scroll, 100);
         $(window).scroll(throttled);
- 
+
         App.registerKeys();
 
         if (Config.dblclickPause) {

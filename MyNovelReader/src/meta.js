@@ -55,7 +55,7 @@
 // @include        http://www.ranwen.cc/*/*/*/*.html
 // @include        http://www.ranwen.net/files/article/*/*/*.html
 // @include        http://www.64mi.com/*/*/*/*.html
-// @include        http://www.bxs.cc/*/*.html
+// @include        http://www.bxs.cc/*/*.html*
 // @include        http://www.laishuwu.com/html/*/*/*.html
 // @include        http://www.binhuo.com/html/*/*/*.html
 // @include        http://www.haoqi99.com/haoqi99/*/*/*.shtml
@@ -84,6 +84,7 @@
 // @include        http://bbs.vyming.com/novel-read-*-*.html
 // @include        http://www.9imw.com/novel-read-*-*.html
 // @include        http://www.23zw.com/olread/*/*/*.html
+// @include        http://www.50zw.com/book_*/*.html
 
 // www.sodu.so
 // @include        http://www.jiaodu8.com/*/*/*/*.html
