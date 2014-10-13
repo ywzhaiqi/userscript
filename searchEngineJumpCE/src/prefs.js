@@ -20,7 +20,7 @@ function openPrefs(){
     if($('setup')) return;
 
     var styleNode = GM_addStyle('\
-        #sej-prefs-setup { position:fixed;z-index:2147483647;top:38px;right:60px;padding:20px 30px;background:#eee;width:500px;border:1px solid black; }\
+        #sej-prefs-setup { position:fixed;z-index:2147483647;top:38px;right:60px;padding:20px 30px 10px;background:#eee;width:500px;border:1px solid black; }\
         #sej-prefs-setup * { color:black;text-align:left;line-height:normal;font-size:12px; }\
         #sej-prefs-setup i { font-family: "微软雅黑", arial; }\
         #sej-prefs-setup a { color:black;text-decoration:underline; }\
@@ -63,7 +63,7 @@ function openPrefs(){
                 <select id="sej-prefs-engineListDataType" >\
                     <option value="custom">用户版本</option>\
                     <option value="normal">作者版本</option>\
-                    <option value="simple">简单版本</option>\
+                    <option value="simple">极简版本</option>\
                     <option value="wenke">文科版本</option>\
                 </select>\
                 <a style="margin-left: 20px;" target="_blank" href="https://greasyfork.org/zh-CN/scripts/5316/feedback" title="通过反馈给作者加入你的版本">加入你的版本？</a>\
@@ -81,8 +81,8 @@ function openPrefs(){
     ';
     div = null;
 
-    var sel_engineListType = $('engineListDataType'),
-        txt_engineList = $('engineList');
+    var engineListType_sel = $('engineListDataType'),
+        engineList_txt = $('engineList');
 
     var close = function() {
         if (styleNode) {
@@ -96,10 +96,10 @@ function openPrefs(){
         GM_setValue('openInNewTab', prefs.openInNewTab = !!$('openInNewTab').checked);
         GM_setValue('debug', prefs.debug = !!$('debug').checked);
         GM_setValue('hideEnglineLabel', prefs.hideEnglineLabel = $('hideEnglineLabel').value);
-        GM_setValue('engineListDataType', prefs.engineListDataType = sel_engineListType.value);
+        GM_setValue('engineListDataType', prefs.engineListDataType = engineListType_sel.value);
 
-        if (sel_engineListType.value == 'custom') {
-            GM_setValue('engineList', engineListData.custom = txt_engineList.value);
+        if (engineListType_sel.value == 'custom') {
+            GM_setValue('engineList', engineListData.custom = engineList_txt.value);
         }
 
         // 刷新工具条
@@ -116,14 +116,14 @@ function openPrefs(){
         minitip.style.display = (minitip.style.display == 'block') ? 'none' : 'block';
     };
 
-    sel_engineListType.onchange = function() {
-        txt_engineList.value = engineListData[sel_engineListType.value].trim();
+    engineListType_sel.onchange = function() {
+        engineList_txt.value = engineListData[engineListType_sel.value].trim();
     };
 
     $('debug').checked = prefs.debug;
     $('openInNewTab').checked = prefs.openInNewTab;
     $('hideEnglineLabel').value = prefs.hideEnglineLabel;
-    sel_engineListType.value = prefs.engineListDataType;
+    engineListType_sel.value = prefs.engineListDataType;
 
-    txt_engineList.value = engineListData[prefs.engineListDataType].trim();
+    engineList_txt.value = engineListData[prefs.engineListDataType].trim();
 };
