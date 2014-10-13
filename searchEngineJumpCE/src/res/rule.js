@@ -1425,7 +1425,7 @@ var rules = [
     },
 ];
 
-var rule_default = {
+rules.default = {
 	name: "通用规则",
     url: /.*/,
     enabled: true,

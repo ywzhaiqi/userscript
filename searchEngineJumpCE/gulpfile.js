@@ -42,12 +42,6 @@ var config = (function() {
         }
     });
 
-    Object.defineProperty(pkg, 'iconData', {
-        get: function() {
-            return fs.readFileSync(FILE.ICON_DATA, 'utf-8');
-        }
-    });
-
     Object.defineProperty(pkg, 'includes', {
         get: function() {
             var r = require(FILE.RULE);
@@ -62,7 +56,7 @@ var config = (function() {
 })();
 
 gulp.task('build', function() {
-    gulp.src(['src/meta.js', 'src/data.js', FILE.RULE, 'src/style.js', 'src/prefs.js', 'src/utils.js', 'src/parse.js', 'src/main.js'])
+    gulp.src(['src/meta.js', 'src/data.js', FILE.RULE, 'src/prefs.js', 'src/utils.js', 'src/parse.js', 'src/main.js'])
         .pipe(template(config))
         .pipe(concat(config.name + '.user.js'))
         .pipe(gulp.dest('.'));

@@ -165,11 +165,14 @@ function addContainer(iTarget, iInput) {
     }
 
     var dropLists = [];
-    var AllEngineList = parseDataStr(engineListDataStr);
+
+    // 根据搜索列表的类型得到数据
+    var engineListDataStr = engineListData[prefs.engineListDataType] || engineListData.normal;
+    var allEngineList = parseDataStr(engineListDataStr);
     var isFirstDropList = true;
     var isMatched = false;  // 当前搜索只匹配一次
 
-    Object.keys(AllEngineList).forEach(function (categoryStr) {
+    Object.keys(allEngineList).forEach(function (categoryStr) {
         var categoryArr = categoryStr.split('-');
 
         var category = {
@@ -181,7 +184,7 @@ function addContainer(iTarget, iInput) {
 
         var engines = [];
 
-        var engineList = AllEngineList[categoryStr];
+        var engineList = allEngineList[categoryStr];
         engineList.forEach(function (engine) {
             if (matchedRule.engineList && !isMatched && toRE(matchedRule.url).test(engine.url)) { // 去掉跳转到当前引擎的引擎
                 isMatched = true;
@@ -414,14 +417,12 @@ function run() {
         return;
     }
 
-    // 根据搜索列表的类型得到数据
-    engineListDataStr = engineListData[prefs.engineListDataType] || engineListData.normal;
-
     addGlobalStyle();
 
     // 判断是否存在
     var container = document.getElementById('sej-container'),
         sejspan = document.querySelector('sejspan.sej-drop-list');
+
     if (!container || !sejspan) {
         if (container) {
             container.parentNode.removeChild(container);

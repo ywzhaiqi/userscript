@@ -62,7 +62,7 @@ function openPrefs(){
                 搜索列表版本：\
                 <select id="sej-prefs-engineListDataType" >\
                     <option value="custom">用户版本</option>\
-                    <option value="normal">作者版本</option>\
+                    <option value="my">作者版本</option>\
                     <option value="simple">极简版本</option>\
                     <option value="wenke">文科版本</option>\
                 </select>\
