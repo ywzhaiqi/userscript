@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name           picViewer CE
+// @name           picviewer CE
 // @author         NLF && ywzhaiqi
-// @description    NLF 的围观图修改版。
-// @version        2014.9.28.1
+// @description    NLF 的围观图修改版
+// @version        2014.10.13.0
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
@@ -15,14 +15,13 @@
 // @namespace      http://userscripts.org/users/NLF
 // @homepage       https://github.com/ywzhaiqi/userscript/tree/master/picviewerCE
 // homepage       http://userscripts.org/scripts/show/105741
-// downloadURL    https://userscripts.org/scripts/source/105741.user.js
-// updateURL      https://userscripts.org/scripts/source/105741.meta.js
 // @include       http*
 // @exclude       http://www.toodledo.com/tasks/*
 // @exclude       http*://maps.google.com*/*
 // ==/UserScript==
 
 // 原脚本的 document-start 会在 chrome 下加载 2 次
+
 
 ;(function(topObject,window,document,unsafeWindow){
 	'use strict';
@@ -227,6 +226,8 @@
 					var bookCover = /\/view\/ark_article_cover\/cut\/public\//i;
 					var spic = /(img\d.douban.com)\/spic\//i
 
+					// 这个网址大图会出错
+					// http://movie.douban.com/subject/25708579/discussion/58950206/
 					if (pic.test(oldsrc)) {
 						newsrc = oldsrc.replace(pic, '/view/photo/raw/public/');
 					} else if (movieCover.test(oldsrc)) {
@@ -360,8 +361,7 @@
 					return newsrc == oldsrc ? null : newsrc;
 				}
 			},
-
-			// ------------------------- 视频 --------------------------------
+			// 视频网站
 			{sitename: "人人影视",
 				enabled: true,
 				url: /^http:\/\/www\.yyets\.com\//i,
@@ -382,7 +382,19 @@
 					}
 				}
 			},
-
+			// 美女
+			{sitename: "美女薄情馆",  // 这个网站有限制，每天只能看多少张
+				url: /^http:\/\/boqingguan\.com\//i,
+				siteExample: 'http://boqingguan.com/Picture/31637',
+				lazyAttr: 'data-original',  // 由于采用了延迟加载技术，所以图片可能为 loading.gif
+				getImage: function(img, a) {
+					var oldsrc = this.getAttribute('data-original') || this.src;
+					if (oldsrc) {
+						var newsrc = oldsrc.replace(/![a-z\d]+$/, '');
+						return newsrc == oldsrc ? '' : newsrc;
+					}
+				}
+			},
 			// 游戏
 			{sitename:"178.com",
 				enabled:true,
@@ -457,7 +469,7 @@
 			// 	},
 			// },
 
-			// ------------------------- 特殊的需要修正 --------------------------------
+			// 特殊的需要修正
 			{sitename: 'github 修正',
 				url: /^https?:\/\/github\.com\//i,
 				clikToOpen: {
@@ -470,9 +482,8 @@
 				}
 			},
 
-			// ------------------------- 需要 xhr 获取的 --------------------------------
-			// 有些页面不行，需要 xhr 获取
-			{sitename:"pixiv",
+			// 需要 xhr 获取的
+			{sitename:"pixiv",  // 有些页面不行，需要 xhr 获取
 				enabled:true,
 				url:/^http:\/\/www\.pixiv\.net/i,
 				getImage:function(img){
@@ -917,7 +928,7 @@
 
 		// 获取真正的unsafeWindow,chrome里面也能访问到真实环境的变量
 		// 在 chrome 37 测试无效
-		if(!envir.firefox && !envir.opera && !envir.ie){
+		if(!envir.firefox && !envir.opera && !envir.ie && !storage.supportGM){
 			;(function(){
 				document.addEventListener('picViewer-return-unsafeWindow',function(e){
 					unsafeWindow = e.detail;
@@ -2242,8 +2253,10 @@
 						!document.msFullscreenElement) {
 
 						var btn = document.getElementById("pv-gallery-fullscreenbtn");
-						btn.textContent = '进入全屏';
-						btn.removeClass('fullscreenbtn');
+						if (btn) {
+							btn.textContent = '进入全屏';
+							btn.removeClass('fullscreenbtn');
+						}
 					}
 				}
 				document.addEventListener('webkitfullscreenchange', fullScreenChanged, false);
@@ -3025,7 +3038,7 @@
 
 				// 滚动主窗口到最底部，然后自动重载库的图片，还有bug，有待进一步测试
 				window.removeEventListener('scroll', this.scrolled, false);
-				
+
 				var self = this;
 				this.scrolled = function() {
 					clearTimeout(self.reloadTimeout);
@@ -3106,6 +3119,14 @@
 					this.slideShow.exit();
 					this.collection.exit();
 					window.removeEventListener('resize',this._resizeHandler,true);
+
+					// 退出全屏
+					var btn = document.getElementById('pv-gallery-fullscreenbtn');
+					if (btn.classList.contains('fullscreenbtn')) {
+						cancelFullScreen();
+						btn.textContent = '进入全屏';
+						btn.classList.remove('fullscreenbtn');
+					}
 				}
 			},
 			runOnce:function(){//运行一次来获取某些数据。
@@ -6601,8 +6622,9 @@
 			};
 
 			var src, type;
+			var imgSrc;  // 有些图片采用了延迟加载的技术
 
-			if(!src && matchedRule){//通过高级规则获取.
+			if(!src && matchedRule){// 通过高级规则获取.
 				// 添加修正的样式
 				if (!matchedRule.cssAdded && matchedRule.css) {
 					var style = document.createElement('style');
@@ -6619,12 +6641,17 @@
 					return;
 				} else {
 					try{
-						src=matchedRule.getImage.call(img,img,imgPA);
+						src = matchedRule.getImage.call(img,img,imgPA);
 					}catch(err){
 						throwErrorInfo(err);
-					};
+					}
 
-					if(src)type='rule';
+					if(src) {
+						type='rule';
+						if (matchedRule.lazyAttr) {
+							imgSrc = img.getAttribute(matchedRule.lazyAttr);
+						}
+					}
 				}
 			};
 
@@ -6681,7 +6708,7 @@
 			var ret={
 				src:src,//得到的src
 				type:type,//通过哪种方式得到的
-				imgSrc:img.src,//处理的图片的src
+				imgSrc: imgSrc || img.src,//处理的图片的src
 				iPASrc:iPASrc,//图片的第一个父a元素的链接地址
 
 				img:img,//处理的图片
@@ -6791,6 +6818,7 @@
 		var messageID='pv-0.5106795670312598';
 
 		var pageScript=document.createElement('script');
+		pageScript.id = 'picviewer-page-script';
 
 		var pageScriptText=function(messageID){
 			var frameID=Math.random();

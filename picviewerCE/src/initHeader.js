@@ -1,4 +1,3 @@
-
 ;(function(topObject,window,document,unsafeWindow){
 	'use strict';
 

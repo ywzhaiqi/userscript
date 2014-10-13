@@ -791,8 +791,10 @@
 						!document.msFullscreenElement) {
 
 						var btn = document.getElementById("pv-gallery-fullscreenbtn");
-						btn.textContent = '进入全屏';
-						btn.removeClass('fullscreenbtn');
+						if (btn) {
+							btn.textContent = '进入全屏';
+							btn.removeClass('fullscreenbtn');
+						}
 					}
 				}
 				document.addEventListener('webkitfullscreenchange', fullScreenChanged, false);
@@ -1574,7 +1576,7 @@
 
 				// 滚动主窗口到最底部，然后自动重载库的图片，还有bug，有待进一步测试
 				window.removeEventListener('scroll', this.scrolled, false);
-				
+
 				var self = this;
 				this.scrolled = function() {
 					clearTimeout(self.reloadTimeout);
@@ -1655,6 +1657,14 @@
 					this.slideShow.exit();
 					this.collection.exit();
 					window.removeEventListener('resize',this._resizeHandler,true);
+
+					// 退出全屏
+					var btn = document.getElementById('pv-gallery-fullscreenbtn');
+					if (btn.classList.contains('fullscreenbtn')) {
+						cancelFullScreen();
+						btn.textContent = '进入全屏';
+						btn.classList.remove('fullscreenbtn');
+					}
 				}
 			},
 			runOnce:function(){//运行一次来获取某些数据。

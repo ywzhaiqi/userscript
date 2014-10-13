@@ -31,8 +31,9 @@
 			};
 
 			var src, type;
+			var imgSrc;  // 有些图片采用了延迟加载的技术
 
-			if(!src && matchedRule){//通过高级规则获取.
+			if(!src && matchedRule){// 通过高级规则获取.
 				// 添加修正的样式
 				if (!matchedRule.cssAdded && matchedRule.css) {
 					var style = document.createElement('style');
@@ -49,12 +50,17 @@
 					return;
 				} else {
 					try{
-						src=matchedRule.getImage.call(img,img,imgPA);
+						src = matchedRule.getImage.call(img,img,imgPA);
 					}catch(err){
 						throwErrorInfo(err);
-					};
+					}
 
-					if(src)type='rule';
+					if(src) {
+						type='rule';
+						if (matchedRule.lazyAttr) {
+							imgSrc = img.getAttribute(matchedRule.lazyAttr);
+						}
+					}
 				}
 			};
 
@@ -111,7 +117,7 @@
 			var ret={
 				src:src,//得到的src
 				type:type,//通过哪种方式得到的
-				imgSrc:img.src,//处理的图片的src
+				imgSrc: imgSrc || img.src,//处理的图片的src
 				iPASrc:iPASrc,//图片的第一个父a元素的链接地址
 
 				img:img,//处理的图片
@@ -221,6 +227,7 @@
 		var messageID='pv-0.5106795670312598';
 
 		var pageScript=document.createElement('script');
+		pageScript.id = 'picviewer-page-script';
 
 		var pageScriptText=function(messageID){
 			var frameID=Math.random();

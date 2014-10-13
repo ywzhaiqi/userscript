@@ -197,6 +197,8 @@
 					var bookCover = /\/view\/ark_article_cover\/cut\/public\//i;
 					var spic = /(img\d.douban.com)\/spic\//i
 
+					// 这个网址大图会出错
+					// http://movie.douban.com/subject/25708579/discussion/58950206/
 					if (pic.test(oldsrc)) {
 						newsrc = oldsrc.replace(pic, '/view/photo/raw/public/');
 					} else if (movieCover.test(oldsrc)) {
@@ -330,8 +332,7 @@
 					return newsrc == oldsrc ? null : newsrc;
 				}
 			},
-
-			// ------------------------- 视频 --------------------------------
+			// 视频网站
 			{sitename: "人人影视",
 				enabled: true,
 				url: /^http:\/\/www\.yyets\.com\//i,
@@ -352,7 +353,19 @@
 					}
 				}
 			},
-
+			// 美女
+			{sitename: "美女薄情馆",  // 这个网站有限制，每天只能看多少张
+				url: /^http:\/\/boqingguan\.com\//i,
+				siteExample: 'http://boqingguan.com/Picture/31637',
+				lazyAttr: 'data-original',  // 由于采用了延迟加载技术，所以图片可能为 loading.gif
+				getImage: function(img, a) {
+					var oldsrc = this.getAttribute('data-original') || this.src;
+					if (oldsrc) {
+						var newsrc = oldsrc.replace(/![a-z\d]+$/, '');
+						return newsrc == oldsrc ? '' : newsrc;
+					}
+				}
+			},
 			// 游戏
 			{sitename:"178.com",
 				enabled:true,
@@ -427,7 +440,7 @@
 			// 	},
 			// },
 
-			// ------------------------- 特殊的需要修正 --------------------------------
+			// 特殊的需要修正
 			{sitename: 'github 修正',
 				url: /^https?:\/\/github\.com\//i,
 				clikToOpen: {
@@ -440,9 +453,8 @@
 				}
 			},
 
-			// ------------------------- 需要 xhr 获取的 --------------------------------
-			// 有些页面不行，需要 xhr 获取
-			{sitename:"pixiv",
+			// 需要 xhr 获取的
+			{sitename:"pixiv",  // 有些页面不行，需要 xhr 获取
 				enabled:true,
 				url:/^http:\/\/www\.pixiv\.net/i,
 				getImage:function(img){

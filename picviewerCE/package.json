@@ -1,15 +1,14 @@
 {
-  "name": "picviewerCE",
-  "version": "2014.9.28.1",
-  "description": "围观图（support （opera，firefox（GreaseMonkey），chrome） Latest Stable，IE9+）",
+  "name": "picviewer CE",
+  "version": "2014.10.13.0",
+  "description": "NLF 的围观图修改版",
   "main": "picviewerCE.user.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
+  "author": "NLF && ywzhaiqi",
   "license": "ISC",
   "devDependencies": {
-    "gulp": "^3.8.8",
-    "gulp-concat": "^2.4.1"
+    "grunt": "^0.4.5",
+    "grunt-contrib-concat": "~0.4.0",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-watch": "~0.6.1"
   }
 }

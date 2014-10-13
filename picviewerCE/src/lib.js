@@ -232,7 +232,7 @@
 
 		// 获取真正的unsafeWindow,chrome里面也能访问到真实环境的变量
 		// 在 chrome 37 测试无效
-		if(!envir.firefox && !envir.opera && !envir.ie){
+		if(!envir.firefox && !envir.opera && !envir.ie && !storage.supportGM){
 			;(function(){
 				document.addEventListener('picViewer-return-unsafeWindow',function(e){
 					unsafeWindow = e.detail;
