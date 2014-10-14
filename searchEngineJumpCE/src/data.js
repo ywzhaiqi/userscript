@@ -22,6 +22,7 @@ var categoryMap = {
     'shopping': '购物',
     'download': '下载',
     'translate': '翻译',
+    '译&词典': '翻译'
 };
 
 var engineListIntroduce = getMStr(function() {/*

@@ -1,4 +1,3 @@
-
 // 转换文本数据为 engineList 对象
 function parseDataStr(str, opt) {
     if (typeof opt == 'undefined') {
@@ -177,7 +176,6 @@ parseUri.options = {
         loose: /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/
     }
 };
-
 
 if (typeof exports !== 'undefined') {
     exports.parseDataStr = parseDataStr;

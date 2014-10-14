@@ -32,7 +32,7 @@
     虾米, http://www.xiami.com/search?key=%s
     piapro, http://piapro.jp/search/?view=audio&keyword=%s
     Lyric, http://music.baidu.com/search/lrc?key=%s
-图片
+图片-Flickr
     百度, http://image.baidu.com/i?ie=utf-8&word=%s
     Google, https://www.google.com.hk/search?tbm=isch&q=%s
     花瓣, http://huaban.com/search/?q=%s
@@ -54,7 +54,7 @@
     京东, http://search.jd.com/Search?keyword=%s&enc=utf-8
     淘宝, http://s.taobao.com/search?q=%s
     亚马逊, http://www.amazon.cn/s/ref=nb_ss?keywords=%s
-译&词典
+译&词典-3
     翻译, http://translate.google.com/translate_t?q=%s&oe=utf-8&ie=UTF-8
     百度译, http://fanyi.baidu.com/#auto2auto|%s
     翻译, http://fanyi.youdao.com/translate?i=%s

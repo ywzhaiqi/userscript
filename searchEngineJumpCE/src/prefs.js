@@ -1,6 +1,3 @@
-
-loadPrefs();
-
 function loadPrefs() {
     prefs.openInNewTab = GM_getValue('openInNewTab', prefs.openInNewTab);
     prefs.debug = GM_getValue('debug', prefs.debug);

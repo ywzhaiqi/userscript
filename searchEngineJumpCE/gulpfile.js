@@ -78,7 +78,7 @@ var config = (function() {
 })();
 
 gulp.task('build', function() {
-    gulp.src(['src/meta.js', 'src/data.js', FILE.RULE, 'src/prefs.js', 'src/utils.js', 'src/parse.js', 'src/main.js'])
+    gulp.src(['src/meta.js', 'src/data.js', FILE.RULE, 'src/prefs.js', 'src/utils.js', 'src/parse.js', 'src/DropDownList.js', 'src/main.js'])
         .pipe(template(config))
         .pipe(concat(config.name + '.user.js'))
         .pipe(gulp.dest('.'));
