@@ -34,7 +34,7 @@
     谷歌, http://www.google.com/search?tbm=isch&q=%s
     picsearch, http://cn.picsearch.com/index.cgi?q=%s
     flickr, https://www.flickr.com/search/?w=all&q=%s
-    deviantart, http://www.deviantart.com/?qh=&section=&q=%s
+    deviantart, http://www.deviantart.com/?qh=&section=&q=%s, ASCII
     findicons, http://findicons.com/search/%s
     easyicon, http://www.easyicon.net/iconsearch/%s
     iconpng, http://www.iconpng.com/search/tag=%s

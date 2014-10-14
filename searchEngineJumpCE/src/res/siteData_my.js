@@ -19,7 +19,7 @@
     pixiv, http://www.pixiv.net/search.php?word=%s
     flickr, http://www.flickr.com/search/?q=%s
     picsearch, http://cn.picsearch.com/index.cgi?q=%s
-    deviantART, http://www.deviantart.com/?q=%s
+    deviantART, http://www.deviantart.com/?q=%s, ASCII
     jpg4, http://img.jpg4.info/index.php?feed=%s
 音乐-音悦Tai
     Songtaste, http://www.songtaste.com/search.php?keyword=%s, gbk
@@ -133,8 +133,8 @@
     绿软联盟, http://www.xdowns.com/i.asp?q=%s, gbk
     绿软家园, http://www.downg.com/search.asp?action=s&sType=ResName&catalog=&keyword=%s, gbk
     创e下载园, http://www.7edown.com/query.asp?q=%s, gbk
-    西西软件, http://so.cr173.com/?keyword=%s, gbk, http://www.cr173.com/favicon.ico
-    pc6下载站, http://so.pc6.com/?keyword=%s, gbk, http://www.pc6.com/favicon.ico
+    西西软件, http://so.cr173.com/?keyword=%s, gbk
+    pc6下载站, http://so.pc6.com/?keyword=%s, gbk
     卡饭论坛, http://bds.kafan.cn/cse/search?q=%s&s=15563968344970452529
 翻译
     google翻译, http://translate.google.com.hk/?q=%s

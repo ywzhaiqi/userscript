@@ -1,14 +1,15 @@
 
 var engineListData = {
     custom: '',
-    my: GM_getResourceText('siteData_my'),
-    simple: GM_getResourceText('siteData_simple'),
-    wenke: GM_getResourceText('siteData_wenke'),
+    my: <%= res['my.js'] %>,
+    simple: <%= res['simple.js'] %>,
+    wenke: <%= res['wenke.js'] %>,
+    ted423: <%= res['ted423.js'] %>,
 };
 
-var ICON_DATA = JSON.parse(GM_getResourceText('ICON_DATA'));
+var MAIN_CSS = <%= res.mainCss %>;
 
-var MAIN_CSS = GM_getResourceText('MAIN_CSS');
+var ICON_DATA = JSON.parse(GM_getResourceText('iconData.json'));
 
 // rules 和 engineList 的对应
 var categoryMap = {

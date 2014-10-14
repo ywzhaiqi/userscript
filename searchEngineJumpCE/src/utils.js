@@ -208,6 +208,37 @@ function getElement(selector) {
     };
 };
 
+function toASCII(str) { //说是ASCII，但其实是dA专用的
+    var length = str.length;
+    var ret = [];
+    var character;
+    var charCode;
+    var gCode;
+    var neReg = /[\dA-z]/;
+    for (var i = 0; i < length; i++) {
+        charCode = str.charCodeAt(i);
+        if (charCode <= 128) {
+            character = str.charAt(i);
+            if (neReg.test(character)) { /*ascii的数字字母不编码*/
+                ret.push(character);
+            } else {
+                ret.push('%' + charCode.toString(16));
+            };
+        } else {
+            gCode = charCode.toString();
+            if (gCode) {
+                while (gCode.length < 4) {
+                    gCode = '0' + gCode;
+                };
+                ret.push('%26%23' + gCode + '%3B');
+            } else {
+                /*字库里面没有.*/
+            };
+        };
+    };
+    return ret.join('');
+};
+
 // unicode转成gbk编码函数
 function toGBK(str) {
     //编码对照 unicode(10进制) : gb2312(16进制)

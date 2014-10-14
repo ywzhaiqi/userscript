@@ -19,15 +19,16 @@ function parseDataStr(str, opt) {
     };
 
     var isEncoding = function(str) {
-        return ['utf-8', 'gbk'].indexOf(str.toLowerCase()) != -1;
+        str = str.trim().toLowerCase();
+        return ['utf-8', 'gb', 'ascii'].some(function(e) {
+            return str.indexOf(e) == 0;
+        });
     };
 
     var parseLine = function (line) {
         line = line.trim();
 
-        if (!line) {
-            return;
-        }
+        if (!line) return;
 
         if (line.indexOf('//') == 0) {
             if (opt.commentLine) {  // 包含注释行

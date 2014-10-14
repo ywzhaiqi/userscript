@@ -18,4 +18,4 @@ searchEngineJumpCE.user.js
 
 - [SearchEngineJump_by_ted423](https://greasyfork.org/zh-CN/scripts/213-searchenginejump-by-ted423)
 - [search_engineJump 文科版](https://greasyfork.org/scripts/2739-search-enginejump)
-- chrome [search2](https://chrome.google.com/webstore/detail/godjlopkhiadfppdjhbekbppchinkmpi) 扩展
+- [search2 - chrome](https://chrome.google.com/webstore/detail/godjlopkhiadfppdjhbekbppchinkmpi) 扩展

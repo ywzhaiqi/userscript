@@ -15,11 +15,7 @@
 // @grant          GM_xmlhttpRequest
 // @grant          GM_getResourceText
 // @run-at         document-end
-// @resource MAIN_CSS        https://raw.githubusercontent.com/ywzhaiqi/userscript/master/searchEngineJumpCE/src/res/main.css
-// @resource siteData_my     https://raw.githubusercontent.com/ywzhaiqi/userscript/master/searchEngineJumpCE/src/res/siteData_my.js
-// @resource siteData_simple https://raw.githubusercontent.com/ywzhaiqi/userscript/master/searchEngineJumpCE/src/res/siteData_simple.js
-// @resource siteData_wenke  https://raw.githubusercontent.com/ywzhaiqi/userscript/master/searchEngineJumpCE/src/res/siteData_wenke.js
-// @resource ICON_DATA       https://raw.githubusercontent.com/ywzhaiqi/userscript/master/searchEngineJumpCE/src/res/iconData.json
+<%= meta_resources %>
 
 <%= includes %>
 

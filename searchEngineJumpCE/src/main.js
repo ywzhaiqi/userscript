@@ -390,6 +390,8 @@ function addContainer(iTarget, iInput) {
                 if (pageEncoding.indexOf('gb') != 0) {// 如果当前页面也使用gbk编码的话，那么不需要再编码
                     value = toGBK(value);
                 }
+            } else if (encoding == 'ASCII') {
+                value = toASCII(value);
             }
 
             // console.log(value);

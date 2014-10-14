@@ -7,38 +7,43 @@ var fs = require('fs');
 var FILE = {
     MAIN_CSS: './src/res/main.css',
     RULE: './src/res/rule.js',
-    SITE_DATA: {
-        my: './src/res/siteData_my.js',
-        simple: './src/res/siteData_simple.js',
-        wenke: './src/res/siteData_wenke.js',
-    },
+    siteData_root: './src/res/siteData_',
+    siteDatas: ['my.js', 'simple.js', 'wenke.js', 'ted423.js'],
     ICON_DATA: './src/res/iconData.json',
+};
+
+// 根据文件的最后修改时间生成链接
+var getResourceURL = function(name) {
+    var path = './src/res/' + name;
+
+    return '// @resource ' + name + ' ' +
+            'https://raw.githubusercontent.com/ywzhaiqi/userscript/master/searchEngineJumpCE/src/res/' +
+            name + '?' +
+            fs.statSync(path).mtime.getTime();
+};
+
+var getResource = function (path) {
+    var str = fs.readFileSync(path, 'utf-8');
+    return str;
+};
+
+var wrapResource = function(str) {
+    return "'" +
+            str.trim()
+                .replace(/\\/g, '\\\\')
+                .replace(/[\n\r]+/g, '\\n')
+                .replace(/'/g, "\\'") +
+            "'";
 };
 
 var config = (function() {
     var pkg = require('./package.json');
 
-    Object.defineProperty(pkg, 'mainCss', {
+    Object.defineProperty(pkg, 'meta_resources', {
         get: function() {
-            return fs.readFileSync(FILE.MAIN_CSS, 'utf-8');
-        }
-    });
-
-    Object.defineProperty(pkg, 'siteDataStr_my', {
-        get: function() {
-            return fs.readFileSync(FILE.SITE_DATA.my, 'utf-8');
-        }
-    });
-
-    Object.defineProperty(pkg, 'siteDataStr_simple', {
-        get: function() {
-            return fs.readFileSync(FILE.SITE_DATA.simple, 'utf-8');
-        }
-    });
-
-    Object.defineProperty(pkg, 'siteDataStr_wenke', {
-        get: function() {
-            return fs.readFileSync(FILE.SITE_DATA.wenke, 'utf-8');
+            return ['iconData.json']
+                .map(getResourceURL)
+                .join('\n');
         }
     });
 
@@ -47,8 +52,25 @@ var config = (function() {
             var r = require(FILE.RULE);
 
             return r.rules.map(function(rule){
-                return '// @include        ' + rule.url.toString().replace(/[igm]*$/, '');
-            }).join('\n');
+                        return '// @include        ' + rule.url.toString().replace(/[igm]*$/, '');
+                    }).join('\n');
+        }
+    });
+
+    pkg.res = {};
+
+    // 动态加载的方式
+    FILE.siteDatas.forEach(function(name) {
+        Object.defineProperty(pkg.res, name, {
+            get: function() {
+                return wrapResource(getResource(FILE.siteData_root + name));
+            }
+        });
+    });
+
+    Object.defineProperty(pkg.res, 'mainCss', {
+        get: function() {
+            return wrapResource(getResource(FILE.MAIN_CSS));
         }
     });
 
@@ -76,7 +98,12 @@ gulp.task('geticon', function() {
 
     var hostMap = {};
 
+    // 从文件 siteData_my.js 中提取 host，并放入 hostMap
     var getHosts = function(str) {
+        if (!str) {
+            throw '要解析的 siteData 为空';
+        }
+
         var englineList = parser.parseDataStr(str, {
             commentLine: true,
             iconType: 0
@@ -95,8 +122,9 @@ gulp.task('geticon', function() {
         });
     };
 
-    Object.keys(FILE.SITE_DATA).forEach(function(key) {
-        getHosts(config['siteDataStr_' + key]);
+    // 提取多个文件
+    FILE.siteDatas.forEach(function(name) {
+        getHosts(getResource(FILE.siteData_root + name));
     });
 
     getIcons(hostMap, FILE.ICON_DATA);
