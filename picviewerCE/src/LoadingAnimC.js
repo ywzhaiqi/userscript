@@ -1,5 +1,4 @@
-
-		//载入动画
+		// 载入动画
 		function LoadingAnimC(data,buttonType,waitImgLoad,openInTopWindow){
 			this.args=arrayFn.slice.call(arguments,0);
 			this.data=data;//data
@@ -27,7 +26,7 @@
 
 				document.body.appendChild(container);
 
-				var self=this;
+				var self = this;
 				container.addEventListener('click',function(e){
 					var tcl=e.target.classList;
 					if(tcl.contains('pv-loading-cancle')){
@@ -39,23 +38,30 @@
 					};
 				},true);
 
-
 				this.setPosition();
 
-				var img=document.createElement('img');
-				img.src= this.buttonType=='current'? this.data.imgSrc : this.data.src;
-
-				var opts={
-					error:function(e){
-						self.error(this,e);
-					},
-				};
-
-				opts[this.waitImgLoad? 'load' : 'ready' ]=function(e){
-					self.load(this,e);
-				};
-
-				this.imgReady=imgReady(img,opts);
+				if (this.buttonType == 'current') {
+					this.loadImg(this.data.imgSrc);
+				} else {
+					if (!this.data.xhr) {
+						this.loadImg(this.data.src);
+					} else {
+						xhrLoad.load({
+							url: this.data.src,
+							xhr: this.data.xhr,
+							cb: function(imgSrc, caption) {
+								if (imgSrc) {
+									self.loadImg(imgSrc);
+								} else {
+									self.error();
+								}
+							},
+							onerror: function() {
+								self.error();
+							}
+						});
+					}
+				}
 			},
 			addStyle:function(){
 				if(LoadingAnimC.styleAdded)return;
@@ -131,7 +137,8 @@
 			},
 			error:function(img,e){
 				this.loadingAnim.classList.add('pv-loading-container_error');
-				console.error('picviewer CE 载入大图错误：%o', this.data);
+				console.debug('picviewer CE 载入大图错误：%o', this.data);
+				console.debug('大图链接为 %s', img.src);
 
 				var self=this;
 				setTimeout(function(){
@@ -146,6 +153,27 @@
 				cs.left=position.left + scrolled.x +1 + 'px';
 				cs.removeProperty('display');
 			},
+
+			// 根据 imgSrc 载入图片
+			loadImg: function(imgSrc) {
+				var self = this;
+
+				var img = document.createElement('img');
+				img.src = imgSrc;
+
+				var opts = {
+					error: function(e) {
+						self.error(this, e);
+					},
+				};
+
+				opts[self.waitImgLoad ? 'load' : 'ready'] = function(e) {
+					self.load(this, e);
+				};
+
+				self.imgReady = imgReady(img, opts);
+			},
+
 			load:function(img,e){
 				this.remove();
 				this.img=img;
@@ -217,7 +245,7 @@
 
 			},
 			getAllValidImgs:function(){
-				var imgs=document.getElementsByTagName('img'),//html collection
+				var imgs=document.getElementsByTagName('img'), // html collection
 					validImgs=[]
 				;
 				arrayFn.forEach.call(imgs,function(img,index,imgs){

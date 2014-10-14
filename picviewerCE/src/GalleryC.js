@@ -1210,7 +1210,32 @@
 				this.thumbScrollbar.scroll(needScrollDis - scrollCenter,false,!noTransition);
 			},
 			getImg:function(ele){
-				var src=dataset(ele,'src');
+				var self = this;
+
+				var src = dataset(ele,'src');
+				var xhr = dataset(ele, 'xhr');
+				if (xhr) {
+					var error = function() {
+						dataset(ele, 'xhr', '');
+						self.getImg(ele);
+					};
+					xhrLoad.load({
+						url: src,
+						xhr: JSON.parse(decodeURI(xhr)),
+						cb: function(imgSrc, caption) {
+							if (imgSrc) {
+								dataset(ele, 'src', imgSrc);
+								dataset(ele, 'xhr', '');
+								self.getImg(ele);
+							} else {
+								error();
+							}
+						},
+						onerror: error
+					});
+					return;
+				}
+
 				this.lastLoading=src;//记住最后读取的图片
 				this.isLoading=true;//表示选择的图片正在读取
 
@@ -1236,8 +1261,6 @@
 				//显示读取指示器。
 				var loadingIndicator=ele.querySelector('.pv-gallery-sidebar-thumb-loading');
 				loadingIndicator.style.display='block';
-
-				var self=this;
 
 
 				this.imgReady=imgReady(src,{
@@ -1414,7 +1437,6 @@
 
 			},
 
-
 			load:function(data, from, reload){
 				if(this.shown || this.minimized){//只允许打开一个,请先关掉当前已经打开的库
 
@@ -1472,6 +1494,7 @@
 						 '<span class="pv-gallery-sidebar-thumb-container'+
 							'" data-type="' + data_i.type +
 							'" data-src="' + data_i.src +
+							(data_i.xhr ? '" data-xhr="' + encodeURI(JSON.stringify(data_i.xhr)) : '') +
 							'" data-thumb-src="' + data_i.imgSrc +
 							'" title="' + data_i.img.title +
 							'">'+

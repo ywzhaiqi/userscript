@@ -1,12 +1,7 @@
-
-		function get(url, callback) {
-			var xhr = new XMLHttpRequest();
-			xhr.open('GET', url);
-			xhr.overrideMimeType('text/html; charset=' + document.characterSet);
-			xhr.onload = function() {
-				callback(xhr.responseText);
-			};
-			xhr.send(null);
+		function getMStr(func) {
+		    var lines = func.toString();
+		    lines = lines.substring(lines.indexOf("/*") + 3, lines.lastIndexOf("*/"));
+		    return lines;
 		}
 
 		function launchFullScreen(element) {

@@ -1,9 +1,11 @@
 module.exports = function(grunt) {
 
 	var paths = [
-	    'src/meta.js', 'src/initHeader.js', 'src/prefs.js', 'src/prefs-2.js', 'src/lib.js',
+	    'src/meta.js', 'src/header.js',
+	    'src/prefs.js', 'src/rule.js', 'src/prefs_icons.js', 'src/prefs_share.js',
+	    'src/lib.js', 'src/xhrLoad.js',
 	    'src/GalleryC.js', 'src/MagnifierC.js', 'src/ImgWindowC.js', 'src/LoadingAnimC.js', 'src/FloatBarC.js',
-	    'src/main.js', 'src/initFooter.js'
+	    'src/main.js', 'src/footer.js'
 	];
 
 	grunt.initConfig({

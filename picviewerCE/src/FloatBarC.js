@@ -1,9 +1,7 @@
-
 		//工具栏
 		function FloatBarC(){
 			this.init();
 		};
-
 
 		FloatBarC.prototype={
 			init:function(){
@@ -284,4 +282,3 @@
 				new LoadingAnimC(this.data, buttonType, waitImgLoad, openInTopWindow);
 			},
 		};
-

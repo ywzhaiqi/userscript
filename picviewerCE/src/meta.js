@@ -10,6 +10,7 @@
 // @grant          GM_getValue
 // @grant          GM_setValue
 // @grant          GM_openInTab
+// @grant          GM_xmlhttpRequest
 // @run-at         document-end
 
 // @namespace      http://userscripts.org/users/NLF

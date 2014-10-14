@@ -18,7 +18,6 @@
 			//base64字符串过长导致正则匹配卡死浏览器
 			var base64Img=/^data:[^;]+;base64,/i.test(img.src);
 
-
 			if(typeof matchedRule=='undefined'){//找到符合站点的高级规则,并缓存.
 				matchedRule=siteInfo._find(function(site,index,array){
 					// if(site.enabled && site.url && site.url.test(URL)){
@@ -56,7 +55,8 @@
 					}
 
 					if(src) {
-						type='rule';
+						type = 'rule';
+
 						if (matchedRule.lazyAttr) {
 							imgSrc = img.getAttribute(matchedRule.lazyAttr);
 						}
@@ -111,7 +111,6 @@
 				};
 			};
 
-
 			if(!src)return;
 
 			var ret={
@@ -119,6 +118,7 @@
 				type:type,//通过哪种方式得到的
 				imgSrc: imgSrc || img.src,//处理的图片的src
 				iPASrc:iPASrc,//图片的第一个父a元素的链接地址
+				xhr: matchedRule && matchedRule.xhr,
 
 				img:img,//处理的图片
 				imgPA:imgPA,//图片的第一个父a元素
