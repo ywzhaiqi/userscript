@@ -5,7 +5,9 @@ GM 脚本
 - [个人主页 - greasyfork.org][ywzhaiqi_greasyfork]
 - [个人主页 - userscripts.org][ywzhaiqi_userscripts]
 
-脚本一览（原创）
+注：有些脚本属于个人使用版本。
+
+脚本一览（原创或修改版）
 ---------------
 
 ### 文件夹
@@ -28,9 +30,7 @@ GM 脚本
 	- [TxtReader.user.js](.修改版/TxtReader.user.js)
 	- [Video_wipe_ADs.user.js](.修改版/Video_wipe_ADs.user.js)
 	- [doubanIMDb.user.js](.修改版/doubanIMDb.user.js)
-	- [picviewerCE.user.js](.修改版/picviewerCE.user.js)
 	- [quick-view-douban 修正版.user.js](.修改版/quick-view-douban 修正版.user.js)
-	- [searchenginejump.user.js](.修改版/searchenginejump.user.js)
 
 ### 单文件
 
