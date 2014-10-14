@@ -345,13 +345,14 @@
 		document.addEventListener('mouseover',globalMouseoverHandler,true);
 
 		// 注册按键
-		if (prefs.gallery.keys.keysEnabled) {
+		if (prefs.floatBar.keys.enable) {
 			document.addEventListener('keydown', function(event) {
 				if (floatBar && floatBar.shown) {
 					var key = String.fromCharCode(event.keyCode).toLowerCase();
 
-					Object.keys(prefs.gallery.keys).some(function(action) {
-						if (key == prefs.gallery.keys[action]) {
+					Object.keys(prefs.floatBar.keys).some(function(action) {
+						if (action == 'enable') return;
+						if (key == prefs.floatBar.keys[action]) {
 							floatBar.open(null, action);
 							event.stopPropagation();
 							event.preventDefault();

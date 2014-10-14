@@ -1106,7 +1106,9 @@
 				container.style.display='none';
 				this.shown=false;
 
+				// 我添加的部分
 				this.initToggleBar();
+				this.initZoom();
 			},
 
 			// 我新加的，是否显示切换 sidebar 按钮
@@ -1136,6 +1138,14 @@
 				this.eleMaps['img-container'].style.borderBottom = isHidden ? prefs.gallery.sidebarSize + 'px solid transparent' : '0';
 				// 修正底部距离
 				this.eleMaps['sidebar-toggle'].style.bottom = isHidden ? '-5px' : '0';
+			},
+			initZoom: function() {  // 如果有放大，则把图片及 sidebar 部分缩放比率改为 1
+				if (prefs.gallery.autoZoom && document.body.style.zoom != undefined) {
+					var oZoom = detectZoom();
+					if (oZoom > 100) {
+						this.eleMaps['body'].style.zoom = 100 / oZoom;
+					}
+				}
 			},
 
 			getThumSpan:function(previous,relatedTarget){

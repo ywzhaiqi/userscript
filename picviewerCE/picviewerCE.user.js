@@ -48,6 +48,15 @@
 					w:100,
 					h:100,
 				},
+
+				// 按键
+				keys: {
+					enable: true,
+					actual: 'a',  //  当出现悬浮条时按下 `a` 打开原图
+					current: 'c',
+					magnifier: 'm',
+					gallery: 'g',
+				},
 			},
 
 			magnifier:{//放大镜的设置.
@@ -69,14 +78,7 @@
 				max:5,//最多预读多少张（前后各多少张）
 
 				autoScrollAndReload: false, // 最后一张图片时，滚动主窗口到最底部，然后自动重载库的图片。还有bug，有待进一步测试
-				// 按键
-				keysEnabled: true,
-				keys: {
-					actual: 'a',  //  当出现悬浮条时按下 `a` 打开原图
-					current: 'c',
-					magnifier: 'm',
-					gallery: 'g',
-				}
+				autoZoom: true,  // 如果有放大，则把图片及 sidebar 部分的缩放改为 100%，增大可视面积（仅在 chrome 下有效）
 			},
 
 			imgWindow:{//图片窗相关设置
@@ -744,6 +746,31 @@
 			} else if (document.webkitExitFullscreen) {
 				document.webkitExitFullscreen();
 			}
+		}
+
+		// 检测缩放
+		function detectZoom (){
+		    var ratio = 0,
+		        screen = window.screen,
+		        ua = navigator.userAgent.toLowerCase();
+
+		    if (window.devicePixelRatio !== undefined) {
+		            ratio = window.devicePixelRatio;
+		    }
+		    else if (~ua.indexOf('msie')) {
+		        if (screen.deviceXDPI && screen.logicalXDPI) {
+		            ratio = screen.deviceXDPI / screen.logicalXDPI;
+		        }
+		    }
+		    else if (window.outerWidth !== undefined && window.innerWidth !== undefined) {
+		        ratio = window.outerWidth / window.innerWidth;
+		    }
+
+		    if (ratio){
+		        ratio = Math.round(ratio * 100);
+		    }
+
+		    return ratio;
 		}
 
 		//获取位置
@@ -2693,7 +2720,9 @@ var xhrLoad = function() {
 				container.style.display='none';
 				this.shown=false;
 
+				// 我添加的部分
 				this.initToggleBar();
+				this.initZoom();
 			},
 
 			// 我新加的，是否显示切换 sidebar 按钮
@@ -2723,6 +2752,14 @@ var xhrLoad = function() {
 				this.eleMaps['img-container'].style.borderBottom = isHidden ? prefs.gallery.sidebarSize + 'px solid transparent' : '0';
 				// 修正底部距离
 				this.eleMaps['sidebar-toggle'].style.bottom = isHidden ? '-5px' : '0';
+			},
+			initZoom: function() {  // 如果有放大，则把图片及 sidebar 部分缩放比率改为 1
+				if (prefs.gallery.autoZoom && document.body.style.zoom != undefined) {
+					var oZoom = detectZoom();
+					if (oZoom > 100) {
+						this.eleMaps['body'].style.zoom = 100 / oZoom;
+					}
+				}
 			},
 
 			getThumSpan:function(previous,relatedTarget){
@@ -7130,13 +7167,14 @@ var xhrLoad = function() {
 		document.addEventListener('mouseover',globalMouseoverHandler,true);
 
 		// 注册按键
-		if (prefs.gallery.keys.keysEnabled) {
+		if (prefs.floatBar.keys.enable) {
 			document.addEventListener('keydown', function(event) {
 				if (floatBar && floatBar.shown) {
 					var key = String.fromCharCode(event.keyCode).toLowerCase();
 
-					Object.keys(prefs.gallery.keys).some(function(action) {
-						if (key == prefs.gallery.keys[action]) {
+					Object.keys(prefs.floatBar.keys).some(function(action) {
+						if (action == 'enable') return;
+						if (key == prefs.floatBar.keys[action]) {
 							floatBar.open(null, action);
 							event.stopPropagation();
 							event.preventDefault();
