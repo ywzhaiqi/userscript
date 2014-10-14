@@ -2,7 +2,7 @@
 // @name           picviewer CE
 // @author         NLF && ywzhaiqi
 // @description    NLF 的围观图修改版
-// @version        2014.10.14.0
+// @version        2014.10.15.0
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
@@ -51,7 +51,7 @@
 			},
 
 			magnifier:{//放大镜的设置.
-				radius:77,//默认半径.单位(像素).
+				radius: 77,//默认半径.单位(像素).
 				wheelZoom:{//滚轮缩放.
 					enabled:true,
 					pauseFirst:true,//需要暂停(单击暂停)后,才能缩放.(推荐,否则因为放大镜会跟着鼠标,如果放大镜过大,那么会影响滚动.)..
@@ -61,8 +61,9 @@
 
 			gallery:{//图库相关设定
 				fitToScreen:true,//图片适应屏幕(适应方式为contain，非cover).
-				sidebarPosition:'bottom',//'top' 'right' 'bottom' 'left'  四个可能值
-				sidebarSize: 120,//侧栏的高（如果是水平放置）或者宽（如果是垂直放置）
+				sidebarPosition: 'bottom',//'top' 'right' 'bottom' 'left'  四个可能值
+					sidebarSize: 120,//侧栏的高（如果是水平放置）或者宽（如果是垂直放置）
+					sidebarToggle: true,  // 是否显示隐藏按钮
 				transition:true,//大图片区的动画。
 				preload:true,//对附近的图片进行预读。
 				max:5,//最多预读多少张（前后各多少张）
@@ -1689,7 +1690,6 @@ var xhrLoad = function() {
 									'<input type="checkbox"  data-command="scrollToEndAndReload"/>'+
 									'<label data-command="scrollToEndAndReload">自动重载</label>'+
 								'</span>'+
-								'<span class="pv-gallery-head-command-drop-list-item" data-command="showHideBottom" title="显示或隐藏缩略图栏">切换缩略图栏</span>'+
 								'<span id="pv-gallery-fullscreenbtn" class="pv-gallery-head-command-drop-list-item" data-command="fullScreen">进入全屏</span>'+
 							'</span>'+
 						'</span>'+
@@ -1735,7 +1735,7 @@ var xhrLoad = function() {
 							'</span>'+
 
 							'<span class="pv-gallery-sidebar-toggle" title="开关侧边栏">'+
-								'<span class="pv-gallery-sidebar-toggle-content">隐藏</span>'+
+								'<span class="pv-gallery-sidebar-toggle-content"></span>'+
 								'<span class="pv-gallery-vertical-align-helper"></span>'+
 							'</span>'+
 
@@ -1774,6 +1774,7 @@ var xhrLoad = function() {
 				maximizeTrigger.className='pv-gallery-maximize-trigger';
 
 				document.body.appendChild(maximizeTrigger);
+
 
 				var validPos=['top','right','bottom','left'];
 				var sBarPosition=prefs.gallery.sidebarPosition;
@@ -2327,15 +2328,6 @@ var xhrLoad = function() {
 
 							exportImages();
 							break;
-						case 'showHideBottom':
-							// 显示隐藏底部图片罗列栏
-							var imgContainer = document.querySelector('.pv-gallery-img-container-bottom'),
-								sidebarContainer = document.querySelector('.pv-gallery-sidebar-container-bottom'),
-								isHidden = !(sidebarContainer.style.visibility == 'hidden');
-							sidebarContainer.style.visibility = isHidden ? 'hidden' : 'visible';
-							// 修正下图片底部的高度
-							imgContainer.style.borderBottom = isHidden ? '0px' : prefs.gallery.sidebarSize + 'px solid transparent';
-							break;
 						case 'reloadGalleryC':
 							self.reload();
 							break;
@@ -2700,6 +2692,37 @@ var xhrLoad = function() {
 
 				container.style.display='none';
 				this.shown=false;
+
+				this.initToggleBar();
+			},
+
+			// 我新加的，是否显示切换 sidebar 按钮
+			initToggleBar: function() {
+				if (prefs.gallery.sidebarToggle) {
+					var toggleBar = this.eleMaps['sidebar-toggle'];
+					toggleBar.style.display = 'block';
+					toggleBar.style.height = '12px';
+					toggleBar.addEventListener('click', this.showHideBottom.bind(this), false);
+
+					// 顶部圆角
+					switch (prefs.gallery.sidebarPosition) {
+						case 'bottom':
+							toggleBar.style.borderRadius = '8px 8px 0 0';
+							break;
+					}
+				}
+			},
+			showHideBottom: function() {  // 显示隐藏 sidebar-container
+
+				var sidebarContainer = this.eleMaps['sidebar-container'],
+					isHidden = sidebarContainer.style.visibility == 'hidden';
+
+				sidebarContainer.style.visibility = isHidden ? 'visible' : 'hidden';
+
+				// 修正下图片底部的高度
+				this.eleMaps['img-container'].style.borderBottom = isHidden ? prefs.gallery.sidebarSize + 'px solid transparent' : '0';
+				// 修正底部距离
+				this.eleMaps['sidebar-toggle'].style.bottom = isHidden ? '-5px' : '0';
 			},
 
 			getThumSpan:function(previous,relatedTarget){
@@ -3869,7 +3892,6 @@ var xhrLoad = function() {
 						text-align:center;\
 						background-color:rgb(0,0,0);\
 						color:#757575;\
-						border:1px solid #333;\
 						white-space:nowrap;\
 						cursor:pointer;\
 						z-index:1;\

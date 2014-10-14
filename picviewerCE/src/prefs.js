@@ -23,7 +23,7 @@
 			},
 
 			magnifier:{//放大镜的设置.
-				radius:77,//默认半径.单位(像素).
+				radius: 77,//默认半径.单位(像素).
 				wheelZoom:{//滚轮缩放.
 					enabled:true,
 					pauseFirst:true,//需要暂停(单击暂停)后,才能缩放.(推荐,否则因为放大镜会跟着鼠标,如果放大镜过大,那么会影响滚动.)..
@@ -33,8 +33,9 @@
 
 			gallery:{//图库相关设定
 				fitToScreen:true,//图片适应屏幕(适应方式为contain，非cover).
-				sidebarPosition:'bottom',//'top' 'right' 'bottom' 'left'  四个可能值
-				sidebarSize: 120,//侧栏的高（如果是水平放置）或者宽（如果是垂直放置）
+				sidebarPosition: 'bottom',//'top' 'right' 'bottom' 'left'  四个可能值
+					sidebarSize: 120,//侧栏的高（如果是水平放置）或者宽（如果是垂直放置）
+					sidebarToggle: true,  // 是否显示隐藏按钮
 				transition:true,//大图片区的动画。
 				preload:true,//对附近的图片进行预读。
 				max:5,//最多预读多少张（前后各多少张）

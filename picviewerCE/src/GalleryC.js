@@ -103,7 +103,6 @@
 									'<input type="checkbox"  data-command="scrollToEndAndReload"/>'+
 									'<label data-command="scrollToEndAndReload">自动重载</label>'+
 								'</span>'+
-								'<span class="pv-gallery-head-command-drop-list-item" data-command="showHideBottom" title="显示或隐藏缩略图栏">切换缩略图栏</span>'+
 								'<span id="pv-gallery-fullscreenbtn" class="pv-gallery-head-command-drop-list-item" data-command="fullScreen">进入全屏</span>'+
 							'</span>'+
 						'</span>'+
@@ -149,7 +148,7 @@
 							'</span>'+
 
 							'<span class="pv-gallery-sidebar-toggle" title="开关侧边栏">'+
-								'<span class="pv-gallery-sidebar-toggle-content">隐藏</span>'+
+								'<span class="pv-gallery-sidebar-toggle-content"></span>'+
 								'<span class="pv-gallery-vertical-align-helper"></span>'+
 							'</span>'+
 
@@ -188,6 +187,7 @@
 				maximizeTrigger.className='pv-gallery-maximize-trigger';
 
 				document.body.appendChild(maximizeTrigger);
+
 
 				var validPos=['top','right','bottom','left'];
 				var sBarPosition=prefs.gallery.sidebarPosition;
@@ -741,15 +741,6 @@
 
 							exportImages();
 							break;
-						case 'showHideBottom':
-							// 显示隐藏底部图片罗列栏
-							var imgContainer = document.querySelector('.pv-gallery-img-container-bottom'),
-								sidebarContainer = document.querySelector('.pv-gallery-sidebar-container-bottom'),
-								isHidden = !(sidebarContainer.style.visibility == 'hidden');
-							sidebarContainer.style.visibility = isHidden ? 'hidden' : 'visible';
-							// 修正下图片底部的高度
-							imgContainer.style.borderBottom = isHidden ? '0px' : prefs.gallery.sidebarSize + 'px solid transparent';
-							break;
 						case 'reloadGalleryC':
 							self.reload();
 							break;
@@ -1114,6 +1105,37 @@
 
 				container.style.display='none';
 				this.shown=false;
+
+				this.initToggleBar();
+			},
+
+			// 我新加的，是否显示切换 sidebar 按钮
+			initToggleBar: function() {
+				if (prefs.gallery.sidebarToggle) {
+					var toggleBar = this.eleMaps['sidebar-toggle'];
+					toggleBar.style.display = 'block';
+					toggleBar.style.height = '12px';
+					toggleBar.addEventListener('click', this.showHideBottom.bind(this), false);
+
+					// 顶部圆角
+					switch (prefs.gallery.sidebarPosition) {
+						case 'bottom':
+							toggleBar.style.borderRadius = '8px 8px 0 0';
+							break;
+					}
+				}
+			},
+			showHideBottom: function() {  // 显示隐藏 sidebar-container
+
+				var sidebarContainer = this.eleMaps['sidebar-container'],
+					isHidden = sidebarContainer.style.visibility == 'hidden';
+
+				sidebarContainer.style.visibility = isHidden ? 'visible' : 'hidden';
+
+				// 修正下图片底部的高度
+				this.eleMaps['img-container'].style.borderBottom = isHidden ? prefs.gallery.sidebarSize + 'px solid transparent' : '0';
+				// 修正底部距离
+				this.eleMaps['sidebar-toggle'].style.bottom = isHidden ? '-5px' : '0';
 			},
 
 			getThumSpan:function(previous,relatedTarget){
@@ -2283,7 +2305,6 @@
 						text-align:center;\
 						background-color:rgb(0,0,0);\
 						color:#757575;\
-						border:1px solid #333;\
 						white-space:nowrap;\
 						cursor:pointer;\
 						z-index:1;\
