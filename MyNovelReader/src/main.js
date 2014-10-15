@@ -184,6 +184,7 @@ var App = {
         App.prevUrl = parser.prevUrl; // 第一个上一页
 
         App.oArticles = [];  // 原始的内容，用于替换的无需刷新
+        App.parsers = [];
 
         // 加入上一章的链接
         if (parser.prevUrl) {
@@ -360,6 +361,7 @@ var App = {
         }
 
         App.oArticles.push(chapter[0].outerHTML);
+        App.parsers.push(parser);
     },
     registerControls: function() {
         // 内容滚动
@@ -554,7 +556,8 @@ var App = {
             App.activeUrl = activeUrl;
 
             if (Config.addToHistory) {
-                var curTitle = $(cur).find('h1').text();
+                var curNum = id.match(/\d+/)[0] - 1;  // 当前是第几个
+                var curTitle = App.parsers[curNum].docTitle;
                 document.title = curTitle;
 
                 // TODO: 起点无法添加整个网址，只能添加后半部分。
