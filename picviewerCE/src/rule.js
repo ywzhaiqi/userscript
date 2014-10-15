@@ -122,14 +122,18 @@
 				url:/^https?:\/\/(?:[^.]+\.)*weibo\.com/i,
 				getImage:function(img){
 					var oldsrc=this.src;
-					var pic=/(\.sinaimg\.cn\/)(?:bmiddle|thumbnail)/i;//微博内容图片.
+					var pic=/(\.sinaimg\.cn\/)(?:bmiddle)/i;//微博内容图片.
+					var pic2=/(\.sinaimg\.cn\/)(?:square|thumbnail)/i;// 微博内容图片2.
 					var head=/(\.sinaimg\.cn\/\d+)\/50\//i;//头像.
 					var photoList=/\.sinaimg\.cn\/thumb150\/\w+/i//相册
 					var newsrc;
 					if(pic.test(oldsrc)){
 						newsrc=oldsrc.replace(pic,'$1large');
 						return newsrc==oldsrc? '' : newsrc;
-					}else if(head.test(oldsrc)){
+					} else if (pic2.test(oldsrc)) {  // large 不是每一张图片都有的
+						newsrc=oldsrc.replace(pic2,'$1mw1024');
+						return newsrc==oldsrc? '' : newsrc;
+					} else if(head.test(oldsrc)){
 						newsrc=oldsrc.replace(head,'$1/180/');
 						return newsrc==oldsrc? '' : newsrc;
 					}else if(photoList.test(oldsrc)){

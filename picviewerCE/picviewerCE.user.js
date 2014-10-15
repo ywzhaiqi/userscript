@@ -2,7 +2,7 @@
 // @name           picviewer CE
 // @author         NLF && ywzhaiqi
 // @description    NLF 的围观图修改版
-// @version        2014.10.15.0
+// @version        2014.10.15.1
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
@@ -49,9 +49,9 @@
 					h:100,
 				},
 
-				// 按键
+				// 按键，在输入框等会有问题
 				keys: {
-					enable: true,
+					enable: false,
 					actual: 'a',  //  当出现悬浮条时按下 `a` 打开原图
 					current: 'c',
 					magnifier: 'm',
@@ -82,7 +82,7 @@
 			},
 
 			imgWindow:{//图片窗相关设置
-				fitToScreen: false,//适应屏幕,并且水平垂直居中(适应方式为contain，非cover).
+				fitToScreen: true,//适应屏幕,并且水平垂直居中(适应方式为contain，非cover).
 				syncSelectedTool:true,//同步当前选择的工具，如果开了多个图片窗口，其中修改一个会反映到其他的上面。
 				defaultTool:'hand',//"hand","rotate","zoom";打开窗口的时候默认选择的工具
 				close:{//关闭的方式
@@ -237,14 +237,18 @@
 				url:/^https?:\/\/(?:[^.]+\.)*weibo\.com/i,
 				getImage:function(img){
 					var oldsrc=this.src;
-					var pic=/(\.sinaimg\.cn\/)(?:bmiddle|thumbnail)/i;//微博内容图片.
+					var pic=/(\.sinaimg\.cn\/)(?:bmiddle)/i;//微博内容图片.
+					var pic2=/(\.sinaimg\.cn\/)(?:square|thumbnail)/i;// 微博内容图片2.
 					var head=/(\.sinaimg\.cn\/\d+)\/50\//i;//头像.
 					var photoList=/\.sinaimg\.cn\/thumb150\/\w+/i//相册
 					var newsrc;
 					if(pic.test(oldsrc)){
 						newsrc=oldsrc.replace(pic,'$1large');
 						return newsrc==oldsrc? '' : newsrc;
-					}else if(head.test(oldsrc)){
+					} else if (pic2.test(oldsrc)) {  // large 不是每一张图片都有的
+						newsrc=oldsrc.replace(pic2,'$1mw1024');
+						return newsrc==oldsrc? '' : newsrc;
+					} else if(head.test(oldsrc)){
 						newsrc=oldsrc.replace(head,'$1/180/');
 						return newsrc==oldsrc? '' : newsrc;
 					}else if(photoList.test(oldsrc)){
@@ -7169,7 +7173,7 @@ var xhrLoad = function() {
 		// 注册按键
 		if (prefs.floatBar.keys.enable) {
 			document.addEventListener('keydown', function(event) {
-				if (floatBar && floatBar.shown) {
+				if (floatBar && floatBar.shown && event.target.nodeName == 'BODY') {
 					var key = String.fromCharCode(event.keyCode).toLowerCase();
 
 					Object.keys(prefs.floatBar.keys).some(function(action) {
@@ -7182,7 +7186,7 @@ var xhrLoad = function() {
 						}
 					})
 				}
-			}, true);
+			}, false);
 		}
 
 	};

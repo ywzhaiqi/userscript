@@ -347,7 +347,7 @@
 		// 注册按键
 		if (prefs.floatBar.keys.enable) {
 			document.addEventListener('keydown', function(event) {
-				if (floatBar && floatBar.shown) {
+				if (floatBar && floatBar.shown && event.target.nodeName == 'BODY') {
 					var key = String.fromCharCode(event.keyCode).toLowerCase();
 
 					Object.keys(prefs.floatBar.keys).some(function(action) {
@@ -360,5 +360,5 @@
 						}
 					})
 				}
-			}, true);
+			}, false);
 		}

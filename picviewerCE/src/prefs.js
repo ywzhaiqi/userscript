@@ -21,9 +21,9 @@
 					h:100,
 				},
 
-				// 按键
+				// 按键，在输入框等会有问题
 				keys: {
-					enable: true,
+					enable: false,
 					actual: 'a',  //  当出现悬浮条时按下 `a` 打开原图
 					current: 'c',
 					magnifier: 'm',
@@ -54,7 +54,7 @@
 			},
 
 			imgWindow:{//图片窗相关设置
-				fitToScreen: false,//适应屏幕,并且水平垂直居中(适应方式为contain，非cover).
+				fitToScreen: true,//适应屏幕,并且水平垂直居中(适应方式为contain，非cover).
 				syncSelectedTool:true,//同步当前选择的工具，如果开了多个图片窗口，其中修改一个会反映到其他的上面。
 				defaultTool:'hand',//"hand","rotate","zoom";打开窗口的时候默认选择的工具
 				close:{//关闭的方式
