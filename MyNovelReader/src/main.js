@@ -54,21 +54,7 @@ var App = {
         }
 
         // load custom replace rules
-        var parseCustomReplaceRules = function(str) {
-            var arr = str.split(/\n/);
-            var rules = {};
-            _.each(arr, function(b) {
-                var pos = b.indexOf('=');
-                if (pos === -1) return;
-
-                var key = b.substring(0, pos),
-                    value = b.substring(pos + 1, b.length);
-                rules[key] = value;
-            });
-            return rules;
-        };
-
-        Rule.customReplace = parseCustomReplaceRules(Config.customReplaceRules);
+        Rule.customReplace = Rule.parseCustomReplaceRules(Config.customReplaceRules);
 
         C.log('载入自定义替换规则成功', Rule.customReplace);
     },
@@ -197,6 +183,8 @@ var App = {
         App.indexUrl = parser.indexUrl;
         App.prevUrl = parser.prevUrl; // 第一个上一页
 
+        App.oArticles = [];  // 原始的内容，用于替换的无需刷新
+
         // 加入上一章的链接
         if (parser.prevUrl) {
             $("<li>")
@@ -230,6 +218,11 @@ var App = {
 
         App.isEnabled = true;
         UI.addButton();
+
+        // 如果已经把当前焦点链接添加到历史记录，则滚动到顶部
+        if (Config.addToHistory) {
+            window.scrollTo(0,0)
+        }
 
         // 有些图片网站高度随着图片加载而变长
         setTimeout(App.scroll, 1000);
@@ -365,6 +358,8 @@ var App = {
             App.menuItems = App.$chapterList.find("div");
             App.scrollItems = $("article");
         }
+
+        App.oArticles.push(chapter[0].outerHTML);
     },
     registerControls: function() {
         // 内容滚动
@@ -557,6 +552,19 @@ var App = {
 
             App.curFocusElement = cur;
             App.activeUrl = activeUrl;
+
+            if (Config.addToHistory) {
+                var curTitle = $(cur).find('h1').text();
+                document.title = curTitle;
+
+                // TODO: 起点无法添加整个网址，只能添加后半部分。
+                var url = activeUrl.replace('http://read.qidian.com', '');
+                try {
+                    unsafeWindow.history.pushState(null, curTitle, url);
+                } catch (e) {
+                    console.error('添加下一页到历史记录失败', e);
+                }
+            }
         }
     },
     getRemain: function() {
@@ -681,18 +689,6 @@ var App = {
     addNextPage: function(parser) {
         if (parser.content) {
             App.appendPage(parser);
-
-            if (Config.addToHistory) {
-                document.title = parser.docTitle;
-
-                // TODO: 起点无法添加整个网址，只能添加后半部分。
-                var url = parser.curPageUrl.replace('http://read.qidian.com', '');
-                try {
-                    unsafeWindow.history.pushState(null, parser.docTitle, url);
-                } catch (e) {
-                    console.error('添加下一页到历史记录失败', e);
-                }
-            }
 
             App.$loading.hide();
             App.requestUrl = parser.nextUrl;

@@ -407,7 +407,23 @@ var UI = {
         Config.extra_css = css;
 
         Config.customSiteinfo = $form.find("#custom_siteinfo").get(0).value;
-        Config.customReplaceRules = $form.find("#custom_replace_rules").get(0).value;
+
+        // 自定义替换规则
+        var rules = $form.find("#custom_replace_rules").get(0).value;
+        Config.customReplaceRules = rules;
+
+        var oContentHtml = App.oArticles.join('\n');
+        if (rules) {
+            var text = oContentHtml;
+            // 转换规则
+            rules = Rule.parseCustomReplaceRules(rules);
+            // 替换
+            text = Parser.prototype.replaceHtml(text, rules);
+
+            UI.$content.html(text);
+        } else {
+            UI.$content.html(oContentHtml);
+        }
 
         UI.hide();
     },

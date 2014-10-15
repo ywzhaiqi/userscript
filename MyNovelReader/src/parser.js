@@ -329,18 +329,7 @@ Parser.prototype = {
 
         // 拼音字、屏蔽字修复
         if(contentHandle){
-            // 先提取出 img
-            var imgs = {};
-            var i = 0;
-            text = text.replace(/<(img|a)[^>]*>/g, function(img){
-                imgs[i] = img;
-                return "{" + (i++) + "}";
-            });
-
-            text = this.contentReplacements(text);
-
-            // 还原图片
-            text = $.nano(text, imgs);
+            text = this.replaceHtml(text, Rule.replace);
         }
 
         /* Turn all double br's into p's */
@@ -452,11 +441,27 @@ Parser.prototype = {
 
         return text;
     },
-    contentReplacements: function (text) {
+    replaceHtml: function(text, replaceRule) {
+        // 先提取出 img
+        var imgs = {};
+        var i = 0;
+        text = text.replace(/<(img|a)[^>]*>/g, function(img){
+            imgs[i] = img;
+            return "{" + (i++) + "}";
+        });
+
+        text = this.contentReplacements(text, replaceRule);
+
+        // 还原图片
+        text = $.nano(text, imgs);
+
+        return text;
+    },
+    contentReplacements: function (text, rule) {
         if (!text) return text;
 
-        for (var key in Rule.replace) {
-            text = text.replace(new RegExp(key, "ig"), Rule.replace[key]);
+        for (var key in rule) {
+            text = text.replace(new RegExp(key, "ig"), rule[key]);
         }
         return text;
     },
