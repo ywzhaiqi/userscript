@@ -5,6 +5,7 @@ function loadPrefs() {
     prefs.engineListDataType = GM_getValue('engineListDataType', prefs.engineListDataType);
 
     engineListData.custom = GM_getValue('engineList') || '';
+    debug = prefs.debug ? console.debug.bind(console) : function() {};
 }
 
 function openPrefs(){
@@ -19,14 +20,14 @@ function openPrefs(){
     var styleNode = GM_addStyle('\
         #sej-prefs-setup { position:fixed;z-index:2147483647;top:38px;right:60px;padding:20px 30px 10px;background:#eee;width:500px;border:1px solid black; }\
         #sej-prefs-setup * { color:black;text-align:left;line-height:normal;font-size:12px; }\
-        #sej-prefs-setup i { font-family: "微软雅黑", arial; }\
+        #sej-prefs-setup i { "Microsoft YaHei UI","微软雅黑",Arial; }\
         #sej-prefs-setup a { color:black;text-decoration:underline; }\
         #sej-prefs-setup div { text-align:center;font-size:14px; }\
         #sej-prefs-title { font-weight:bold; }\
         #sej-prefs-setup ul { margin:15px 0 0 0;padding:0;list-style:none;background:#eee;border:0; }\
         #sej-prefs-setup input, #sej-prefs-setup select { border:1px solid gray;padding:2px;background:white; }\
         #sej-prefs-setup li { margin:0;padding:6px 0;vertical-align:middle;background:#eee;border:0 }\
-        #sej-prefs-setup textarea { width:98%; height:60px; margin:3px 0; }\
+        #sej-prefs-setup textarea { width:98%; height:60px; margin:3px 0; font-family: "Microsoft YaHei UI","微软雅黑",Arial; }\
         #sej-prefs-setup button { padding: 1px 6px; font-size: 12px; margin-right: 3px; }\
         #sej-prefs-setup #top-buttons{background:none repeat scroll 0 0 #fff;display:block;position:absolute;top:-35px;border-right:12px solid #e0e0e0;border-top:12px solid #e0e0e0;border-left:12px solid #e0e0e0;text-align:center}\
         #sej-prefs-setup img { display: initial; }\

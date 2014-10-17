@@ -1,14 +1,16 @@
 网页
     Google, https://www.google.com.hk/search?q=%s&ie=utf-8&safe=off
+    // Google, https://www.google.com/ncr#num=30&newwindow=1&safe=off&hl=zh-CN&q=%s
     // wen.lu, https://wen.lu/search?q=%s&hl=zh-CN&safe=off&ie=utf-8, www.google.com.hk
     百度, http://www.baidu.com/s?wd=%s&ie=utf-8
-    必应, http://cn.bing.com/search?q=%s
+    必应, https://cn.bing.com/search?q=%s
     360, http://www.so.com/s?ie=utf-8&q=%s
     搜狗, http://www.sogou.com/web?query=%s
     // 搜搜, http://www.soso.com/q?query=%s&utf-8=ie
     // 有道, http://www.youdao.com/search?q=%s&ue=utf8
     // DuckDuckGo, https://duckduckgo.com/?q=%s&kl=cn-zh
     // Wolfram, http://www.wolframalpha.com/input/?i=%s
+
 图片-pixiv
     Google, https://www.google.com.hk/search?q=%s&tbm=isch
     百度, http://image.baidu.cn/i?ie=utf-8&word=%s
@@ -21,6 +23,7 @@
     picsearch, http://cn.picsearch.com/index.cgi?q=%s
     deviantART, http://www.deviantart.com/?q=%s, ASCII
     jpg4, http://img.jpg4.info/index.php?feed=%s
+
 音乐-音悦Tai
     Songtaste, http://www.songtaste.com/search.php?keyword=%s, gbk
     百度音乐, http://music.baidu.com/search?ie=utf-8&oe=utf-8&key=%s
@@ -34,6 +37,7 @@
     雷电音乐, http://www.leidian.com/s?q=%s&ie=utf-8&t=music
     网易云音乐, http://music.163.com/#/search/m/?s=%s
     百度歌词, http://music.baidu.com/search/lrc?key=%s
+
 视频-搜库
     豆瓣电影, http://movie.douban.com/subject_search?search_text=%s&cat=1002, www.douban.com
     搜库, http://www.soku.com/v?keyword=%s
@@ -57,6 +61,7 @@
         ku6 视频, http://so.ku6.com/search?q=%s&ie=utf-8&oe=utf-8
         迅雷看看, http://search.kankan.com/search.php?keyword=%s
         niconico, http://www.nicovideo.jp/search/%s
+
 知识-2
     百度百科, http://baike.baidu.com/search/word?pic=1&sug=1&word=%s
     维基(zh), http://zh.wikipedia.org/wiki/%s
@@ -80,6 +85,7 @@
         github, https://github.com/search?q=%s
         krugle, http://opensearch.krugle.org/document/search/#query=%s
         npm, https://www.npmjs.org/search?q=%s
+
 社交
     新浪微博, http://s.weibo.com/weibo/%s
     豆瓣, http://www.douban.com/search?source=suggest&q=%s
@@ -88,6 +94,7 @@
     Twitter, https://twitter.com/search/%s
     Facebook, https://www.facebook.com/search/results.php?q=%s
     Google+, https://plus.google.com/s/%s
+
 购物
     一淘, http://s.etao.com/search?q=%s
     惠惠, http://www.huihui.cn/search?q=%s
@@ -103,13 +110,14 @@
     其它--购物
         ebay, http://www.ebay.com/sch/i.html?_nkw=%s
         QQ网购, http://se.wanggou.com/comm_search?KeyWord=%s, gbk
+
 下载-种子快搜
     下载搜索, https://www.google.com/cse?q=%s&newwindow=1&cx=006100883259189159113%3Atwgohm0sz8q
     网盘搜索, http://so.baiduyun.me/search.php?wd=%s
     我乐盘, http://www.56pan.com/s.php?q=%s&wp=0
     种子快搜, http://www.searchbt.net/btsearch.php?query=%s
     bt 天堂, http://www.bttiantang.com/s.php?q=%s
-    我爱P2P, http://oabt.org/?topic_title=%s
+    我爱P2P, http://www.byhh.org/?topic_title=%s
     VeryCD, http://www.verycd.com/search/folders/%s
     射手字幕, http://www.shooter.cn/search/%s
     影视--下载搜索
@@ -117,18 +125,19 @@
         天天美剧, http://www.ttmeiju.com/search.php?keyword=%s&range=0&mozcharset=gbk
         极影动漫, http://bt.ktxp.com/search.php?keyword=%s
         动漫花园, http://share.dmhy.org/topics/list?keyword=%s
-    电驴-ed2000-下载搜索
+    BT-ed2000-下载搜索
         simpledCD, http://simplecd.me/search/entry/?query=%s
         ed2000, http://www.ed2000.com/FileList.asp?SearchWord=%s
         海盗湾, https://kickass.to/usearch/%s/
         btspread, http://www.btspread.com/search/%s
         torrentkitty, http://www.torrentkitty.org/search/%s
         BTDigg, https://btdigg.org/search?q=%s
+
 软件
     Firefox 附加组件, https://addons.mozilla.org/zh-cn/firefox/search/?q=%s
     Chrome 应用商店, https://chrome.google.com/webstore/search-extensions/%s?hl=zh-CN
     greasyfork, https://greasyfork.org/scripts/search?q=%s
-    userscripts, http://www.google.com.hk/search?q=site:userscripts-mirror.org+inurl:scripts+inurl:show+%s, userscripts.org
+    userscripts, https://www.google.com.hk/search?q=site:userscripts-mirror.org+inurl:scripts+inurl:show+%s, userscripts.org
     华彩软件, http://www.huacolor.com/search.asp?word=%s, gbk
     绿软联盟, http://www.xdowns.com/i.asp?q=%s, gbk
     绿软家园, http://www.downg.com/search.asp?action=s&sType=ResName&catalog=&keyword=%s, gbk
@@ -136,20 +145,22 @@
     西西软件, http://so.cr173.com/?keyword=%s, gbk
     pc6下载站, http://so.pc6.com/?keyword=%s, gbk
     卡饭论坛, http://bds.kafan.cn/cse/search?q=%s&s=15563968344970452529
+
 翻译
-    google翻译, http://translate.google.com.hk/?q=%s
+    google翻译, https://translate.google.com.hk/?q=%s
     百度翻译, http://fanyi.baidu.com/#auto/zh/%s
     有道翻译, http://fanyi.youdao.com/translate?i=%s
     bing 翻译, http://www.bing.com/translator/?&text=%s&from=&to=zh-chs
     抓鸟翻译, http://dict.zhuaniao.com/collab/translate.php?translation_query=%s
-    有道词典, http://dict.youdao.com/search?q=%s
-    爱词霸, http://www.iciba.com/%s
-    海词, http://dict.cn/%s
-    沪江EN, http://dict.hjenglish.com/w/%s
-    必应词典, http://www.bing.com/dict/search?q=%s&go=&qs=bs&form=CM
-    大耳朵, http://dict.bigear.cn/w/%s/
-    汉典, http://www.zdic.net/sousuo/?q=%s
-    nciku, http://www.nciku.com/search/all/%s
+    词典--google翻译
+        有道词典, http://dict.youdao.com/search?q=%s
+        爱词霸, http://www.iciba.com/%s
+        海词, http://dict.cn/%s
+        沪江EN, http://dict.hjenglish.com/w/%s
+        必应词典, http://www.bing.com/dict/search?q=%s&go=&qs=bs&form=CM
+        大耳朵, http://dict.bigear.cn/w/%s/
+        汉典, http://www.zdic.net/sousuo/?q=%s
+        nciku, http://www.nciku.com/search/all/%s
 // 小说
 //     booklink, http://booklink.me/after_search.php
 //         - name: %s, search_type: book

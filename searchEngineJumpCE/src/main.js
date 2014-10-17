@@ -15,7 +15,7 @@ function addContainer(iTarget, iInput) {
 
     // 创建dom
     var aPattern = '<a href="" class="sej-engine"' + (prefs.openInNewTab ? ' target="_blank" ' : ' ') +
-        'encoding="$encoding$" url="$url$" onclick="$onclick$" title="$title$">' +
+        'encoding="$encoding$" url="$url$" onclick="$onclick$" _title="$title$">' +
         '<img src="$favicon$" class="sej-engine-icon" />$form$<span>$name$</span></a>';
 
     var container = document.createElement('sejspan');
@@ -82,7 +82,7 @@ function addContainer(iTarget, iInput) {
 
         // 插入一个节点给 insertBefore 用
         var lastInsertTitle = category.name;
-        engines = engines.join('') + '<span class="sej-engine" title="' + lastInsertTitle + '" style="display: none;"></span>';
+        engines = engines.join('') + '<span class="sej-engine" _title="' + lastInsertTitle + '" style="display: none;"></span>';
 
         if (isTheSameCategory(category.name, matchedRule.engineList)) {
             container.innerHTML = '<sejspan id="sej-expanded-category">'+ category.name +'</sejspan>' + engines;
@@ -94,7 +94,6 @@ function addContainer(iTarget, iInput) {
             // 有子 droplist
             var a = dropList.firstElementChild.cloneNode(true);
             a.className = a.className + ' sej-drop-list-trigger';
-            a.title = category.name;
             a.lastChild.textContent = category.name;
 
             // 更改图标
@@ -139,20 +138,7 @@ function addContainer(iTarget, iInput) {
         var ins;
         var insert = a.dataset.insert;
         if (typeof insert !== 'undefined') {
-            ins = document.querySelector('.sej-engine[title="' + insert + '"]:not(.sej-drop-list-trigger)');
-
-            // var prevChilds = document.querySelectorAll('');
-
-            // var prevItem = dropLists[index - 2];
-            // if (prevItem) {
-            //     var prevChilds = prevItem.dropList.children;
-
-            //     if (insert < prevChilds.length) {
-            //         ins = prevChilds[insert];
-            //     } else {
-            //         ins = document.querySelector('.sej-engine[title="' + a.dataset.insert + '"]:not(.sej-drop-list-trigger)');
-            //     }
-            // }
+            ins = document.querySelector('.sej-engine[_title="' + insert + '"]:not(.sej-drop-list-trigger)');
         }
 
         if (ins) {
@@ -177,11 +163,11 @@ function addContainer(iTarget, iInput) {
         new DropDownList(a, dropList);
     });
 
-	// 添加设置按钮
-	var configBtn = document.createElement('a');
-	configBtn.innerHTML = '<img class="sej-engine-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABbklEQVQ4jZWSu0oDURCGp9BCLcRCAzFGsjvzHwyoWbMzYKWdErBREQQLG/F90qW1y5sEfYGgTyBewBtRiYlFdkPibowOnGrn+883Z5bo95ogKk+O6RkNQ6wFsbbvry38iWAOD5mDIhGRSHjgYF0H64qE50REhUKw7FhPRsC6B9GOE31z0GYM94/YtYM99wL1NBEArC8CepcAk+fF80qSauGgV70m/YRoTURLzEERElYh1nKwLsRuEqDnlWcd6xFEOw7WBewiYShhNbYA9CyfX50b+GhPg5rMtpl8o6A42AOxdiazNhOp28NwgG79DBDR0vBb6Ec2W54mIqJcLjcFhBWIfkWK9eQIWhtY63EfHm6yRqwHaJ053Ga2TcAuHPQzurmZugHPK+cd9H78GvVVZGMlEcBsO9EIjxBrxOP0jLQD6CXEbuMRUi2AsOL7G0xE5Hzd7d8a/b5LS0FWRPdT4ZSacLBniL4zB/N/hf5d3635oJ6ZNLU9AAAAAElFTkSuQmCC" />';
-	configBtn.onclick = openPrefs;
-	container.appendChild(configBtn);
+    // 添加设置按钮
+    var configBtn = document.createElement('a');
+    configBtn.innerHTML = '<img class="sej-engine-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABbklEQVQ4jZWSu0oDURCGp9BCLcRCAzFGsjvzHwyoWbMzYKWdErBREQQLG/F90qW1y5sEfYGgTyBewBtRiYlFdkPibowOnGrn+883Z5bo95ogKk+O6RkNQ6wFsbbvry38iWAOD5mDIhGRSHjgYF0H64qE50REhUKw7FhPRsC6B9GOE31z0GYM94/YtYM99wL1NBEArC8CepcAk+fF80qSauGgV70m/YRoTURLzEERElYh1nKwLsRuEqDnlWcd6xFEOw7WBewiYShhNbYA9CyfX50b+GhPg5rMtpl8o6A42AOxdiazNhOp28NwgG79DBDR0vBb6Ec2W54mIqJcLjcFhBWIfkWK9eQIWhtY63EfHm6yRqwHaJ053Ga2TcAuHPQzurmZugHPK+cd9H78GvVVZGMlEcBsO9EIjxBrxOP0jLQD6CXEbuMRUi2AsOL7G0xE5Hzd7d8a/b5LS0FWRPdT4ZSacLBniL4zB/N/hf5d3635oJ6ZNLU9AAAAAElFTkSuQmCC" />';
+    configBtn.onclick = openPrefs;
+    container.appendChild(configBtn);
 
     // 插入到文档中
     switch (matchedRule.insertIntoDoc.where.toLowerCase()) {
@@ -212,15 +198,17 @@ function addContainer(iTarget, iInput) {
 
     // 插入后调整下，如果变成两行，隐藏文字
     if (prefs.hideEnglineLabel == 2 || (prefs.hideEnglineLabel == 1 && isTwoLine)) {
-        [].forEach.call(document.querySelectorAll('#sej-container > a[class="sej-engine"] > span'), function(link) {
-        	link.parentNode.classList.add('only-icon');
+        [].forEach.call(document.querySelectorAll('#sej-container > a[class="sej-engine"] > span'), function(span) {
+            var link = span.parentNode;
+            link.classList.add('only-icon');
+            link.setAttribute('title', span.textContent);
         });
 
         // 取消前面的距离并居中
-        if (isTwoLine) {
-            container.style.paddingLeft = '';
-            container.style.textAlign = 'center';
-        }
+        // if (isTwoLine) {
+        //     container.style.paddingLeft = '';
+        //     container.style.textAlign = 'center';
+        // }
     }
 
     function mousedownhandler(e) {
@@ -274,7 +262,15 @@ function run() {
 
     // 判断插入位置和输入框是否存在
     var iTarget = getElement(matchedRule.insertIntoDoc.target);
-    var iInput = typeof matchedRule.insertIntoDoc.keyword == 'function' ? matchedRule.insertIntoDoc.keyword : getElement(matchedRule.insertIntoDoc.keyword);
+    var iInput;
+    if (typeof matchedRule.insertIntoDoc.keyword == 'function') {
+        iInput = matchedRule.insertIntoDoc.keyword;
+        if (!iInput()) {
+            return;
+        }
+    } else {
+        iInput = getElement(matchedRule.insertIntoDoc.keyword);
+    }
     debug('插入的位置为 %o', iTarget);
     debug('匹配的输入框为 %o', iInput);
 
@@ -298,18 +294,20 @@ function run() {
 }
 
 function remove() {
-	var elems = document.querySelectorAll('#sej-container, sejspan.sej-drop-list');
-	if (!elems) return;
+    var elems = document.querySelectorAll('#sej-container, sejspan.sej-drop-list');
+    if (!elems) return;
 
-	[].forEach.call(elems, function(elem) {
-		elem.parentNode.removeChild(elem);
-	});
+    [].forEach.call(elems, function(elem) {
+        elem.parentNode.removeChild(elem);
+    });
 }
 
 // iframe 禁止加载
 if (window.self != window.top) return;
 
 loadPrefs();
+
+loadIconData();
 
 var matchedRule;
 

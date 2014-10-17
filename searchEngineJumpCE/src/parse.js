@@ -66,9 +66,8 @@ function parseDataStr(str, opt) {
         if (typeof ICON_DATA != 'undefined') {
             if (!engine.favicon) {  // 不存在尝试通过链接的域名获取
                 engine.favicon = ICON_DATA[engine.host];
-            } else if (engine.favicon.indexOf('data:image') == 0) {  // base64 图标
-
-            } else if (engine.favicon.indexOf('http') == 0) {  // 在线图标
+            } else if (engine.favicon.startsWith('data:image')) {  // base64 图标
+            } else if (engine.favicon.startsWith('http')) {  // 在线图标
                 engine.favicon = ICON_DATA[parseUri(engine.favicon).host] || engine.favicon;
             } else {  // 域名
                 engine.favicon = ICON_DATA[engine.favicon] || getFaviconUrl(engine.favicon, opt.iconType);
@@ -104,15 +103,16 @@ function parseDataStr(str, opt) {
 }
 
 function getFaviconUrl(url, type) {
+    var uri = parseUri(url);
+
     switch(type) {
         case 0:
             return url;
         case 1:
             return 'http://g.etfv.co/' + url;
         case 2:
-            return 'http://www.google.com/s2/favicons?domain=' + parseUri(url).host;
+            return 'http://www.google.com/s2/favicons?domain=' + uri.host;
         case 3:
-            var uri = parseUri(url);
             return uri.protocol + '://' + uri.host + '/favicons.ico';
         default:
             return 'http://api.byi.pw/favicon?url=' + url;

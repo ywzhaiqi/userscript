@@ -93,6 +93,7 @@ exports.run = function(oHostMap, ICON_DATA_FILE) {
 
     if (moreHosts.length === 0) {
         console.log('没有新增的 host');
+        finish([]);
         return;
     }
 

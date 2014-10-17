@@ -14,6 +14,17 @@ searchEngineJumpCE.user.js
 - 新增监视标题变化的功能，随着标题的变化，会重新插入。主要是对百度、Google 不刷新页面搜索的支持。
 - 新增 POST 的支持，来自 [POST 实现 - Greasy Forum](https://greasyfork.org/forum/discussion/1490/post-%E5%AE%9E%E7%8E%B0)
 
+### 添加图标
+
+脚本内置一些常用站点的图标，如果图标不存在，请按示例加载最后面
+
+    360音乐, http://s.music.so.com/s?ie=utf-8&q=%s, http://www.so.com/favicon.ico
+
+如果是已经存在的域名，也可简写成 www.amazon.cn
+
+	亚马逊（中）, http://www.amazon.cn/s/ref=nb_sb_noss?field-keywords=%s
+	亚马逊（英）, http://www.amazon.com/s/ref=nb_sb_noss?field-keywords=%s, www.amazon.cn
+
 ### 同类脚本或扩展
 
 - [SearchEngineJump_by_ted423](https://greasyfork.org/zh-CN/scripts/213-searchenginejump-by-ted423)

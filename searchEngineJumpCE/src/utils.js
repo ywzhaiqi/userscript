@@ -3,8 +3,14 @@
 
 var debug = prefs.debug ? console.debug.bind(console) : function() {};
 
+if (typeof String.prototype.startsWith != 'function') {
+    String.prototype.startsWith = function(str) {
+        return this.slice(0, str.length) == str;
+    };
+}
+
 // var iconUrl = 'http://www.google.com/s2/favicons?domain=www.google.com';
-// getImageBase64(iconUrl);
+// imageUrlToBase64(iconUrl);
 function imageUrlToBase64(iconUrl, callback) {
     GM_xmlhttpRequest({
         method: "GET",
@@ -30,6 +36,7 @@ function imageUrlToBase64(iconUrl, callback) {
         }
     });
 }
+
 
 // 获取 method 为 POST 的表单的 HTML
 function getPostFormHTML(url, args, newTab) {

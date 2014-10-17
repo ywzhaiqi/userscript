@@ -9,6 +9,7 @@
     搜狗, http://www.sogou.com/web?query=%s
     SimilarSite, http://www.similarsitesearch.com/q.php?URL=%s
     DuckDuckGo, https://duckduckgo.com/?q=%s
+
 视频
     A站, http://www.acfun.tv/search.aspx#query=%s
     B站, http://www.bilibili.tv/search?keyword=%s
@@ -22,6 +23,7 @@
     乐视, http://so.letv.com/s?wd=%s
     搜狐, http://so.tv.sohu.com/mts?wd=%s
     pps, http://so.iqiyi.com/pps/?q=%s
+
 音乐
     网易云音乐, http://music.163.com/#/search/m/?s=%s
     百度, http://music.baidu.com/search?key=%s&ie=utf-8&oe=utf-8
@@ -30,8 +32,9 @@
     一听, http://so.1ting.com/song?q=%s
     酷我, http://sou.kuwo.cn/ws/NSearch?key=%s
     搜狗, http://mp3.sogou.com/music.so?query=%s&ie=utf-8&oe=utf-8
+
 图片
-    谷歌, http://www.google.com/search?tbm=isch&q=%s
+    谷歌, https://www.google.com/search?tbm=isch&q=%s
     picsearch, http://cn.picsearch.com/index.cgi?q=%s
     flickr, https://www.flickr.com/search/?w=all&q=%s
     deviantart, http://www.deviantart.com/?qh=&section=&q=%s, ASCII
@@ -42,6 +45,7 @@
     搜狗, http://pic.sogou.com/pics?query=%s, gbk
     必应, http://cn.bing.com/images/search?q=%s
     有道, http://image.youdao.com/search?q=%s
+
 ACG
     pixiv, http://www.pixiv.net/search.php?s_mode=s_tag&word=%s
     Safebooru, http://safebooru.org/index.php?page=post&s=list&tags=%s
@@ -54,6 +58,7 @@ ACG
     Zerochan, http://www.zerochan.net/%s
     anime-pictures, http://anime-pictures.net/pictures/view_posts/0?search_tag=%s
     anime-girls, http://anime-girls.ru/qsearch.php?q=%s
+
 下载
     极影动漫, http://bt.ktxp.com/search.php?keyword=%s
     动漫花园, http://share.dmhy.org/topics/list?keyword=%s
@@ -68,6 +73,7 @@ ACG
     ED2000, http://www.ed2000.com/FileList.asp?PageIndex=2&SearchWord=%s&searchMethod=ED2000
     笔下文学, http://www.baidu.com/s?wd=%s&ct=2097152&si=www.bxwx.org&sts=www.bxwx.org
     txt下载, http://www.txtxiazai.org/s/%s
+
 BT
     磁力搜索, http://www.btcherry.com/search?keyword=%s
     kickass, http://kickass.to/usearch/?q=%s
@@ -80,6 +86,7 @@ BT
     torrentkitty, http://www.torrentkitty.org/search/%s
     YourBittorrent, http://yourbittorrent.com/?q=%s
     BitSnoop, http://bitsnoop.com/search/all/%s
+
 翻译
     海词, http://dict.cn/%s
     爱词霸, http://www.iciba.com/%s/
@@ -90,6 +97,7 @@ BT
     沪江英语, http://dict.hjenglish.com/w/%s
     有道词典, http://dict.youdao.com/search?q=%s&ue=utf8
     必应词典, http://cn.bing.com/dict/search?q=%s
+
 知识
     MDN, https://developer.mozilla.org/en-US/search?q=%s
     维基(zh), https://zh.wikipedia.org/wiki/%s
@@ -102,6 +110,7 @@ BT
     github, https://github.com/search?utf8=✓&q=%s
     krugle, http://opensearch.krugle.org/document/search/#query=%s
     知乎, http://www.zhihu.com/search?q=%s
+
 火狐
     mozillaZine, http://www.google.com/cse?cx=003258325049489668794%3Aru2dpahviq8&q=%s, kb.mozillazine.org
     附件组件, https://addons.mozilla.org/zh-CN/firefox/search/?q=%s
@@ -112,6 +121,7 @@ BT
     火狐贴吧, http://tieba.baidu.com/f/search/res?ie=utf-8&kw=firefox&qw=%s&rn=100&un=&sm=1s
     卡饭, http://bds.kafan.cn/cse/search?q=%s&s=15563968344970452529
     火狐官方帮助, https://support.mozilla.org/zh-CN/search?q=%s
+
 软件
     华彩软件, http://www.huacolor.com/search.asp?word=%s, gbk
     绿软联盟, http://zhannei.baidu.com/cse/search?s=1955694951866873337&q=%s
@@ -121,6 +131,7 @@ BT
     绿茶软件园, http://www.33lc.com/index.php?m=search&c=index&a=init&typeid=2&siteid=1&q=%s, gbk
     pc6下载站, http://so.pc6.com/?keyword=%s, gbk
     快乐无极, http://www.oyksoft.com/search.asp?action=s&sType=ResName&keyword=%s, gbk
+
 购物
     淘宝, http://s.taobao.com/search?q=%s
     天猫, http://list.tmall.com/search_product.htm?q=%s, gbk

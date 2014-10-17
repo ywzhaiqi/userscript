@@ -36,8 +36,10 @@ var rules = [
                if (input) return input.value;
            }, */
            keyword: '//input[@name="q"]',
-           target: 'css;#rcnt',
-           where: 'beforeBegin',
+           // target: 'css;#rcnt',
+           // where: 'beforeBegin',
+           target: 'css;#top_nav',
+           where: 'afterEnd',
         },
         // 自定义样式，我新增的
         stylish: '',
@@ -232,14 +234,17 @@ var rules = [
         }
     },
     {name: "百度知道",
-        url: /^https?:\/\/zhidao\.baidu\.com\/(search|question)/,
+        // url: /^https?:\/\/zhidao\.baidu\.com\/(search|question)/,
+        url: /^https?:\/\/zhidao\.baidu\.com\/search/,
         enabled: true,
         engineList: "知识",
         style: '\
             margin-bottom: 8px;\
         ',
         insertIntoDoc: {
-            keyword: 'css;input#kw',
+            keyword: function() {
+              return document.querySelector('#kw').value;
+            },
             target: 'css;#body',
             where: 'beforeBegin'
         }
@@ -297,9 +302,8 @@ var rules = [
         engineList: "视频",
         enabled: true,
         style: "\
-           border-bottom: 1px solid #EEEEEE;\
-           border-top: 1px solid #EEEEEE;\
-           text-align: center;\
+            width: 970px;\
+            margin: 0 auto;\
         ",
         insertIntoDoc: {
            keyword: 'css;#headq',
@@ -849,8 +853,8 @@ var rules = [
         engineList: "下载",
         enabled: true,
         style: '\
-            border-bottom: 1px solid #00AFFF;\
-            text-align: center;\
+            width: 980px;\
+            margin: 0 auto;\
         ',
         insertIntoDoc: {
             keyword: 'css;#keyword',
@@ -875,18 +879,17 @@ var rules = [
         },
     },
     {name: "我爱p2p",
-        url: /^http:\/\/oabt\.org\/\?topic_title=/,
+        url: /^http:\/\/(?:oabt|www\.byhh)\.org\/\?topic_title=/,
         engineList: "下载",
         enabled: true,
         style: "\
-            border-bottom: 1px solid #3BA1DC;\
-            border-top: 1px solid #3BA1DC;\
-            text-align: center;\
+            margin: 0 auto;\
+            padding-left: 16px;\
         ",
         insertIntoDoc: {
             keyword: 'css;#username',
             target: 'css;#seamain',
-            where: 'afterEnd',
+            where: 'beforeEnd',
         },
     },
     {name: "dmhy",
@@ -1104,9 +1107,7 @@ var rules = [
         enabled: true,
         engineList: "shopping",
         style: "\
-           border-bottom:1px solid #E5E5E5;\
            border-top:1px solid #E5E5E5;\
-           margin-bottom:3px;\
         ",
         insertIntoDoc: {
            keyword: 'css;#twotabsearchtextbox',
@@ -1184,7 +1185,7 @@ var rules = [
         enabled: true,
         engineList: "translate",
         style: "\
-            margin:0 auto;\
+            text-align: center;\
             position:absolut;\
             border-bottom:1px solid #D4E9F7;\
             border-top:1px solid #D4E9F7;\
@@ -1287,7 +1288,7 @@ var rules = [
         enabled: true,
         engineList: "translate",
         style: "\
-            margin:0 auto;\
+            text-align: center;\
             border-bottom:1px solid #D4E9F7;\
             border-top:1px solid #D4E9F7;\
             ",
@@ -1302,7 +1303,7 @@ var rules = [
         enabled: true,
         engineList: "translate",
         style: "\
-            text-align:left;\
+            text-align:center;\
             margin-bottom:10px;\
             margin-top:0px;\
             border-bottom:1px solid #D4E9F7;\
@@ -1319,8 +1320,7 @@ var rules = [
         enabled: true,
         engineList: "translate",
         style: "\
-            margin: 0 auto;\
-            max-width: 1000px;\
+            text-align: center;\
             ",
         insertIntoDoc: {
             keyword: 'css;#inputText',
@@ -1439,7 +1439,6 @@ rules.default = {
         where: 'beforeBegin'
     }
 };
-
 
 if (typeof exports !== 'undefined') {
     exports.rules = rules;
