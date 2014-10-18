@@ -270,7 +270,7 @@
 					case 'actual':;
 					case 'current':;
 					case 'original':{//original 是为了兼容以前的规则
-						new ImgWindowC(this.img);
+						new ImgWindowC(this.img, this.data);
 					}break;
 				};
 			},

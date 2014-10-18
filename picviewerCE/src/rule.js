@@ -183,13 +183,20 @@
 			{name: '花瓣网',
 				enabled: true,
 				url: /^https?:\/\/huaban\.com\//i,
+				ext: 'previous-2',
+				// ext: function(target) {
+				// 	if (target.className == 'cover') {
+				// 		return target.parentNode.querySelector('img');
+				// 	}
+				// },
 				getImage: function() {
-					var pic = /(.*img.hb.aicdn.com\/.*)_fw236$/i
+					var pic = /(.*img.hb.aicdn.com\/.*)_fw(?:236|320)$/i
 					if (this.src.match(pic)) {
 						return RegExp.$1 + '_fw658';
 					}
 				},
-				css: '.pin a.img .cover { display: none; }',
+				description: './../following-sibling::p[@class="description"]',
+				// css: '.pin a.img .cover { display: none; }',
 				exclude: /weixin_code\.png$/i,
 			},
 			// 其它
@@ -258,6 +265,17 @@
 					var oldsrc = this.src;
 					if (oldsrc.match(/(.*\/images\/posters\/\d+)-(?:300|138)\.jpg\?(\d+)$/)) {
 						return RegExp.$1 + '.jpg?' + RegExp.$2;
+					}
+				}
+			},
+			// Music
+			{name: '网易云音乐',
+				url: 'http://music.163.com/*',
+				ext: 'previous',  // 扩展模式，检查前面一个是否为 img
+				getImage: function() {
+					var oldsrc = this.src;
+					if (oldsrc.match(/(.*)\?param=\d+y\d+$/)) {
+						return RegExp.$1;
 					}
 				}
 			},

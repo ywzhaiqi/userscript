@@ -1,9 +1,11 @@
 
 
 		//图片窗口
-		function ImgWindowC(img){
+		function ImgWindowC(img, data){
 			this.img=img;
 			this.src=img.src;
+			this.data = data;
+
 			this.init();
 		};
 
@@ -75,8 +77,9 @@
 						'<span class="pv-pic-window-tb-flip-horizontal pv-pic-window-tb-command" title="水平翻转"></span>'+
 						'<span class="pv-pic-window-tb-flip-vertical pv-pic-window-tb-command" title="垂直翻转"></span>'+
 					'</span>'+
-					'<span class="pv-pic-window-close"></span>'+
-					'<span class="pv-pic-window-range"></span>';
+					'<span class="pv-pic-window-close"></span>' +
+					'<span class="pv-pic-window-range"></span>' +
+					'<span class="pv-pic-window-description">测试中文</span>';
 
 				container.insertBefore(img,container.firstChild);
 
@@ -103,6 +106,16 @@
 				closeButton.addEventListener('click',function(e){
 					self.remove();
 				},false);
+
+				// 说明
+				var descriptionSpan = container.querySelector('.pv-pic-window-description');
+				descriptionSpan.style.cssText = '\
+					bottom: -40px;\
+					left: 10px;\
+				';
+				descriptionSpan.textContent = this.data.description || '';
+				descriptionSpan.style.display = this.data.description ? 'block' : 'none';
+				this.descriptionSpan = descriptionSpan;
 
 				var toolbar=container.querySelector('.pv-pic-window-toolbar');
 				toolbar.style.cssText='\
@@ -328,6 +341,10 @@
 					}\
 					.pv-pic-window-close_focus {\
 						display: block;\
+					}\
+					.pv-pic-window-description {\
+						position: absolute;\
+						min-height: 20px;\
 					}\
 					.pv-pic-window-pic {\
 						position: relative;\
@@ -598,6 +615,7 @@
 
 				keepSI(this.closeButton,['top','right'],[-24,0]);
 				keepSI(this.toolbar,['top','left'],[0,-45]);
+				keepSI(this.descriptionSpan,['bottom','left'],[-40, 10]);
 			},
 			fitToScreen:function(){
 				var wSize=getWindowSize();

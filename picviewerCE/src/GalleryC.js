@@ -22,6 +22,7 @@
 								'<span class="pv-gallery-head-left-img-info-resolution" title="分辨率">0 x 0</span>'+
 								'<span class="pv-gallery-head-left-img-info-scaling" title="缩放比">（100%）</span>'+
 								'<span class="pv-gallery-vertical-align-helper"></span>'+
+								'<span class="pv-gallery-head-left-img-info-description" title="图片注释"></span>'+
 							'</span>'+
 						'</span>'+
 
@@ -213,6 +214,7 @@
 					'head',
 
 					'head-left-img-info',
+					'head-left-img-info-description',
 					'head-left-img-info-resolution',
 					'head-left-img-info-scaling',
 
@@ -406,7 +408,7 @@
 						this.highLight();
 					},
 					tAreaValue:function(){
-						this.textArea.value=this.favorite? this.favorite.description : '';
+						this.textArea.value=this.favorite? this.favorite.description : self.eleMaps['head-left-img-info-description'].textContent;
 					},
 					highLight:function(){
 						eleMaps['head-command-collect'].classList[this.favorite? 'add' : 'remove']('pv-gallery-head-command-collect-favorite');
@@ -1219,7 +1221,7 @@
 					//thumb.src='http://www.notexistwebsite.com/';
 					thumb.className='pv-gallery-sidebar-thumb';
 
-					dataset(span_i,'thumbLoaded','true')
+					dataset(span_i,'thumbLoaded','true');
 					span_i.appendChild(thumb);
 
 					imgReady(thumb,{
@@ -1253,7 +1255,7 @@
 					};
 					xhrLoad.load({
 						url: src,
-						xhr: JSON.parse(decodeURI(xhr)),
+						xhr: JSON.parse(decodeURIComponent(xhr)),
 						cb: function(imgSrc, caption) {
 							if (imgSrc) {
 								dataset(ele, 'src', imgSrc);
@@ -1360,6 +1362,7 @@
 				this.imgNaturalSize=imgNaturalSize;
 
 				this.eleMaps['head-left-img-info-resolution'].textContent= imgNaturalSize.w + ' x ' + imgNaturalSize.h;
+				this.eleMaps['head-left-img-info-description'].textContent= decodeURIComponent(dataset(relatedThumb, 'description'));
 
 				this.img=img;
 				this.src=img.src;
@@ -1504,7 +1507,7 @@
 				var index=unique.index;
 
 				if (reload && this.data.length >= data.length) {
-					alert('没有新增的图片');
+					// alert('没有新增的图片');
 					return;
 				}
 
@@ -1526,7 +1529,8 @@
 						 '<span class="pv-gallery-sidebar-thumb-container'+
 							'" data-type="' + data_i.type +
 							'" data-src="' + data_i.src +
-							(data_i.xhr ? '" data-xhr="' + encodeURI(JSON.stringify(data_i.xhr)) : '') +
+							(data_i.xhr ? '" data-xhr="' + encodeURIComponent(JSON.stringify(data_i.xhr)) : '') +
+							'" data-description="' + encodeURIComponent(data_i.description || '') +
 							'" data-thumb-src="' + data_i.imgSrc +
 							'" title="' + data_i.img.title +
 							'">'+
@@ -1592,6 +1596,7 @@
 				//重置style;
 				this.thumbVisibleStyle.textContent='';
 			},
+
 			// --------- 我添加的部分 start ----------------
 			reload: function() {
 				// 函数在 LoadingAnimC 中
@@ -1604,6 +1609,9 @@
 				this.close(true);
 
 				this.load(data, null, true);
+			},
+			reloadNew: function() {
+
 			},
 			getAllValidImgs:function(){
 				var imgs = document.getElementsByTagName('img'),
@@ -1627,21 +1635,19 @@
 					return;
 				}
 
+				// 滚动主窗口到最底部，然后自动重载库的图片
+				// TODO：
+				// 1、修正 滚动几页后不再滚动 的 bug。
+				// 2、关闭图库再打开，图片的顺序不太正确？
+				// 3、定位图片无效或不存在的 bug
 				window.scrollTo(0, 99999);
 
-				// 滚动主窗口到最底部，然后自动重载库的图片，还有bug，有待进一步测试
-				window.removeEventListener('scroll', this.scrolled, false);
-
 				var self = this;
-				this.scrolled = function() {
-					clearTimeout(self.reloadTimeout);
-					self.reloadTimeout = setTimeout(function(){
-						window.removeEventListener('scroll', self.scrolled, false);
-						self.reload();
-					}, 500);
-				};
-
-				window.addEventListener('scroll', this.scrolled, false);
+				clearTimeout(self.reloadTimeout);
+				self.reloadTimeout = setTimeout(function(){
+					// window.removeEventListener('scroll', self.scrolled, false);
+					self.reload();
+				}, 1000);
 			},
 			// --------- 我添加的部分 end ----------------
 
@@ -1953,6 +1959,9 @@
 					}\
 					.pv-gallery-head-left-img-info{\
 						cursor:help;\
+					}\
+					.pv-gallery-head-left-img-info-description {\
+						margin-left: 10px;\
 					}\
 					/*顶栏里面的按钮样式-开始*/\
 					.pv-gallery-head-command{\
@@ -2584,6 +2593,14 @@
 				this.thumbVisibleStyle=style2;
 				style2.type='text/css';
 				head.appendChild(style2);
+
+				// 让 description 的文字内容溢出用点点点(...)省略号表示
+				// .pv-gallery-head-left-img-info-description {
+				//   	overflow: hidden;
+				//     text-overflow: ellipsis;
+				//     white-space: nowrap;
+				//     width: 27em;
+				// }
 			},
 
 		};

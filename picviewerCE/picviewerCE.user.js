@@ -2,7 +2,7 @@
 // @name           picviewer CE
 // @author         NLF && ywzhaiqi
 // @description    NLF 的围观图修改版
-// @version        2014.10.15.1
+// @version        2014.10.18.0
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
@@ -49,7 +49,7 @@
 					h:100,
 				},
 
-				// 按键，在输入框等会有问题
+				// 按键，感觉用不太到，默认禁用
 				keys: {
 					enable: false,
 					actual: 'a',  //  当出现悬浮条时按下 `a` 打开原图
@@ -298,13 +298,20 @@
 			{name: '花瓣网',
 				enabled: true,
 				url: /^https?:\/\/huaban\.com\//i,
+				ext: 'previous-2',
+				// ext: function(target) {
+				// 	if (target.className == 'cover') {
+				// 		return target.parentNode.querySelector('img');
+				// 	}
+				// },
 				getImage: function() {
-					var pic = /(.*img.hb.aicdn.com\/.*)_fw236$/i
+					var pic = /(.*img.hb.aicdn.com\/.*)_fw(?:236|320)$/i
 					if (this.src.match(pic)) {
 						return RegExp.$1 + '_fw658';
 					}
 				},
-				css: '.pin a.img .cover { display: none; }',
+				description: './../following-sibling::p[@class="description"]',
+				// css: '.pin a.img .cover { display: none; }',
 				exclude: /weixin_code\.png$/i,
 			},
 			// 其它
@@ -373,6 +380,17 @@
 					var oldsrc = this.src;
 					if (oldsrc.match(/(.*\/images\/posters\/\d+)-(?:300|138)\.jpg\?(\d+)$/)) {
 						return RegExp.$1 + '.jpg?' + RegExp.$2;
+					}
+				}
+			},
+			// Music
+			{name: '网易云音乐',
+				url: 'http://music.163.com/*',
+				ext: 'previous',  // 扩展模式，检查前面一个是否为 img
+				getImage: function() {
+					var oldsrc = this.src;
+					if (oldsrc.match(/(.*)\?param=\d+y\d+$/)) {
+						return RegExp.$1;
 					}
 				}
 			},
@@ -722,10 +740,57 @@
 			},
 		};
 
+		if (typeof String.prototype.startsWith != 'function') {
+		    String.prototype.startsWith = function(str) {
+		        return this.slice(0, str.length) == str;
+		    };
+		}
+
 		function getMStr(func) {
 		    var lines = func.toString();
 		    lines = lines.substring(lines.indexOf("/*") + 3, lines.lastIndexOf("*/"));
 		    return lines;
+		}
+
+		function toRE(obj) {
+			if (obj instanceof RegExp) {
+				return obj;
+			} else if (obj instanceof Array) {
+				return new RegExp(obj[0], obj[1]);
+			} else if (typeof obj === 'string') {
+				obj = wildcardToRegExpStr(obj);
+				return new RegExp(obj);
+			}
+		}
+
+		function wildcardToRegExpStr(urlstr) {
+			if (urlstr.source) return urlstr.source;
+			var reg = urlstr.replace(/[()\[\]{}|+.,^$?\\]/g, "\\$&").replace(/\*+/g, function(str){
+				return str === "*" ? ".*" : "[^/]*";
+			});
+			return "^" + reg + "$";
+		}
+
+		function isXPath(xpath) {
+			return xpath.startsWith('./') || xpath.startsWith('//') || xpath.startsWith('id(');
+		}
+
+		function getElementByNode(selector, contextNode, doc) {
+			var ret;
+			if (!selector || !contextNode) return ret;
+			doc = doc || document;
+
+			var type = typeof selector;
+			if (type == 'string') {
+				if (isXPath(selector)) {
+					ret = getElementByXpath(selector, contextNode, doc);
+				} else {
+					ret = contextNode.parentNode.querySelector(selector);
+				}
+			} else if (type == 'function') {
+				ret = selector(contextNode, doc);
+			}
+			return ret;
 		}
 
 		function launchFullScreen(element) {
@@ -1640,6 +1705,7 @@ var xhrLoad = function() {
 								'<span class="pv-gallery-head-left-img-info-resolution" title="分辨率">0 x 0</span>'+
 								'<span class="pv-gallery-head-left-img-info-scaling" title="缩放比">（100%）</span>'+
 								'<span class="pv-gallery-vertical-align-helper"></span>'+
+								'<span class="pv-gallery-head-left-img-info-description" title="图片注释"></span>'+
 							'</span>'+
 						'</span>'+
 
@@ -1831,6 +1897,7 @@ var xhrLoad = function() {
 					'head',
 
 					'head-left-img-info',
+					'head-left-img-info-description',
 					'head-left-img-info-resolution',
 					'head-left-img-info-scaling',
 
@@ -2024,7 +2091,7 @@ var xhrLoad = function() {
 						this.highLight();
 					},
 					tAreaValue:function(){
-						this.textArea.value=this.favorite? this.favorite.description : '';
+						this.textArea.value=this.favorite? this.favorite.description : self.eleMaps['head-left-img-info-description'].textContent;
 					},
 					highLight:function(){
 						eleMaps['head-command-collect'].classList[this.favorite? 'add' : 'remove']('pv-gallery-head-command-collect-favorite');
@@ -2837,7 +2904,7 @@ var xhrLoad = function() {
 					//thumb.src='http://www.notexistwebsite.com/';
 					thumb.className='pv-gallery-sidebar-thumb';
 
-					dataset(span_i,'thumbLoaded','true')
+					dataset(span_i,'thumbLoaded','true');
 					span_i.appendChild(thumb);
 
 					imgReady(thumb,{
@@ -2871,7 +2938,7 @@ var xhrLoad = function() {
 					};
 					xhrLoad.load({
 						url: src,
-						xhr: JSON.parse(decodeURI(xhr)),
+						xhr: JSON.parse(decodeURIComponent(xhr)),
 						cb: function(imgSrc, caption) {
 							if (imgSrc) {
 								dataset(ele, 'src', imgSrc);
@@ -2978,6 +3045,7 @@ var xhrLoad = function() {
 				this.imgNaturalSize=imgNaturalSize;
 
 				this.eleMaps['head-left-img-info-resolution'].textContent= imgNaturalSize.w + ' x ' + imgNaturalSize.h;
+				this.eleMaps['head-left-img-info-description'].textContent= decodeURIComponent(dataset(relatedThumb, 'description'));
 
 				this.img=img;
 				this.src=img.src;
@@ -3122,7 +3190,7 @@ var xhrLoad = function() {
 				var index=unique.index;
 
 				if (reload && this.data.length >= data.length) {
-					alert('没有新增的图片');
+					// alert('没有新增的图片');
 					return;
 				}
 
@@ -3144,7 +3212,8 @@ var xhrLoad = function() {
 						 '<span class="pv-gallery-sidebar-thumb-container'+
 							'" data-type="' + data_i.type +
 							'" data-src="' + data_i.src +
-							(data_i.xhr ? '" data-xhr="' + encodeURI(JSON.stringify(data_i.xhr)) : '') +
+							(data_i.xhr ? '" data-xhr="' + encodeURIComponent(JSON.stringify(data_i.xhr)) : '') +
+							'" data-description="' + encodeURIComponent(data_i.description || '') +
 							'" data-thumb-src="' + data_i.imgSrc +
 							'" title="' + data_i.img.title +
 							'">'+
@@ -3210,6 +3279,7 @@ var xhrLoad = function() {
 				//重置style;
 				this.thumbVisibleStyle.textContent='';
 			},
+
 			// --------- 我添加的部分 start ----------------
 			reload: function() {
 				// 函数在 LoadingAnimC 中
@@ -3222,6 +3292,9 @@ var xhrLoad = function() {
 				this.close(true);
 
 				this.load(data, null, true);
+			},
+			reloadNew: function() {
+
 			},
 			getAllValidImgs:function(){
 				var imgs = document.getElementsByTagName('img'),
@@ -3245,21 +3318,19 @@ var xhrLoad = function() {
 					return;
 				}
 
+				// 滚动主窗口到最底部，然后自动重载库的图片
+				// TODO：
+				// 1、修正 滚动几页后不再滚动 的 bug。
+				// 2、关闭图库再打开，图片的顺序不太正确？
+				// 3、定位图片无效或不存在的 bug
 				window.scrollTo(0, 99999);
 
-				// 滚动主窗口到最底部，然后自动重载库的图片，还有bug，有待进一步测试
-				window.removeEventListener('scroll', this.scrolled, false);
-
 				var self = this;
-				this.scrolled = function() {
-					clearTimeout(self.reloadTimeout);
-					self.reloadTimeout = setTimeout(function(){
-						window.removeEventListener('scroll', self.scrolled, false);
-						self.reload();
-					}, 500);
-				};
-
-				window.addEventListener('scroll', this.scrolled, false);
+				clearTimeout(self.reloadTimeout);
+				self.reloadTimeout = setTimeout(function(){
+					// window.removeEventListener('scroll', self.scrolled, false);
+					self.reload();
+				}, 1000);
 			},
 			// --------- 我添加的部分 end ----------------
 
@@ -3571,6 +3642,9 @@ var xhrLoad = function() {
 					}\
 					.pv-gallery-head-left-img-info{\
 						cursor:help;\
+					}\
+					.pv-gallery-head-left-img-info-description {\
+						margin-left: 10px;\
 					}\
 					/*顶栏里面的按钮样式-开始*/\
 					.pv-gallery-head-command{\
@@ -4202,6 +4276,14 @@ var xhrLoad = function() {
 				this.thumbVisibleStyle=style2;
 				style2.type='text/css';
 				head.appendChild(style2);
+
+				// 让 description 的文字内容溢出用点点点(...)省略号表示
+				// .pv-gallery-head-left-img-info-description {
+				//   	overflow: hidden;
+				//     text-overflow: ellipsis;
+				//     white-space: nowrap;
+				//     width: 27em;
+				// }
 			},
 
 		};
@@ -4703,9 +4785,11 @@ var xhrLoad = function() {
 
 
 		//图片窗口
-		function ImgWindowC(img){
+		function ImgWindowC(img, data){
 			this.img=img;
 			this.src=img.src;
+			this.data = data;
+
 			this.init();
 		};
 
@@ -4777,8 +4861,9 @@ var xhrLoad = function() {
 						'<span class="pv-pic-window-tb-flip-horizontal pv-pic-window-tb-command" title="水平翻转"></span>'+
 						'<span class="pv-pic-window-tb-flip-vertical pv-pic-window-tb-command" title="垂直翻转"></span>'+
 					'</span>'+
-					'<span class="pv-pic-window-close"></span>'+
-					'<span class="pv-pic-window-range"></span>';
+					'<span class="pv-pic-window-close"></span>' +
+					'<span class="pv-pic-window-range"></span>' +
+					'<span class="pv-pic-window-description">测试中文</span>';
 
 				container.insertBefore(img,container.firstChild);
 
@@ -4805,6 +4890,16 @@ var xhrLoad = function() {
 				closeButton.addEventListener('click',function(e){
 					self.remove();
 				},false);
+
+				// 说明
+				var descriptionSpan = container.querySelector('.pv-pic-window-description');
+				descriptionSpan.style.cssText = '\
+					bottom: -40px;\
+					left: 10px;\
+				';
+				descriptionSpan.textContent = this.data.description || '';
+				descriptionSpan.style.display = this.data.description ? 'block' : 'none';
+				this.descriptionSpan = descriptionSpan;
 
 				var toolbar=container.querySelector('.pv-pic-window-toolbar');
 				toolbar.style.cssText='\
@@ -5030,6 +5125,10 @@ var xhrLoad = function() {
 					}\
 					.pv-pic-window-close_focus {\
 						display: block;\
+					}\
+					.pv-pic-window-description {\
+						position: absolute;\
+						min-height: 20px;\
 					}\
 					.pv-pic-window-pic {\
 						position: relative;\
@@ -5300,6 +5399,7 @@ var xhrLoad = function() {
 
 				keepSI(this.closeButton,['top','right'],[-24,0]);
 				keepSI(this.toolbar,['top','left'],[0,-45]);
+				keepSI(this.descriptionSpan,['bottom','left'],[-40, 10]);
 			},
 			fitToScreen:function(){
 				var wSize=getWindowSize();
@@ -6533,7 +6633,7 @@ var xhrLoad = function() {
 					case 'actual':;
 					case 'current':;
 					case 'original':{//original 是为了兼容以前的规则
-						new ImgWindowC(this.img);
+						new ImgWindowC(this.img, this.data);
 					}break;
 				};
 			},
@@ -6844,32 +6944,16 @@ var xhrLoad = function() {
 			//base64字符串过长导致正则匹配卡死浏览器
 			var base64Img=/^data:[^;]+;base64,/i.test(img.src);
 
-			if(typeof matchedRule=='undefined'){//找到符合站点的高级规则,并缓存.
-				matchedRule=siteInfo._find(function(site,index,array){
-					// if(site.enabled && site.url && site.url.test(URL)){
-					if(site.url && site.url.test(URL)){
-						return true;
-					};
-				});
-				matchedRule=matchedRule? matchedRule[0] : false;
-				// console.log('匹配的规则：',matchedRule);
-			};
+			// if (typeof matchedRule == 'undefined') { // 找到符合站点的高级规则,并缓存.
 
-			var src, type;
-			var imgSrc;  // 有些图片采用了延迟加载的技术
+			// };
+
+			var src,  // 大图网址
+				type,  // 类别
+				imgSrc,  // img 节点的 src
+				description;  // 图片的注释
 
 			if(!src && matchedRule){// 通过高级规则获取.
-				// 添加修正的样式
-				if (!matchedRule.cssAdded && matchedRule.css) {
-					var style = document.createElement('style');
-					style.type = 'text/css';
-					style.id = 'gm-picviewer-site-style';
-					style.textContent = matchedRule.css;
-					document.head.appendChild(style);
-
-					matchedRule.cssAdded = true;
-				}
-
 				// 排除
 				if (matchedRule.exclude && matchedRule.exclude.test(img.src)) {
 					return;
@@ -6883,8 +6967,15 @@ var xhrLoad = function() {
 					if(src) {
 						type = 'rule';
 
-						if (matchedRule.lazyAttr) {
+						if (matchedRule.lazyAttr) {  // 由于采用了延迟加载技术，所以图片可能为 loading.gif
 							imgSrc = img.getAttribute(matchedRule.lazyAttr);
+						}
+
+						if (matchedRule.description) {
+							var node = getElementByNode(matchedRule.description, img);
+							if (node) {
+								description = node.getAttribute('title') || node.textContent;
+							}
 						}
 					}
 				}
@@ -6944,7 +7035,9 @@ var xhrLoad = function() {
 				type:type,//通过哪种方式得到的
 				imgSrc: imgSrc || img.src,//处理的图片的src
 				iPASrc:iPASrc,//图片的第一个父a元素的链接地址
+
 				xhr: matchedRule && matchedRule.xhr,
+				description: description || '',
 
 				img:img,//处理的图片
 				imgPA:imgPA,//图片的第一个父a元素
@@ -6952,8 +7045,51 @@ var xhrLoad = function() {
 
 			//console.log('图片查找结果:',ret);
 			return ret;
-		};
+		}
 
+		function isKeyDownEffectiveTarget(target) {
+			var localName = target.localName;
+
+			// 确保光标不是定位在文字输入框或选择框
+			if (localName == 'textarea' || localName == 'input' || localName == 'select')
+			    return false;
+
+			// 视频播放器
+			if (localName == 'object' || localName == 'embed')
+			    return false;
+
+			// 百度贴吧回复输入的问题
+			if (target.getAttribute('contenteditable') == 'true')
+			    return false;
+
+			return true;
+		}
+
+		function getMatchedRule() {
+			var rule = siteInfo._find(function(site, index, array) {
+				if (site.url && toRE(site.url).test(URL)) {
+					return true;
+				}
+			});
+
+			rule = rule ? rule[0] : false;
+			// console.log('匹配的规则：',rule);
+
+			return rule;
+		}
+
+		function init() {
+			matchedRule = getMatchedRule();
+
+			// 添加自定义样式
+			if (matchedRule && matchedRule.css) {
+				var style = document.createElement('style');
+				style.type = 'text/css';
+				style.id = 'gm-picviewer-site-style';
+				style.textContent = matchedRule.css;
+				document.head.appendChild(style);
+			}
+		}
 
 		var isFrame=window!=window.parent;
 		var topWindowValid;//frameset的窗口这个标记为false
@@ -7149,9 +7285,36 @@ var xhrLoad = function() {
 
 			var target=e.target;
 
-			if(target.nodeName!='IMG' || target.classList.contains('pv-pic-ignored')){
+			if (target.classList.contains('pv-pic-ignored')) {
 				return;
-			};
+			}
+
+			// 扩展模式，检查前面一个是否为 img
+			if (target.nodeName != 'IMG' && matchedRule && matchedRule.ext) {
+				var _type = typeof matchedRule.ext;
+				if (_type == 'string') {
+					switch (matchedRule.ext) {
+						case 'previous':
+							target = target.previousElementSibling;
+							break;
+						case 'previous-2':
+							target = target.previousElementSibling &&
+									target.previousElementSibling.previousElementSibling;
+							break;
+					}
+				} else if (_type == 'function') {
+					try {
+						target = matchedRule.ext(target);
+					} catch(ex) {
+						throwErrorInfo(ex);
+					}
+				}
+
+				if (!target || target.nodeName != 'IMG') {
+					return;
+				}
+			}
+
 			var result=findPic(target);
 
 			if(result){
@@ -7168,12 +7331,17 @@ var xhrLoad = function() {
 			};
 		};
 
+		init();
+
 		document.addEventListener('mouseover',globalMouseoverHandler,true);
 
 		// 注册按键
 		if (prefs.floatBar.keys.enable) {
 			document.addEventListener('keydown', function(event) {
-				if (floatBar && floatBar.shown && event.target.nodeName == 'BODY') {
+				if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey)
+					return;
+
+				if (floatBar && floatBar.shown && isKeyDownEffectiveTarget(event.target)) {
 					var key = String.fromCharCode(event.keyCode).toLowerCase();
 
 					Object.keys(prefs.floatBar.keys).some(function(action) {

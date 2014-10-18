@@ -18,32 +18,16 @@
 			//base64字符串过长导致正则匹配卡死浏览器
 			var base64Img=/^data:[^;]+;base64,/i.test(img.src);
 
-			if(typeof matchedRule=='undefined'){//找到符合站点的高级规则,并缓存.
-				matchedRule=siteInfo._find(function(site,index,array){
-					// if(site.enabled && site.url && site.url.test(URL)){
-					if(site.url && site.url.test(URL)){
-						return true;
-					};
-				});
-				matchedRule=matchedRule? matchedRule[0] : false;
-				// console.log('匹配的规则：',matchedRule);
-			};
+			// if (typeof matchedRule == 'undefined') { // 找到符合站点的高级规则,并缓存.
 
-			var src, type;
-			var imgSrc;  // 有些图片采用了延迟加载的技术
+			// };
+
+			var src,  // 大图网址
+				type,  // 类别
+				imgSrc,  // img 节点的 src
+				description;  // 图片的注释
 
 			if(!src && matchedRule){// 通过高级规则获取.
-				// 添加修正的样式
-				if (!matchedRule.cssAdded && matchedRule.css) {
-					var style = document.createElement('style');
-					style.type = 'text/css';
-					style.id = 'gm-picviewer-site-style';
-					style.textContent = matchedRule.css;
-					document.head.appendChild(style);
-
-					matchedRule.cssAdded = true;
-				}
-
 				// 排除
 				if (matchedRule.exclude && matchedRule.exclude.test(img.src)) {
 					return;
@@ -57,8 +41,15 @@
 					if(src) {
 						type = 'rule';
 
-						if (matchedRule.lazyAttr) {
+						if (matchedRule.lazyAttr) {  // 由于采用了延迟加载技术，所以图片可能为 loading.gif
 							imgSrc = img.getAttribute(matchedRule.lazyAttr);
+						}
+
+						if (matchedRule.description) {
+							var node = getElementByNode(matchedRule.description, img);
+							if (node) {
+								description = node.getAttribute('title') || node.textContent;
+							}
 						}
 					}
 				}
@@ -118,7 +109,9 @@
 				type:type,//通过哪种方式得到的
 				imgSrc: imgSrc || img.src,//处理的图片的src
 				iPASrc:iPASrc,//图片的第一个父a元素的链接地址
+
 				xhr: matchedRule && matchedRule.xhr,
+				description: description || '',
 
 				img:img,//处理的图片
 				imgPA:imgPA,//图片的第一个父a元素
@@ -126,8 +119,51 @@
 
 			//console.log('图片查找结果:',ret);
 			return ret;
-		};
+		}
 
+		function isKeyDownEffectiveTarget(target) {
+			var localName = target.localName;
+
+			// 确保光标不是定位在文字输入框或选择框
+			if (localName == 'textarea' || localName == 'input' || localName == 'select')
+			    return false;
+
+			// 视频播放器
+			if (localName == 'object' || localName == 'embed')
+			    return false;
+
+			// 百度贴吧回复输入的问题
+			if (target.getAttribute('contenteditable') == 'true')
+			    return false;
+
+			return true;
+		}
+
+		function getMatchedRule() {
+			var rule = siteInfo._find(function(site, index, array) {
+				if (site.url && toRE(site.url).test(URL)) {
+					return true;
+				}
+			});
+
+			rule = rule ? rule[0] : false;
+			// console.log('匹配的规则：',rule);
+
+			return rule;
+		}
+
+		function init() {
+			matchedRule = getMatchedRule();
+
+			// 添加自定义样式
+			if (matchedRule && matchedRule.css) {
+				var style = document.createElement('style');
+				style.type = 'text/css';
+				style.id = 'gm-picviewer-site-style';
+				style.textContent = matchedRule.css;
+				document.head.appendChild(style);
+			}
+		}
 
 		var isFrame=window!=window.parent;
 		var topWindowValid;//frameset的窗口这个标记为false
@@ -323,9 +359,36 @@
 
 			var target=e.target;
 
-			if(target.nodeName!='IMG' || target.classList.contains('pv-pic-ignored')){
+			if (target.classList.contains('pv-pic-ignored')) {
 				return;
-			};
+			}
+
+			// 扩展模式，检查前面一个是否为 img
+			if (target.nodeName != 'IMG' && matchedRule && matchedRule.ext) {
+				var _type = typeof matchedRule.ext;
+				if (_type == 'string') {
+					switch (matchedRule.ext) {
+						case 'previous':
+							target = target.previousElementSibling;
+							break;
+						case 'previous-2':
+							target = target.previousElementSibling &&
+									target.previousElementSibling.previousElementSibling;
+							break;
+					}
+				} else if (_type == 'function') {
+					try {
+						target = matchedRule.ext(target);
+					} catch(ex) {
+						throwErrorInfo(ex);
+					}
+				}
+
+				if (!target || target.nodeName != 'IMG') {
+					return;
+				}
+			}
+
 			var result=findPic(target);
 
 			if(result){
@@ -342,12 +405,17 @@
 			};
 		};
 
+		init();
+
 		document.addEventListener('mouseover',globalMouseoverHandler,true);
 
 		// 注册按键
 		if (prefs.floatBar.keys.enable) {
 			document.addEventListener('keydown', function(event) {
-				if (floatBar && floatBar.shown && event.target.nodeName == 'BODY') {
+				if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey)
+					return;
+
+				if (floatBar && floatBar.shown && isKeyDownEffectiveTarget(event.target)) {
 					var key = String.fromCharCode(event.keyCode).toLowerCase();
 
 					Object.keys(prefs.floatBar.keys).some(function(action) {

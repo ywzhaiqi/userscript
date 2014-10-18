@@ -1,7 +1,54 @@
+		if (typeof String.prototype.startsWith != 'function') {
+		    String.prototype.startsWith = function(str) {
+		        return this.slice(0, str.length) == str;
+		    };
+		}
+
 		function getMStr(func) {
 		    var lines = func.toString();
 		    lines = lines.substring(lines.indexOf("/*") + 3, lines.lastIndexOf("*/"));
 		    return lines;
+		}
+
+		function toRE(obj) {
+			if (obj instanceof RegExp) {
+				return obj;
+			} else if (obj instanceof Array) {
+				return new RegExp(obj[0], obj[1]);
+			} else if (typeof obj === 'string') {
+				obj = wildcardToRegExpStr(obj);
+				return new RegExp(obj);
+			}
+		}
+
+		function wildcardToRegExpStr(urlstr) {
+			if (urlstr.source) return urlstr.source;
+			var reg = urlstr.replace(/[()\[\]{}|+.,^$?\\]/g, "\\$&").replace(/\*+/g, function(str){
+				return str === "*" ? ".*" : "[^/]*";
+			});
+			return "^" + reg + "$";
+		}
+
+		function isXPath(xpath) {
+			return xpath.startsWith('./') || xpath.startsWith('//') || xpath.startsWith('id(');
+		}
+
+		function getElementByNode(selector, contextNode, doc) {
+			var ret;
+			if (!selector || !contextNode) return ret;
+			doc = doc || document;
+
+			var type = typeof selector;
+			if (type == 'string') {
+				if (isXPath(selector)) {
+					ret = getElementByXpath(selector, contextNode, doc);
+				} else {
+					ret = contextNode.parentNode.querySelector(selector);
+				}
+			} else if (type == 'function') {
+				ret = selector(contextNode, doc);
+			}
+			return ret;
 		}
 
 		function launchFullScreen(element) {
