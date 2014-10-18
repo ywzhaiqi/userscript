@@ -70,6 +70,9 @@
     当当, http://search.dangdang.com/search.php?key=%s, gbk
     亚马逊（中）, http://www.amazon.cn/s/ref=nb_sb_noss?field-keywords=%s
     亚马逊（英）, http://www.amazon.com/s/ref=nb_sb_noss?field-keywords=%s, www.amazon.cn
+    Google 书籍, http://books.google.com/books?q=%s, www.google.com
+    多看, http://www.duokan.com/search/%s/1
+    百度盘（主页）, http://pan.baidu.com/disk/home?adapt=pc#dir/key=%s
 
 下载-2
     我乐盘, http://www.56pan.com/s.php?q=%s&wp=0

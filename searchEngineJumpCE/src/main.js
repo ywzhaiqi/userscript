@@ -211,6 +211,14 @@ function addContainer(iTarget, iInput) {
         // }
     }
 
+    if (typeof matchedRule.endFix == 'function') {
+        try {
+            matchedRule.endFix();
+        } catch(ex) {
+            console.error('endFix 错误', ex);
+        }
+    }
+
     function mousedownhandler(e) {
         var target = e.target;
 

@@ -233,8 +233,7 @@ var rules = [
             where: 'beforeBegin'
         }
     },
-    {name: "百度知道",
-        // url: /^https?:\/\/zhidao\.baidu\.com\/(search|question)/,
+    {name: "百度知道(search)",
         url: /^https?:\/\/zhidao\.baidu\.com\/search/,
         enabled: true,
         engineList: "知识",
@@ -242,12 +241,32 @@ var rules = [
             margin-bottom: 8px;\
         ',
         insertIntoDoc: {
+            keyword: 'css;input#kw',
+            target: 'css;#body',
+            where: 'beforeBegin'
+        },
+    },
+    {name: "百度知道(question)",
+        url: /^https?:\/\/zhidao\.baidu\.com\/question/,
+        enabled: true,
+        engineList: "知识",
+        style: '\
+            width: 980px;\
+            margin: 0 auto;\
+        ',
+        insertIntoDoc: {
             keyword: function() {
-              return document.querySelector('#kw').value;
+                return document.querySelector('#kw').value;
             },
             target: 'css;#body',
             where: 'beforeBegin'
-        }
+        },
+        endFix: function() {  // 插入搜索条后修正绿色背景错位的问题
+            var container = document.getElementById('sej-container');
+            if (container && document.body.classList.contains('has-menu')) {
+                document.body.style.backgroundPosition = '0px ' + ( 95 + container.clientHeight ) + 'px';
+            }
+        },
     },
     {name: "知乎",
         url: /^https?:\/\/www\.zhihu\.com\/search\?/,
@@ -376,9 +395,9 @@ var rules = [
         enabled: true,
         engineList: "video",
         style: "\
-        	margin:0 auto;\
-        	width: 984px;\
-		",
+            margin:0 auto;\
+            width: 984px;\
+        ",
         insertIntoDoc: {
            keyword: 'css;#kw',
            target: 'css;#navbar',
@@ -1426,7 +1445,7 @@ var rules = [
 ];
 
 rules.default = {
-	name: "通用规则",
+    name: "通用规则",
     url: /.*/,
     enabled: true,
     style: "\

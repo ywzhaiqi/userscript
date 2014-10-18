@@ -18,7 +18,7 @@ var getResourceURL = function(name) {
 
     return '// @resource ' + name + ' ' +
             'https://raw.githubusercontent.com/ywzhaiqi/userscript/master/searchEngineJumpCE/src/res/' +
-            name + '?' +
+            name + '?version=' +
             fs.statSync(path).mtime.getTime();
 };
 
