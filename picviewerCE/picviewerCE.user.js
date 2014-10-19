@@ -2,7 +2,7 @@
 // @name           picviewer CE
 // @author         NLF && ywzhaiqi
 // @description    NLF 的围观图修改版
-// @version        2014.10.19.0
+// @version        2014.10.19.1
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
@@ -204,34 +204,33 @@
 					};
 				},
 			},
-			{name:"豆瓣",
-				siteExample:"http://movie.douban.com/photos/photo/1000656155/",
-				enabled:true,
-				url:/^https?:\/\/[^.]*\.douban\.com/i,
-				getImage:function(){
-					var oldsrc = this.src,
-						newsrc = oldsrc;
-					var pic = /\/view\/photo\/(?:photo|albumcover|albumicon|thumb)\/public\//i;
-					var movieCover = /\/view\/movie_poster_cover\/[si]pst\/public\//i;
-					var bookCover = /\/view\/ark_article_cover\/cut\/public\//i;
-					var spic = /(img\d.douban.com)\/spic\//i
+			// {name:"豆瓣",
+			// 	siteExample:"http://movie.douban.com/photos/photo/1000656155/",
+			// 	enabled: false,
+			// 	url:/^https?:\/\/[^.]*\.douban\.com/i,
+			// 	getImage:function(){
+			// 		var oldsrc = this.src,
+			// 			newsrc = oldsrc;
+			// 		var pic = /\/view\/photo\/(?:photo|albumcover|albumicon|thumb)\/public\//i;
+			// 		var movieCover = /\/view\/movie_poster_cover\/[si]pst\/public\//i;
+			// 		var bookCover = /\/view\/ark_article_cover\/cut\/public\//i;
+			// 		var spic = /(img\d+.douban.com)\/[sm]pic\//i
 
-					// 这个网址大图会出错
-					// http://movie.douban.com/subject/25708579/discussion/58950206/
-					if (pic.test(oldsrc)) {
-						newsrc = oldsrc.replace(pic, '/view/photo/raw/public/');
-					} else if (movieCover.test(oldsrc)) {
-						newsrc = oldsrc.replace(movieCover, '/view/photo/raw/public/');
-					} else if (bookCover.test(oldsrc)) {
-						newsrc = oldsrc.replace(bookCover, '/view/ark_article_cover/retina/public/');
-					} else if (spic.test(oldsrc)) {
-						// newsrc = oldsrc.replace(spic, '$1/mpic/');
-						newsrc = oldsrc.replace(spic, '$1/lpic/');
-					}
+			// 		// 这个网址大图会出错
+			// 		// http://movie.douban.com/subject/25708579/discussion/58950206/
+			// 		if (pic.test(oldsrc)) {
+			// 			newsrc = oldsrc.replace(pic, '/view/photo/raw/public/');
+			// 		} else if (movieCover.test(oldsrc)) {
+			// 			newsrc = oldsrc.replace(movieCover, '/view/photo/raw/public/');
+			// 		} else if (bookCover.test(oldsrc)) {
+			// 			newsrc = oldsrc.replace(bookCover, '/view/ark_article_cover/retina/public/');
+			// 		} else if (spic.test(oldsrc)) {
+			// 			newsrc = oldsrc.replace(spic, '$1/lpic/');
+			// 		}
 
-					return newsrc == oldsrc ? null : newsrc;
-				}
-			},
+			// 		return newsrc == oldsrc ? null : newsrc;
+			// 	}
+			// },
 			{name:"新浪微博",
 				siteExample:"http://weibo.com/pub/?source=toptray",
 				enabled:true,
@@ -244,9 +243,9 @@
 					var photoList=/\.sinaimg\.cn\/thumb150\/\w+/i//相册
 					var newsrc;
 					if(pic.test(oldsrc)){
-						newsrc=oldsrc.replace(pic,'$1large');
+						newsrc=oldsrc.replace(pic,'$1large');  // large 不是每一张图片都有的
 						return newsrc==oldsrc? '' : newsrc;
-					} else if (pic2.test(oldsrc)) {  // large 不是每一张图片都有的
+					} else if (pic2.test(oldsrc)) {
 						newsrc=oldsrc.replace(pic2,'$1mw1024');
 						return newsrc==oldsrc? '' : newsrc;
 					} else if(head.test(oldsrc)){
@@ -535,18 +534,8 @@
 
 		// 通配型规则,无视站点.
 		var tprules=[
-			function(img,a){ // 解决新的dz论坛的原图获取方式.
-				var reg=/(.+\/attachments?\/.+)\.thumb\.\w{2,5}$/i;
-				var oldsrc=this.src;
-				if (!oldsrc) return;
-				var newsrc=oldsrc.replace(reg,'$1');
-				if(oldsrc!=newsrc)return newsrc;
-			},
-
-			// GoogleContent
-			function(img, a) { // 来自 Imagus 扩展
+			function(img, a) { // GoogleContent 规则，来自 Imagus 扩展
 				var reg = new RegExp('((?:(?:lh|gp|yt)\\d+\\.g(?:oogleuserconten|gph)|\\d\\.bp\\.blogspo)t\\.com/)(?:([_-](?:[\\w\\-]{11}/){4})[^/]+(/[^?#]+)?|([^=]+)).*');
-
 				var $ = reg.exec(this.src);
 				if ($) {
 					var url = true ?
@@ -555,14 +544,21 @@
 					return 'http://' + url;
 				}
 			},
+
+			function(img,a){ // 解决新的dz论坛的原图获取方式.
+				var reg=/(.+\/attachments?\/.+)\.thumb\.\w{2,5}$/i;
+				var oldsrc=this.src;
+				if (!oldsrc) return;
+				var newsrc=oldsrc.replace(reg,'$1');
+				if(oldsrc!=newsrc)return newsrc;
+			},
 		];
 
-		// TODO：兼容 Imagus 扩展和 Mouseover Popup Image Viewer 脚本的规则
-		var rule = {};
+		var Rule = {};
 
-		// Imagus 扩展的规则
+		// TODO：兼容 Imagus 扩展的规则
 		// 1、要移除前面的 https?://
-		rule.imagus = [
+		Rule.imagus = [
 			{name: 'GoogleContent',
 				img: '^((?:(?:lh|gp|yt)\\d+\\.g(?:oogleuserconten|gph)|\\d\\.bp\\.blogspo)t\\.com/)(?:([_-](?:[\\w\\-]{11}/){4})[^/]+(/[^?#]+)?|([^=]+)).*',
 				to: function($) {
@@ -573,14 +569,39 @@
 			}
 		];
 
-		// Mouseover Popup Image Viewer 脚本的规则
-		rule.MPIV = [
-			{ d: 'www.topit.me', r: /(.*topit\.me)\/[ml]\/(.*\.jpg)$/, q: 'a[download], a#item-tip' },
-			{ d: 'www.topit.me', r: /(.*topit\.me\/[c1]\/.*)m\.jpg$/, s: '$1l.jpg' },
-
-			// 豆瓣
-			{ r: /(img\d.douban.com)\/spic\//i, s: '$1/lpic/' },  // 用了人人影视的豆瓣脚本需要用到
+		// 兼容部分 Mouseover Popup Image Viewer 脚本的规则
+		Rule.MPIV = [
+			{name: "Douban",  // 人人影视的豆瓣脚本需要用到
+				r: "(img\\d+\\.douban\\.com/)(?:(view/)(?:photo|movie_poster_cover)/(?!large)[^/]+|(icon/u(?=\\d))|[sm](?=pic/))(.*)",
+				s: function(m, node) {
+					return [
+						'http://' + m[1] + (m[2] ? m[2] + 'photo/raw' : ((m[3]||'') + 'l')) + m[4],
+						'http://' + m[1] + (m[2] ? m[2] + 'photo/photo' : ((m[3]||'') + 'l')) + m[4]
+					];
+				}
+			}
 		];
+
+		loadRule_MPIV();
+
+		function loadRule_MPIV() {
+			Rule.MPIV.forEach(function(h) {
+				try {
+					if(h.r) h.r = new RegExp(h.r, 'i');
+					if(h.s && h.s.indexOf('return ') > -1) h.s = new Function('m', 'node', h.s);
+					if(h.q && h.q.indexOf('return ') > -1) h.q = new Function('text', 'doc', h.q);
+					if(h.c && h.c.indexOf('return ') > -1) h.c = new Function('text', 'doc', h.c);
+				} catch(ex) {
+					console.error('MPIV 规则中无效的 host: ' + h, ex);
+				}
+			});
+
+			var filter = function(hn, h) {
+				return !h.d || hn.indexOf(h.d) > -1;
+			};
+
+			Rule.MPIV = Rule.MPIV.filter(filter.bind(null, location.hostname));
+		}
 
 		//图标
 		prefs.icons={
@@ -758,12 +779,16 @@
 		}
 
 		function toRE(obj) {
-			if (obj instanceof RegExp) {
+			if (!obj) {
+				return obj;
+			} else if (obj instanceof RegExp) {
 				return obj;
 			} else if (obj instanceof Array) {
 				return new RegExp(obj[0], obj[1]);
 			} else if (typeof obj === 'string') {
-				obj = wildcardToRegExpStr(obj);
+				if (obj.indexOf('.*') == -1) {
+					obj = wildcardToRegExpStr(obj);
+				}
 				return new RegExp(obj);
 			}
 		}
@@ -1577,114 +1602,6 @@
 			};
 
 		})();
-
-/**
- * 提取自 Mouseover Popup Image Viewer 脚本，用于 xhr 方式的获取
- */
-var xhrLoad = function() {
-	var _ = {};
-
-	var caches = {};
-	var handleError;
-
-	/**
-	 * @param  q  图片的选择器或函数
-	 * @param  c  图片说明的选择器或函数
-	 */
-	function parsePage(url, q, c, post, cb) {
-		downloadPage(url, post, function(html) {
-			var iurl, cap, doc = createDoc(html);
-			if(typeof q == 'function') {
-				iurl = q(html, doc);
-			} else {
-				var inode = findNode(q, doc);
-				iurl = inode ? findFile(inode, url) : false;
-			}
-			if(typeof c == 'function') {
-				cap = c(html, doc);
-			} else {
-				var cnode = findNode(c, doc);
-				cap = cnode ? findCaption(cnode) : false;
-			}
-
-			// 缓存
-			if (iurl) {
-				caches[url] = {
-					iurl: iurl,
-					cap: cap
-				};
-			}
-
-			cb(iurl, cap);
-		});
-	}
-
-	function downloadPage(url, post, cb) {
-		var opts = {
-			method: 'GET',
-			url: url,
-			onload: function(req) {
-				try {
-					if(req.status > 399) throw 'Server error: ' + req.status;
-					cb(req.responseText, req.finalUrl || url);
-				} catch(ex) {
-					handleError(ex);
-				}
-			},
-			onerror: handleError
-		};
-		if(post) {
-			opts.method = 'POST';
-			opts.data = post;
-			opts.headers = {'Content-Type':'application/x-www-form-urlencoded','Referer':url};
-		}
-
-		GM_xmlhttpRequest(opts);
-	}
-
-	function createDoc(text) {
-		var doc = document.implementation.createHTMLDocument('picViewerCE');
-		doc.documentElement.innerHTML = text;
-		return doc;
-	}
-
-	function findNode(q, doc) {
-		var node;
-		if (!Array.isArray(q)) q = [q];
-		for (var i = 0, len = q.length; i < len; i++) {
-			node = qs(q[i], doc);
-			if (node) break;
-		}
-		return node;
-	}
-
-	function findFile(n, url) {
-		var path = n.src || n.href;
-		return path ? path.trim() : false;
-	}
-
-	function findCaption(n) {
-		return n.getAttribute('content') || n.getAttribute('title') || n.textContent;
-	}
-
-	function qs(s, n) {
-		return n.querySelector(s);
-	}
-
-	_.load = function(opt) {
-		var info = caches[opt.url];
-		if (info) {
-			opt.cb(info.iurl, info.cap);
-			return;
-		}
-
-		handleError = opt.onerror || function() {};
-
-		parsePage(opt.url, opt.xhr.q, opt.xhr.c, opt.post, opt.cb);
-	};
-
-	return _;
-}();
 
 
 		//库
@@ -2935,6 +2852,11 @@ var xhrLoad = function() {
 				var self = this;
 
 				var src = dataset(ele,'src');
+
+				this.lastLoading=src;//记住最后读取的图片
+				this.isLoading=true;//表示选择的图片正在读取
+
+				// 特殊的 xhr 方式获取
 				var xhr = dataset(ele, 'xhr');
 				if (xhr) {
 					var error = function() {
@@ -2958,17 +2880,11 @@ var xhrLoad = function() {
 					return;
 				}
 
-				this.lastLoading=src;//记住最后读取的图片
-				this.isLoading=true;//表示选择的图片正在读取
-
 				var allLoading=this.allLoading;
-
 				if(allLoading.indexOf(src)!=-1){//在读取队列中。
 					return;
 				};
-
 				allLoading.push(src);
-				//console.log('正在读取中的图片：',cloneObject(allLoading));
 
 				//上一个读取中的图片，不是当前显示的。那么直接终止
 				var preImgR=this.imgReady;
@@ -6412,7 +6328,7 @@ var xhrLoad = function() {
 					this.loadImg(this.data.imgSrc);
 				} else {
 					if (!this.data.xhr) {
-						this.loadImg(this.data.src);
+						this.loadImg(this.data.src, this.data.srcs);
 					} else {
 						xhrLoad.load({
 							url: this.data.src,
@@ -6522,8 +6438,8 @@ var xhrLoad = function() {
 				cs.removeProperty('display');
 			},
 
-			// 根据 imgSrc 载入图片
-			loadImg: function(imgSrc) {
+			// 根据 imgSrc 载入图片，imgSrcs 为备用图片地址，imgSrc 加载失败备用
+			loadImg: function(imgSrc, imgSrcs) {
 				var self = this;
 
 				var img = document.createElement('img');
@@ -6531,6 +6447,14 @@ var xhrLoad = function() {
 
 				var opts = {
 					error: function(e) {
+						if (Array.isArray(imgSrcs)) {
+							var src = imgSrcs.shift();
+							if (src) {
+								self.loadImg(src, imgSrcs);
+								return;
+							}
+						}
+
 						self.error(this, e);
 					},
 				};
@@ -6929,10 +6853,269 @@ var xhrLoad = function() {
 			},
 		};
 
+/**
+ * 提取自 Mouseover Popup Image Viewer 脚本，用于 xhr 方式的获取
+ */
+var xhrLoad = function() {
+	var _ = {};
+
+	var caches = {};
+	var handleError;
+
+	/**
+	 * @param  q  图片的选择器或函数
+	 * @param  c  图片说明的选择器或函数
+	 */
+	function parsePage(url, q, c, post, cb) {
+		downloadPage(url, post, function(html) {
+			var iurl, cap, doc = createDoc(html);
+			if(typeof q == 'function') {
+				iurl = q(html, doc);
+			} else {
+				var inode = findNode(q, doc);
+				iurl = inode ? findFile(inode, url) : false;
+			}
+			if(typeof c == 'function') {
+				cap = c(html, doc);
+			} else {
+				var cnode = findNode(c, doc);
+				cap = cnode ? findCaption(cnode) : false;
+			}
+
+			// 缓存
+			if (iurl) {
+				caches[url] = {
+					iurl: iurl,
+					cap: cap
+				};
+			}
+
+			cb(iurl, cap);
+		});
+	}
+
+	function downloadPage(url, post, cb) {
+		var opts = {
+			method: 'GET',
+			url: url,
+			onload: function(req) {
+				try {
+					if(req.status > 399) throw 'Server error: ' + req.status;
+					cb(req.responseText, req.finalUrl || url);
+				} catch(ex) {
+					handleError(ex);
+				}
+			},
+			onerror: handleError
+		};
+		if(post) {
+			opts.method = 'POST';
+			opts.data = post;
+			opts.headers = {'Content-Type':'application/x-www-form-urlencoded','Referer':url};
+		}
+
+		GM_xmlhttpRequest(opts);
+	}
+
+	function createDoc(text) {
+		var doc = document.implementation.createHTMLDocument('picViewerCE');
+		doc.documentElement.innerHTML = text;
+		return doc;
+	}
+
+	function findNode(q, doc) {
+		var node;
+		if (!Array.isArray(q)) q = [q];
+		for (var i = 0, len = q.length; i < len; i++) {
+			node = qs(q[i], doc);
+			if (node) break;
+		}
+		return node;
+	}
+
+	function findFile(n, url) {
+		var path = n.src || n.href;
+		return path ? path.trim() : false;
+	}
+
+	function findCaption(n) {
+		return n.getAttribute('content') || n.getAttribute('title') || n.textContent;
+	}
+
+	function qs(s, n) {
+		return n.querySelector(s);
+	}
+
+	_.load = function(opt) {
+		var info = caches[opt.url];
+		if (info) {
+			opt.cb(info.iurl, info.cap);
+			return;
+		}
+
+		handleError = opt.onerror || function() {};
+
+		parsePage(opt.url, opt.xhr.q, opt.xhr.c, opt.post, opt.cb);
+	};
+
+	return _;
+}();
+
+
+/**
+ * 兼容 Mousever Popup Image Viewer 脚本规则
+ * @return {[type]} [description]
+ */
+var MPIV = (function() {
+	// 规则说明地址：http://w9p.co/userscripts/mpiv/host_rules.html
+
+	var hosts = Rule.MPIV;
+
+	var d = document, wn = window;
+	var cfg = {
+		thumbsonly: true,
+	};
+
+	function hasBg(node) {
+		return node ? wn.getComputedStyle(node).backgroundImage != 'none' && node.className.indexOf('YTLT-') < 0 : false;
+	}
+
+	function rel2abs(rel, abs) {
+		if(rel.indexOf('//') === 0) rel = 'http:' + rel;
+		var re = /^([a-z]+:)?\/\//;
+		if(re.test(rel))  return rel;
+		if(!re.exec(abs)) return;
+		if(rel[0] == '/') return abs.substr(0, abs.indexOf('/', RegExp.lastMatch.length)) + rel;
+		return abs.substr(0, abs.lastIndexOf('/')) + '/' + rel;
+	}
+
+	/**
+	 *   {"r":"hotimg\\.com/image", "s":"/image/direct/"}
+	 *   把 image 替换为 direct ，就是 .replace(/image/, "direct")
+	 */
+	function replace(s, m) {
+		if(!m) return s;
+		if(s.indexOf('/') === 0) {
+			var mid = /[^\\]\//.exec(s).index+1;
+			var end = s.lastIndexOf('/');
+			var re = new RegExp(s.substring(1, mid), s.substr(end+1));
+			return m.input.replace(re, s.substring(mid+1, end));
+		}
+		for(var i = m.length; i--;) {
+			s = s.replace('$'+i, m[i]);
+		}
+		return s;
+	}
+
+	function rect(node, q) {
+		if(q) {
+			var n = node;
+			while(tag(n = n.parentNode) != 'BODY') {
+				if(matches(n, q)) return n.getBoundingClientRect();
+			}
+		}
+		var nodes = node.querySelectorAll('*');
+		for(var i = nodes.length; i-- && (n = nodes[i]);) {
+			if(n.offsetHeight > node.offsetHeight) node = n;
+		}
+		return node.getBoundingClientRect();
+	}
+
+	function matches(n, q) {
+		var p = Element.prototype, m = p.mozMatchesSelector || p.webkitMatchesSelector || p.oMatchesSelector || p.matchesSelector || p.matches;
+		if(m) return m.call(n, q);
+	}
+
+	function tag(n) {
+		return n.tagName.toUpperCase();
+	}
+
+	function qs(s, n) {
+		return n.querySelector(s);
+	}
+
+	function parseNode(node) {
+		var a, img, url, info;
+		// if(!hosts) hosts = loadHosts();
+		if(tag(node) == 'A') {
+			a = node;
+		} else {
+			if(tag(node) == 'IMG') {
+				img = node;
+				if(img.src.substr(0, 5) != 'data:') url = rel2abs(img.src, location.href);
+			}
+			info = findInfo(url, node);
+			if(info) return info;
+			a = tag(node.parentNode) == 'A' ? node.parentNode : (tag(node.parentNode.parentNode) == 'A' ? node.parentNode.parentNode : false);
+		}
+		if(a) {
+			if(cfg.thumbsonly && !(img || qs('i', a) || a.rel == 'theater') && !hasBg(a) && !hasBg(a.parentNode) && !hasBg(a.firstElementChild)) return;
+			url = a.getAttribute('data-expanded-url') || a.getAttribute('data-full-url') || a.getAttribute('data-url') || a.href;
+			if(url.substr(0, 5) == 'data:') url = false;
+			else if(url.indexOf('//t.co/') > -1) url = 'http://' + a.textContent;
+			info = findInfo(url, a);
+			if(info) return info;
+		}
+		if(img) return {url:img.src, node:img, rect:rect(img), distinct:true};
+	}
+
+	function findInfo(url, node, noHtml, skipHost) {
+		for(var i = 0, len = hosts.length, tn = tag(node), h, m, html, urls; i < len && (h = hosts[i]); i++) {
+			if(h.e && !matches(node, h.e) || h == skipHost) continue;
+			if(h.r) {
+				if(h.html && !noHtml && (tn == 'A' || tn == 'IMG' || h.e)) {
+					if(!html) html = node.outerHTML;
+					m = h.r.exec(html)
+				} else if(url) {
+					m = h.r.exec(url);
+				} else {
+					m = null;
+				}
+			} else {
+				m = url ? /.*/.exec(url) : [];
+			}
+			if(!m || tn == 'IMG' && !('s' in h)) continue;
+			if('s' in h) {
+				urls = (Array.isArray(h.s) ? h.s : [h.s]).map(function(s) { if(typeof s == 'string') return decodeURIComponent(replace(s, m)); if(typeof s == 'function') return s(m, node); return s; });
+				if(Array.isArray(urls[0])) urls = urls[0];
+				if(urls[0] === false) continue;
+				urls = urls.map(function(u) { return u ? decodeURIComponent(u) : u; });
+			} else {
+				urls = [m.input];
+			}
+			if((h.follow === true || typeof h.follow == 'function' && h.follow(urls[0])) && !h.q) return findInfo(urls[0], node, false, h);
+			return {
+				node: node,
+				url: urls.shift(),
+				urls: urls,
+				r: h.r,
+				q: h.q,
+				c: h.c,
+				// g: h.g ? loadGalleryParser(h.g) : h.g,
+				xhr: h.xhr,
+				post: typeof h.post == 'function' ? h.post(m) : h.post,
+				follow: h.follow,
+				css: h.css,
+				manual: h.manual,
+				distinct: h.distinct,
+				// rect: rect(node, h.rect)
+			};
+		};
+	}
+
+	return {
+		findInfo: findInfo,
+		parseNode: parseNode
+	}
+
+})();
+
 
 		var matchedRule,
 			URL=location.href,
 			floatBar;
+
+
 
 		function findPic(img){
 			//获取包裹img的第一个a元素。
@@ -6953,9 +7136,11 @@ var xhrLoad = function() {
 
 			// };
 
-			var src,  // 大图网址
+			var src,  // 大图地址
+				srcs,  // 备用的大图地址
 				type,  // 类别
 				imgSrc,  // img 节点的 src
+				xhr,
 				description;  // 图片的注释
 
 			if(!src && matchedRule){// 通过高级规则获取.
@@ -6970,7 +7155,13 @@ var xhrLoad = function() {
 					}
 
 					if(src) {
+						if (Array.isArray(src)) {
+							srcs = src;
+							src = srcs.shift();
+						}
+
 						type = 'rule';
+						xhr = matchedRule.xhr;
 
 						if (matchedRule.lazyAttr) {  // 由于采用了延迟加载技术，所以图片可能为 loading.gif
 							imgSrc = img.getAttribute(matchedRule.lazyAttr);
@@ -6985,6 +7176,20 @@ var xhrLoad = function() {
 					}
 				}
 			};
+
+			if (!src && !base64Img) { // 兼容 MPIV 脚本规则
+				var info = MPIV.findInfo(img.src, img);
+				if (info) {
+					type = 'rule';
+					src = info.url;
+					srcs = info.urls;
+					// if (info.q) {
+					// 	xhr = {
+					// 		q: info.q
+					// 	};
+					// }
+				}
+			}
 
 			if(!src && !base64Img){//遍历通配规则
 				tprules._find(function(rule,index,array){
@@ -7035,17 +7240,18 @@ var xhrLoad = function() {
 
 			if(!src)return;
 
-			var ret={
-				src:src,//得到的src
-				type:type,//通过哪种方式得到的
-				imgSrc: imgSrc || img.src,//处理的图片的src
-				iPASrc:iPASrc,//图片的第一个父a元素的链接地址
+			var ret = {
+				src: src,                  // 得到的src
+				srcs: srcs,                // 多个 src，失败了会尝试下一个
+				type: type,                // 通过哪种方式得到的
+				imgSrc: imgSrc || img.src, // 处理的图片的src
+				iPASrc: iPASrc,            // 图片的第一个父a元素的链接地址
 
-				xhr: matchedRule && matchedRule.xhr,
+				xhr: xhr,
 				description: description || '',
 
-				img:img,//处理的图片
-				imgPA:imgPA,//图片的第一个父a元素
+				img: img,                  // 处理的图片
+				imgPA: imgPA,              // 图片的第一个父a元素
 			};
 
 			//console.log('图片查找结果:',ret);

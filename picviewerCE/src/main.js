@@ -3,6 +3,8 @@
 			URL=location.href,
 			floatBar;
 
+
+
 		function findPic(img){
 			//获取包裹img的第一个a元素。
 			var imgPN=img;
@@ -22,9 +24,11 @@
 
 			// };
 
-			var src,  // 大图网址
+			var src,  // 大图地址
+				srcs,  // 备用的大图地址
 				type,  // 类别
 				imgSrc,  // img 节点的 src
+				xhr,
 				description;  // 图片的注释
 
 			if(!src && matchedRule){// 通过高级规则获取.
@@ -39,7 +43,13 @@
 					}
 
 					if(src) {
+						if (Array.isArray(src)) {
+							srcs = src;
+							src = srcs.shift();
+						}
+
 						type = 'rule';
+						xhr = matchedRule.xhr;
 
 						if (matchedRule.lazyAttr) {  // 由于采用了延迟加载技术，所以图片可能为 loading.gif
 							imgSrc = img.getAttribute(matchedRule.lazyAttr);
@@ -54,6 +64,20 @@
 					}
 				}
 			};
+
+			if (!src && !base64Img) { // 兼容 MPIV 脚本规则
+				var info = MPIV.findInfo(img.src, img);
+				if (info) {
+					type = 'rule';
+					src = info.url;
+					srcs = info.urls;
+					// if (info.q) {
+					// 	xhr = {
+					// 		q: info.q
+					// 	};
+					// }
+				}
+			}
 
 			if(!src && !base64Img){//遍历通配规则
 				tprules._find(function(rule,index,array){
@@ -104,17 +128,18 @@
 
 			if(!src)return;
 
-			var ret={
-				src:src,//得到的src
-				type:type,//通过哪种方式得到的
-				imgSrc: imgSrc || img.src,//处理的图片的src
-				iPASrc:iPASrc,//图片的第一个父a元素的链接地址
+			var ret = {
+				src: src,                  // 得到的src
+				srcs: srcs,                // 多个 src，失败了会尝试下一个
+				type: type,                // 通过哪种方式得到的
+				imgSrc: imgSrc || img.src, // 处理的图片的src
+				iPASrc: iPASrc,            // 图片的第一个父a元素的链接地址
 
-				xhr: matchedRule && matchedRule.xhr,
+				xhr: xhr,
 				description: description || '',
 
-				img:img,//处理的图片
-				imgPA:imgPA,//图片的第一个父a元素
+				img: img,                  // 处理的图片
+				imgPA: imgPA,              // 图片的第一个父a元素
 			};
 
 			//console.log('图片查找结果:',ret);

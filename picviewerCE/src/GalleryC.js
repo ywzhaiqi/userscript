@@ -1247,6 +1247,11 @@
 				var self = this;
 
 				var src = dataset(ele,'src');
+
+				this.lastLoading=src;//记住最后读取的图片
+				this.isLoading=true;//表示选择的图片正在读取
+
+				// 特殊的 xhr 方式获取
 				var xhr = dataset(ele, 'xhr');
 				if (xhr) {
 					var error = function() {
@@ -1270,17 +1275,11 @@
 					return;
 				}
 
-				this.lastLoading=src;//记住最后读取的图片
-				this.isLoading=true;//表示选择的图片正在读取
-
 				var allLoading=this.allLoading;
-
 				if(allLoading.indexOf(src)!=-1){//在读取队列中。
 					return;
 				};
-
 				allLoading.push(src);
-				//console.log('正在读取中的图片：',cloneObject(allLoading));
 
 				//上一个读取中的图片，不是当前显示的。那么直接终止
 				var preImgR=this.imgReady;

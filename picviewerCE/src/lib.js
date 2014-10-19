@@ -11,12 +11,16 @@
 		}
 
 		function toRE(obj) {
-			if (obj instanceof RegExp) {
+			if (!obj) {
+				return obj;
+			} else if (obj instanceof RegExp) {
 				return obj;
 			} else if (obj instanceof Array) {
 				return new RegExp(obj[0], obj[1]);
 			} else if (typeof obj === 'string') {
-				obj = wildcardToRegExpStr(obj);
+				if (obj.indexOf('.*') == -1) {
+					obj = wildcardToRegExpStr(obj);
+				}
 				return new RegExp(obj);
 			}
 		}

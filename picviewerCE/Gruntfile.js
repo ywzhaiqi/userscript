@@ -3,8 +3,9 @@ module.exports = function(grunt) {
 	var paths = [
 	    'src/meta.js', 'src/header.js',
 	    'src/prefs.js', 'src/rule.js', 'src/prefs_icons.js', 'src/prefs_share.js',
-	    'src/lib.js', 'src/xhrLoad.js',
+	    'src/lib.js',
 	    'src/GalleryC.js', 'src/MagnifierC.js', 'src/ImgWindowC.js', 'src/LoadingAnimC.js', 'src/FloatBarC.js',
+	    'src/third party/xhrLoad.js', 'src/third party/MPIV.js',
 	    'src/main.js', 'src/footer.js'
 	];
 

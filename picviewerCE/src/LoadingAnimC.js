@@ -44,7 +44,7 @@
 					this.loadImg(this.data.imgSrc);
 				} else {
 					if (!this.data.xhr) {
-						this.loadImg(this.data.src);
+						this.loadImg(this.data.src, this.data.srcs);
 					} else {
 						xhrLoad.load({
 							url: this.data.src,
@@ -154,8 +154,8 @@
 				cs.removeProperty('display');
 			},
 
-			// 根据 imgSrc 载入图片
-			loadImg: function(imgSrc) {
+			// 根据 imgSrc 载入图片，imgSrcs 为备用图片地址，imgSrc 加载失败备用
+			loadImg: function(imgSrc, imgSrcs) {
 				var self = this;
 
 				var img = document.createElement('img');
@@ -163,6 +163,14 @@
 
 				var opts = {
 					error: function(e) {
+						if (Array.isArray(imgSrcs)) {
+							var src = imgSrcs.shift();
+							if (src) {
+								self.loadImg(src, imgSrcs);
+								return;
+							}
+						}
+
 						self.error(this, e);
 					},
 				};

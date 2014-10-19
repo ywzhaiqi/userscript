@@ -89,34 +89,33 @@
 					};
 				},
 			},
-			{name:"豆瓣",
-				siteExample:"http://movie.douban.com/photos/photo/1000656155/",
-				enabled:true,
-				url:/^https?:\/\/[^.]*\.douban\.com/i,
-				getImage:function(){
-					var oldsrc = this.src,
-						newsrc = oldsrc;
-					var pic = /\/view\/photo\/(?:photo|albumcover|albumicon|thumb)\/public\//i;
-					var movieCover = /\/view\/movie_poster_cover\/[si]pst\/public\//i;
-					var bookCover = /\/view\/ark_article_cover\/cut\/public\//i;
-					var spic = /(img\d.douban.com)\/spic\//i
+			// {name:"豆瓣",
+			// 	siteExample:"http://movie.douban.com/photos/photo/1000656155/",
+			// 	enabled: false,
+			// 	url:/^https?:\/\/[^.]*\.douban\.com/i,
+			// 	getImage:function(){
+			// 		var oldsrc = this.src,
+			// 			newsrc = oldsrc;
+			// 		var pic = /\/view\/photo\/(?:photo|albumcover|albumicon|thumb)\/public\//i;
+			// 		var movieCover = /\/view\/movie_poster_cover\/[si]pst\/public\//i;
+			// 		var bookCover = /\/view\/ark_article_cover\/cut\/public\//i;
+			// 		var spic = /(img\d+.douban.com)\/[sm]pic\//i
 
-					// 这个网址大图会出错
-					// http://movie.douban.com/subject/25708579/discussion/58950206/
-					if (pic.test(oldsrc)) {
-						newsrc = oldsrc.replace(pic, '/view/photo/raw/public/');
-					} else if (movieCover.test(oldsrc)) {
-						newsrc = oldsrc.replace(movieCover, '/view/photo/raw/public/');
-					} else if (bookCover.test(oldsrc)) {
-						newsrc = oldsrc.replace(bookCover, '/view/ark_article_cover/retina/public/');
-					} else if (spic.test(oldsrc)) {
-						// newsrc = oldsrc.replace(spic, '$1/mpic/');
-						newsrc = oldsrc.replace(spic, '$1/lpic/');
-					}
+			// 		// 这个网址大图会出错
+			// 		// http://movie.douban.com/subject/25708579/discussion/58950206/
+			// 		if (pic.test(oldsrc)) {
+			// 			newsrc = oldsrc.replace(pic, '/view/photo/raw/public/');
+			// 		} else if (movieCover.test(oldsrc)) {
+			// 			newsrc = oldsrc.replace(movieCover, '/view/photo/raw/public/');
+			// 		} else if (bookCover.test(oldsrc)) {
+			// 			newsrc = oldsrc.replace(bookCover, '/view/ark_article_cover/retina/public/');
+			// 		} else if (spic.test(oldsrc)) {
+			// 			newsrc = oldsrc.replace(spic, '$1/lpic/');
+			// 		}
 
-					return newsrc == oldsrc ? null : newsrc;
-				}
-			},
+			// 		return newsrc == oldsrc ? null : newsrc;
+			// 	}
+			// },
 			{name:"新浪微博",
 				siteExample:"http://weibo.com/pub/?source=toptray",
 				enabled:true,
@@ -129,9 +128,9 @@
 					var photoList=/\.sinaimg\.cn\/thumb150\/\w+/i//相册
 					var newsrc;
 					if(pic.test(oldsrc)){
-						newsrc=oldsrc.replace(pic,'$1large');
+						newsrc=oldsrc.replace(pic,'$1large');  // large 不是每一张图片都有的
 						return newsrc==oldsrc? '' : newsrc;
-					} else if (pic2.test(oldsrc)) {  // large 不是每一张图片都有的
+					} else if (pic2.test(oldsrc)) {
 						newsrc=oldsrc.replace(pic2,'$1mw1024');
 						return newsrc==oldsrc? '' : newsrc;
 					} else if(head.test(oldsrc)){
@@ -420,18 +419,8 @@
 
 		// 通配型规则,无视站点.
 		var tprules=[
-			function(img,a){ // 解决新的dz论坛的原图获取方式.
-				var reg=/(.+\/attachments?\/.+)\.thumb\.\w{2,5}$/i;
-				var oldsrc=this.src;
-				if (!oldsrc) return;
-				var newsrc=oldsrc.replace(reg,'$1');
-				if(oldsrc!=newsrc)return newsrc;
-			},
-
-			// GoogleContent
-			function(img, a) { // 来自 Imagus 扩展
+			function(img, a) { // GoogleContent 规则，来自 Imagus 扩展
 				var reg = new RegExp('((?:(?:lh|gp|yt)\\d+\\.g(?:oogleuserconten|gph)|\\d\\.bp\\.blogspo)t\\.com/)(?:([_-](?:[\\w\\-]{11}/){4})[^/]+(/[^?#]+)?|([^=]+)).*');
-
 				var $ = reg.exec(this.src);
 				if ($) {
 					var url = true ?
@@ -440,14 +429,21 @@
 					return 'http://' + url;
 				}
 			},
+
+			function(img,a){ // 解决新的dz论坛的原图获取方式.
+				var reg=/(.+\/attachments?\/.+)\.thumb\.\w{2,5}$/i;
+				var oldsrc=this.src;
+				if (!oldsrc) return;
+				var newsrc=oldsrc.replace(reg,'$1');
+				if(oldsrc!=newsrc)return newsrc;
+			},
 		];
 
-		// TODO：兼容 Imagus 扩展和 Mouseover Popup Image Viewer 脚本的规则
-		var rule = {};
+		var Rule = {};
 
-		// Imagus 扩展的规则
+		// TODO：兼容 Imagus 扩展的规则
 		// 1、要移除前面的 https?://
-		rule.imagus = [
+		Rule.imagus = [
 			{name: 'GoogleContent',
 				img: '^((?:(?:lh|gp|yt)\\d+\\.g(?:oogleuserconten|gph)|\\d\\.bp\\.blogspo)t\\.com/)(?:([_-](?:[\\w\\-]{11}/){4})[^/]+(/[^?#]+)?|([^=]+)).*',
 				to: function($) {
@@ -458,11 +454,36 @@
 			}
 		];
 
-		// Mouseover Popup Image Viewer 脚本的规则
-		rule.MPIV = [
-			{ d: 'www.topit.me', r: /(.*topit\.me)\/[ml]\/(.*\.jpg)$/, q: 'a[download], a#item-tip' },
-			{ d: 'www.topit.me', r: /(.*topit\.me\/[c1]\/.*)m\.jpg$/, s: '$1l.jpg' },
-
-			// 豆瓣
-			{ r: /(img\d.douban.com)\/spic\//i, s: '$1/lpic/' },  // 用了人人影视的豆瓣脚本需要用到
+		// 兼容部分 Mouseover Popup Image Viewer 脚本的规则
+		Rule.MPIV = [
+			{name: "Douban",  // 人人影视的豆瓣脚本需要用到
+				r: "(img\\d+\\.douban\\.com/)(?:(view/)(?:photo|movie_poster_cover)/(?!large)[^/]+|(icon/u(?=\\d))|[sm](?=pic/))(.*)",
+				s: function(m, node) {
+					return [
+						'http://' + m[1] + (m[2] ? m[2] + 'photo/raw' : ((m[3]||'') + 'l')) + m[4],
+						'http://' + m[1] + (m[2] ? m[2] + 'photo/photo' : ((m[3]||'') + 'l')) + m[4]
+					];
+				}
+			}
 		];
+
+		loadRule_MPIV();
+
+		function loadRule_MPIV() {
+			Rule.MPIV.forEach(function(h) {
+				try {
+					if(h.r) h.r = new RegExp(h.r, 'i');
+					if(h.s && h.s.indexOf('return ') > -1) h.s = new Function('m', 'node', h.s);
+					if(h.q && h.q.indexOf('return ') > -1) h.q = new Function('text', 'doc', h.q);
+					if(h.c && h.c.indexOf('return ') > -1) h.c = new Function('text', 'doc', h.c);
+				} catch(ex) {
+					console.error('MPIV 规则中无效的 host: ' + h, ex);
+				}
+			});
+
+			var filter = function(hn, h) {
+				return !h.d || hn.indexOf(h.d) > -1;
+			};
+
+			Rule.MPIV = Rule.MPIV.filter(filter.bind(null, location.hostname));
+		}
