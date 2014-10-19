@@ -1,7 +1,7 @@
 picviewerCE.user.js
 ===================
 
-[picViewer By NLF](http://userscripts-mirror.org/scripts/show/105741) 修改版。[直接安装地址](https://github.com/ywzhaiqi/userscript/raw/master/picviewerCE/picviewerCE.user.js)
+[picViewer By NLF](http://userscripts-mirror.org/scripts/show/105741) 修改版。[github 安装地址](https://github.com/ywzhaiqi/userscript/raw/master/picviewerCE/picviewerCE.user.js)
 
 ## 修改说明
 
@@ -12,8 +12,7 @@ picviewerCE.user.js
 
 ### 修改
 
-- 修改了默认的设置
-    - 改为**双击**关闭图片窗口，还可用 esc 键关闭。
+- 修改为 **双击关闭图片窗口**，还可使用 esc 键关闭。
 
 ### 新增
 
@@ -28,9 +27,9 @@ picviewerCE.user.js
 - 新增了几个库的命令
     - `重载`。跟下面的自动重载类同，这是手动重载。
     - `导出所有图片到新窗口`
-    - **`进入全屏`、`退出全屏` 按钮**
+    - **进入全屏和退出全屏按钮**
 - 新增了 `显示隐藏底部条` 按钮
-- ~~新增库浏览时，当滚动到最后一个，会自动滚动原页面到最底部，如果有新的图片会自动重载。例如百度图片库浏览时。~~ 已被默认禁用，有待进一步完善。
+- *新增库浏览时，当滚动到最后一个，会自动滚动原页面到最底部，如果有新的图片会自动重载。例如百度图片库浏览时。* 需要手动启用，有待进一步完善。
 
 ## 鼠标手势调用（FireGesture）
 

@@ -2,7 +2,7 @@
 // @name           picviewer CE
 // @author         NLF && ywzhaiqi
 // @description    NLF 的围观图修改版
-// @version        2014.10.19.1
+// @version        2014.10.19.2
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
@@ -558,16 +558,16 @@
 
 		// TODO：兼容 Imagus 扩展的规则
 		// 1、要移除前面的 https?://
-		Rule.imagus = [
-			{name: 'GoogleContent',
-				img: '^((?:(?:lh|gp|yt)\\d+\\.g(?:oogleuserconten|gph)|\\d\\.bp\\.blogspo)t\\.com/)(?:([_-](?:[\\w\\-]{11}/){4})[^/]+(/[^?#]+)?|([^=]+)).*',
-				to: function($) {
-					return true ?
-							$[1] + ($[4] ? $[4] + '=' : $[2]) + 's0' + ($[3]||'') :  // 原图
-							$[1] + ($[4] ? $[4] + '=' : $[2]) + 's1024' + ($[3]||'');  // 1024 大小
-				}
-			}
-		];
+		// Rule.imagus = [
+		// 	{name: 'GoogleContent',
+		// 		img: '^((?:(?:lh|gp|yt)\\d+\\.g(?:oogleuserconten|gph)|\\d\\.bp\\.blogspo)t\\.com/)(?:([_-](?:[\\w\\-]{11}/){4})[^/]+(/[^?#]+)?|([^=]+)).*',
+		// 		to: function($) {
+		// 			return true ?
+		// 					$[1] + ($[4] ? $[4] + '=' : $[2]) + 's0' + ($[3]||'') :  // 原图
+		// 					$[1] + ($[4] ? $[4] + '=' : $[2]) + 's1024' + ($[3]||'');  // 1024 大小
+		// 		}
+		// 	}
+		// ];
 
 		// 兼容部分 Mouseover Popup Image Viewer 脚本的规则
 		Rule.MPIV = [
@@ -578,19 +578,23 @@
 						'http://' + m[1] + (m[2] ? m[2] + 'photo/raw' : ((m[3]||'') + 'l')) + m[4],
 						'http://' + m[1] + (m[2] ? m[2] + 'photo/photo' : ((m[3]||'') + 'l')) + m[4]
 					];
-				}
+				},
 			}
 		];
 
 		loadRule_MPIV();
 
 		function loadRule_MPIV() {
+			var isStringFn = function(a) {
+				return typeof a == 'string' && a.indexOf('return ') > -1;
+			};
+
 			Rule.MPIV.forEach(function(h) {
 				try {
 					if(h.r) h.r = new RegExp(h.r, 'i');
-					if(h.s && h.s.indexOf('return ') > -1) h.s = new Function('m', 'node', h.s);
-					if(h.q && h.q.indexOf('return ') > -1) h.q = new Function('text', 'doc', h.q);
-					if(h.c && h.c.indexOf('return ') > -1) h.c = new Function('text', 'doc', h.c);
+					if(isStringFn(h.s)) h.s = new Function('m', 'node', h.s);
+					if(isStringFn(h.q)) h.q = new Function('text', 'doc', h.q);
+					if(isStringFn(h.c)) h.c = new Function('text', 'doc', h.c);
 				} catch(ex) {
 					console.error('MPIV 规则中无效的 host: ' + h, ex);
 				}
