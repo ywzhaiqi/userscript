@@ -2,7 +2,7 @@
 // @name           picviewer CE
 // @author         NLF && ywzhaiqi
 // @description    NLF 的围观图修改版
-// @version        2014.10.18.0
+// @version        2014.10.19.0
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
@@ -225,7 +225,8 @@
 					} else if (bookCover.test(oldsrc)) {
 						newsrc = oldsrc.replace(bookCover, '/view/ark_article_cover/retina/public/');
 					} else if (spic.test(oldsrc)) {
-						newsrc = oldsrc.replace(spic, '$1/mpic/');
+						// newsrc = oldsrc.replace(spic, '$1/mpic/');
+						newsrc = oldsrc.replace(spic, '$1/lpic/');
 					}
 
 					return newsrc == oldsrc ? null : newsrc;
@@ -537,6 +538,7 @@
 			function(img,a){ // 解决新的dz论坛的原图获取方式.
 				var reg=/(.+\/attachments?\/.+)\.thumb\.\w{2,5}$/i;
 				var oldsrc=this.src;
+				if (!oldsrc) return;
 				var newsrc=oldsrc.replace(reg,'$1');
 				if(oldsrc!=newsrc)return newsrc;
 			},
@@ -575,6 +577,9 @@
 		rule.MPIV = [
 			{ d: 'www.topit.me', r: /(.*topit\.me)\/[ml]\/(.*\.jpg)$/, q: 'a[download], a#item-tip' },
 			{ d: 'www.topit.me', r: /(.*topit\.me\/[c1]\/.*)m\.jpg$/, s: '$1l.jpg' },
+
+			// 豆瓣
+			{ r: /(img\d.douban.com)\/spic\//i, s: '$1/lpic/' },  // 用了人人影视的豆瓣脚本需要用到
 		];
 
 		//图标
@@ -7309,10 +7314,10 @@ var xhrLoad = function() {
 						throwErrorInfo(ex);
 					}
 				}
+			}
 
-				if (!target || target.nodeName != 'IMG') {
-					return;
-				}
+			if (!target || target.nodeName != 'IMG') {
+				return;
 			}
 
 			var result=findPic(target);

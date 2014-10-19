@@ -383,10 +383,10 @@
 						throwErrorInfo(ex);
 					}
 				}
+			}
 
-				if (!target || target.nodeName != 'IMG') {
-					return;
-				}
+			if (!target || target.nodeName != 'IMG') {
+				return;
 			}
 
 			var result=findPic(target);
