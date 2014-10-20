@@ -41,7 +41,7 @@ var rules = [
            target: 'css;#top_nav',
            where: 'afterEnd',
         },
-        // 自定义样式，我新增的
+        // 自定义样式
         stylish: '',
     },
     {name: "wen.lu网页搜索",
@@ -109,7 +109,8 @@ var rules = [
            target: 'css;#container',
            where: 'beforeBegin',
         },
-        stylish: '#head{ margin-bottom: 0; }'
+        stylish: '#head{ margin-bottom: 0; }',
+        left: false
     },
     {name: "搜狗网页搜索",
         url: /^https?:\/\/www\.sogou\.com\/(?:web|sogou)/,
@@ -485,7 +486,7 @@ var rules = [
                ',
         insertIntoDoc: {
            keyword: 'css;#data-widget-searchword',
-           target: 'css;#destinationBox',
+           target: 'css;.mod_search_header',
            where: 'afterEnd'
         },
     },
@@ -683,7 +684,8 @@ var rules = [
             keyword: 'css;input[name=q]',
             target: 'css;#top_nav',
             where: 'beforeBegin'
-        }
+        },
+        left: false
     },
     {name: "百度图片",
         url: /^https?:\/\/image\.baidu\.c(om|n)\/i/,
@@ -1002,8 +1004,8 @@ var rules = [
         style: '\
                border-top:1px solid #FFFFFF;\
                border-bottom:1px solid #FFFFFF;\
-               margin:0 auto;\
                margin-top:50px;\
+               text-align: center;\
                ',
         insertIntoDoc: {
            keyword: function() {
@@ -1037,7 +1039,7 @@ var rules = [
         style: "\
            border-top:1px solid #D4E9F7;\
            border-bottom:1px solid #D4E9F7;\
-           margin:0 auto;\
+           text-align: center;\
            word-break:keep-all;\
            white-space:nowrap;\
         ",
@@ -1070,11 +1072,22 @@ var rules = [
         style: "\
            border-bottom: 1px solid #E5E5E5;\
            border-top: 1px solid #E5E5E5;\
+           text-align: center;\
         ",
         insertIntoDoc: {
-           keyword: 'css;#q',
-           target: 'css;.tb-container',
-           where: 'beforeBegin',
+            keyword: function() {
+                var input = document.querySelector('#q');
+                if (input) {
+                    return input.value;
+                } else {
+                    var m = location.search.match(/q=([^&]+)/);
+                    if (m) {
+                        return decodeURIComponent(m[1]);
+                    }
+                }
+            },
+            target: 'css;body',
+            where: 'beforeBegin',
         },
     },
     {name: "易迅",
@@ -1113,7 +1126,7 @@ var rules = [
            margin:0 auto;\
            border-bottom:1px solid #E5E5E5;\
            border-top:1px solid #E5E5E5;\
-           margin-bottom:3px;\
+           text-align: center;\
         ",
         insertIntoDoc: {
            keyword: 'css;#mq',

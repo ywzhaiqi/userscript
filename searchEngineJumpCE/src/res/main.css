@@ -10,6 +10,7 @@
 
 #sej-expanded-category {
     font-weight: bold;
+    cursor: pointer;
 }
 #sej-expanded-category::after {
     content:"：";

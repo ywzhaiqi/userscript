@@ -111,11 +111,11 @@ function getFaviconUrl(url, type) {
         case 1:
             return 'http://g.etfv.co/' + url;
         case 2:
-            return 'http://www.google.com/s2/favicons?domain=' + uri.host;
+            return 'http://api.byi.pw/favicon?url=' + url;
         case 3:
             return uri.protocol + '://' + uri.host + '/favicons.ico';
         default:
-            return 'http://api.byi.pw/favicon?url=' + url;
+            return 'http://www.google.com/s2/favicons?domain=' + uri.host;
     }
 }
 

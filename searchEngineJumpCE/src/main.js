@@ -85,7 +85,7 @@ function addContainer(iTarget, iInput) {
         engines = engines.join('') + '<span class="sej-engine" _title="' + lastInsertTitle + '" style="display: none;"></span>';
 
         if (isTheSameCategory(category.name, matchedRule.engineList)) {
-            container.innerHTML = '<sejspan id="sej-expanded-category">'+ category.name +'</sejspan>' + engines;
+            container.innerHTML = '<sejspan id="sej-expanded-category" title="点击打开设置窗口">'+ category.name +'</sejspan>' + engines;
         } else {
             var dropList = document.createElement('sejspan');
             dropList.className = 'sej-drop-list';
@@ -156,6 +156,10 @@ function addContainer(iTarget, iInput) {
             ins.parentNode.insertBefore(a, ins);
         }
 
+        if (prefs.position == 'left') {  // 如果再左边的话，修正弹出菜单的位置
+            a.dataset.horizontal = true;
+        }
+
         document.body.appendChild(dropList);
 
         dropList.addEventListener('mousedown', mousedownhandler, true);
@@ -164,13 +168,43 @@ function addContainer(iTarget, iInput) {
     });
 
     // 添加设置按钮
-    var configBtn = document.createElement('a');
-    configBtn.innerHTML = '<img class="sej-engine-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABbklEQVQ4jZWSu0oDURCGp9BCLcRCAzFGsjvzHwyoWbMzYKWdErBREQQLG/F90qW1y5sEfYGgTyBewBtRiYlFdkPibowOnGrn+883Z5bo95ogKk+O6RkNQ6wFsbbvry38iWAOD5mDIhGRSHjgYF0H64qE50REhUKw7FhPRsC6B9GOE31z0GYM94/YtYM99wL1NBEArC8CepcAk+fF80qSauGgV70m/YRoTURLzEERElYh1nKwLsRuEqDnlWcd6xFEOw7WBewiYShhNbYA9CyfX50b+GhPg5rMtpl8o6A42AOxdiazNhOp28NwgG79DBDR0vBb6Ec2W54mIqJcLjcFhBWIfkWK9eQIWhtY63EfHm6yRqwHaJ053Ga2TcAuHPQzurmZugHPK+cd9H78GvVVZGMlEcBsO9EIjxBrxOP0jLQD6CXEbuMRUi2AsOL7G0xE5Hzd7d8a/b5LS0FWRPdT4ZSacLBniL4zB/N/hf5d3635oJ6ZNLU9AAAAAElFTkSuQmCC" />';
-    configBtn.onclick = openPrefs;
-    container.appendChild(configBtn);
+    if (!prefs.hidePrefsBtn) {
+        var configBtn = document.createElement('a');
+        configBtn.innerHTML = '<img class="sej-engine-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABbklEQVQ4jZWSu0oDURCGp9BCLcRCAzFGsjvzHwyoWbMzYKWdErBREQQLG/F90qW1y5sEfYGgTyBewBtRiYlFdkPibowOnGrn+883Z5bo95ogKk+O6RkNQ6wFsbbvry38iWAOD5mDIhGRSHjgYF0H64qE50REhUKw7FhPRsC6B9GOE31z0GYM94/YtYM99wL1NBEArC8CepcAk+fF80qSauGgV70m/YRoTURLzEERElYh1nKwLsRuEqDnlWcd6xFEOw7WBewiYShhNbYA9CyfX50b+GhPg5rMtpl8o6A42AOxdiazNhOp28NwgG79DBDR0vBb6Ec2W54mIqJcLjcFhBWIfkWK9eQIWhtY63EfHm6yRqwHaJ053Ga2TcAuHPQzurmZugHPK+cd9H78GvVVZGMlEcBsO9EIjxBrxOP0jLQD6CXEbuMRUi2AsOL7G0xE5Hzd7d8a/b5LS0FWRPdT4ZSacLBniL4zB/N/hf5d3635oJ6ZNLU9AAAAAElFTkSuQmCC" />';
+        configBtn.onclick = openPrefs;
+        container.appendChild(configBtn);
+    }
+    // 点击最前面的 "类别" 按钮打开设置窗口
+    var categoryBtn = container.querySelector('#sej-expanded-category');
+    categoryBtn.addEventListener('click', openPrefs, false);
+
+    // 设置插入的位置
+    var insertWhere = matchedRule.insertIntoDoc.where;
+    if (matchedRule.left != false) {
+        switch (prefs.position) {
+            case 'left':
+                prefs.hideEnglineLabel = 0;
+                insertWhere = 'beforebegin';
+                iTarget = document.body;
+                container.style.cssText = '\
+                    position: fixed;\
+                    top: 104px;\
+                    width: 100px;\
+                    z-index: 9999;\
+                ';
+                GM_addStyle('#sej-container > a { width: 100px; }');
+                break;
+            case 'top':
+                insertWhere = 'beforebegin';
+                iTarget = document.body;
+                break;
+            case 'default':
+                break;
+        }
+    }
 
     // 插入到文档中
-    switch (matchedRule.insertIntoDoc.where.toLowerCase()) {
+    switch (insertWhere.toLowerCase()) {
         case 'beforebegin' :
             iTarget.parentNode.insertBefore(container, iTarget);
         break;

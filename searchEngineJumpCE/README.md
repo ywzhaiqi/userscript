@@ -1,9 +1,9 @@
 searchEngineJumpCE.user.js
 ===========================
 
-基于 [searchEngineJump By NLF](http://userscripts.org/scripts/show/84970) 修改增强简化。仅适用于 Greasemonkey 或 Tampermonkey。
+基于 [searchEngineJump By NLF](http://userscripts.org/scripts/show/84970) 修改增强简化。**仅适用于 Greasemonkey 或 Tampermonkey**。
 
-[直接安装地址](https://raw.githubusercontent.com/ywzhaiqi/userscript/master/searchEngineJumpCE/searchEngineJumpCE.user.js)
+[github 安装地址](https://raw.githubusercontent.com/ywzhaiqi/userscript/master/searchEngineJumpCE/searchEngineJumpCE.user.js)
 
 ### 修改说明
 
@@ -27,6 +27,6 @@ searchEngineJumpCE.user.js
 
 ### 同类脚本或扩展
 
-- [SearchEngineJump_by_ted423](https://greasyfork.org/zh-CN/scripts/213-searchenginejump-by-ted423)
+- [SearchEngineJump_by_ted423](https://greasyfork.org/scripts/213-searchenginejump-by-ted423)
 - [search_engineJump 文科版](https://greasyfork.org/scripts/2739-search-enginejump)
-- [search2 - chrome](https://chrome.google.com/webstore/detail/godjlopkhiadfppdjhbekbppchinkmpi) 扩展
+- chrome [search2](https://chrome.google.com/webstore/detail/godjlopkhiadfppdjhbekbppchinkmpi) 扩展

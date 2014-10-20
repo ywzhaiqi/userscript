@@ -7,10 +7,11 @@
 
 视频-youtube
     搜库, http://www.soku.com/v?keyword=%s
+    豆瓣电影, http://movie.douban.com/subject_search?search_text=%s&cat=1002, www.douban.com
     搜狐, http://so.tv.sohu.com/mts?wd=%s
     腾讯, http://v.qq.com/search.html?ms_key=%s
     奇艺, http://so.iqiyi.com/so/q_%s
-    乐视, http://so.letv.com/s?wd=%s
+    // 乐视, http://so.letv.com/s?wd=%s
     acfan, http://www.acfun.tv/search.aspx#query=%s
     bilibili, http://www.bilibili.tv/search?keyword=%s
     youtube, https://www.youtube.com/results?search_query=%s
@@ -55,15 +56,25 @@
 
 购物
     一淘, http://s.etao.com/search?q=%s
-    惠惠, http://www.huihui.cn/search?q=%s
-    易迅, http://searchex.yixun.com/html?charset=utf-8&as=1&key=%s
-    360购物, http://s.mall.360.cn/search.html?query=%s
     淘宝, http://s.taobao.com/search?q=%s
     天猫, http://list.tmall.com/search_product.htm?q=%s&type=p, gbk
     京东, http://search.jd.com/Search?keyword=%s&enc=utf-8
     苏宁, http://search.suning.com/%s/
     当当, http://search.dangdang.com/search.php?key=%s, gbk
     亚马逊, http://www.amazon.cn/s/ref=nb_sb_noss?field-keywords=%s
+    360购物, http://s.mall.360.cn/search.html?query=%s
+    惠惠, http://www.huihui.cn/search?q=%s
+    易迅, http://searchex.yixun.com/html?charset=utf-8&as=1&key=%s
+
+下载-1
+    搜索百度盘, https://www.google.com.hk/search?num=20&newwindow=1&hl=zh-CN&q=site:pan.baidu.com+%s, so.baiduyun.me
+    我乐盘, http://www.56pan.com/s.php?q=%s&wp=0
+    人人影视, http://www.yyets.com/search/index?keyword=%s
+    我爱P2P, http://www.byhh.org/?topic_title=%s
+    种子快搜, http://www.searchbt.net/btsearch.php?query=%s
+    下载搜索, https://www.google.com/cse?q=%s&newwindow=1&cx=006100883259189159113%3Atwgohm0sz8q
+    simpledCD, http://simplecd.me/search/entry/?query=%s
+    射手字幕, http://www.shooter.cn/search/%s
 
 书籍
     豆瓣读书, http://book.douban.com/subject_search?search_text=%s&cat=1001, www.douban.com
@@ -73,16 +84,6 @@
     Google 书籍, http://books.google.com/books?q=%s, www.google.com
     多看, http://www.duokan.com/search/%s/1
     百度盘（主页）, http://pan.baidu.com/disk/home?adapt=pc#dir/key=%s
-
-下载-2
-    我乐盘, http://www.56pan.com/s.php?q=%s&wp=0
-    网盘搜索, http://so.baiduyun.me/search.php?wd=%s
-    人人影视, http://www.yyets.com/search/index?keyword=%s
-    我爱P2P, http://www.byhh.org/?topic_title=%s
-    simpledCD, http://simplecd.me/search/entry/?query=%s
-    种子快搜, http://www.searchbt.net/btsearch.php?query=%s
-    下载搜索, https://www.google.com/cse?q=%s&newwindow=1&cx=006100883259189159113%3Atwgohm0sz8q
-    射手字幕, http://www.shooter.cn/search/%s
 
 翻译-有道词典
     google翻译, https://translate.google.com/?q=%s
@@ -94,8 +95,9 @@
     汉典, http://www.zdic.net/search/?q=%s
 
 地图
-   Google 地图, http://ditu.google.cn/maps?q=%s,
-   百度地图, http://map.baidu.com/m?word=%s,
+   Google 地图, http://ditu.google.cn/maps?q=%s
+   Google 地图（新）, https://maps.google.com/maps?q=%s, ditu.google.cn
+   百度地图, http://map.baidu.com/m?word=%s
    搜狗地图, http://map.sogou.com/new/#lq=%s
    必应地图, http://cn.bing.com/ditu/?q=%s&mkt=zh-CN
    城市吧, http://www.city8.com/key_%s

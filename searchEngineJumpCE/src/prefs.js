@@ -1,8 +1,11 @@
 function loadPrefs() {
     prefs.openInNewTab = GM_getValue('openInNewTab', prefs.openInNewTab);
     prefs.debug = GM_getValue('debug', prefs.debug);
+    prefs.hidePrefsBtn = GM_getValue('hidePrefsBtn', prefs.hidePrefsBtn);
     prefs.hideEnglineLabel = GM_getValue('hideEnglineLabel', prefs.hideEnglineLabel);
     prefs.engineListDataType = GM_getValue('engineListDataType', prefs.engineListDataType);
+    prefs.position = GM_getValue('position', prefs.position);
+    prefs.siteInfo = JSON.parse(GM_getValue('siteInfo') || '{}');
 
     engineListData.custom = GM_getValue('engineList') || '';
     debug = prefs.debug ? console.debug.bind(console) : function() {};
@@ -25,7 +28,7 @@ function openPrefs(){
         #sej-prefs-setup div { text-align:center;font-size:14px; }\
         #sej-prefs-title { font-weight:bold; }\
         #sej-prefs-setup ul { margin:15px 0 0 0;padding:0;list-style:none;background:#eee;border:0; }\
-        #sej-prefs-setup input, #sej-prefs-setup select { border:1px solid gray;padding:2px;background:white; }\
+        #sej-prefs-setup input, #sej-prefs-setup select { border:1px solid gray;padding:2px;background:white; height: auto; }\
         #sej-prefs-setup li { margin:0;padding:6px 0;vertical-align:middle;background:#eee;border:0 }\
         #sej-prefs-setup textarea { width:98%; height:60px; margin:3px 0; font-family: "Microsoft YaHei UI","微软雅黑",Arial; }\
         #sej-prefs-setup button { padding: 1px 6px; font-size: 12px; margin-right: 3px; }\
@@ -34,6 +37,7 @@ function openPrefs(){
         #sej-prefs-minitip { position: absolute; background: #ff9; border: 1px solid #F96; padding: 10px; left: -400px; top: 200px; right: 570px; }\
         #sej-prefs-minitip p { margin: 5px 5px; }\
         #sej-prefs-minitip span { color: green; }\
+        #sej-prefs-debug { margin-left: 18px; }\
     ');
 
     var div = d.createElement('div');
@@ -41,13 +45,25 @@ function openPrefs(){
     d.body.appendChild(div);
     div.innerHTML = '\
         <div id="top-buttons">\
-            <button id="sej-prefs-ok" title="需要刷新页面才能生效">√ 确定</button>\
+            <button id="sej-prefs-ok" title="立即生效">√ 确定</button>\
             <button id="sej-prefs-cancel" title="取消本次设定，所有选项还原">X 取消</button>\
         </div>\
         <div id="sej-prefs-title">SearchEngineJumpCE 设置</div>\
         <ul>\
-            <li><input type="checkbox" id="sej-prefs-openInNewTab" /> 在新页面打开</li>\
-            <li><input type="checkbox" id="sej-prefs-debug" /> 调试模式</li>\
+            <li>\
+                <input type="checkbox" id="sej-prefs-openInNewTab" /> 在新页面打开\
+                <input type="checkbox" id="sej-prefs-debug" /> 调试模式\
+                <span title="点击最前面的类别（如网页）打开设置">\
+                    <input type="checkbox" id="sej-prefs-hidePrefsBtn" /> 隐藏设置按钮（点击类别打开）\
+                </span>\
+            </li>\
+            <li style="display: none;">\
+                插入的位置：\
+                <select id="sej-prefs-position" >\
+                    <option value="default">默认</option>\
+                    <option value="left">如果允许，优先左侧</option>\
+                </select>\
+            </li>\
             <li>\
                 前几个搜索的文字部分：\
                 <select id="sej-prefs-hideEnglineLabel" >\
@@ -60,8 +76,8 @@ function openPrefs(){
                 搜索列表版本：\
                 <select id="sej-prefs-engineListDataType" >\
                     <option value="custom">用户版本</option>\
-                    <option value="my">作者版本</option>\
                     <option value="simple">极简版本</option>\
+                    <option value="my">详细版本</option>\
                     <option value="wenke">文科版本</option>\
                     <option value="ted423">ted423版本</option>\
                 </select>\
@@ -94,8 +110,10 @@ function openPrefs(){
     on($('ok'), 'click', function(){
         GM_setValue('openInNewTab', prefs.openInNewTab = !!$('openInNewTab').checked);
         GM_setValue('debug', prefs.debug = !!$('debug').checked);
+        GM_setValue('hidePrefsBtn', prefs.hidePrefsBtn = !!$('hidePrefsBtn').checked);
         GM_setValue('hideEnglineLabel', prefs.hideEnglineLabel = $('hideEnglineLabel').value);
         GM_setValue('engineListDataType', prefs.engineListDataType = engineListType_sel.value);
+        GM_setValue('position', prefs.position = $('position').value);
 
         if (engineListType_sel.value == 'custom') {
             GM_setValue('engineList', engineListData.custom = engineList_txt.value);
@@ -119,9 +137,11 @@ function openPrefs(){
         engineList_txt.value = engineListData[engineListType_sel.value].trim();
     };
 
-    $('debug').checked = prefs.debug;
     $('openInNewTab').checked = prefs.openInNewTab;
+    $('debug').checked = prefs.debug;
+    $('hidePrefsBtn').checked = prefs.hidePrefsBtn;
     $('hideEnglineLabel').value = prefs.hideEnglineLabel;
+    $('position').value = prefs.position;
     engineListType_sel.value = prefs.engineListDataType;
 
     engineList_txt.value = engineListData[prefs.engineListDataType].trim();

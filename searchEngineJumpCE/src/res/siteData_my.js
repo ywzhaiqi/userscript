@@ -101,7 +101,7 @@
     易迅, http://searchex.yixun.com/html?charset=utf-8&as=1&key=%s
     360购物, http://s.mall.360.cn/search.html?query=%s
     淘宝, http://s.taobao.com/search?q=%s
-    天猫, http://list.tmall.com/search_product.htm?q=%s&type=p
+    天猫, http://list.tmall.com/search_product.htm?q=%s&type=p, gbk
     京东, http://search.jd.com/Search?keyword=%s&enc=utf-8
     苏宁, http://search.suning.com/%s/
     国美, http://www.gome.com.cn/search?question=%s
@@ -128,7 +128,8 @@
     BT-ed2000-下载搜索
         simpledCD, http://simplecd.me/search/entry/?query=%s
         ed2000, http://www.ed2000.com/FileList.asp?SearchWord=%s
-        海盗湾, https://kickass.to/usearch/%s/
+        海盗湾, https://thepiratebay.se/search/%s
+        kickass, https://kickass.to/usearch/%s/
         btspread, http://www.btspread.com/search/%s
         torrentkitty, http://www.torrentkitty.org/search/%s
         BTDigg, https://btdigg.org/search?q=%s
