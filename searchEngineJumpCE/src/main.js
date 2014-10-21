@@ -176,7 +176,9 @@ function addContainer(iTarget, iInput) {
     }
     // 点击最前面的 "类别" 按钮打开设置窗口
     var categoryBtn = container.querySelector('#sej-expanded-category');
-    categoryBtn.addEventListener('click', openPrefs, false);
+    if (categoryBtn) {
+        categoryBtn.addEventListener('click', openPrefs, false);
+    }
 
     // 设置插入的位置
     var insertWhere = matchedRule.insertIntoDoc.where;

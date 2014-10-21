@@ -31,7 +31,7 @@ var wrapResource = function(str) {
     return "'" +
             str.trim()
                 .replace(/\\/g, '\\\\')
-                .replace(/[\n\r]+/g, '\\n')
+                .replace(/\r?\n/g, '\\n')
                 .replace(/'/g, "\\'") +
             "'";
 };
