@@ -1,7 +1,11 @@
 
 // --------------------可设置项结束------------------------
 
-var debug = prefs.debug ? console.debug.bind(console) : function() {};
+var debug;
+
+function reloadDebug() {
+    debug = prefs.debug ? console.debug.bind(console) : function() {};
+}
 
 if (typeof String.prototype.startsWith != 'function') {
     String.prototype.startsWith = function(str) {

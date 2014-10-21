@@ -218,7 +218,7 @@ var rules = [
         }
     },
     {name: "wiki",
-        url: /^https?:\/\/(?:en|zh|ja)\.wikipedia\.org\/(wiki\/|w\/index\.php\?search=%s)/,
+        url: /^https?:\/\/(?:en|zh|ja)\.wikipedia\.org\/(?:zh-|wiki\/|w\/index.php\?search=)/,
         enabled: true,
         engineList: "知识",
         style: '\
@@ -799,18 +799,25 @@ var rules = [
             ",
         insertIntoDoc: {
             keyword: function() {
-            if (document.getElementById("autosuggest-input"))
-                var input = document.getElementById("autosuggest-input").value;
-            else input = "";
-            return input;
+                var input = document.getElementById("autosuggest-input");
+                if (input) {
+                    return input.value;
+                } else {
+                    var m = location.search.match(/q=([^&]+)/i);
+                    if (m) {
+                        return decodeURIComponent(m[1]);
+                    }
+                }
             },
-            target: 'css;#content',
-            where: 'afterBegin'
+            target: 'css;body',
+            where: 'beforeBegin'
         },
-        etc: function() {
-            setTimeout(function() {
-            document.getElementsByTagName("section")[0].style.setProperty("top", "31px", "important");
-            }, 1500);
+        endFix: function() {
+            var container = document.getElementById('sej-container');
+            if (container) {
+                var height = (container.clientHeight + 3);
+                document.getElementsByTagName("section")[0].style.setProperty("top", height + "px", "important");
+            }
         }
     },
     {name: "picsearch",

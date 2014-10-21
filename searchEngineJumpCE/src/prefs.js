@@ -8,7 +8,8 @@ function loadPrefs() {
     prefs.siteInfo = JSON.parse(GM_getValue('siteInfo') || '{}');
 
     engineListData.custom = GM_getValue('engineList') || '';
-    debug = prefs.debug ? console.debug.bind(console) : function() {};
+
+    reloadDebug();
 }
 
 function openPrefs(){
@@ -122,6 +123,7 @@ function openPrefs(){
         // 刷新工具条
         remove();
         run();
+        reloadDebug();
 
         close();
     });

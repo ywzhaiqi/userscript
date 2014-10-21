@@ -1,12 +1,12 @@
 function addGlobalStyle() {
     // 添加全局样式和自定义样式
-    var globalStyle = document.getElementById('sej-style');
-    if (!globalStyle) {
-        globalStyle = document.createElement('style');
-        globalStyle.id = 'sej-style';
-        globalStyle.type = 'text/css';
-        globalStyle.textContent = MAIN_CSS + '\n' + (matchedRule.stylish || '');
-        document.head.appendChild(globalStyle);
+    var style = document.getElementById('sej-style');
+    if (!style) {
+        style = document.createElement('style');
+        style.id = 'sej-style';
+        style.type = 'text/css';
+        style.textContent = MAIN_CSS + '\n' + (matchedRule.stylish || '');
+        document.head.appendChild(style);
     }
 }
 
@@ -56,9 +56,9 @@ function addContainer(iTarget, iInput) {
             }
 
             var a = aPattern.replace('$encoding$', (engine.encoding || 'utf-8').toLowerCase())
-                .replace('$url$', engine.url)
-                .replace('$name$', engine.name)
-                .replace('$title$', engine.name);
+                            .replace('$url$', engine.url)
+                            .replace('$name$', engine.name)
+                            .replace('$title$', engine.name);
             if (engine.favicon) {
                 a = a.replace('$favicon$', engine.favicon);
             } else {

@@ -27,7 +27,7 @@
 // @include        /^https?:\/\/baike\.baidu\.com\/(?:sub)?view\//
 // @include        /^https?:\/\/[a-z]{2,3}\.baike\.com\/[a-z]/
 // @include        /^https?:\/\/..\.wikipedia\.org\/w\/index\.php(?!.*\?search=%s)/
-// @include        /^https?:\/\/(?:en|zh|ja)\.wikipedia\.org\/(wiki\/|w\/index\.php\?search=%s)/
+// @include        /^https?:\/\/(?:en|zh|ja)\.wikipedia\.org\/(?:zh-|wiki\/|w\/index.php\?search=)/
 // @include        /^https?:\/\/zhidao\.baidu\.com\/search/
 // @include        /^https?:\/\/zhidao\.baidu\.com\/question/
 // @include        /^https?:\/\/www\.zhihu\.com\/search\?/
@@ -136,7 +136,7 @@ var MAIN_CSS = '#sej-container {\n    display: block;\n    position: relative;\n
 var ICON_DATA = JSON.parse(GM_getResourceText('iconData.json'));
 
 var ICON_DATA_CUSTOM = {
-    'www.doukan.com': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACR0lEQVQ4jaWLzUuTAQCH37/ANnWToQd1Tc0ypSVhkJ06eI3+AfHQB3SZbqhYjnJ+kB/Z0EksFRplXwoKUmDUoUOdkiaBfZlsTef2bu+77w/H00E3tW56eC7P8/sJmdlGMi8bDsdsI8L283McBSH9tJ6jIKQcelIOPcnHepLzV9j+NU/6+wuSr5rItj3Oknp24YATktN1JKfriE3WkhGXIeGBhIf0+hviU7Vke3K6jrjjPBn32wNeSNhrSNhrCD08zba0Sia8Ria8RsL1gfDEKbI9bq8hZK8n8XMRefxkzgsxWzUxWzXBB1VszHWQ9q+Q8i7jmmpGsp4g26O2agJjZ4h9nUMcqcx5IWqtIGqtQL6vw91ThtNYidOow9NbRmhUR7ZHrBUER3RsWMoIDh/PeSE8rCU8rCU0pCU4Xo9oa8A/WElwsJzQbssiD2mRrLXIQ3tOCA2UEhooReovJfKuh9Tv10QWDcj9O34/8j0dsaVbSH17TpAtJciWEgJ3i3H16Yl8niG+MoP0qAlpt8mWEqT+cqJLt/GNXkS8U5zzQtCsIWjWIHZrcHcUsWq5hPxxkrjzCZH3vYRmrxFeMBD9NMbmxGX+tBchdu98gmYNQqBLTaBLjdilZqtTxXpbIV9ualmzNeNbMBNYNON1XOVHRxXrhkK2OlWIu59AlxpBbC8gi7+9AK+pAHdrPt9uKHC25LHSksf36wpchny8pp3N/o/gNyr5F1+bks1WJR6DAo9BwWarkq22/3d+oxLBZ1LhMxw7HCYVfwH7br97wWxejQAAAABJRU5ErkJggg==',
+    'www.duokan.com': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACR0lEQVQ4jaWLzUuTAQCH37/ANnWToQd1Tc0ypSVhkJ06eI3+AfHQB3SZbqhYjnJ+kB/Z0EksFRplXwoKUmDUoUOdkiaBfZlsTef2bu+77w/H00E3tW56eC7P8/sJmdlGMi8bDsdsI8L283McBSH9tJ6jIKQcelIOPcnHepLzV9j+NU/6+wuSr5rItj3Oknp24YATktN1JKfriE3WkhGXIeGBhIf0+hviU7Vke3K6jrjjPBn32wNeSNhrSNhrCD08zba0Sia8Ria8RsL1gfDEKbI9bq8hZK8n8XMRefxkzgsxWzUxWzXBB1VszHWQ9q+Q8i7jmmpGsp4g26O2agJjZ4h9nUMcqcx5IWqtIGqtQL6vw91ThtNYidOow9NbRmhUR7ZHrBUER3RsWMoIDh/PeSE8rCU8rCU0pCU4Xo9oa8A/WElwsJzQbssiD2mRrLXIQ3tOCA2UEhooReovJfKuh9Tv10QWDcj9O34/8j0dsaVbSH17TpAtJciWEgJ3i3H16Yl8niG+MoP0qAlpt8mWEqT+cqJLt/GNXkS8U5zzQtCsIWjWIHZrcHcUsWq5hPxxkrjzCZH3vYRmrxFeMBD9NMbmxGX+tBchdu98gmYNQqBLTaBLjdilZqtTxXpbIV9ualmzNeNbMBNYNON1XOVHRxXrhkK2OlWIu59AlxpBbC8gi7+9AK+pAHdrPt9uKHC25LHSksf36wpchny8pp3N/o/gNyr5F1+bks1WJR6DAo9BwWarkq22/3d+oxLBZ1LhMxw7HCYVfwH7br97wWxejQAAAABJRU5ErkJggg==',
     'pan.baidu.com': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACIklEQVQ4jZ3MS0hUURwG8NOmVjGLFtGm9i1aGESRUItWs1CoICiKIMhtybSwKOhND1KooCGhF9j15kRBFDHgjIJiUmSOIyaak/mayTNzz/ucEL4Wl5ujbszFb/P9v+9PfN+PSSk9a61zzmE1rLVOSuml0+kYEUJ41lqshRDCI8YYt9YHxhhHjLFYjiuL9vwfXOxewNWeBWQn3IpOhBhjUE1rg2tdBodeWZz56HD6ncPhDos3w0t7EaJ1OIrkpxVqH5VxJ8uhtQaTGqc6GOqeVaC1xvI+CcOQmp5Bv9+JeKIbqS/lf/n5tyXUNBfRN2kQiMW+1hpEKQ2lNFKDAkeelzBUfxKVfQcw0dCI/GgR2e8MBz2OeJtEvE3i2GuJgSmJaEeUUsj94tj5YA5HX5Yw1dmL33dbUKjZi6b6G9h+bwa1ySK8rwypbwz7H5cQf1oEFxJKKRApFe53lbDlyjj6xyuQUkJKib66E9h9NoNt138gPbyYt2TD7sBPBikViBASD7OzWJ/Io+NzEUJIzFc49iQy2HAujye9YRbJTVbQ4E2iSDmEkOGDwhzDpgt5bGwawvEXE9hxewSkMYfL76cghFiiUBJo/cRBAxE+4FyAc4GeMYpdrQWsuzmGzc3juJWZBecc0T3yYXAeWy+NYHQ6AOcChDHuqgtBwMHYymG16M4Yd4RS6jEWjv4XpeV2kkwmY5RSLwiYW+0wCJijlHq+78f+AjFijgdXSBqcAAAAAElFTkSuQmCC',
     'ditu.google.cn': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAC4klEQVQ4jZ2T3W9TdRjHf//F4cbE+YaxvYIrTDQuU+LLhYneiR1yQ+jBizVwQ0xqE4IXQAgZOes6cUHWTTPp2zmup4d14thKCIKkp9Cm6wt0zK1dxyiYRV3L7+NF240Qr/wmn8vn8+T5Pc9PCCGElfnhhWRmQklmYltcL8eU6+WkIjrJf/xB01ac5D96vymej6araMZz6F3c5N97l7TiwFac2IqT7FtvoxkqQgghEldiP//19wZSyv9kvhgl59hFWnHS3/MS9g4n2Z270HSVa3MawpzRLYBS1e50dlOq2kigsHiXIUPd6mwrTtKKg7Ti4KjHzeh3AYQ5E7WklATMATRdZagzgpSSJxsNNEMldXMMe4dza4zBvne2BVPJ8GUpJYH4AJrREegqT59K1hp1NENlbmGS2vg30lacnOvr5ajH/awg1BaYnu3HM1RarRa3Fn5F01Vq9VBrYy3GjVd3bxVb0e+Z0iOIqelL1marRb1RI2AOMGJ6WKyVyVVuoxkqSytjrSfrk5QLcfRPPuXsSS+35wzupIy2IGpOxIYMlXTpKg9WCjSbTcoP7qIZKqWKv9lYG6VSDJO+kSA0fJpMyiA7HyM3G2kLwmYw1t391bTO5maTynIBO3Oq+bCm0Vj1s177luVykPytMHfmouRmQ+R++aktiJjB6PbxuOlmrV5iejb8j8tnkcv+yHp1iEerw6wujnL/93EWkhMdQXx8imeyVDjE48c1AGr1dc4F53H5LFw+iyupCCsVP49W/TysjnQFwbimu9EMlT+Kh1i+d4RQ/OKfmfwSAKnfFvj86wSuLj6L85O6zNqB9iVeMi5ENL1dvFQ8KP0XBze+8F3m4IkZipUqAC5vHJfPot+boN+b4DNvgn3eBOfHwgghRM/JwN5rlv5h+qvjrhnHXs+FN3oPD7/edziwf+CU7vry+PRrverIy28eOPvKngNnXtyz/4x6bBD12CBCiJ7uh+z5n4h/AWy0oXdRPD+0AAAAAElFTkSuQmCC',
     'map.baidu.com': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAADm0lEQVQ4jaXB308bBQAH8PNFY4y/nkyIGkd88YEXQ1zQOB8W4tiDP8aYMjRDB3R0pRSGUShu0GyUzhmNWVyM28NGcCQQWULawcYcIFCuo9e7/ri2sLZ3V/qL629oaXt3/fpH+PkQ7e3tr9jJjTthgSfDoS3rTjxK+v1u0rH+iPTFgiQb2CbdzH3S7aPIbes4KSx+ZHUtnyfNy7OTLS0tzxJarfYbMREpQi4hILLVVMCJ0qIFe79fQ+biAJLMEpIZEnnvDzigjyHt01f9/KLi4P6VOrrbPyQu9PUNpcWoVKnsIyZ4sX/VgOrkBJTrvyLXdASRj+tRpE5jn/kEXu8NsBEnwrtbsotfw7nznZ8TOp1WH+OfVgqVIspL89WDM6cgGy9DvjSEclcroodeRfpWFwrlGHyhFdCh5aonbFX4uLva26tpJnQ6rT4c9FcUKKiY72Gv6QNUtB0oq9pw0HIUkZrnIN76E2UAycgmHIEH8ITXFDHBQ63uOUkM9A/o4zuCVJAAyWlG9r0a7DcdRvFYPXL1byD61kvI0VaUKgUcZOPYCf8DeotV5jZCOPVVZzPR19M5nIoHpIPgbyhtH0dRexjZ159Htu5lZF4jEFR9DcrnRizoQSIRx4bTgZmVTWXWJqLty5bTxGDPkeEc9YUksydQTMwj4rcheugFpF98Bol33oTlzk2YzbNYWNrA9CqHv9d5bId5JcSHUf9unYoY7Hl/eM9+XMrGGbABL1x5FqmfDcgRBOZbW3Hj7l1Mzq3DQsXA7RZQKpchlQrKzNQEamtr24jevsHh5Oa3UnbLBIajwSWdyKci8DW9jSfTati3E7j9mAcTTAGQsZdNwmZdUW7+cR1qteoEoRu4qN/lVyR4P0Uu4wTFrcEeXEUg8hCSuwn5mA2WzTimV0MQBA5bLI2pv24rC5Z7UKk6ThI6nVqfyZQqiP+CtKu1yoYZpJMcCvkyst4RlNgz4CMJTCxxWKY5rC8/qE5PTShu5gk0mnPNRL9Op98RhFJGDMiio18Wdyi5kM/JuXRS3o145RQzIIuCVV6lBXmJdMn352ZkhrJVxLggazSaZqK7u2vIbluDw24DzbBwMRQ8TgpeDwPWzcDl8sHFUGCdm2DsVnhcFLigH0/9bpw92/4Z0dDQUPfj4HcL10yXmatXLjlMRgNtGhulx8dGadPYKG0aG6FNRgNtMhron4wG2nRlxDE+Nkrrv7/wqLGxsYb4v/4DCtLPHdhzlSIAAAAASUVORK5CYII=',
@@ -412,7 +412,7 @@ var rules = [
         }
     },
     {name: "wiki",
-        url: /^https?:\/\/(?:en|zh|ja)\.wikipedia\.org\/(wiki\/|w\/index\.php\?search=%s)/,
+        url: /^https?:\/\/(?:en|zh|ja)\.wikipedia\.org\/(?:zh-|wiki\/|w\/index.php\?search=)/,
         enabled: true,
         engineList: "知识",
         style: '\
@@ -993,18 +993,25 @@ var rules = [
             ",
         insertIntoDoc: {
             keyword: function() {
-            if (document.getElementById("autosuggest-input"))
-                var input = document.getElementById("autosuggest-input").value;
-            else input = "";
-            return input;
+                var input = document.getElementById("autosuggest-input");
+                if (input) {
+                    return input.value;
+                } else {
+                    var m = location.search.match(/q=([^&]+)/i);
+                    if (m) {
+                        return decodeURIComponent(m[1]);
+                    }
+                }
             },
-            target: 'css;#content',
-            where: 'afterBegin'
+            target: 'css;body',
+            where: 'beforeBegin'
         },
-        etc: function() {
-            setTimeout(function() {
-            document.getElementsByTagName("section")[0].style.setProperty("top", "31px", "important");
-            }, 1500);
+        endFix: function() {
+            var container = document.getElementById('sej-container');
+            if (container) {
+                var height = (container.clientHeight + 3);
+                document.getElementsByTagName("section")[0].style.setProperty("top", height + "px", "important");
+            }
         }
     },
     {name: "picsearch",
@@ -1680,7 +1687,8 @@ function loadPrefs() {
     prefs.siteInfo = JSON.parse(GM_getValue('siteInfo') || '{}');
 
     engineListData.custom = GM_getValue('engineList') || '';
-    debug = prefs.debug ? console.debug.bind(console) : function() {};
+
+    reloadDebug();
 }
 
 function openPrefs(){
@@ -1794,6 +1802,7 @@ function openPrefs(){
         // 刷新工具条
         remove();
         run();
+        reloadDebug();
 
         close();
     });
@@ -1822,7 +1831,11 @@ function openPrefs(){
 
 // --------------------可设置项结束------------------------
 
-var debug = prefs.debug ? console.debug.bind(console) : function() {};
+var debug;
+
+function reloadDebug() {
+    debug = prefs.debug ? console.debug.bind(console) : function() {};
+}
 
 if (typeof String.prototype.startsWith != 'function') {
     String.prototype.startsWith = function(str) {
@@ -2393,13 +2406,13 @@ DropDownList.prototype = {
 
 function addGlobalStyle() {
     // 添加全局样式和自定义样式
-    var globalStyle = document.getElementById('sej-style');
-    if (!globalStyle) {
-        globalStyle = document.createElement('style');
-        globalStyle.id = 'sej-style';
-        globalStyle.type = 'text/css';
-        globalStyle.textContent = MAIN_CSS + '\n' + (matchedRule.stylish || '');
-        document.head.appendChild(globalStyle);
+    var style = document.getElementById('sej-style');
+    if (!style) {
+        style = document.createElement('style');
+        style.id = 'sej-style';
+        style.type = 'text/css';
+        style.textContent = MAIN_CSS + '\n' + (matchedRule.stylish || '');
+        document.head.appendChild(style);
     }
 }
 
@@ -2449,9 +2462,9 @@ function addContainer(iTarget, iInput) {
             }
 
             var a = aPattern.replace('$encoding$', (engine.encoding || 'utf-8').toLowerCase())
-                .replace('$url$', engine.url)
-                .replace('$name$', engine.name)
-                .replace('$title$', engine.name);
+                            .replace('$url$', engine.url)
+                            .replace('$name$', engine.name)
+                            .replace('$title$', engine.name);
             if (engine.favicon) {
                 a = a.replace('$favicon$', engine.favicon);
             } else {
