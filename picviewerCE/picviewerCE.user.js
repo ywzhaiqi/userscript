@@ -2,7 +2,7 @@
 // @name           picviewer CE
 // @author         NLF && ywzhaiqi
 // @description    NLF 的围观图修改版
-// @version        2014.10.19.2
+// @version        2014.10.22.0
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
@@ -16,7 +16,9 @@
 // @namespace      http://userscripts.org/users/NLF
 // @homepage       https://github.com/ywzhaiqi/userscript/tree/master/picviewerCE
 // homepage       http://userscripts.org/scripts/show/105741
-// @include       http*
+
+// @include       http://*
+// @include       https://*
 // @exclude       http://www.toodledo.com/tasks/*
 // @exclude       http*://maps.google.com*/*
 // ==/UserScript==
@@ -79,6 +81,7 @@
 
 				autoScrollAndReload: false, // 最后一张图片时，滚动主窗口到最底部，然后自动重载库的图片。还有bug，有待进一步测试
 				autoZoom: true,  // 如果有放大，则把图片及 sidebar 部分的缩放改为 100%，增大可视面积（仅在 chrome 下有效）
+				descriptionLength: 32,  // 注释的最大宽度
 			},
 
 			imgWindow:{//图片窗相关设置
@@ -184,7 +187,8 @@
 					if (ret != src) {
 						return ret;
 					}
-				}
+				},
+				description: './../../following-sibling::div[@class="ext-info"]/a',
 			},
 			{name:"百度贴吧",
 				enabled:true,
@@ -315,9 +319,9 @@
 				exclude: /weixin_code\.png$/i,
 			},
 			// 其它
-			{name:"wiki百科",
+			{name: "wikipedia",
 				enabled:true,
-				url:/^http:\/\/[^.]+.wikipedia.org\/wiki\/\w+/i,
+				url:/^http:\/\/[^.]+.wikipedia.org\//i,
 				getImage:function(){
 					var src=this.src;
 					var ret=src.replace('/thumb/','/');
@@ -2970,7 +2974,13 @@
 				this.imgNaturalSize=imgNaturalSize;
 
 				this.eleMaps['head-left-img-info-resolution'].textContent= imgNaturalSize.w + ' x ' + imgNaturalSize.h;
-				this.eleMaps['head-left-img-info-description'].textContent= decodeURIComponent(dataset(relatedThumb, 'description'));
+				// 加上图片的注释
+				var description = decodeURIComponent(dataset(relatedThumb, 'description')),
+					defaultLength = prefs.gallery.descriptionLength;
+				this.eleMaps['head-left-img-info-description'].title = description;
+				this.eleMaps['head-left-img-info-description'].textContent= description.length > defaultLength ?
+						description.slice(0, defaultLength) + '...' :
+						description;
 
 				this.img=img;
 				this.src=img.src;
@@ -4788,7 +4798,7 @@
 					'</span>'+
 					'<span class="pv-pic-window-close"></span>' +
 					'<span class="pv-pic-window-range"></span>' +
-					'<span class="pv-pic-window-description">测试中文</span>';
+					'<span class="pv-pic-window-description"></span>';
 
 				container.insertBefore(img,container.firstChild);
 
@@ -4816,14 +4826,19 @@
 					self.remove();
 				},false);
 
-				// 说明
+				/**
+				 * 说明
+				 * 1、对原来的适应屏幕等功能会有影响，暂时禁用。
+				 * 2、分为 absolute 和默认的2种情况
+				 */
 				var descriptionSpan = container.querySelector('.pv-pic-window-description');
-				descriptionSpan.style.cssText = '\
-					bottom: -40px;\
-					left: 10px;\
-				';
+				// descriptionSpan.style.cssText = '\
+				// 	bottom: -40px;\
+				// 	left: 10px;\
+				// ';
 				descriptionSpan.textContent = this.data.description || '';
-				descriptionSpan.style.display = this.data.description ? 'block' : 'none';
+				// descriptionSpan.style.display = this.data.description ? 'block' : 'none';
+				descriptionSpan.style.display = 'none';
 				this.descriptionSpan = descriptionSpan;
 
 				var toolbar=container.querySelector('.pv-pic-window-toolbar');
@@ -5052,7 +5067,7 @@
 						display: block;\
 					}\
 					.pv-pic-window-description {\
-						position: absolute;\
+						margin-top: 20px;\
 						min-height: 20px;\
 					}\
 					.pv-pic-window-pic {\
@@ -5271,7 +5286,7 @@
 
 				var windowSize=getWindowSize();
 
-				function keepSI(obj,offsetDirection,defaultValue){
+				function keepSI(obj,offsetDirection,defaultValue, out){
 					var objRect=obj.getBoundingClientRect();
 					var objStyle=obj.style;
 
@@ -5324,7 +5339,9 @@
 
 				keepSI(this.closeButton,['top','right'],[-24,0]);
 				keepSI(this.toolbar,['top','left'],[0,-45]);
-				keepSI(this.descriptionSpan,['bottom','left'],[-40, 10]);
+
+				// 保持注释在图片里面
+				// keepSI(this.descriptionSpan,['bottom', 'left'],[-40, 10]);
 			},
 			fitToScreen:function(){
 				var wSize=getWindowSize();
@@ -5338,7 +5355,6 @@
 					h:parseFloat(imgWindowCS.height),
 					w:parseFloat(imgWindowCS.width),
 				};
-
 
 				var size;
 				if(rectSize.w - wSize.w>0 || rectSize.h - wSize.h>0){//超出屏幕，那么缩小。

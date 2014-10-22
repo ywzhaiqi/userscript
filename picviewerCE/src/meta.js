@@ -16,7 +16,9 @@
 // @namespace      http://userscripts.org/users/NLF
 // @homepage       https://github.com/ywzhaiqi/userscript/tree/master/picviewerCE
 // homepage       http://userscripts.org/scripts/show/105741
-// @include       http*
+
+// @include       http://*
+// @include       https://*
 // @exclude       http://www.toodledo.com/tasks/*
 // @exclude       http*://maps.google.com*/*
 // ==/UserScript==

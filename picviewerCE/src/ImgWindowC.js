@@ -79,7 +79,7 @@
 					'</span>'+
 					'<span class="pv-pic-window-close"></span>' +
 					'<span class="pv-pic-window-range"></span>' +
-					'<span class="pv-pic-window-description">测试中文</span>';
+					'<span class="pv-pic-window-description"></span>';
 
 				container.insertBefore(img,container.firstChild);
 
@@ -107,14 +107,19 @@
 					self.remove();
 				},false);
 
-				// 说明
+				/**
+				 * 说明
+				 * 1、对原来的适应屏幕等功能会有影响，暂时禁用。
+				 * 2、分为 absolute 和默认的2种情况
+				 */
 				var descriptionSpan = container.querySelector('.pv-pic-window-description');
-				descriptionSpan.style.cssText = '\
-					bottom: -40px;\
-					left: 10px;\
-				';
+				// descriptionSpan.style.cssText = '\
+				// 	bottom: -40px;\
+				// 	left: 10px;\
+				// ';
 				descriptionSpan.textContent = this.data.description || '';
-				descriptionSpan.style.display = this.data.description ? 'block' : 'none';
+				// descriptionSpan.style.display = this.data.description ? 'block' : 'none';
+				descriptionSpan.style.display = 'none';
 				this.descriptionSpan = descriptionSpan;
 
 				var toolbar=container.querySelector('.pv-pic-window-toolbar');
@@ -343,7 +348,7 @@
 						display: block;\
 					}\
 					.pv-pic-window-description {\
-						position: absolute;\
+						margin-top: 20px;\
 						min-height: 20px;\
 					}\
 					.pv-pic-window-pic {\
@@ -562,7 +567,7 @@
 
 				var windowSize=getWindowSize();
 
-				function keepSI(obj,offsetDirection,defaultValue){
+				function keepSI(obj,offsetDirection,defaultValue, out){
 					var objRect=obj.getBoundingClientRect();
 					var objStyle=obj.style;
 
@@ -615,7 +620,9 @@
 
 				keepSI(this.closeButton,['top','right'],[-24,0]);
 				keepSI(this.toolbar,['top','left'],[0,-45]);
-				keepSI(this.descriptionSpan,['bottom','left'],[-40, 10]);
+
+				// 保持注释在图片里面
+				// keepSI(this.descriptionSpan,['bottom', 'left'],[-40, 10]);
 			},
 			fitToScreen:function(){
 				var wSize=getWindowSize();
@@ -629,7 +636,6 @@
 					h:parseFloat(imgWindowCS.height),
 					w:parseFloat(imgWindowCS.width),
 				};
-
 
 				var size;
 				if(rectSize.w - wSize.w>0 || rectSize.h - wSize.h>0){//超出屏幕，那么缩小。

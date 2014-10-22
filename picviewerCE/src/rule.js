@@ -69,7 +69,8 @@
 					if (ret != src) {
 						return ret;
 					}
-				}
+				},
+				description: './../../following-sibling::div[@class="ext-info"]/a',
 			},
 			{name:"百度贴吧",
 				enabled:true,
@@ -200,9 +201,9 @@
 				exclude: /weixin_code\.png$/i,
 			},
 			// 其它
-			{name:"wiki百科",
+			{name: "wikipedia",
 				enabled:true,
-				url:/^http:\/\/[^.]+.wikipedia.org\/wiki\/\w+/i,
+				url:/^http:\/\/[^.]+.wikipedia.org\//i,
 				getImage:function(){
 					var src=this.src;
 					var ret=src.replace('/thumb/','/');

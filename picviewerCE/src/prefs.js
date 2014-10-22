@@ -51,6 +51,7 @@
 
 				autoScrollAndReload: false, // 最后一张图片时，滚动主窗口到最底部，然后自动重载库的图片。还有bug，有待进一步测试
 				autoZoom: true,  // 如果有放大，则把图片及 sidebar 部分的缩放改为 100%，增大可视面积（仅在 chrome 下有效）
+				descriptionLength: 32,  // 注释的最大宽度
 			},
 
 			imgWindow:{//图片窗相关设置

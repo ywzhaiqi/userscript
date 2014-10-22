@@ -1361,7 +1361,13 @@
 				this.imgNaturalSize=imgNaturalSize;
 
 				this.eleMaps['head-left-img-info-resolution'].textContent= imgNaturalSize.w + ' x ' + imgNaturalSize.h;
-				this.eleMaps['head-left-img-info-description'].textContent= decodeURIComponent(dataset(relatedThumb, 'description'));
+				// 加上图片的注释
+				var description = decodeURIComponent(dataset(relatedThumb, 'description')),
+					defaultLength = prefs.gallery.descriptionLength;
+				this.eleMaps['head-left-img-info-description'].title = description;
+				this.eleMaps['head-left-img-info-description'].textContent= description.length > defaultLength ?
+						description.slice(0, defaultLength) + '...' :
+						description;
 
 				this.img=img;
 				this.src=img.src;
