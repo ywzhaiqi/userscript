@@ -286,11 +286,10 @@ function addContainer(iTarget, iInput) {
                 if (pageEncoding.indexOf('gb') != 0) {// 如果当前页面也使用gbk编码的话，那么不需要再编码
                     value = toGBK(value);
                 }
-            } else if (encoding == 'ASCII') {
+            } else if (encoding == 'ascii') {
                 value = toASCII(value);
             }
 
-            // console.log(value);
             target.href = target.getAttribute('url').replace(/%s/g, value); // 替换“全部”关键词
         } else { // 提交方式为 POST
             var inputs = target.getElementsByTagName('input');

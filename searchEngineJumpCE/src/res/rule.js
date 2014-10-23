@@ -16,8 +16,6 @@ var rules = [
         engineList: 'web',
         // 给引擎列表的样式
         style: '\
-           border-bottom: 1px solid #E5E5E5;\
-           border-top: 1px solid #E5E5E5;\
            padding-left: 135px;\
         ',
 
@@ -67,7 +65,6 @@ var rules = [
         engineList: 'web',
         style: '\
            border-top:1px solid #D9E1F7;\
-           border-bottom:1px solid #D9E1F7;\
            padding-left: 138px;\
         ',
         insertIntoDoc: {
@@ -103,6 +100,7 @@ var rules = [
            border-bottom: 1px solid #E0E0E0;\
            border-top: 1px solid #E0E0E0;\
            margin-bottom: 10px;\
+           padding-left: 20px;\
         ',
         insertIntoDoc: {
            keyword: 'css;#keyword',
@@ -679,6 +677,7 @@ var rules = [
         style: '\
             border-top:1px solid #ccc;\
             border-bottom:1px solid #ccc;\
+            text-align: center;\
             ',
         insertIntoDoc: {
             keyword: 'css;input[name=q]',

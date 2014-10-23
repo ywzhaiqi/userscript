@@ -4,8 +4,8 @@ function loadPrefs() {
     prefs.hidePrefsBtn = GM_getValue('hidePrefsBtn', prefs.hidePrefsBtn);
     prefs.hideEnglineLabel = GM_getValue('hideEnglineLabel', prefs.hideEnglineLabel);
     prefs.engineListDataType = GM_getValue('engineListDataType', prefs.engineListDataType);
-    prefs.position = GM_getValue('position', prefs.position);
-    prefs.siteInfo = JSON.parse(GM_getValue('siteInfo') || '{}');
+    // prefs.position = GM_getValue('position', prefs.position);
+    // prefs.siteInfo = JSON.parse(GM_getValue('siteInfo') || '{}');
 
     engineListData.custom = GM_getValue('engineList') || '';
 
@@ -77,7 +77,7 @@ function openPrefs(){
                 搜索列表版本：\
                 <select id="sej-prefs-engineListDataType" >\
                     <option value="custom">用户版本</option>\
-                    <option value="simple">极简版本</option>\
+                    <option value="simple">简单版本</option>\
                     <option value="my">详细版本</option>\
                     <option value="wenke">文科版本</option>\
                     <option value="ted423">ted423版本</option>\
@@ -114,7 +114,7 @@ function openPrefs(){
         GM_setValue('hidePrefsBtn', prefs.hidePrefsBtn = !!$('hidePrefsBtn').checked);
         GM_setValue('hideEnglineLabel', prefs.hideEnglineLabel = $('hideEnglineLabel').value);
         GM_setValue('engineListDataType', prefs.engineListDataType = engineListType_sel.value);
-        GM_setValue('position', prefs.position = $('position').value);
+        // GM_setValue('position', prefs.position = $('position').value);
 
         if (engineListType_sel.value == 'custom') {
             GM_setValue('engineList', engineListData.custom = engineList_txt.value);
@@ -143,7 +143,7 @@ function openPrefs(){
     $('debug').checked = prefs.debug;
     $('hidePrefsBtn').checked = prefs.hidePrefsBtn;
     $('hideEnglineLabel').value = prefs.hideEnglineLabel;
-    $('position').value = prefs.position;
+    // $('position').value = prefs.position;
     engineListType_sel.value = prefs.engineListDataType;
 
     engineList_txt.value = engineListData[prefs.engineListDataType].trim();

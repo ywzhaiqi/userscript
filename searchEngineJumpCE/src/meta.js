@@ -30,8 +30,8 @@ var prefs = {
     hideEnglineLabel: 2,  // 是否隐藏前几个搜索的文字部分。0：不隐藏，1：根据高度自行判断，2：隐藏
     engineListDataType: 'simple',  // 搜索列表的默认类型: my, simple, wenke, ted423，见设置
 
-    position: '',     // 全局搜索条插入的位置：default, left, top
-    siteInfo: {},  // 每个站点的额外信息
+    // position: '',     // 全局搜索条插入的位置：default, left, top
+    // siteInfo: {},  // 每个站点的额外信息
 
     debug: false,
 };

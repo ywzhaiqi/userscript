@@ -40,7 +40,6 @@
     百度百科, http://baike.baidu.com/search/word?pic=1&sug=1&word=%s
     知乎, http://www.zhihu.com/search?q=%s
     维基百科, http://zh.wikipedia.org/wiki/%s
-    萌娘百科, http://zh.moegirl.org/index.php?search=%s
     互动百科, http://so.baike.com/s/doc/%s
     百度文库, http://wenku.baidu.com/search?word=%s&ie=utf-8
     豆丁文档, http://www.docin.com/search.do?searchcat=2&searchType_banner=p&nkey=%s
@@ -85,7 +84,7 @@
     多看, http://www.duokan.com/search/%s/1
     百度盘（主页）, http://pan.baidu.com/disk/home?adapt=pc#dir/key=%s
 
-翻译-有道词典
+翻译-爱词霸
     google翻译, https://translate.google.com/?q=%s
     百度翻译, http://fanyi.baidu.com/#auto/zh/%s
     有道词典, http://dict.youdao.com/search?q=%s
