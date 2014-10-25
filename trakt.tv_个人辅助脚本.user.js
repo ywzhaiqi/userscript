@@ -2,11 +2,14 @@
 // @name        trakt.tv 个人辅助脚本
 // @namespace   https://github.com/ywzhaiqi
 // @include     http://trakt.tv/calendar/my-shows*
+// @include     https://trakt.tv/calendar/my-shows*
 // @version     1.1
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @require     http://cdn.staticfile.org/zepto/1.1.4/zepto.min.js
 // ==/UserScript==
+
+var enableOtherURL = true;
 
 // 无法在线播放的链接规则
 var rules = {
@@ -39,6 +42,10 @@ var rules = {
     'the amazing race': {
         name: '极速前进',
         sohu: 'http://tv.sohu.com/item/MTE5NDU1NA==.html',
+    },
+    'ncis': {
+        name: '海军罪案调查处',
+        yyets: 'http://www.yyets.com/resource/11001'
     }
 };
 
@@ -75,7 +82,7 @@ var ns = {
             Object.keys(rule).some(function(key) {
                 if (key == 'name') {
                     name = rule.name
-                } else {
+                } else if (enableOtherURL){
                     url = rule[key];
                     text = key;
                     title = url;
