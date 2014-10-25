@@ -5,13 +5,13 @@ function parseDataStr(str, opt) {
     }
 
     // 提前处理下特殊的 post 方式
-    str = str.replace(/[\n\r]+[\s\/]*-\s*(\S)+:/g, '_POST_ $1:');
+    str = str.replace(/[\n\r]+[\s\/]*-\s*(\S+):/g, '_POST_ $1:');
 
     var parseArgs = function(str) {
         var arr = str.replace(/，/g, ', ').split(/\s*, \s*/);
         var args = {};
         arr.forEach(function(s){
-            var argArr = s.split(/\s*: \s*/);
+            var argArr = s.split(/\s*:\s*/);
             args[argArr[0]] = argArr[1];
         });
         return args;

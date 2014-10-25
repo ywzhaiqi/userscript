@@ -4,7 +4,7 @@
 // @author         NLF && ywzhaiqi
 // @contributor    ted423
 // @description    方便的在各个引擎之间跳转。可自定义搜索列表的 NLF 修改版。
-// @version        4.1.9.0
+// @version        4.1.9.1
 // @namespace      http://userscripts.org/users/NLF
 // @homepage       https://github.com/ywzhaiqi/userscript
 // homepage       http://userscripts.org/scripts/show/84970
@@ -1106,6 +1106,8 @@ var rules = [
         style: "\
             margin: 0 auto;\
             padding-left: 16px;\
+            border-top: 1px solid #E5E5E5;\
+            border-bottom: 1px solid #E5E5E5;\
         ",
         insertIntoDoc: {
             keyword: 'css;#username',
@@ -2118,13 +2120,13 @@ function parseDataStr(str, opt) {
     }
 
     // 提前处理下特殊的 post 方式
-    str = str.replace(/[\n\r]+[\s\/]*-\s*(\S)+:/g, '_POST_ $1:');
+    str = str.replace(/[\n\r]+[\s\/]*-\s*(\S+):/g, '_POST_ $1:');
 
     var parseArgs = function(str) {
         var arr = str.replace(/，/g, ', ').split(/\s*, \s*/);
         var args = {};
         arr.forEach(function(s){
-            var argArr = s.split(/\s*: \s*/);
+            var argArr = s.split(/\s*:\s*/);
             args[argArr[0]] = argArr[1];
         });
         return args;

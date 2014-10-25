@@ -912,6 +912,8 @@ var rules = [
         style: "\
             margin: 0 auto;\
             padding-left: 16px;\
+            border-top: 1px solid #E5E5E5;\
+            border-bottom: 1px solid #E5E5E5;\
         ",
         insertIntoDoc: {
             keyword: 'css;#username',
