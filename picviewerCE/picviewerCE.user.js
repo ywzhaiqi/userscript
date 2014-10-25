@@ -2,7 +2,7 @@
 // @name           picviewer CE
 // @author         NLF && ywzhaiqi
 // @description    NLF 的围观图修改版
-// @version        2014.10.22.0
+// @version        2014.10.26.0
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
@@ -321,7 +321,7 @@
 			// 其它
 			{name: "wikipedia",
 				enabled:true,
-				url:/^http:\/\/[^.]+.wikipedia.org\//i,
+				url:/^https?:\/\/[^.]+.wikipedia.org\//i,
 				getImage:function(){
 					var src=this.src;
 					var ret=src.replace('/thumb/','/');
@@ -2737,22 +2737,43 @@
 					// 顶部圆角
 					switch (prefs.gallery.sidebarPosition) {
 						case 'bottom':
-							toggleBar.style.borderRadius = '8px 8px 0 0';
+							toggleBar.style.borderRadius = '8px 8px 0 0';  // 左上、右上、右下、左下
+							break;
+						case 'top':
+							toggleBar.style.borderRadius = '0 0 8px 8px';
+							break;
+						case 'left':
+							toggleBar.style.height = '60px';
+							toggleBar.style.borderRadius = '0 8px 8px 0';
+							break;
+						case 'right':
+							toggleBar.style.height = '60px';
+							toggleBar.style.borderRadius = '8px 0 0 8px';
 							break;
 					}
 				}
 			},
 			showHideBottom: function() {  // 显示隐藏 sidebar-container
-
 				var sidebarContainer = this.eleMaps['sidebar-container'],
 					isHidden = sidebarContainer.style.visibility == 'hidden';
 
 				sidebarContainer.style.visibility = isHidden ? 'visible' : 'hidden';
 
+				var sidebarPosition = prefs.gallery.sidebarPosition,
+					capitalize = function(string) { // 将字符串中每个单词首字母大写
+						var words = string.split(" ");
+						for (var i = 0; i < words.length; i++) {
+							words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
+						}
+						return words.join(" ");
+					};
+
 				// 修正下图片底部的高度
-				this.eleMaps['img-container'].style.borderBottom = isHidden ? prefs.gallery.sidebarSize + 'px solid transparent' : '0';
+				this.eleMaps['img-container'].style['border' + capitalize(sidebarPosition)] = isHidden ?
+						prefs.gallery.sidebarSize + 'px solid transparent' :
+						'0';
 				// 修正底部距离
-				this.eleMaps['sidebar-toggle'].style.bottom = isHidden ? '-5px' : '0';
+				this.eleMaps['sidebar-toggle'].style[sidebarPosition] = isHidden ? '-5px' : '0';
 			},
 			initZoom: function() {  // 如果有放大，则把图片及 sidebar 部分缩放比率改为 1
 				if (prefs.gallery.autoZoom && document.body.style.zoom != undefined) {
@@ -4831,15 +4852,17 @@
 				 * 1、对原来的适应屏幕等功能会有影响，暂时禁用。
 				 * 2、分为 absolute 和默认的2种情况
 				 */
-				var descriptionSpan = container.querySelector('.pv-pic-window-description');
-				// descriptionSpan.style.cssText = '\
-				// 	bottom: -40px;\
-				// 	left: 10px;\
-				// ';
-				descriptionSpan.textContent = this.data.description || '';
-				// descriptionSpan.style.display = this.data.description ? 'block' : 'none';
-				descriptionSpan.style.display = 'none';
-				this.descriptionSpan = descriptionSpan;
+				if (this.data) {
+					var descriptionSpan = container.querySelector('.pv-pic-window-description');
+					// descriptionSpan.style.cssText = '\
+					// 	bottom: -40px;\
+					// 	left: 10px;\
+					// ';
+					descriptionSpan.textContent = this.data.description || '';
+					// descriptionSpan.style.display = this.data.description ? 'block' : 'none';
+					descriptionSpan.style.display = 'none';
+					this.descriptionSpan = descriptionSpan;
+				}
 
 				var toolbar=container.querySelector('.pv-pic-window-toolbar');
 				toolbar.style.cssText='\
@@ -7134,8 +7157,6 @@ var MPIV = (function() {
 		var matchedRule,
 			URL=location.href,
 			floatBar;
-
-
 
 		function findPic(img){
 			//获取包裹img的第一个a元素。

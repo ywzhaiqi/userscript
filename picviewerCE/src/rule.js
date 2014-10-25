@@ -203,7 +203,7 @@
 			// 其它
 			{name: "wikipedia",
 				enabled:true,
-				url:/^http:\/\/[^.]+.wikipedia.org\//i,
+				url:/^https?:\/\/[^.]+.wikipedia.org\//i,
 				getImage:function(){
 					var src=this.src;
 					var ret=src.replace('/thumb/','/');

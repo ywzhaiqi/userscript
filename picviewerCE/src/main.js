@@ -3,8 +3,6 @@
 			URL=location.href,
 			floatBar;
 
-
-
 		function findPic(img){
 			//获取包裹img的第一个a元素。
 			var imgPN=img;

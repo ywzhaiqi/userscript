@@ -1124,22 +1124,43 @@
 					// 顶部圆角
 					switch (prefs.gallery.sidebarPosition) {
 						case 'bottom':
-							toggleBar.style.borderRadius = '8px 8px 0 0';
+							toggleBar.style.borderRadius = '8px 8px 0 0';  // 左上、右上、右下、左下
+							break;
+						case 'top':
+							toggleBar.style.borderRadius = '0 0 8px 8px';
+							break;
+						case 'left':
+							toggleBar.style.height = '60px';
+							toggleBar.style.borderRadius = '0 8px 8px 0';
+							break;
+						case 'right':
+							toggleBar.style.height = '60px';
+							toggleBar.style.borderRadius = '8px 0 0 8px';
 							break;
 					}
 				}
 			},
 			showHideBottom: function() {  // 显示隐藏 sidebar-container
-
 				var sidebarContainer = this.eleMaps['sidebar-container'],
 					isHidden = sidebarContainer.style.visibility == 'hidden';
 
 				sidebarContainer.style.visibility = isHidden ? 'visible' : 'hidden';
 
+				var sidebarPosition = prefs.gallery.sidebarPosition,
+					capitalize = function(string) { // 将字符串中每个单词首字母大写
+						var words = string.split(" ");
+						for (var i = 0; i < words.length; i++) {
+							words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
+						}
+						return words.join(" ");
+					};
+
 				// 修正下图片底部的高度
-				this.eleMaps['img-container'].style.borderBottom = isHidden ? prefs.gallery.sidebarSize + 'px solid transparent' : '0';
+				this.eleMaps['img-container'].style['border' + capitalize(sidebarPosition)] = isHidden ?
+						prefs.gallery.sidebarSize + 'px solid transparent' :
+						'0';
 				// 修正底部距离
-				this.eleMaps['sidebar-toggle'].style.bottom = isHidden ? '-5px' : '0';
+				this.eleMaps['sidebar-toggle'].style[sidebarPosition] = isHidden ? '-5px' : '0';
 			},
 			initZoom: function() {  // 如果有放大，则把图片及 sidebar 部分缩放比率改为 1
 				if (prefs.gallery.autoZoom && document.body.style.zoom != undefined) {

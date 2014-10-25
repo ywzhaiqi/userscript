@@ -112,15 +112,17 @@
 				 * 1、对原来的适应屏幕等功能会有影响，暂时禁用。
 				 * 2、分为 absolute 和默认的2种情况
 				 */
-				var descriptionSpan = container.querySelector('.pv-pic-window-description');
-				// descriptionSpan.style.cssText = '\
-				// 	bottom: -40px;\
-				// 	left: 10px;\
-				// ';
-				descriptionSpan.textContent = this.data.description || '';
-				// descriptionSpan.style.display = this.data.description ? 'block' : 'none';
-				descriptionSpan.style.display = 'none';
-				this.descriptionSpan = descriptionSpan;
+				if (this.data) {
+					var descriptionSpan = container.querySelector('.pv-pic-window-description');
+					// descriptionSpan.style.cssText = '\
+					// 	bottom: -40px;\
+					// 	left: 10px;\
+					// ';
+					descriptionSpan.textContent = this.data.description || '';
+					// descriptionSpan.style.display = this.data.description ? 'block' : 'none';
+					descriptionSpan.style.display = 'none';
+					this.descriptionSpan = descriptionSpan;
+				}
 
 				var toolbar=container.querySelector('.pv-pic-window-toolbar');
 				toolbar.style.cssText='\
