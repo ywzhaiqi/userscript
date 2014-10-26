@@ -6,16 +6,16 @@
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
+// @namespace      http://userscripts.org/users/NLF
+// @homepage       https://github.com/ywzhaiqi/userscript/tree/master/picviewerCE
 
 // @grant          GM_getValue
 // @grant          GM_setValue
+// @grant          GM_addStyle
 // @grant          GM_openInTab
 // @grant          GM_xmlhttpRequest
+// @grant          GM_registerMenuCommand
 // @run-at         document-end
-
-// @namespace      http://userscripts.org/users/NLF
-// @homepage       https://github.com/ywzhaiqi/userscript/tree/master/picviewerCE
-// homepage       http://userscripts.org/scripts/show/105741
 
 // @include       http://*
 // @include       https://*

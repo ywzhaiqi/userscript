@@ -50,27 +50,24 @@
 				max:5,//最多预读多少张（前后各多少张）
 
 				autoScrollAndReload: false, // 最后一张图片时，滚动主窗口到最底部，然后自动重载库的图片。还有bug，有待进一步测试
-				autoZoom: true,  // 如果有放大，则把图片及 sidebar 部分的缩放改为 100%，增大可视面积（仅在 chrome 下有效）
+				autoZoom: true,  // 如果有放大，则把图片及 sidebar 部分的缩放改回 100%，增大可视面积（仅在 chrome 下有效）
 				descriptionLength: 32,  // 注释的最大宽度
 			},
 
-			imgWindow:{//图片窗相关设置
-				fitToScreen: true,//适应屏幕,并且水平垂直居中(适应方式为contain，非cover).
+			imgWindow:{// 图片窗相关设置
+				fitToScreen: false,//适应屏幕,并且水平垂直居中(适应方式为contain，非cover).
 				syncSelectedTool:true,//同步当前选择的工具，如果开了多个图片窗口，其中修改一个会反映到其他的上面。
 				defaultTool:'hand',//"hand","rotate","zoom";打开窗口的时候默认选择的工具
 				close:{//关闭的方式
 					escKey:true,//按esc键
-					dblClickImgWindow:true,//双击图片窗口
-					clickOutside:{//是否点击图片外部关闭
-						enabled:false,
-						trigger:'click',//'click'|'dblclick'；点击或者双击
-					},
+					dblClickImgWindow: true,//双击图片窗口
+					clickOutside:'', // 点击图片外部关闭。值为''|'click'|'dblclick'；无或点击或双击
 				},
-				overlayer:{//覆盖层.
+				overlayer:{// 覆盖层.
 					shown:false,//显示
 					color:'rgba(0,0,0,0.8)',//颜色和不透明度设置.
 				},
-				shiftRotateStep:15,//旋转的时候，按住shift键时,旋转的步进.单位:度.
+				shiftRotateStep:15,// 旋转的时候，按住shift键时,旋转的步进.单位:度.
 				zoom:{//滚轮缩放
 					range:[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.1,1.2,1.3,1.4,1.5,1.7,1.9,2,2.5,3.0,4.0],//缩放比例.(不要出现负数,谢谢-_-!~)
 					mouseWheelZoom:true,//是否允许使用滚轮缩放。

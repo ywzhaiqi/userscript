@@ -105,6 +105,7 @@
 									'<label data-command="scrollToEndAndReload">自动重载</label>'+
 								'</span>'+
 								'<span id="pv-gallery-fullscreenbtn" class="pv-gallery-head-command-drop-list-item" data-command="fullScreen">进入全屏</span>'+
+								'<span class="pv-gallery-head-command-drop-list-item" data-command="openPrefs">设置</span>'+
 							'</span>'+
 						'</span>'+
 
@@ -764,6 +765,9 @@
 							target.classList.toggle('fullscreenbtn');
 							target.textContent = '退出全屏';
 							target.classList.add('fullscreenbtn');
+							break;
+						case 'openPrefs':
+							openPrefs();
 							break;
 						case 'enterCollection':{
 							//进入管理模式

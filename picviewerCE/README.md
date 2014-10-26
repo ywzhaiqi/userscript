@@ -19,6 +19,7 @@ picviewerCE.user.js
 - 新增了几个查看大图的站点规则
 - **新增了 xhr 方式获取大图**
 - **新增了 Mouseover Popup Image Viewer 脚本规则的兼容**，非完全兼容，仅兼容主要部分。
+- **新增了设置界面**，在 Greasemonkey/Tampermonkey 用户脚本处打开。还可在图库的命令处打开设置。
 - 新增按键，已被默认禁用。
     - 当出现悬浮条时按下 `a` 键打开原图（actual）
     - 当出现悬浮条时按下 `c` 键打开当前图片（current）

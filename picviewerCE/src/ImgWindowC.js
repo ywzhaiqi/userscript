@@ -246,7 +246,7 @@
 				};
 
 				//是否点击图片外部关闭
-				if(prefs.imgWindow.close.clickOutside.enabled){
+				if(prefs.imgWindow.close.clickOutside.trigger){
 					var clickOutside=function(e){
 						var target=e.target;
 						if(!container.contains(target)){
