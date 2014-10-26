@@ -87,7 +87,7 @@ Rule.specialSite = [
             "www.cmfu.com发布|起点中文网www.qidian.com欢迎广大书友光临阅读.*": "",
             '(<p>\\s+)?<a href="?http://www.(?:qidian|cmfu).com"?>起点中文网.*': '',
 
-            '([\\u4e00-\\u9fa5])[%￥]+([\\u4e00-\\u9fa5])': '$1$2',  // 启动屏蔽词，例如：风%%骚
+            '([\\u4e00-\\u9fa5])[%￥]+([\\u4e00-\\u9fa5])': '$1$2',  // 屏蔽词修正，例如：风%%骚
         },
         contentRemove: "span[id^='ad_']",
         contentPatch: function(fakeStub){
@@ -181,7 +181,9 @@ Rule.specialSite = [
         url: /^http:\/\/www\.jjwxc\.net\/onebook\.php\S*/,
         titleReg: /《(.*?)》.*ˇ(.*?)ˇ.*/,
         indexSelector: ".noveltitle > h1 > a",
+        contentSelector: '.noveltext',
         contentHandle: false,
+        contentRemove: 'font[color], hr',
         contentPatch: function(fakeStub){
             fakeStub.find('h2').remove();
             fakeStub.find('#six_list, #sendKingTickets').parent().remove();
@@ -586,6 +588,7 @@ Rule.specialSite = [
             /(百度搜索 )?本书名 \+ 盗梦人 看最快更新/ig,
             "520xs.com ”520小说“小说章节更新最快",
             "（首发）",
+            "&amp;nbsp",
         ]
     },
     {siteName: "飞卢小说网",
@@ -617,6 +620,12 @@ Rule.specialSite = [
             var realtitle = temp.replace(/第.*卷\s/,'');
             fakeStub.find('title').html(realtitle);
         }
+    },
+    {siteName: '23中文',
+        url: '^http://www\\.23zw\\.com/.*\\.html',
+        contentReplace: [
+            '本文由首发'
+        ]
     },
     {siteName: '笔下阁',
         url: "^http://www\\.bixiage\\.com/\\w+/\\d+/\\d+/\\d+\\.html",
@@ -695,7 +704,15 @@ Rule.specialSite = [
         bookTitleSelector: '.srcbox > a:last',
         contentReplace: [
             '更新最快【】',
-            '&lt;/dd&gt;'
+            '&lt;/dd&gt;',
+            '&lt;center&gt; &lt;fon color=red&gt;'
+        ]
+    },
+    {siteName: "乡村小说网",
+        url: '^http://www\\.xiangcunxiaoshuo\\.com/shu/\\d+/\\d+\\.html',
+        bookTitleSelector: '.read_m > .list',
+        contentSelector: '.yd_text2',
+        contentReplace: [
         ]
     },
 
@@ -801,13 +818,14 @@ Rule.specialSite = [
         // titleSelector: 'h1',
         // bookTitleSelector: '#breadCrumb>a:eq(1)',
         useiframe: true,
-        contentRemove: 'h1',
+        contentRemove: 'h1, font[color="blue"]',
         contentReplace: [
             "网站升级完毕！感谢对给力文学网的支持！",
             "（百度搜索给力文学网更新最快最稳定\\)",
             "【sogou,360,soso搜免费下载小说】",
             "给力文学网",
             "看最快更新",
+            "小说网不跳字",
             "\\.com",
             "BAIDU_CLB_fillSlot\\(.*",
         ]
@@ -884,7 +902,7 @@ Rule.specialSite = [
         bookTitleSelector: '#content > h1 > a',
         contentSelector: "#content",
         useiframe: true,  // 否则 content 在 body 下面
-        contentRemove: "h1, table",
+        contentRemove: "h1, table, .toplink",
         contentReplace: [
             /[{〖]请在百度搜索.*[}〗]|.(?:百度搜索飄天|无弹窗小说网).*\.Net.|\[飄天.*无弹窗小说网\]/ig,
             '\\{飘天文学www.piaotian.net感谢各位书友的支持，您的支持就是我们最大的动力\\}'
@@ -1134,8 +1152,9 @@ Rule.replace = {
     "水印广告测试": "",
     "\\(平南文学网\\)":"",  "讀蕶蕶尐說網":"",
     "比奇提示：如何快速搜自己要找的书籍":"",  "《百度书名\\+比奇》即可快速直达":"",
+
     "\\(一秒记住小说界\\）|\\*一秒记住\\*":"",
-    "uutxt\\.org|3vbook\\.cn|www\\.qbwx\\.com|WWw\\.YaNkuai\\.com|www\\.btzw\\.com": "",
+    "uutxt\\.org|3vbook\\.cn|www\\.qbwx\\.com|WWw\\.YaNkuai\\.com|www\\.btzw\\.com|www\\.23uS\\.com": "",
     "txt53712/": "",
     "\xa0{4,12}":"\xa0\xa0\xa0\xa0\xa0\xa0\xa0",
 
@@ -1155,7 +1174,7 @@ Rule.replace = {
     // === 双字替换 ===
     "暧m[eè][iì]":"暧昧",
     "bàn\\s*fǎ":"办法", "bucuo":"不错", "不liáng":"不良", "b[ěe]i(\\s|&nbsp;)*j[īi]ng":"北京","半shen": "半身", "b[ìi]j[ìi]ng":"毕竟", "报(了?)jing":"报$1警", "bèi'pò":"被迫", "包yǎng":"包养", "(?:biǎo|婊\\\\?)子":"婊子", "biǎo\\s*xiàn\\s*":"表现",
-    "chifan":"吃饭", "ch[oō]ngd[oò]ng":"冲动", "chong物":"宠物", "cao(练|作)":"操$1", "出gui":"出轨", "缠mian": "缠绵", "成shu": "成熟", "(?:赤|chi)\\s*lu[oǒ]": "赤裸", "春guang": "春光", "chun风":"春风", "chuang伴":"床伴", "沉mi":"沉迷", "沉lun":"沉沦", "刺ji":"刺激", "chao红":"潮红", "初chun":"初春", "＂ｃｈｉ　ｌｕｏ＂":"赤裸",
+    "chifan":"吃饭", "ch[oō]ngd[oò]ng":"冲动", "chong物":"宠物", "cao(练|作)":"操$1", "出gui":"出轨", "chu\\s*xian":"出现", "缠mian": "缠绵", "成shu": "成熟", "(?:赤|chi)\\s*lu[oǒ]": "赤裸", "春guang": "春光", "chun风":"春风", "chuang伴":"床伴", "沉mi":"沉迷", "沉lun":"沉沦", "刺ji":"刺激", "chao红":"潮红", "初chun":"初春", "＂ｃｈｉ　ｌｕｏ＂":"赤裸",
     "dān\\s*xīn":"当心", "dang校": "党校", "da子": "鞑子", "大tui":"大腿", "dǎ\\s*suàn":"打算", "dengdai":"等待", "diao丝": "屌丝", "d[úu](?:\\s|&nbsp;|<br/>)*l[ìi]": "独立", "d[uú]\\s{0,2}c[áa]i":"独裁",  "d?[iì]f[āa]ng":"地方", "d[ìi]\\s*d[ūu]":"帝都", "di国":"帝国", "du[oò]落":"堕落", "坠luò":"坠落",
     "f[ǎa]ngf[óo]":"仿佛", "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "f[èe]nn[ùu]":"愤怒", "fǎn\\s*yīng":"反应",
     "gao潮": "高潮", "高氵朝":"高潮", "gāo\\s*xìng\\s*":"高兴", "干chai": "干柴", "勾yin":"勾引", "gu[oò]ch[ée]ng":"过程", "gu[āa]n\\s*x[iì]":"关系", "g[ǎa]nji[àa]o":"感觉", "国wu院":"国务院", "gù\\s*yì\\s*":"故意", "guofen":"过分",
@@ -1229,7 +1248,6 @@ Rule.replace = {
 // 自定义的
 Rule.customRules = [];
 Rule.customReplace = {};
-
 
 Rule.parseCustomReplaceRules = function(str) {
     var arr = str.split(/\n/);

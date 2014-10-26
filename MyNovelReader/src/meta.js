@@ -85,6 +85,7 @@
 // @include        http://www.9imw.com/novel-read-*-*.html
 // @include        http://www.23zw.com/olread/*/*/*.html
 // @include        http://www.50zw.com/book_*/*.html
+// @include        http://www.xiangcunxiaoshuo.com/shu/*/*.html
 
 // www.sodu.so
 // @include        http://www.jiaodu8.com/*/*/*/*.html

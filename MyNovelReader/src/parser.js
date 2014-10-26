@@ -408,9 +408,10 @@ Parser.prototype = {
             $div.filter('br').remove();
 
             wrapTextNodes($div);
+
+            $div.find('*').removeAttr('style');
         }
 
-        $div.find('*').removeAttr('style');
         $div.find('p').removeAttr('class');
 
         // 图片居中，所有图像？
