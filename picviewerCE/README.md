@@ -32,6 +32,8 @@ picviewerCE.user.js
 - 新增了 `显示隐藏底部条` 按钮
 - *新增库浏览时，当滚动到最后一个，会自动滚动原页面到最底部，如果有新的图片会自动重载。例如百度图片库浏览时。* 需要手动启用，有待进一步完善。
 
+![设置界面](https://ww3.sinaimg.cn/mw690/6257c444gw1eloo1ejotaj20hf0gmdgp.jpg)
+
 ## 鼠标手势调用（FireGesture）
 
 ### 打开原图

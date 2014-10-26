@@ -2,7 +2,7 @@
 // @name           picviewer CE
 // @author         NLF && ywzhaiqi
 // @description    NLF 的围观图修改版
-// @version        2014.10.26.1
+// @version        2014.10.26.2
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
@@ -8544,76 +8544,111 @@ GM_config.init({
             options: ['top left', 'top right', 'bottom right', 'bottom left'],
             textContents: ['图片左上角', '图片右上角', '图片右下角', '图片左下角'],
             default: prefs.floatBar.position,
-            section: ['浮动工具栏相关设置'],
+            section: ['浮动工具栏'],
         },
         'floatBar.forceShow.size.w': {
-            label: '无缩放图片强制显示的宽度(像素)',
+            label: '无缩放图片，强制显示的宽度（像素）',
             type: 'int',
             size: 5,
             default: prefs.floatBar.forceShow.size.w,
             title: '在没有被缩放的图片上,但是大小超过下面设定的尺寸时,强制显示浮动框.(以便进行旋转,放大,翻转等等操作)..',
         },
         'floatBar.forceShow.size.h': {
-            label: '无缩放图片强制显示的高度(像素)',
+            label: '无缩放图片，强制显示的高度（像素）',
             type: 'int',
             size: 5,
             default: prefs.floatBar.forceShow.size.h,
             title: '在没有被缩放的图片上,但是大小超过下面设定的尺寸时,强制显示浮动框.(以便进行旋转,放大,翻转等等操作)..',
         },
+        'floatBar.minSizeLimit.w': {
+            label: '显示浮动工具栏，图片最小的宽度（像素）',
+            type: 'int',
+            size: 5,
+            default: prefs.floatBar.minSizeLimit.w,
+            title: '就算是图片被缩放了(看到的图片被设定了width或者height限定了大小,这种情况下),如果没有被缩放的原图片小于设定值,那么也不显示浮动工具栏',
+        },
+        'floatBar.minSizeLimit.h': {
+            label: '显示浮动工具栏，图片最小的高度（像素）',
+            type: 'int',
+            size: 5,
+            default: prefs.floatBar.minSizeLimit.h,
+            title: '就算是图片被缩放了(看到的图片被设定了width或者height限定了大小,这种情况下),如果没有被缩放的原图片小于设定值,那么也不显示浮动工具栏',
+        },
+        // 按键
         'floatBar.keys.enable': {
             label: '启用以下4个快捷键',
             type: 'checkbox',
             default: prefs.floatBar.keys.enable
         },
         'floatBar.keys.actual': {
-            label: '打开原图快捷键',
+            label: '&nbsp;&nbsp;&nbsp;&nbsp;打开大图',
             type: 'text',
             size: 5,
             default: prefs.floatBar.keys.actual,
-            title: '当出现悬浮条时按下此按键打开原图'
+            title: '当出现悬浮条时按下此按键打开大图'
         },
         'floatBar.keys.current': {
-            label: '打开当前显示的图片快捷键',
+            label: '&nbsp;&nbsp;&nbsp;&nbsp;打开当前图片',
             type: 'text',
             size: 5,
             default: prefs.floatBar.keys.current,
             title: '当出现悬浮条时按下此按键打开当前显示的图片'
         },
         'floatBar.keys.magnifier': {
-            label: '打开放大镜观察快捷键',
+            label: '&nbsp;&nbsp;&nbsp;&nbsp;打开放大镜观察',
             type: 'text',
             size: 5,
             default: prefs.floatBar.keys.magnifier,
             title: '当出现悬浮条时按下此按键打开放大镜观察'
         },
         'floatBar.keys.gallery': {
-            label: '打开图库快捷键',
+            label: '&nbsp;&nbsp;&nbsp;&nbsp;打开图库',
             type: 'text',
             size: 5,
             default: prefs.floatBar.keys.gallery,
             title: '当出现悬浮条时按下此按键打开图库'
         },
 
+        // 放大镜
+        'magnifier.radius': {
+            label: '默认半径（像素）',
+            type: 'text',
+            size: 5,
+            default: prefs.magnifier.radius,
+            section: ['放大镜'],
+        },
+        'magnifier.wheelZoom.enabled': {
+            label: '启用滚轮缩放',
+            type: 'checkbox',
+            default: prefs.magnifier.wheelZoom.enabled,
+        },
+        // 'magnifier.wheelZoom.range': {
+        //     label: '缩放的范围',
+        //     type: 'select',
+        //     default: prefs.magnifier.wheelZoom.range,
+        // },
+
         // 图库
         'gallery.fitToScreen': {
             label: '图片适应屏幕',
             type: 'checkbox',
             default: prefs.gallery.fitToScreen,
-            section: ['图库相关设定'],
+            section: ['图库'],
             title: '适应方式为contain，非cover'
         },
         'gallery.sidebarPosition': {
             label: '缩略图栏位置',
             type: 'select',
             options: ['bottom', 'right', 'left', 'top'],
+            textContents: ['底部', '右侧', '左侧', '顶部'],
             default: prefs.gallery.sidebarPosition,
-            title: '缩略图栏的高（如果是水平放置）或者宽（如果是垂直放置）'
         },
         'gallery.sidebarSize': {
-            label: '缩略图栏高(像素)',
+            label: '缩略图栏高（像素）',
             type: 'int',
             size: 5,
-            default: prefs.gallery.sidebarSize
+            default: prefs.gallery.sidebarSize,
+            title: '缩略图栏的高（如果是水平放置）或者宽（如果是垂直放置）'
         },
         'gallery.max': {
             label: '最多预读多少张图片',
@@ -8634,7 +8669,7 @@ GM_config.init({
             label: '适应屏幕，并且水平垂直居中',
             type: 'checkbox',
             default: prefs.imgWindow.fitToScreen,
-            section: ['图片窗口相关设定'],
+            section: ['图片窗口'],
             title: '适应方式为contain，非cover'
         },
         'imgWindow.close.dblClickImgWindow': {
@@ -8649,6 +8684,11 @@ GM_config.init({
             textContents: ['无', '单击', '双击'],
             default: prefs.imgWindow.close.clickOutside,
         },
+        // 'imgWindow.zoom.mouseWheelZoom': {
+        //     label: '滚轮缩放比例',
+        //     type: 'select',
+        //     default: prefs.imgWindow.zoom.mouseWheelZoom,
+        // },
 
         // 其它
         'waitImgLoad': {
