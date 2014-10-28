@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name           quick-view-douban
+// @name           quick-view-douban 修正版
 // @namespace      http://vivyli.com
 // @modified       ywzhaiqi
 // @include        *
-// @version        2.1
+// @version        2.2
 // @updateURL      https://userscripts.org/scripts/source/176991.meta.js
 // @downloadURL    https://userscripts.org/scripts/source/176991.user.js
 // @description    see douban book movie music in every webpage by selecting text
@@ -591,9 +591,8 @@ function images() {
 }
 
 
-var _regex = /\{([\w\.]*)\}/g;
 function nano(template, data) {
-    return template.replace(this._regex, function(str, key) {
+    return template.replace(/\{([\w\.]*)\}/g, function(str, key) {
         var keys = key.split('.'),
             value = data[keys.shift()];
         keys.forEach(function(key) {
