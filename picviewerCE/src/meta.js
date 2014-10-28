@@ -13,6 +13,7 @@
 // @grant          GM_setValue
 // @grant          GM_addStyle
 // @grant          GM_openInTab
+// @grant          GM_setClipboard
 // @grant          GM_xmlhttpRequest
 // @grant          GM_registerMenuCommand
 // @run-at         document-end

@@ -2,7 +2,7 @@
 // @name           picviewer CE
 // @author         NLF && ywzhaiqi
 // @description    NLF 的围观图修改版
-// @version        2014.10.26.2
+// @version        2014.10.28.0
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
@@ -13,6 +13,7 @@
 // @grant          GM_setValue
 // @grant          GM_addStyle
 // @grant          GM_openInTab
+// @grant          GM_setClipboard
 // @grant          GM_xmlhttpRequest
 // @grant          GM_registerMenuCommand
 // @run-at         document-end
@@ -490,8 +491,10 @@
 					preventDefault: true,
 					type: 'actual',
 				},
-				getImage: function() {
-					return this.src;
+				getImage: function(img, a) {
+					if (a && a.href.indexOf('/blob/master/') > 0) {
+						return this.src;
+					}
 				}
 			},
 
@@ -1707,8 +1710,9 @@
 							'<span class="pv-gallery-head-command-drop-list pv-gallery-head-command-drop-list-others">'+
 								'<span class="pv-gallery-head-command-drop-list-item" data-command="openInNewWindow" title="新窗口打开图片">新窗口打开</span>'+
 								'<span class="pv-gallery-head-command-drop-list-item" data-command="scrollIntoView" title="滚动到当前图片所在的位置">定位到图片</span>'+
-								'<span class="pv-gallery-head-command-drop-list-item" data-command="enterCollection" title="查看所有收藏的图片">查看所有收藏</span>'+
-								'<span class="pv-gallery-head-command-drop-list-item" data-command="exportImages" title="导出所有图片的链接到新窗口">导出所有图片</span>'+
+								'<span class="pv-gallery-head-command-drop-list-item" data-command="enterCollection" title="查看所有收藏的图片">查看收藏</span>'+
+								'<span class="pv-gallery-head-command-drop-list-item" data-command="exportImages" title="导出所有图片的链接到新窗口">导出图片</span>'+
+								'<span class="pv-gallery-head-command-drop-list-item" data-command="copyImages" title="复制所有大图的地址">复制图片</span>'+
 								'<span class="pv-gallery-head-command-drop-list-item" data-command="reloadGalleryC" title="重新载入所有有效的图片">手动重载</span>'+
 								'<span class="pv-gallery-head-command-drop-list-item" title="最后一张图片时，滚动主窗口到最底部，然后自动重载库的图片（测试）">'+
 									'<input type="checkbox"  data-command="scrollToEndAndReload"/>'+
@@ -2319,40 +2323,10 @@
 
 						}break;
 						case 'exportImages':
-							var exportImages = function () {  // 导出所有图片到新窗口
-								var nodes = document.querySelectorAll('.pv-gallery-sidebar-thumb-container[data-src]');
-								var arr = [].map.call(nodes, function(node){
-									return '<div><img src=' + node.dataset.src + ' /></div>'
-								});
-
-								var title = document.title;
-
-								var html = '\
-									<head>\
-										<title>' + title + ' 导出大图</title>\
-										<style>\
-											div {\
-												float: left;\
-												max-height: 180px;\
-												max-width: 320px;\
-												margin: 2px;\
-											}\
-											img {\
-												max-height: 180px;\
-												max-width: 320px;\
-											}\
-										</style>\
-									</head>\
-									<body>\
-										<p>【图片标题】：' + title + '</p>\
-										<p>【图片数量】：' + nodes.length + '</p>\
-								';
-
-								html += arr.join('\n') + '</body>'
-								GM_openInTab('data:text/html;charset=utf-8,' + encodeURIComponent(html));
-							};
-
-							exportImages();
+							self.exportImages();
+							break;
+						case 'copyImages':
+							self.copyImages(true);
 							break;
 						case 'reloadGalleryC':
 							self.reload();
@@ -2727,8 +2701,12 @@
 				this.initZoom();
 			},
 
-			// 我新加的，是否显示切换 sidebar 按钮
-			initToggleBar: function() {
+			// ------------------ 我添加的部分 start -----------------------------
+			initToggleBar: function() {  // 是否显示切换 sidebar 按钮
+				/**
+				 * TODO：仿造下面的链接重新改造过？
+				 * http://image.baidu.com/detail/newindex?col=%E8%B5%84%E8%AE%AF&tag=%E4%BD%93%E8%82%B2&pn=0&pid=5123662821688142478&aid=&user_id=10086&setid=-1&sort=0&newsPn=4&star=&fr=hotword&from=1
+				 */
 				if (prefs.gallery.sidebarToggle) {
 					var toggleBar = this.eleMaps['sidebar-toggle'];
 					toggleBar.style.display = 'block';
@@ -2784,6 +2762,95 @@
 					}
 				}
 			},
+
+			reload: function() {
+				// 函数在 LoadingAnimC 中
+				var data = this.getAllValidImgs();
+				// 设置当前选中的图片
+				data.target = {
+					src: this.selected.dataset.src
+				};
+
+				this.close(true);
+
+				this.load(data, null, true);
+			},
+			reloadNew: function() {
+
+			},
+			getAllValidImgs:function(){
+				var imgs = document.getElementsByTagName('img'),
+					container = document.querySelector('.pv-gallery-container'),
+					preloadContainer = document.querySelector('.pv-gallery-preloaded-img-container'),
+					validImgs = [];
+
+				arrayFn.forEach.call(imgs, function(img, index, imgs) {
+					// 排除库里面的图片
+					if (container.contains(img) || preloadContainer.contains(img)) return;
+
+					var result = findPic(img);
+					if (result) {
+						validImgs.push(result);
+					};
+				});
+				return validImgs;
+			},
+			scrollToEndAndReload: function() {
+				if (!prefs.gallery.autoScrollAndReload) {
+					return;
+				}
+
+				// 滚动主窗口到最底部，然后自动重载库的图片
+				// TODO：
+				// 1、修正 滚动几页后不再滚动 的 bug。
+				// 2、关闭图库再打开，图片的顺序不太正确？
+				// 3、定位图片无效或不存在的 bug
+				window.scrollTo(0, 99999);
+
+				var self = this;
+				clearTimeout(self.reloadTimeout);
+				self.reloadTimeout = setTimeout(function(){
+					// window.removeEventListener('scroll', self.scrolled, false);
+					self.reload();
+				}, 1000);
+			},
+			exportImages: function () {  // 导出所有图片到新窗口
+				var nodes = document.querySelectorAll('.pv-gallery-sidebar-thumb-container[data-src]');
+				var arr = [].map.call(nodes, function(node){
+					return '<div><img src=' + node.dataset.src + ' /></div>'
+				});
+
+				var title = document.title;
+
+				var html = '\
+					<head>\
+						<title>' + title + ' 导出大图</title>\
+						<style>\
+							div { float: left; max-height: 180px; max-width: 320px; margin: 2px; }\
+							img { max-height: 180px; max-width: 320px; }\
+						</style>\
+					</head>\
+					<body>\
+						<p>【图片标题】：' + title + '</p>\
+						<p>【图片数量】：' + nodes.length + '</p>\
+				';
+
+				html += arr.join('\n') + '</body>'
+				GM_openInTab('data:text/html;charset=utf-8,' + encodeURIComponent(html));
+			},
+			copyImages: function(alert) {
+				var nodes = document.querySelectorAll('.pv-gallery-sidebar-thumb-container[data-src]');
+				var urls = [].map.call(nodes, function(node){
+					return node.dataset.src;
+				});
+
+				GM_setClipboard(urls.join('\n'));
+
+				if (alert) {
+					alert('已成功复制 ' + urls.length + ' 张大图地址');
+				}
+			},
+			// ------------------ 我添加的部分 end -----------------------------
 
 			getThumSpan:function(previous,relatedTarget){
 				var ret;
@@ -3236,60 +3303,6 @@
 				//重置style;
 				this.thumbVisibleStyle.textContent='';
 			},
-
-			// --------- 我添加的部分 start ----------------
-			reload: function() {
-				// 函数在 LoadingAnimC 中
-				var data = this.getAllValidImgs();
-				// 设置当前选中的图片
-				data.target = {
-					src: this.selected.dataset.src
-				};
-
-				this.close(true);
-
-				this.load(data, null, true);
-			},
-			reloadNew: function() {
-
-			},
-			getAllValidImgs:function(){
-				var imgs = document.getElementsByTagName('img'),
-					container = document.querySelector('.pv-gallery-container'),
-					preloadContainer = document.querySelector('.pv-gallery-preloaded-img-container'),
-					validImgs = [];
-
-				arrayFn.forEach.call(imgs, function(img, index, imgs) {
-					// 排除库里面的图片
-					if (container.contains(img) || preloadContainer.contains(img)) return;
-
-					var result = findPic(img);
-					if (result) {
-						validImgs.push(result);
-					};
-				});
-				return validImgs;
-			},
-			scrollToEndAndReload: function() {
-				if (!prefs.gallery.autoScrollAndReload) {
-					return;
-				}
-
-				// 滚动主窗口到最底部，然后自动重载库的图片
-				// TODO：
-				// 1、修正 滚动几页后不再滚动 的 bug。
-				// 2、关闭图库再打开，图片的顺序不太正确？
-				// 3、定位图片无效或不存在的 bug
-				window.scrollTo(0, 99999);
-
-				var self = this;
-				clearTimeout(self.reloadTimeout);
-				self.reloadTimeout = setTimeout(function(){
-					// window.removeEventListener('scroll', self.scrolled, false);
-					self.reload();
-				}, 1000);
-			},
-			// --------- 我添加的部分 end ----------------
 
 			unique:function(data){
 				var imgSrc=data.target.src;

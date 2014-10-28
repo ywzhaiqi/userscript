@@ -375,8 +375,10 @@
 					preventDefault: true,
 					type: 'actual',
 				},
-				getImage: function() {
-					return this.src;
+				getImage: function(img, a) {
+					if (a && a.href.indexOf('/blob/master/') > 0) {
+						return this.src;
+					}
 				}
 			},
 
