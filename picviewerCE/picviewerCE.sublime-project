@@ -1,10 +1,13 @@
 {
-    "folders":
-    [
-        {
-            "follow_symlinks": true,
-            "path": ".",
-            "folder_exclude_patterns": ["node_modules"]
-        }
-    ]
+	"folders":
+	[
+		{
+			"folder_exclude_patterns":
+			[
+				"node_modules"
+			],
+			"follow_symlinks": true,
+			"path": "."
+		}
+	]
 }

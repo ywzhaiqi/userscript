@@ -1,10 +1,9 @@
 
 /**
  * 兼容 Mousever Popup Image Viewer 脚本规则
- * @return {[type]} [description]
+ * 规则说明地址：http://w9p.co/userscripts/mpiv/host_rules.html
  */
 var MPIV = (function() {
-	// 规则说明地址：http://w9p.co/userscripts/mpiv/host_rules.html
 
 	var hosts = Rule.MPIV;
 
@@ -12,6 +11,33 @@ var MPIV = (function() {
 	var cfg = {
 		thumbsonly: true,
 	};
+
+	function loadRule() {
+		var rules = Rule.MPIV;
+
+		var isStringFn = function(a) {
+			return typeof a == 'string' && a.indexOf('return ') > -1;
+		};
+
+		rules.forEach(function(h) {
+			try {
+				if(h.r) h.r = toRE(h.r, 'i');
+				if(isStringFn(h.s)) h.s = new Function('m', 'node', h.s);
+				if(isStringFn(h.q)) h.q = new Function('text', 'doc', h.q);
+				if(isStringFn(h.c)) h.c = new Function('text', 'doc', h.c);
+			} catch(ex) {
+				console.error('MPIV 规则无效: %o', h, ex);
+			}
+		});
+
+		var filter = function(hn, h) {
+			return !h.d || hn.indexOf(h.d) > -1;
+		};
+
+		hosts = rules.filter(filter.bind(null, location.hostname));
+
+		return hosts;
+	}
 
 	function hasBg(node) {
 		return node ? wn.getComputedStyle(node).backgroundImage != 'none' && node.className.indexOf('YTLT-') < 0 : false;
@@ -27,11 +53,18 @@ var MPIV = (function() {
 	}
 
 	/**
+	 * 我新增了特殊的替换模式
+	 * 规则：
 	 *   {"r":"hotimg\\.com/image", "s":"/image/direct/"}
 	 *   把 image 替换为 direct ，就是 .replace(/image/, "direct")
 	 */
-	function replace(s, m) {
+	function replace(s, m, r) {
 		if(!m) return s;
+
+		if (r && s.startsWith('r;')) {  // 特殊的替换模式
+			return m.input.replace(r, s.slice(2));
+		}
+
 		if(s.indexOf('/') === 0) {
 			var mid = /[^\\]\//.exec(s).index+1;
 			var end = s.lastIndexOf('/');
@@ -64,7 +97,7 @@ var MPIV = (function() {
 	}
 
 	function tag(n) {
-		return n.tagName.toUpperCase();
+		return n.tagName && n.tagName.toUpperCase();
 	}
 
 	function qs(s, n) {
@@ -73,7 +106,6 @@ var MPIV = (function() {
 
 	function parseNode(node) {
 		var a, img, url, info;
-		// if(!hosts) hosts = loadHosts();
 		if(tag(node) == 'A') {
 			a = node;
 		} else {
@@ -113,7 +145,7 @@ var MPIV = (function() {
 			}
 			if(!m || tn == 'IMG' && !('s' in h)) continue;
 			if('s' in h) {
-				urls = (Array.isArray(h.s) ? h.s : [h.s]).map(function(s) { if(typeof s == 'string') return decodeURIComponent(replace(s, m)); if(typeof s == 'function') return s(m, node); return s; });
+				urls = (Array.isArray(h.s) ? h.s : [h.s]).map(function(s) { if(typeof s == 'string') return decodeURIComponent(replace(s, m, h.r)); if(typeof s == 'function') return s(m, node); return s; });
 				if(Array.isArray(urls[0])) urls = urls[0];
 				if(urls[0] === false) continue;
 				urls = urls.map(function(u) { return u ? decodeURIComponent(u) : u; });
@@ -121,11 +153,14 @@ var MPIV = (function() {
 				urls = [m.input];
 			}
 			if((h.follow === true || typeof h.follow == 'function' && h.follow(urls[0])) && !h.q) return findInfo(urls[0], node, false, h);
+
+			// debug('MPIV 找到的规则是 %o', h);
 			return {
 				node: node,
 				url: urls.shift(),
 				urls: urls,
 				r: h.r,
+				s: h.s,
 				q: h.q,
 				c: h.c,
 				// g: h.g ? loadGalleryParser(h.g) : h.g,
@@ -140,9 +175,26 @@ var MPIV = (function() {
 		};
 	}
 
+	// TODO
+	function rulesToString(rules) {
+		var newRules = [];
+
+		rules.forEach(function(h) {
+			var newInfo = {}
+			Object.keys(h).forEach(function(key) {
+				if (key == 'r') {
+					newInfo.r = h.r instanceof RegExp ?
+							h.r.toString() : null;
+				}
+
+			});
+		});
+	}
+
 	return {
+		parseNode: parseNode,
 		findInfo: findInfo,
-		parseNode: parseNode
+		loadRule: loadRule,
 	}
 
 })();

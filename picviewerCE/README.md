@@ -1,7 +1,8 @@
 picviewerCE.user.js
 ===================
 
-[picViewer By NLF](http://userscripts-mirror.org/scripts/show/105741) 修改版。[github 安装地址](https://github.com/ywzhaiqi/userscript/raw/master/picviewerCE/picviewerCE.user.js)
+[picViewer By NLF](http://userscripts-mirror.org/scripts/show/105741) 修改版，需要运行在 **Greasemonkey / Tampermonkey** 环境中。
+
 
 ## 修改说明
 
@@ -16,7 +17,7 @@ picviewerCE.user.js
 
 ### 新增
 
-- 新增了几个查看大图的站点规则
+- 新增了多个查看大图的站点规则
 - **新增了 xhr 方式获取大图**
 - **新增了 Mouseover Popup Image Viewer 脚本规则的兼容**，非完全兼容，仅兼容主要部分。
 - **新增了设置界面**，在 Greasemonkey/Tampermonkey 用户脚本处打开。还可在图库的命令处打开设置。
@@ -32,7 +33,7 @@ picviewerCE.user.js
 - 新增了 `显示隐藏底部条` 按钮
 - *新增库浏览时，当滚动到最后一个，会自动滚动原页面到最底部，如果有新的图片会自动重载。例如百度图片库浏览时。* 需要手动启用，有待进一步完善。
 
-![设置界面](https://ww3.sinaimg.cn/mw690/6257c444gw1eloo1ejotaj20hf0gmdgp.jpg)
+![设置界面](https://github.com/ywzhaiqi/userscript/raw/master/picviewerCE/config.png)
 
 ## 鼠标手势调用（FireGesture）
 
@@ -55,3 +56,8 @@ picviewerCE.user.js
     if (galleryBtn) {
         galleryBtn.click();
     }
+
+### 附录
+
+- github 直接安装地址：[https://github.com/ywzhaiqi/userscript/raw/master/picviewerCE/picviewerCE.user.js](https://github.com/ywzhaiqi/userscript/raw/master/picviewerCE/picviewerCE.user.js)
+- greasyfork 地址：[https://greasyfork.org/zh-CN/scripts/5199-picviewer-ce](https://greasyfork.org/zh-CN/scripts/5199-picviewer-ce)

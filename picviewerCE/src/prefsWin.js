@@ -1,4 +1,6 @@
 
+var debug;  // 调试函数
+
 GM_config.init({
     id: 'pv-prefs',
     title: GM_config.create('a', {
@@ -6,7 +8,14 @@ GM_config.init({
        target: '_blank',
        textContent: 'picviewerCE 设置',
     }),
-    css: '',
+    css: [
+        "#pv-prefs { background: #EEE; padding: 10px; }",
+        "#pv-prefs .field_label { font-size: 12px; font-weight: normal; padding-right: 20px;}",
+        "#pv-prefs .config_var { display: table-row; height: 25px; }",
+        "#pv-prefs .section_header { background: #414141; border: 1px solid #000; border-radius: 3px;",
+            " color: #FFF; font-size: 13pt;margin: 12px 0; padding: 5px 15px; }",
+        "#pv-prefs .config_var > * { display: table-cell; }",
+    ].join('\n'),
     fields: {
         // 浮动工具栏
         'floatBar.position': {
@@ -18,32 +27,30 @@ GM_config.init({
             section: ['浮动工具栏'],
         },
         'floatBar.forceShow.size.w': {
-            label: '无缩放图片，强制显示的宽度（像素）',
+            label: '非缩放图片，超过该尺寸，强制显示',
             type: 'int',
-            size: 5,
+            size: 2,
             default: prefs.floatBar.forceShow.size.w,
             title: '在没有被缩放的图片上,但是大小超过下面设定的尺寸时,强制显示浮动框.(以便进行旋转,放大,翻转等等操作)..',
         },
         'floatBar.forceShow.size.h': {
-            label: '无缩放图片，强制显示的高度（像素）',
+            label: '',
             type: 'int',
-            size: 5,
+            size: 2,
             default: prefs.floatBar.forceShow.size.h,
-            title: '在没有被缩放的图片上,但是大小超过下面设定的尺寸时,强制显示浮动框.(以便进行旋转,放大,翻转等等操作)..',
         },
         'floatBar.minSizeLimit.w': {
-            label: '显示浮动工具栏，图片最小的宽度（像素）',
+            label: '缩放图片，小于该尺寸，不显示',
             type: 'int',
-            size: 5,
+            size: 2,
             default: prefs.floatBar.minSizeLimit.w,
-            title: '就算是图片被缩放了(看到的图片被设定了width或者height限定了大小,这种情况下),如果没有被缩放的原图片小于设定值,那么也不显示浮动工具栏',
+            title: '就算是图片被缩放了(看到的图片被设定了width或者height限定了大小,这种情4况下),如果没有被缩放的原图片小于设定值,那么也不显示浮动工具栏',
         },
         'floatBar.minSizeLimit.h': {
-            label: '显示浮动工具栏，图片最小的高度（像素）',
+            label: '',
             type: 'int',
-            size: 5,
+            size: 2,
             default: prefs.floatBar.minSizeLimit.h,
-            title: '就算是图片被缩放了(看到的图片被设定了width或者height限定了大小,这种情况下),如果没有被缩放的原图片小于设定值,那么也不显示浮动工具栏',
         },
         // 按键
         'floatBar.keys.enable': {
@@ -95,7 +102,7 @@ GM_config.init({
         },
         // 'magnifier.wheelZoom.range': {
         //     label: '缩放的范围',
-        //     type: 'select',
+        //     type: 'textarea',
         //     default: prefs.magnifier.wheelZoom.range,
         // },
 
@@ -169,12 +176,36 @@ GM_config.init({
             section: ['其它'],
             title: '按住ctrl键的时候,可以临时执行和这个设定相反的设定'
         },
+        'debug': {
+            label: '调试模式',
+            type: 'checkbox',
+            default: prefs.debug
+        }
     },
     events: {
         open: function(doc, win, frame) {
             frame.style.width = '500px';
             frame.style.left = 'auto';
             frame.style.right = '60px';
+
+            var create = GM_config.create,
+                getId = function(id) {
+                    return doc.getElementById(id);
+                };
+
+            // 调整尺寸到一行
+            var moveToOneLine = function(key) {
+                var widthNode = getId('pv-prefs_field_' + key + '.w'),
+                    heightNode = getId('pv-prefs_field_' + key + '.h');
+
+                widthNode.parentNode.appendChild(heightNode);
+                widthNode.title = '宽度（单位：像素）';
+                heightNode.title = '高度（单位：像素）';
+                getId('pv-prefs_' + key + '.h_var').style.display = 'none';
+            };
+
+            moveToOneLine('floatBar.forceShow.size');
+            moveToOneLine('floatBar.minSizeLimit');
         },
         save: function() {
             loadPrefs();
@@ -202,4 +233,6 @@ function loadPrefs() {
 
         lastPref[lastKey] = GM_config.get(keyStr);
     });
+
+    debug = prefs.debug ? console.debug.bind(console) : function() {};
 }
