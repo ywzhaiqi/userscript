@@ -226,7 +226,7 @@ var rules = [
         ',
         insertIntoDoc: {
             keyword: function() {
-                return document.evaluate("//span[@dir='auto']", document, null, 9, null).singleNodeValue.innerHTML;
+                return document.evaluate("//span[@dir='auto']", document, null, 9, null).singleNodeValue.textContent;
             },
             target: 'css;#siteNotice',
             where: 'beforeBegin'

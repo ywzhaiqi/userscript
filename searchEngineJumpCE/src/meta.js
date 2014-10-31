@@ -18,6 +18,7 @@
 <%= meta_resources %>
 
 <%= includes %>
+// @exclude        http*://services.addons.mozilla.org/*
 
 // ==/UserScript==
 

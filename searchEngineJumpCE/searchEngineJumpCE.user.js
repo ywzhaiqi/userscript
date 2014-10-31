@@ -4,7 +4,7 @@
 // @author         NLF && ywzhaiqi
 // @contributor    ted423
 // @description    方便的在各个引擎之间跳转。可自定义搜索列表的 NLF 修改版。
-// @version        4.2.0.0
+// @version        4.2.0.1
 // @namespace      http://userscripts.org/users/NLF
 // @homepage       https://github.com/ywzhaiqi/userscript
 // homepage       http://userscripts.org/scripts/show/84970
@@ -104,6 +104,7 @@
 // @include        /^https?:\/\/search\.t\.qq\.com\/index|user\.php\?(?!.*QQ%E6%97)/
 // @include        /^https?:\/\/s\.weibo\.com\/weibo|user\//
 // @include        /^https?:\/\/shooter\.cn\/search/
+// @exclude        http*://services.addons.mozilla.org/*
 
 // ==/UserScript==
 
@@ -421,7 +422,7 @@ var rules = [
         ',
         insertIntoDoc: {
             keyword: function() {
-                return document.evaluate("//span[@dir='auto']", document, null, 9, null).singleNodeValue.innerHTML;
+                return document.evaluate("//span[@dir='auto']", document, null, 9, null).singleNodeValue.textContent;
             },
             target: 'css;#siteNotice',
             where: 'beforeBegin'
