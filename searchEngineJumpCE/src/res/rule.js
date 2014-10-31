@@ -804,7 +804,7 @@ var rules = [
                 } else {
                     var m = location.search.match(/q=([^&]+)/i);
                     if (m) {
-                        return decodeURIComponent(m[1]);
+                        return true;
                     }
                 }
             },
@@ -1087,10 +1087,10 @@ var rules = [
                 var input = document.querySelector('#q');
                 if (input) {
                     return input.value;
-                } else {
+                } else {  // 由于开始运行时淘宝还没有搜索框
                     var m = location.search.match(/q=([^&]+)/);
                     if (m) {
-                        return decodeURIComponent(m[1]);
+                        return true;
                     }
                 }
             },

@@ -4,7 +4,7 @@
 // @author         NLF && ywzhaiqi
 // @contributor    ted423
 // @description    方便的在各个引擎之间跳转。可自定义搜索列表的 NLF 修改版。
-// @version        4.2.0.1
+// @version        4.2.0.2
 // @namespace      http://userscripts.org/users/NLF
 // @homepage       https://github.com/ywzhaiqi/userscript
 // homepage       http://userscripts.org/scripts/show/84970
@@ -1000,7 +1000,7 @@ var rules = [
                 } else {
                     var m = location.search.match(/q=([^&]+)/i);
                     if (m) {
-                        return decodeURIComponent(m[1]);
+                        return true;
                     }
                 }
             },
@@ -1283,10 +1283,10 @@ var rules = [
                 var input = document.querySelector('#q');
                 if (input) {
                     return input.value;
-                } else {
+                } else {  // 由于开始运行时淘宝还没有搜索框
                     var m = location.search.match(/q=([^&]+)/);
                     if (m) {
-                        return decodeURIComponent(m[1]);
+                        return true;
                     }
                 }
             },
