@@ -4,7 +4,7 @@
 // @author         NLF && ywzhaiqi
 // @contributor    ted423
 // @description    方便的在各个引擎之间跳转。可自定义搜索列表的 NLF 修改版。
-// @version        4.1.9.1
+// @version        4.2.0.0
 // @namespace      http://userscripts.org/users/NLF
 // @homepage       https://github.com/ywzhaiqi/userscript
 // homepage       http://userscripts.org/scripts/show/84970
@@ -115,6 +115,7 @@ var prefs = {
     hidePrefsBtn: false,  // 隐藏设置按钮
     hideEnglineLabel: 2,  // 是否隐藏前几个搜索的文字部分。0：不隐藏，1：根据高度自行判断，2：隐藏
     engineListDataType: 'simple',  // 搜索列表的默认类型: my, simple, wenke, ted423，见设置
+    iconType: '',   // 获取 icon 的在线服务的地址类型
 
     // position: '',     // 全局搜索条插入的位置：default, left, top
     // siteInfo: {},  // 每个站点的额外信息
@@ -1684,6 +1685,7 @@ function loadPrefs() {
     prefs.hidePrefsBtn = GM_getValue('hidePrefsBtn', prefs.hidePrefsBtn);
     prefs.hideEnglineLabel = GM_getValue('hideEnglineLabel', prefs.hideEnglineLabel);
     prefs.engineListDataType = GM_getValue('engineListDataType', prefs.engineListDataType);
+    prefs.iconType = GM_getValue('iconType', prefs.iconType);
     // prefs.position = GM_getValue('position', prefs.position);
     // prefs.siteInfo = JSON.parse(GM_getValue('siteInfo') || '{}');
 
@@ -1754,6 +1756,15 @@ function openPrefs(){
                 </select>\
             </li>\
             <li>\
+                获取在线图标的服务类型：\
+                <select id="sej-prefs-iconType" >\
+                    <option value="">Google Favicons</option>\
+                    <option value="1">g.etfv.co</option>\
+                    <option value="2">api.byi.pw</option>\
+                    <option value="3" title="拼接成 http://HOST/favicon.ico，但一些网站不是这个地址">字符串拼接方式</option>\
+                </select>\
+            </li>\
+            <li>\
                 搜索列表版本：\
                 <select id="sej-prefs-engineListDataType" >\
                     <option value="custom">用户版本</option>\
@@ -1794,6 +1805,7 @@ function openPrefs(){
         GM_setValue('hidePrefsBtn', prefs.hidePrefsBtn = !!$('hidePrefsBtn').checked);
         GM_setValue('hideEnglineLabel', prefs.hideEnglineLabel = $('hideEnglineLabel').value);
         GM_setValue('engineListDataType', prefs.engineListDataType = engineListType_sel.value);
+        GM_setValue('iconType', prefs.iconType = $('iconType').value);
         // GM_setValue('position', prefs.position = $('position').value);
 
         if (engineListType_sel.value == 'custom') {
@@ -1823,6 +1835,7 @@ function openPrefs(){
     $('debug').checked = prefs.debug;
     $('hidePrefsBtn').checked = prefs.hidePrefsBtn;
     $('hideEnglineLabel').value = prefs.hideEnglineLabel;
+    $('iconType').value = prefs.iconType;
     // $('position').value = prefs.position;
     engineListType_sel.value = prefs.engineListDataType;
 
@@ -2220,17 +2233,16 @@ function parseDataStr(str, opt) {
 function getFaviconUrl(url, type) {
     var uri = parseUri(url);
 
-    switch(type) {
-        case 0:
-            return url;
-        case 1:
-            return 'http://g.etfv.co/' + url;
-        case 2:
-            return 'http://api.byi.pw/favicon?url=' + url;
-        case 3:
-            return uri.protocol + '://' + uri.host + '/favicons.ico';
-        default:
-            return 'http://www.google.com/s2/favicons?domain=' + uri.host;
+    if (type == 'no') {
+        return url;
+    } else if (type == 1) {
+        return 'http://g.etfv.co/' + url;
+    } else if (type == 2) {
+        return 'http://api.byi.pw/favicon?url=' + url;
+    } else if (type == 3) {
+        return uri.protocol + '://' + uri.host + '/favicon.ico';
+    } else {
+        return 'http://www.google.com/s2/favicons?domain=' + uri.host;
     }
 }
 
@@ -2439,7 +2451,7 @@ function addContainer(iTarget, iInput) {
 
     // 根据搜索列表的类型得到数据
     var engineListDataStr = engineListData[prefs.engineListDataType] || engineListData.normal;
-    var allEngineList = parseDataStr(engineListDataStr);
+    var allEngineList = parseDataStr(engineListDataStr, { iconType: prefs.iconType});
     var isFirstDropList = true;
     var isMatched = false;  // 当前搜索只匹配一次
 

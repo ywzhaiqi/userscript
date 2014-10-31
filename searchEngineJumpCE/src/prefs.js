@@ -4,6 +4,7 @@ function loadPrefs() {
     prefs.hidePrefsBtn = GM_getValue('hidePrefsBtn', prefs.hidePrefsBtn);
     prefs.hideEnglineLabel = GM_getValue('hideEnglineLabel', prefs.hideEnglineLabel);
     prefs.engineListDataType = GM_getValue('engineListDataType', prefs.engineListDataType);
+    prefs.iconType = GM_getValue('iconType', prefs.iconType);
     // prefs.position = GM_getValue('position', prefs.position);
     // prefs.siteInfo = JSON.parse(GM_getValue('siteInfo') || '{}');
 
@@ -74,6 +75,15 @@ function openPrefs(){
                 </select>\
             </li>\
             <li>\
+                获取在线图标的服务类型：\
+                <select id="sej-prefs-iconType" >\
+                    <option value="">Google Favicons</option>\
+                    <option value="1">g.etfv.co</option>\
+                    <option value="2">api.byi.pw</option>\
+                    <option value="3" title="拼接成 http://HOST/favicon.ico，但一些网站不是这个地址">字符串拼接方式</option>\
+                </select>\
+            </li>\
+            <li>\
                 搜索列表版本：\
                 <select id="sej-prefs-engineListDataType" >\
                     <option value="custom">用户版本</option>\
@@ -114,6 +124,7 @@ function openPrefs(){
         GM_setValue('hidePrefsBtn', prefs.hidePrefsBtn = !!$('hidePrefsBtn').checked);
         GM_setValue('hideEnglineLabel', prefs.hideEnglineLabel = $('hideEnglineLabel').value);
         GM_setValue('engineListDataType', prefs.engineListDataType = engineListType_sel.value);
+        GM_setValue('iconType', prefs.iconType = $('iconType').value);
         // GM_setValue('position', prefs.position = $('position').value);
 
         if (engineListType_sel.value == 'custom') {
@@ -143,6 +154,7 @@ function openPrefs(){
     $('debug').checked = prefs.debug;
     $('hidePrefsBtn').checked = prefs.hidePrefsBtn;
     $('hideEnglineLabel').value = prefs.hideEnglineLabel;
+    $('iconType').value = prefs.iconType;
     // $('position').value = prefs.position;
     engineListType_sel.value = prefs.engineListDataType;
 

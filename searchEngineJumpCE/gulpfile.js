@@ -106,7 +106,7 @@ gulp.task('geticon', function() {
 
         var englineList = parser.parseDataStr(str, {
             commentLine: true,
-            iconType: 0
+            iconType: 'no'
         });
 
         Object.keys(englineList).forEach(function(category) {

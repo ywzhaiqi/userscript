@@ -32,7 +32,7 @@ function addContainer(iTarget, iInput) {
 
     // 根据搜索列表的类型得到数据
     var engineListDataStr = engineListData[prefs.engineListDataType] || engineListData.normal;
-    var allEngineList = parseDataStr(engineListDataStr);
+    var allEngineList = parseDataStr(engineListDataStr, { iconType: prefs.iconType});
     var isFirstDropList = true;
     var isMatched = false;  // 当前搜索只匹配一次
 

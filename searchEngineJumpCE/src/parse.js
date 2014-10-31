@@ -105,17 +105,16 @@ function parseDataStr(str, opt) {
 function getFaviconUrl(url, type) {
     var uri = parseUri(url);
 
-    switch(type) {
-        case 0:
-            return url;
-        case 1:
-            return 'http://g.etfv.co/' + url;
-        case 2:
-            return 'http://api.byi.pw/favicon?url=' + url;
-        case 3:
-            return uri.protocol + '://' + uri.host + '/favicons.ico';
-        default:
-            return 'http://www.google.com/s2/favicons?domain=' + uri.host;
+    if (type == 'no') {
+        return url;
+    } else if (type == 1) {
+        return 'http://g.etfv.co/' + url;
+    } else if (type == 2) {
+        return 'http://api.byi.pw/favicon?url=' + url;
+    } else if (type == 3) {
+        return uri.protocol + '://' + uri.host + '/favicon.ico';
+    } else {
+        return 'http://www.google.com/s2/favicons?domain=' + uri.host;
     }
 }
 
