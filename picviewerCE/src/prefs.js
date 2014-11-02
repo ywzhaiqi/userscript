@@ -42,12 +42,14 @@ var prefs={
 
 	gallery:{//图库相关设定
 		fitToScreen:true,//图片适应屏幕(适应方式为contain，非cover).
-		sidebarPosition: 'bottom',//'top' 'right' 'bottom' 'left'  四个可能值
+		sidebarPosition: 'right',//'top' 'right' 'bottom' 'left'  四个可能值
 			sidebarSize: 120,//侧栏的高（如果是水平放置）或者宽（如果是垂直放置）
 			sidebarToggle: true,  // 是否显示隐藏按钮
 		transition:true,//大图片区的动画。
 		preload:true,//对附近的图片进行预读。
 		max:5,//最多预读多少张（前后各多少张）
+
+		scaleSmallSize: 200,  // 图库的新类别，缩放的图片，尺寸的高或宽都小于该值
 
 		autoScrollAndReload: false, // 最后一张图片时，滚动主窗口到最底部，然后自动重载库的图片。还有bug，有待进一步测试
 		autoZoom: true,  // 如果有放大，则把图片及 sidebar 部分的缩放改回 100%，增大可视面积（仅在 chrome 下有效）
@@ -76,7 +78,7 @@ var prefs={
 
 	//等图片完全载入后,才开始执行弹出,放大等等操作,
 	//按住ctrl键的时候,可以临时执行和这个设定相反的设定.
-	waitImgLoad:true,
+	waitImgLoad: false,
 
 	//框架里面的图片在顶层窗口展示出来，但是当frame与顶层窗口domain不一样的时候，可能导致图片被反盗链拦截，
 	//按住shift键，可以临时执行和这个设定相反的设定

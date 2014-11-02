@@ -358,8 +358,6 @@ var Rule = {};
 // 兼容 Imagus 扩展的规则，自定义部分
 Rule.Imagus = {};
 
-//
-//
 /**
  * 兼容 Mouseover Popup Image Viewer 脚本的规则（非完全）
  * 1、新增了特殊的替换模式：已 r; 开头
@@ -370,12 +368,12 @@ Rule.MPIV = [
 		r: "(hiphotos|imgsrc)\\.baidu\\.com/(.+?)/.+?([0-9a-f]{40})",
 		s: "r;$1.baidu.com/$2/pic/item/$3"
 	},
-	{name: "百度图片2",
-		d: "image.baidu.com",  // imgt8.bdstatic.com 类型的图片链接
-		r: "image\\.baidu\\.com/detail/newindex\\?",
-		q: 'img[alt="preloading"][src*="/pic/item/"]',
-		// description: './../../following-sibling::div[@class="ext-info"]/a',
-	},
+	// {name: "百度图片2",
+	// 	d: "image.baidu.com",  // imgt8.bdstatic.com 类型的图片链接
+	// 	r: "image\\.baidu\\.com/detail/newindex\\?",
+	// 	q: 'img[alt="preloading"][src*="/pic/item/"]',
+	// 	// description: './../../following-sibling::div[@class="ext-info"]/a',
+	// },
 	{name: "pixiv（部分）",
 	    d: 'pixiv.net',
 	    r: /(pixiv.net\/img\d+\/img\/.+\/\d+)_[ms]\.(\w{2,5})$/i,
@@ -411,6 +409,13 @@ Rule.MPIV = [
 		d: "yyets.com",
 		r: "(res\\.yyets\\.com/ftp/(?:attachment/)?\\d+/\\d+)/[ms]_(.*)",
 		s: "http://$1/$2"
+	},
+
+	// 论坛
+	{name: "Firefox 中文社区",
+		d: "firefox.net.cn",
+		r: "www.firefox.net.cn/attachment/thumb/",
+		s: "r;www.firefox.net.cn/attachment/"
 	},
 
 	// 游戏

@@ -2,7 +2,7 @@
 // @name           picviewer CE
 // @author         NLF && ywzhaiqi
 // @description    NLF 的围观图修改版
-// @version        2014.10.30.0
+// @version        2014.11.2.0
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
@@ -74,12 +74,14 @@ var prefs={
 
 	gallery:{//图库相关设定
 		fitToScreen:true,//图片适应屏幕(适应方式为contain，非cover).
-		sidebarPosition: 'bottom',//'top' 'right' 'bottom' 'left'  四个可能值
+		sidebarPosition: 'right',//'top' 'right' 'bottom' 'left'  四个可能值
 			sidebarSize: 120,//侧栏的高（如果是水平放置）或者宽（如果是垂直放置）
 			sidebarToggle: true,  // 是否显示隐藏按钮
 		transition:true,//大图片区的动画。
 		preload:true,//对附近的图片进行预读。
 		max:5,//最多预读多少张（前后各多少张）
+
+		scaleSmallSize: 200,  // 图库的新类别，缩放的图片，尺寸的高或宽都小于该值
 
 		autoScrollAndReload: false, // 最后一张图片时，滚动主窗口到最底部，然后自动重载库的图片。还有bug，有待进一步测试
 		autoZoom: true,  // 如果有放大，则把图片及 sidebar 部分的缩放改回 100%，增大可视面积（仅在 chrome 下有效）
@@ -108,7 +110,7 @@ var prefs={
 
 	//等图片完全载入后,才开始执行弹出,放大等等操作,
 	//按住ctrl键的时候,可以临时执行和这个设定相反的设定.
-	waitImgLoad:true,
+	waitImgLoad: false,
 
 	//框架里面的图片在顶层窗口展示出来，但是当frame与顶层窗口domain不一样的时候，可能导致图片被反盗链拦截，
 	//按住shift键，可以临时执行和这个设定相反的设定
@@ -477,8 +479,6 @@ var Rule = {};
 // 兼容 Imagus 扩展的规则，自定义部分
 Rule.Imagus = {};
 
-//
-//
 /**
  * 兼容 Mouseover Popup Image Viewer 脚本的规则（非完全）
  * 1、新增了特殊的替换模式：已 r; 开头
@@ -489,12 +489,12 @@ Rule.MPIV = [
 		r: "(hiphotos|imgsrc)\\.baidu\\.com/(.+?)/.+?([0-9a-f]{40})",
 		s: "r;$1.baidu.com/$2/pic/item/$3"
 	},
-	{name: "百度图片2",
-		d: "image.baidu.com",  // imgt8.bdstatic.com 类型的图片链接
-		r: "image\\.baidu\\.com/detail/newindex\\?",
-		q: 'img[alt="preloading"][src*="/pic/item/"]',
-		// description: './../../following-sibling::div[@class="ext-info"]/a',
-	},
+	// {name: "百度图片2",
+	// 	d: "image.baidu.com",  // imgt8.bdstatic.com 类型的图片链接
+	// 	r: "image\\.baidu\\.com/detail/newindex\\?",
+	// 	q: 'img[alt="preloading"][src*="/pic/item/"]',
+	// 	// description: './../../following-sibling::div[@class="ext-info"]/a',
+	// },
 	{name: "pixiv（部分）",
 	    d: 'pixiv.net',
 	    r: /(pixiv.net\/img\d+\/img\/.+\/\d+)_[ms]\.(\w{2,5})$/i,
@@ -530,6 +530,13 @@ Rule.MPIV = [
 		d: "yyets.com",
 		r: "(res\\.yyets\\.com/ftp/(?:attachment/)?\\d+/\\d+)/[ms]_(.*)",
 		s: "http://$1/$2"
+	},
+
+	// 论坛
+	{name: "Firefox 中文社区",
+		d: "firefox.net.cn",
+		r: "www.firefox.net.cn/attachment/thumb/",
+		s: "r;www.firefox.net.cn/attachment/"
 	},
 
 	// 游戏
@@ -1810,7 +1817,6 @@ GalleryC.prototype={
 
 		var self=this;
 
-
 		var imgStatistics={//图片的总类，统计,初始化值
 			rule:{
 				shown:true,
@@ -1836,6 +1842,14 @@ GalleryC.prototype={
 				description:'js自动查找，无缩放过的，但是满足一定的大小',
 				name:'无缩放过',
 			},
+
+			// new
+			scaleSmall: {
+				shown: true,
+				count: 0,
+				description: '缩放的图片，实际尺寸的高或宽都小于 ' + prefs.gallery.scaleSmallSize + ' 像素',
+				name: '小尺寸'
+			}
 		};
 		this.imgStatistics=imgStatistics;
 
@@ -2687,7 +2701,7 @@ GalleryC.prototype={
 		html += arr.join('\n') + '</body>'
 		GM_openInTab('data:text/html;charset=utf-8,' + encodeURIComponent(html));
 	},
-	copyImages: function(alert) {
+	copyImages: function(isAlert) {
 		var nodes = document.querySelectorAll('.pv-gallery-sidebar-thumb-container[data-src]');
 		var urls = [].map.call(nodes, function(node){
 			return node.dataset.src;
@@ -2695,7 +2709,7 @@ GalleryC.prototype={
 
 		GM_setClipboard(urls.join('\n'));
 
-		if (alert) {
+		if (isAlert) {
 			alert('已成功复制 ' + urls.length + ' 张大图地址');
 		}
 	},
@@ -2805,8 +2819,9 @@ GalleryC.prototype={
 		// 特殊的 xhr 方式获取
 		var xhr = dataset(ele, 'xhr');
 		if (xhr) {
-			var error = function() {
+			var xhrError = function() {
 				dataset(ele, 'xhr', '');
+				dataset(ele, 'src', dataset(ele, 'thumb-src'));
 				self.getImg(ele);
 			};
 			xhrLoad.load({
@@ -2818,10 +2833,10 @@ GalleryC.prototype={
 						dataset(ele, 'xhr', '');
 						self.getImg(ele);
 					} else {
-						error();
+						xhrError();
 					}
 				},
-				onerror: error
+				onerror: xhrError
 			});
 			return;
 		}
@@ -7190,6 +7205,9 @@ function findPic(img){
 			if(imgAS.h > prefs.floatBar.minSizeLimit.h || imgAS.w > prefs.floatBar.minSizeLimit.w){//最小限定判断.
 				src=img.src;
 				type='scale';
+				if (imgAS.h < prefs.gallery.scaleSmallSize && imgAS.w < prefs.gallery.scaleSmallSize) {
+					type = 'scaleSmall';
+				}
 			};
 		}else{
 			if(prefs.floatBar.forceShow.enabled && (imgCS.w>=prefs.floatBar.forceShow.size.w && imgCS.h>=prefs.floatBar.forceShow.size.h)){

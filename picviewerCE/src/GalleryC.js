@@ -348,7 +348,6 @@ GalleryC.prototype={
 
 		var self=this;
 
-
 		var imgStatistics={//图片的总类，统计,初始化值
 			rule:{
 				shown:true,
@@ -374,6 +373,14 @@ GalleryC.prototype={
 				description:'js自动查找，无缩放过的，但是满足一定的大小',
 				name:'无缩放过',
 			},
+
+			// new
+			scaleSmall: {
+				shown: true,
+				count: 0,
+				description: '缩放的图片，实际尺寸的高或宽都小于 ' + prefs.gallery.scaleSmallSize + ' 像素',
+				name: '小尺寸'
+			}
 		};
 		this.imgStatistics=imgStatistics;
 
@@ -1225,7 +1232,7 @@ GalleryC.prototype={
 		html += arr.join('\n') + '</body>'
 		GM_openInTab('data:text/html;charset=utf-8,' + encodeURIComponent(html));
 	},
-	copyImages: function(alert) {
+	copyImages: function(isAlert) {
 		var nodes = document.querySelectorAll('.pv-gallery-sidebar-thumb-container[data-src]');
 		var urls = [].map.call(nodes, function(node){
 			return node.dataset.src;
@@ -1233,7 +1240,7 @@ GalleryC.prototype={
 
 		GM_setClipboard(urls.join('\n'));
 
-		if (alert) {
+		if (isAlert) {
 			alert('已成功复制 ' + urls.length + ' 张大图地址');
 		}
 	},
@@ -1343,8 +1350,9 @@ GalleryC.prototype={
 		// 特殊的 xhr 方式获取
 		var xhr = dataset(ele, 'xhr');
 		if (xhr) {
-			var error = function() {
+			var xhrError = function() {
 				dataset(ele, 'xhr', '');
+				dataset(ele, 'src', dataset(ele, 'thumb-src'));
 				self.getImg(ele);
 			};
 			xhrLoad.load({
@@ -1356,10 +1364,10 @@ GalleryC.prototype={
 						dataset(ele, 'xhr', '');
 						self.getImg(ele);
 					} else {
-						error();
+						xhrError();
 					}
 				},
-				onerror: error
+				onerror: xhrError
 			});
 			return;
 		}
