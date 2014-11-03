@@ -107,7 +107,7 @@
 // @include        http://www.yunlaige.com/html/*/*/*.html
 // @include        http://www.cfwx.net/files/article/html/*/*/*.html
 // @include        http://www.7dsw.com/book/*/*/*.html
-// @include        http://www.geiliwx.com/GeiLi/*/*/*.shtml
+// @include        http://www.geiliwx.com/GeiLi/*/*/*.shtml*
 // @include        http://www.d586.com/*/*/
 // @include        http://www.bookgew.com/Html/Book/*/*/*.htm
 // @include        http://read.shuhaha.com/Html/Book/*/*/*.html

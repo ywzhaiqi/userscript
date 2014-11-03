@@ -230,7 +230,6 @@ var UI = {
         $form.find("#copyCurTitle").get(0).checked = Config.copyCurTitle;
 
         $form.find("#hide-menu-list").get(0).checked = Config.menu_list_hiddden;
-        $form.find("#hide-menu-bar").get(0).checked = Config.menu_bar_hidden;
         $form.find("#hide-footer-nav").get(0).checked = Config.hide_footer_nav;
         $form.find("#hide-preferences-button").get(0).checked = Config.hide_preferences_button;
         $form.find("#add-nextpage-to-history").get(0).checked = Config.addToHistory;
@@ -327,9 +326,6 @@ var UI = {
                     alert('隐藏后通过快捷键或 Greasemonkey 用户脚本命令处调用'.uiTrans());
                 }
                 break;
-            case 'hide-menu-bar':
-                UI.hideMenuBar(target.checked);
-                break;
             case 'hide-footer-nav':
                 break;
             case 'quietModeKey':
@@ -398,7 +394,6 @@ var UI = {
         Config.menu_list_hiddden = $form.find("#hide-menu-list").get(0).checked;
         UI.hideMenuList(Config.menu_list_hiddden);
 
-        Config.menu_bar_hidden = $form.find("#hide-menu-bar").get(0).checked;
         Config.hide_footer_nav = $form.find("#hide-footer-nav").get(0).checked;
         Config.hide_preferences_button = $form.find("#hide-preferences-button").get(0).checked;
 

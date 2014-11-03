@@ -2,7 +2,7 @@
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
-// @version        4.8.0
+// @version        4.8.1
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs
@@ -107,7 +107,7 @@
 // @include        http://www.yunlaige.com/html/*/*/*.html
 // @include        http://www.cfwx.net/files/article/html/*/*/*.html
 // @include        http://www.7dsw.com/book/*/*/*.html
-// @include        http://www.geiliwx.com/GeiLi/*/*/*.shtml
+// @include        http://www.geiliwx.com/GeiLi/*/*/*.shtml*
 // @include        http://www.d586.com/*/*/
 // @include        http://www.bookgew.com/Html/Book/*/*/*.htm
 // @include        http://read.shuhaha.com/Html/Book/*/*/*.html
@@ -570,8 +570,9 @@ Rule.specialSite = [
             '起点中文网www.qidian.com欢迎广大书.*',
             '书迷楼最快更新.*',
             '更新最快最稳定',
-            '\\(.\\)RU',
+            '\\(\\.\\)R?U',
             {'<p>\\?\\?': '<p>'},
+            '\\(www.\\)',
         ],
         fixImage: true,
         contentPatch: function(fakeStub){
@@ -842,6 +843,8 @@ Rule.specialSite = [
             "www，|&nbsp;\\\\|“梦”(&nbsp;| )*“小”(&nbsp;| )*(“说” )?“网”|“岛”(&nbsp;| )+“说”",
             /(百度搜索 )?本书名 \+ 盗梦人 看最快更新/ig,
             "520xs.com ”520小说“小说章节更新最快",
+            "本文由　……　首发",
+            "看最新最全小说",
             "（首发）",
             "&amp;nbsp",
         ]
@@ -879,7 +882,11 @@ Rule.specialSite = [
     {siteName: '23中文',
         url: '^http://www\\.23zw\\.com/.*\\.html',
         contentReplace: [
-            '本文由首发'
+            '本文由首发',
+            '章节更新最快',
+            '顶点小说.23us.。',
+            '\\(顶点小说\\)',
+            "看最新最全",
         ]
     },
     {siteName: '笔下阁',
@@ -1160,7 +1167,8 @@ Rule.specialSite = [
         contentRemove: "h1, table, .toplink",
         contentReplace: [
             /[{〖]请在百度搜索.*[}〗]|.(?:百度搜索飄天|无弹窗小说网).*\.Net.|\[飄天.*无弹窗小说网\]/ig,
-            '\\{飘天文学www.piaotian.net感谢各位书友的支持，您的支持就是我们最大的动力\\}'
+            '\\{飘天文学www.piaotian.net感谢各位书友的支持，您的支持就是我们最大的动力\\}',
+            '章节更新最快'
         ],
     },
     {siteName: "天使小说网",
@@ -1397,6 +1405,7 @@ Rule.replace = {
     ".{2,4}中文网欢迎广大书友": "",
     "访问下载txt小说|◎雲來閣免费万本m.yunlaige.com◎":"",
     "〖∷更新快∷无弹窗∷纯文字∷.*?〗": "",
+    "本文由　。。　首发":"",
     '”小说“小说章节更新最快': '',
     '如果觉得好看，请把本站网址推荐给您的朋友吧！': '',
     '本站手机网址：&nbsp;&nbsp;请互相通知向您QQ群【微博/微信】论坛贴吧推荐宣传介绍!': '',
@@ -1441,12 +1450,12 @@ Rule.replace = {
     "nàme":"那么", "n[ǎa]o\\s*d[àa]i":"脑袋", "n[ée]ngg[oò]u":"能够", "nán\\s{0,2}hǎi": "那会", "内jian":"内奸", "[内內]y[iī]":"内衣", "内ku":"内裤",
     "pi[áa]o客":"嫖客", "p[áa]ngbi[āa]n":"旁边",
     "q[íi]gu[àa]i":"奇怪", "qing\\s*(ren|人)":"情人", "qin兽":"禽兽", "q[iī]ngch[uǔ]":"清楚", "què\\s*dìng":"确定", "球mi":"球迷", "青chun":"青春", "青lou":"青楼", "qingkuang":"情况", "qiang[　\\s]*jian":"强奸",
-    "r[úu]gu[oǒ]":"如果", "r[oó]ngy[ìi]":"容易", "ru(房|白色)": "乳$1", "rén员":"人员", "rén形":"人形", "人chao":"人潮",  "renmen":"人名",
+    "re\\s*nao":"热闹", "r[úu]gu[oǒ]":"如果", "r[oó]ngy[ìi]":"容易", "ru(房|白色)": "乳$1", "rén员":"人员", "rén形":"人形", "人chao":"人潮",  "renmen":"人名",
     "she(门|术|手|程|击)":"射$1", "sudu":"速度", "shuijue":"睡觉", "shide":"是的", "sh[iì]ji[eè]":"世界", "sh[ií]ji[aā]n":"时间", "sh[ií]h[oò]u": "时候", "sh[ií]me":"什么", "si人":"私人", "shi女":"侍女", "shi身": "失身", "sh[ūu]j[ìi]":"书记", "shu女": "熟女", "shu[　\\s]?xiong":"酥胸", "(?:上|shang)chuang": "上床", "呻y[íi]n": "呻吟", "sh[ēe]ngzh[íi]": "生殖", "深gu": "深谷", "双xiu": "双修", "生r[ìi]": "生日", "si盐":"私盐", "shi卫":"侍卫", "si下":"私下", "sao扰":"骚扰", "ｓｈｕａｎｇ　ｆｅｎｇ":"双峰",
     "t[uū]r[áa]n":"突然", "tiaojiao": "调教", "偷qing":"偷情", "推dao": "推倒", "脱guang": "脱光", "t[èe]bi[ée]":"特别", "t[ōo]nggu[òo]":"通过", "同ju":"同居", "tian来tian去":"舔来舔去",
     "w[ēe]ixi[ée]":"威胁", "wèizh[ìi]":"位置", "wei员":"委员", "w[èe]nti":"问题", "wèi\\s*dào\\s*":"味道", "wú\\s*nài":"无奈", "weilai":"未来",
     "xiu长": "修长", "亵du": "亵渎", "xing福": "幸福", "小bo":"小波", "小niū":"小妞", "xiong([^a-z])":"胸$1", "小tui":"小腿", "xiàohuà":"笑话", "xiàn\\'zhì":"限制", "xiōng\\s*dì":"兄弟",
-    "yì\\s*wài\\s*":"意外", "yin(冷|暗|谋|险|沉|沟|癸派|后)":"阴$1", "y[iī]y[àa]ng":"一样", "y[īi]di[ǎa]n":"一点", "yī\\s*zhèn":"一阵", "y[ǐi]j[īi]ng":"已经", "疑huo":"疑惑", "yí\\s*huò":"疑惑", "影mi":"影迷", "yin荡":"淫荡", "yin贼":"淫贼", "阳w[ěe]i": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "(?:you|诱)(?:惑|huo)": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人", "youshi":"有事", "御yòng":"御用", "旖ni":"旖旎", "yu念":"欲念", "you敌深入":"诱敌深入", "影she":"影射", "牙qian":"牙签", "一yè情":"一夜情",
+    "yì\\s*wài\\s*":"意外", "yin(冷|暗|谋|险|沉|沟|癸派|后)":"阴$1", "y[iī]y[àa]ng":"一样", "y[īi]di[ǎa]n":"一点", "yī\\s*zhèn":"一阵", "y[ǐi]j[īi]ng":"已经", "疑huo":"疑惑", "yí\\s*huò":"疑惑", "影mi":"影迷", "yin荡":"淫荡", "yin贼":"淫贼", "阳w[ěe]i": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "(?:you|诱)(?:惑|huo)": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人", "youshi":"有事", "you\\s*xiu":"优秀", "御yòng":"御用", "旖ni":"旖旎", "yu念":"欲念", "you敌深入":"诱敌深入", "影she":"影射", "牙qian":"牙签", "一yè情":"一夜情",
     "z[iì]j[iǐ]": "自己","z[ìi](?:\\s|<br/?>|&nbsp;)*y[oó]u": "自由","zh[iī]d?[àa]u?o":"知道", "zixin":"自信", "zhì'fú":"制服", "zha药": "炸药", "zhan有": "占有", "zhè\\s*gè":"这个", "政f[ǔu]": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zong理":"总理", "zh[ōo]ngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]\\s*y[oò]u":"左右", "zhǔ\\s*dòng":"主动", "zh[oō]uw[ée]i":"周围", "中nan海":"中南海", "中j委":"中纪委", "中zu部":"中组部", "政zhi局":"政治局", "(昨|一|时|余)(?:<br/?>|&nbsp;|\\s)*ì":"$1日", "照she":"照射", "zhǔn\\s*bèi\\s*":"准备",
 
     "</p>\\n<p>\\s*ì":"日",
@@ -1677,13 +1686,6 @@ var Config = {
     },
     set menu_list_hiddden(bool) {
         GM_setValue("menu_list_hiddden", bool);
-    },
-
-    get menu_bar_hidden() {
-        return getBooleanConfig("menu_bar_hidden", false);
-    },
-    set menu_bar_hidden(bool) {
-        GM_setValue("menu_bar_hidden", bool);
     },
 
     get hide_footer_nav() {
@@ -2208,7 +2210,6 @@ var UI = {
         $form.find("#copyCurTitle").get(0).checked = Config.copyCurTitle;
 
         $form.find("#hide-menu-list").get(0).checked = Config.menu_list_hiddden;
-        $form.find("#hide-menu-bar").get(0).checked = Config.menu_bar_hidden;
         $form.find("#hide-footer-nav").get(0).checked = Config.hide_footer_nav;
         $form.find("#hide-preferences-button").get(0).checked = Config.hide_preferences_button;
         $form.find("#add-nextpage-to-history").get(0).checked = Config.addToHistory;
@@ -2305,9 +2306,6 @@ var UI = {
                     alert('隐藏后通过快捷键或 Greasemonkey 用户脚本命令处调用'.uiTrans());
                 }
                 break;
-            case 'hide-menu-bar':
-                UI.hideMenuBar(target.checked);
-                break;
             case 'hide-footer-nav':
                 break;
             case 'quietModeKey':
@@ -2376,7 +2374,6 @@ var UI = {
         Config.menu_list_hiddden = $form.find("#hide-menu-list").get(0).checked;
         UI.hideMenuList(Config.menu_list_hiddden);
 
-        Config.menu_bar_hidden = $form.find("#hide-menu-bar").get(0).checked;
         Config.hide_footer_nav = $form.find("#hide-footer-nav").get(0).checked;
         Config.hide_preferences_button = $form.find("#hide-preferences-button").get(0).checked;
 
@@ -2449,10 +2446,10 @@ if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
 }
 
 var Res = {
-    CSS_MAIN: '@font-face {\n    font-family: "FontAwesome";\n    src: url({fontawesomeWoff});\n    font-weight: normal;\n    font-style: normal;\n}\nbody > a { display:none !important; }\n.hidden {\n    display: none;\n}\n.quiet-mode {\n    display: none;\n}\nbody {\n    background: #F3F2EE;\n    color: #1F0909;\n    padding: 0px;\n    margin: 0px;\n    font-family: "Microsoft YaHei UI", 微软雅黑, 新宋体, 宋体, arial;\n}\na { color: #065488; }\na:link { text-decoration: none; }\n#mynovelreader-content {\n    width: {content_width};\n    font-size: {font_size};\n    font-family: {font_family};\n    line-height: {text_line_height};\n    margin-left:auto;\n    margin-right:auto;\n    padding-bottom: 15px;\n}\narticle {\n    margin-top: 55px;\n    word-wrap: break-word;\n}\narticle h1 {\n    clear: both;\n    line-height: 50px;\n    font-size: {title_font_size};\n    font-weight: normal;\n    margin: 25px -20px;\n    padding: 0 20px 10px;\n    border-bottom: 1px solid rgba(0,0,0,.25);\n    font-weight: normal;\n    text-transform: none;\n}\n.chapter-footer-nav {\n    text-align:center;\n    font-size:0.9em;\n    margin:-10px 0px 30px 0px;\n}\n#loading {\n    color: white;\n    text-align: center;\n    font: 12px "微软雅黑", "宋体", "Times New Roman", "Verdana";\n    margin-top: 20px;\n    margin-left: auto;\n    margin-right: auto;\n    width: 376px;\n    height: 32px;\n    line-height: 32px;\n    border-radius: 20px;\n    border: 1px solid #666;\n    background-color: #333;\n}\n#loading img {\n    vertical-align: middle;\n}\n#loading a {\n    color: white;\n}\n#preferencesBtn{\n    position: fixed;\n    top: 10px;\n    right: 10px;\n    z-index: 1597;\n}\n#alert {\n    position: fixed;\n    z-index: 100;\n    float: auto;\n    width: auto;\n    height: auto;\n    top: 10px;\n    left: 500px;\n    background: rgba(215, 240, 253, 0.65);\n    color: #2d7091;\n    border: 1px solid rgba(45,112,145,0.3);\n    border-radius: 4px;\n    text-shadow: 0 1px 0 #fff;\n}\n#alert p {\n    font-size: 13px;\n    margin: 6px;\n}\nimg.blockImage {clear: both;float: none;display: block;margin-left: auto;margin-right: auto;}\n#menu-bar {\n    border: solid rgba(0, 100, 255, .9);\n    border-width: 3px 2px 3px 0px;\n    position: fixed;\n    left: 0px;\n    top: 40%;\n    height: 100px;\n    width: 2px;\n    z-index: 199;\n    {menu-bar-hidden}\n}\n#menu {\n    position: fixed;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    z-index: 100;\n    width: 270px;\n    max-width: 100%;\n    background: #333;\n    overflow-y: auto;\n}\n#menu:after {\n    content: "";\n    display: block;\n    position: absolute;\n    top: 46px;\n    bottom: 0;\n    right: 0;\n    width: 1px;\n    background: rgba(0,0,0,0.6);\n    box-shadow: 0 0 5px 2px rgba(0,0,0,0.6);\n}\n#header{\n    color: #777;\n    margin-top: 0;\n    border-top: 1px solid rgba(0,0,0,0.3);\n    background: #404040;\n    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);\n    text-shadow: 0 1px 0 rgba(0,0,0,0.5);\n    padding: 10px 12px;\n    text-transform: uppercase;\n    font-weight: bold;\n    font-size: 20px;\n}\n#header a {\n    color: #777777;\n}\n#divider {\n    position: relative;\n    z-index: 300;\n    border-top: 1px solid rgba(255,255,255,0.01);\n    border-bottom: 1px solid rgba(0,0,0,0.3);\n    margin: 0;\n    height: 4px;\n    background: rgba(0,0,0,0.2);\n    box-shadow: 0 1px 0 rgba(255,255,255,0.05), inset 0 1px 3px rgba(0,0,0,0.3);\n}\n#chapter-list {\n    position: relative;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    z-index: 200;\n    margin: 0;\n    padding: 0;\n    cursor: pointer;\n    list-style: none;\n    overflow-y: auto;\n}\n.chapter {\n    list-style: none;\n}\n.chapter:last-child {\n    border-bottom: 1px solid rgba(0,0,0,0.3);\n    box-shadow: 0 1px 0 rgba(255,255,255,0.05);\n}\n.chapter div {\n    color: #ccc;\n    font-size: 15px;\n    padding: 8px 20px;\n    border-top: 1px solid rgba(0,0,0,0.3);\n    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);\n    text-shadow: 0 1px 0 rgba(0,0,0,0.5);\n    display: block;\n    text-decoration: none;\n    text-overflow: ellipsis;\n    overflow: hidden;\n    white-space: nowrap;\n    cursor: pointer;\n}\n.chapter div:before {\n    content: "\\f105";\n    width: 20px;\n    margin-left: -10px;\n    float: left;\n    font-family: "FontAwesome" !important;\n    text-align: center;\n}\n.chapter div:hover {\n    background: #404040;\n    color: #fff;\n    outline: 0;\n}\n.chapter.active div {\n    background: #1a1a1a;\n    color: #fff;\n    font-size: 16px;\n    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);\n}\n::-webkit-scrollbar {\n    height: 9px !important;\n    width: 9px !important;\n}\n::-webkit-scrollbar-thumb {\n    background-color: #7D7D7D !important;\n    border-radius: 3px !important;\n}\n::-webkit-scrollbar-track-piece {\n    background-color: rgba(0,0,0,.25) !important;\n}'
+    CSS_MAIN: '@font-face {\n    font-family: "FontAwesome";\n    src: url({fontawesomeWoff});\n    font-weight: normal;\n    font-style: normal;\n}\nbody > a { display:none !important; }\n.hidden {\n    display: none;\n}\n.quiet-mode {\n    display: none;\n}\nbody {\n    background: #F3F2EE;\n    color: #1F0909;\n    padding: 0px;\n    margin: 0px;\n    font-family: "Microsoft YaHei UI", 微软雅黑, 新宋体, 宋体, arial;\n}\na { color: #065488; }\na:link { text-decoration: none; }\n#mynovelreader-content {\n    width: {content_width};\n    font-size: {font_size};\n    font-family: {font_family};\n    line-height: {text_line_height};\n    margin-left:auto;\n    margin-right:auto;\n    padding-bottom: 15px;\n}\narticle {\n    margin-top: 55px;\n    word-wrap: break-word;\n}\narticle h1 {\n    clear: both;\n    line-height: 50px;\n    font-size: {title_font_size};\n    font-weight: normal;\n    margin: 25px -20px;\n    padding: 0 20px 10px;\n    border-bottom: 1px solid rgba(0,0,0,.25);\n    font-weight: normal;\n    text-transform: none;\n}\n.chapter-footer-nav {\n    text-align:center;\n    font-size:0.9em;\n    margin:-10px 0px 30px 0px;\n}\n#loading {\n    color: white;\n    text-align: center;\n    font: 12px "微软雅黑", "宋体", "Times New Roman", "Verdana";\n    margin-top: 20px;\n    margin-left: auto;\n    margin-right: auto;\n    width: 376px;\n    height: 32px;\n    line-height: 32px;\n    border-radius: 20px;\n    border: 1px solid #666;\n    background-color: #333;\n}\n#loading img {\n    vertical-align: middle;\n}\n#loading a {\n    color: white;\n}\n#preferencesBtn{\n    position: fixed;\n    top: 10px;\n    right: 10px;\n    z-index: 1597;\n}\n#alert {\n    position: fixed;\n    z-index: 100;\n    float: auto;\n    width: auto;\n    height: auto;\n    top: 10px;\n    left: 500px;\n    background: rgba(215, 240, 253, 0.65);\n    color: #2d7091;\n    border: 1px solid rgba(45,112,145,0.3);\n    border-radius: 4px;\n    text-shadow: 0 1px 0 #fff;\n}\n#alert p {\n    font-size: 13px;\n    margin: 6px;\n}\nimg.blockImage {clear: both;float: none;display: block;margin-left: auto;margin-right: auto;}\n#menu-bar {\n    border: solid rgba(0, 100, 255, .9);\n    border-width: 3px 2px 3px 0px;\n    position: fixed;\n    left: 0px;\n    top: 40%;\n    height: 100px;\n    width: 2px;\n    z-index: 199;\n    {menu-bar-hidden}\n}\n#menu-bar { \n    top: 0px;\n    height: 100%;\n    width: 1px;\n    background: transparent;\n    border: none;\n}\n#menu {\n    position: fixed;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    z-index: 100;\n    width: 270px;\n    max-width: 100%;\n    background: #333;\n    overflow-y: auto;\n}\n#menu:after {\n    content: "";\n    display: block;\n    position: absolute;\n    top: 46px;\n    bottom: 0;\n    right: 0;\n    width: 1px;\n    background: rgba(0,0,0,0.6);\n    box-shadow: 0 0 5px 2px rgba(0,0,0,0.6);\n}\n#header{\n    color: #777;\n    margin-top: 0;\n    border-top: 1px solid rgba(0,0,0,0.3);\n    background: #404040;\n    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);\n    text-shadow: 0 1px 0 rgba(0,0,0,0.5);\n    padding: 10px 12px;\n    text-transform: uppercase;\n    font-weight: bold;\n    font-size: 20px;\n}\n#header a {\n    color: #777777;\n}\n#divider {\n    position: relative;\n    z-index: 300;\n    border-top: 1px solid rgba(255,255,255,0.01);\n    border-bottom: 1px solid rgba(0,0,0,0.3);\n    margin: 0;\n    height: 4px;\n    background: rgba(0,0,0,0.2);\n    box-shadow: 0 1px 0 rgba(255,255,255,0.05), inset 0 1px 3px rgba(0,0,0,0.3);\n}\n#chapter-list {\n    position: relative;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    z-index: 200;\n    margin: 0;\n    padding: 0;\n    cursor: pointer;\n    list-style: none;\n    overflow-y: auto;\n}\n.chapter {\n    list-style: none;\n}\n.chapter:last-child {\n    border-bottom: 1px solid rgba(0,0,0,0.3);\n    box-shadow: 0 1px 0 rgba(255,255,255,0.05);\n}\n.chapter div {\n    color: #ccc;\n    font-size: 15px;\n    padding: 8px 20px;\n    border-top: 1px solid rgba(0,0,0,0.3);\n    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);\n    text-shadow: 0 1px 0 rgba(0,0,0,0.5);\n    display: block;\n    text-decoration: none;\n    text-overflow: ellipsis;\n    overflow: hidden;\n    white-space: nowrap;\n    cursor: pointer;\n}\n.chapter div:before {\n    content: "\\f105";\n    width: 20px;\n    margin-left: -10px;\n    float: left;\n    font-family: "FontAwesome" !important;\n    text-align: center;\n}\n.chapter div:hover {\n    background: #404040;\n    color: #fff;\n    outline: 0;\n}\n.chapter.active div {\n    background: #1a1a1a;\n    color: #fff;\n    font-size: 16px;\n    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);\n}\n::-webkit-scrollbar {\n    height: 9px !important;\n    width: 9px !important;\n}\n::-webkit-scrollbar-thumb {\n    background-color: #7D7D7D !important;\n    border-radius: 3px !important;\n}\n::-webkit-scrollbar-track-piece {\n    background-color: rgba(0,0,0,.25) !important;\n}'
         .replace('{fontawesomeWoff}', fontawesomeWoff),
 
-    preferencesHTML: '<form id="preferences" name="preferences">\n    <div id="setting_table1">\n        <span id="top-buttons">\n            <input title="部分选项需要刷新页面才能生效" id="save_button" value="√ 确认" type="button">\n            <input title="取消本次设定，所有选项还原" id="close_button" value="X 取消" type="button">\n        </span>\n        <div class="form-row">\n            <label>\n                界面语言<select id="lang">\n                </select>\n            </label>\n            <label title="将小说网页文本转换为繁体。\\n\\n注意：内置的繁简转换表，只收录了简单的单字转换，启用本功能后，如有错误转换的情形，请利用脚本的自订字词取代规则来修正。\\n例如：「千里之外」，会错误转换成「千里之外」，你可以加入规则「千里之外=千里之外」来自行修正。">\n                <input type="checkbox" id="enable-cn2tw" name="enable-cn2tw"/>网页：转繁体\n            </label>\n            <label id="quietMode" class="right" title="隐藏其他，只保留正文，适用于全屏状态下">\n                <input class="key" type="button" id="quietModeKey"/>安静模式\n            </label>\n        </div>\n        <div class="form-row">\n            <label title="不影响 booklink.me 的启用">\n                <input type="checkbox" id="disable-auto-launch" name="disable-auto-launch"/>强制手动启用\n            </label>\n            <label title="booklink.me 点击的网站强制启用">\n                <input type="checkbox" id="booklink-enable" name="booklink-enable"/>booklink 自动启用\n            </label>\n            <label>\n                <input type="checkbox" id="debug" name="debug"/>调试模式\n            </label>\n            <a href="https://greasyfork.org/scripts/292-my-novel-reader/feedback" target="_blank">反馈地址</a>\n        </div>\n        <div class="form-row">\n            <label title="图片章节用夜间模式没法看，这个选项在启动时会自动切换到缺省皮肤">\n                <input type="checkbox" id="pic-nightmode-check" name="pic-nightmode-check"/>\n                夜间模式的图片章节检测\n            </label>\n            <label>\n                <input type="checkbox" id="copyCurTitle"/>\n                打开目录复制当前标题\n            </label>\n        </div>\n        <div class="form-row">\n            <label title="通过快捷键切换">\n                <input type="checkbox" id="hide-menu-list"/>隐藏左侧章节列表\n            </label>\n            <label>\n                <input type="checkbox" id="hide-footer-nav"/>隐藏底部导航栏\n            </label>\n        </div>\n        <div class="form-row">\n            <label>\n                <input type="checkbox" id="hide-menu-bar"/>隐藏左侧导航条\n            </label>\n            <input class="key" type="button" id="setHideMenuListKey" />\n            <label title="通过快捷键切换或在 Greasemonkey 用户脚本命令处打开设置窗口">\n                <input type="checkbox" id="hide-preferences-button"/>隐藏设置按钮\n            </label>\n            <input class="key" type="button" id="openPreferencesKey"/>\n        </div>\n        <div class="form-row">\n            <label>\n                距离底部\n                <input type="textbox" id="remain-height" name="remain-height" size="5"/>\n                px 加载下一页\n            </label>\n            <label>\n                <input type="checkbox" id="add-nextpage-to-history"/>添加下一页到历史记录\n            </label>\n            <label>\n                <input type="checkbox" id="enable-dblclick-pause"/>双击暂停翻页\n            </label>\n        </div>\n        <div class="form-row">\n            <label>\n                <select id="skin">\n                </select>\n            </label>\n            <label>\n                字体\n                <input type="textbox" id="font-family" style="min-width:200px;"/>\n            </label>\n            <br/><br/>\n            <label>\n                字体大小\n                <input type="textbox" id="font-size" name="font-size" size="6"/>\n            </label>\n            <label>\n                行高\n                <input type="textbox" id="text_line_height" size="6"/>\n            </label>\n            <label>\n                行宽\n                <input type="textbox" id="content_width" size="6"/>\n            </label>\n        </div>\n        <div class="form-row">\n            <div class="prefs_title">自定义样式</div>\n            <textarea id="extra_css" class="prefs_textarea" placeholder="自定义样式"></textarea>\n        </div>\n    </div>\n    <div id="setting_table2">\n        <div class="form-row" title="详见脚本代码的 Rule.specialSite">\n            <div class="prefs_title">自定义站点规则</div>\n            <textarea id="custom_siteinfo" class="prefs_textarea" placeholder="自定义站点规则" />\n        </div>\n        <div class="form-row" title="一行一个，每行的第一个 = 为分隔符。\\n保存后生效">\n            <div class="prefs_title">自定义替换规则</div>\n            <textarea id="custom_replace_rules" class="prefs_textarea" placeholder="b[āà]ng=棒" />\n        </div>\n    </div>\n</form>'
+    preferencesHTML: '<form id="preferences" name="preferences">\n    <div id="setting_table1">\n        <span id="top-buttons">\n            <input title="部分选项需要刷新页面才能生效" id="save_button" value="√ 确认" type="button">\n            <input title="取消本次设定，所有选项还原" id="close_button" value="X 取消" type="button">\n        </span>\n        <div class="form-row">\n            <label>\n                界面语言<select id="lang">\n                </select>\n            </label>\n            <label title="将小说网页文本转换为繁体。\\n\\n注意：内置的繁简转换表，只收录了简单的单字转换，启用本功能后，如有错误转换的情形，请利用脚本的自订字词取代规则来修正。\\n例如：「千里之外」，会错误转换成「千里之外」，你可以加入规则「千里之外=千里之外」来自行修正。">\n                <input type="checkbox" id="enable-cn2tw" name="enable-cn2tw"/>网页：转繁体\n            </label>\n            <label id="quietMode" class="right" title="隐藏其他，只保留正文，适用于全屏状态下">\n                <input class="key" type="button" id="quietModeKey"/>安静模式\n            </label>\n        </div>\n        <div class="form-row">\n            <label title="不影响 booklink.me 的启用">\n                <input type="checkbox" id="disable-auto-launch" name="disable-auto-launch"/>强制手动启用\n            </label>\n            <label title="booklink.me 点击的网站强制启用">\n                <input type="checkbox" id="booklink-enable" name="booklink-enable"/>booklink 自动启用\n            </label>\n            <label>\n                <input type="checkbox" id="debug" name="debug"/>调试模式\n            </label>\n            <a href="https://greasyfork.org/scripts/292-my-novel-reader/feedback" target="_blank">反馈地址</a>\n        </div>\n        <div class="form-row">\n            <label title="图片章节用夜间模式没法看，这个选项在启动时会自动切换到缺省皮肤">\n                <input type="checkbox" id="pic-nightmode-check" name="pic-nightmode-check"/>\n                夜间模式的图片章节检测\n            </label>\n            <label>\n                <input type="checkbox" id="copyCurTitle"/>\n                打开目录复制当前标题\n            </label>\n        </div>\n        <div class="form-row">\n            <label title="通过快捷键切换">\n                <input type="checkbox" id="hide-menu-list"/>隐藏左侧章节列表\n            </label>\n            <label>\n                <input type="checkbox" id="hide-footer-nav"/>隐藏底部导航栏\n            </label>\n        </div>\n        <div class="form-row">\n            <label>\n                左侧导航栏切换快捷键：\n            </label>\n            <input class="key" type="button" id="setHideMenuListKey" />\n            <label title="通过快捷键切换或在 Greasemonkey 用户脚本命令处打开设置窗口">\n                <input type="checkbox" id="hide-preferences-button"/>隐藏设置按钮\n            </label>\n            <input class="key" type="button" id="openPreferencesKey"/>\n        </div>\n        <div class="form-row">\n            <label>\n                距离底部\n                <input type="textbox" id="remain-height" name="remain-height" size="5"/>\n                px 加载下一页\n            </label>\n            <label>\n                <input type="checkbox" id="add-nextpage-to-history"/>添加下一页到历史记录\n            </label>\n            <label>\n                <input type="checkbox" id="enable-dblclick-pause"/>双击暂停翻页\n            </label>\n        </div>\n        <div class="form-row">\n            <label>\n                <select id="skin">\n                </select>\n            </label>\n            <label>\n                字体\n                <input type="textbox" id="font-family" style="min-width:200px;"/>\n            </label>\n            <br/><br/>\n            <label>\n                字体大小\n                <input type="textbox" id="font-size" name="font-size" size="6"/>\n            </label>\n            <label>\n                行高\n                <input type="textbox" id="text_line_height" size="6"/>\n            </label>\n            <label>\n                行宽\n                <input type="textbox" id="content_width" size="6"/>\n            </label>\n        </div>\n        <div class="form-row">\n            <div class="prefs_title">自定义样式</div>\n            <textarea id="extra_css" class="prefs_textarea" placeholder="自定义样式"></textarea>\n        </div>\n    </div>\n    <div id="setting_table2">\n        <div class="form-row" title="详见脚本代码的 Rule.specialSite">\n            <div class="prefs_title">自定义站点规则</div>\n            <textarea id="custom_siteinfo" class="prefs_textarea" placeholder="自定义站点规则" />\n        </div>\n        <div class="form-row" title="一行一个，每行的第一个 = 为分隔符。\\n保存后生效">\n            <div class="prefs_title">自定义替换规则</div>\n            <textarea id="custom_replace_rules" class="prefs_textarea" placeholder="b[āà]ng=棒" />\n        </div>\n    </div>\n</form>'
         .uiTrans().replace(/\\n/g, '\n'),
 
     preferencesCSS: '.body {\n     color:#333;\n     margin: 0 auto;\n     background: white;\n     padding: 10px;\n     height: 420px;\n     overflow-y: auto;\n }\n #top-buttons {\n     background: none repeat scroll 0% 0% rgb(255, 255, 255);\n     display: block;\n     position: absolute;\n     top: -35px;\n     border-right: 12px solid rgb(224, 224, 224);\n     border-top: 12px solid rgb(224, 224, 224);\n     border-left: 12px solid rgb(224, 224, 224);\n     text-align: center;\n }\n input {\n     font-size: 12px;\n     margin-right: 3px;\n     vertical-align: middle;\n }\n .form-row {\n     overflow: hidden;\n     padding: 8px 12px;\n     margin-top: 3px;\n     font-size: 11px;\n }\n .form-row label {\n     padding-right: 10px;\n }\n .form-row input {\n     vertical-align: middle;\n     margin-top: 0px;\n }\n textarea, .form-row input {\n     padding: 2px 4px;\n     border: 1px solid #e5e5e5;\n     background: #fff;\n     border-radius: 4px;\n     color: #666;\n     -webkit-transition: all linear .2s;\n     transition: all linear .2s;\n }\n textarea {\n     width: 100%;\n     overflow: auto;\n     vertical-align: top;\n }\n textarea:focus, input:focus {\n     border-color: #99baca;\n     outline: 0;\n     background: #f5fbfe;\n     color: #666;\n }\n .prefs_title {\n     font-size: 12px;\n     font-weight: bold;\n }\n .prefs_textarea {\n     font-size: 12px;\n     margin-top: 5px;\n     height: 100px;\n }\n .right {\n    float: right;\n }',
@@ -3409,29 +3406,41 @@ var App = {
         $(document).unbind("keydown");
 
         // remove body style
-        $('link[rel="stylesheet"], style, script').remove();
+        $('link[rel="stylesheet"], script').remove();
         $('body')
             .removeAttr('style')
             .removeAttr('bgcolor');
+
+        $('style').filter(function() {
+            var $style = $(this);
+            if($style.text().indexOf('#cVim-link-container') != -1) {  // chrome 的 cVim 扩展
+                return false;
+            }
+            return true;
+        }).remove();
     },
     initDocument: function(parser) {
         document.title = parser.docTitle;
         window.name = "MyNovelReader";
         document.body.innerHTML = $.nano('<div id="container">\n    <div id="menu-bar" title="点击显示隐藏章节列表"></div>\n    <div id="menu">\n        <div id="header" title="打开目录">\n            <a href="{indexUrl}" target="_blank">{bookTitle}</a>\n        </div>\n        <div id="divider"></div>\n        <ul id="chapter-list" title="左键滚动，中键打开链接（无阅读模式）">\n        </ul>\n    </div>\n    <div id="mynovelreader-content"></div>\n    <div id="loading" style="display:none"></div>\n    <div id="preferencesBtn">\n        <img style="width:16px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAABwklEQVRIibVVzWrCQBAeQk/bdk+bm0aWDQEPHtwVahdavLU9aw6KAQ+SQ86Sa19Aqu0T9NafSw8ttOgr1CewUB9CBL3Yy26x1qRp0A8GhsnO9yUzmxmAhKjX68cAMAeAufK3C875FQAsAWCp/O3CsqyhFlB+Oti2/cAYewrD8FDHarXahWEYUy1gGMbUdd1z/TwMw0PG2JNt2/ex5IyxR02CEJpIKbuEkJGOrRshZCSl7CKEJjrGGHuIFMjlcs9RZElNcWxGEAQHGONxWnKM8TgIgoPYMkkpL9MKqNx4xNX8LyOEvMeSq5uxMZlz3vN9v+D7foFz3os6V61Wz36QNhqNUyHENaV0CACLTUnFYvF6/WVUbJPIglI6FELctFqtMiT59Ha7TdcFVCxJ6XYs0Gw2T1SJBlsq0ZxSOhBC3Hied/QjSTUoqsn9lSb3o879avI61FXbzTUFACiXy7v70Tqdzj7G+COtwJ+jIpPJvKYl12ZZ1kucwJs+iBD6lFJ2TdOMHB2mab7/a1xXKpW9fD5/6zjO3erCcV33PMnCcRwnfuHEYXVlZrPZQWqiKJRKpe8Bt5Ol73leCQBmADBTfiJ8AebTYCRbI3BUAAAAAElFTkSuQmCC"/>\n    </div>\n    <div id="alert" style="display: none;">\n        <p id="App-notice"></p>\n    </div>\n</div>'.uiTrans(), parser);
     },
+    clean: function() {
+        $('body > *:not("#container, .readerbtn, #reader_preferences, #uil_blocker,iframe[name=\'mynovelreader-iframe\']")').remove();
+        $('link[rel="stylesheet"]').remove();
+    },
     cleanAgain: function() {
-        // 再次移除其它不相关的，起点，纵横中文有时候有问题
-        var clean = function() {
-            $('body > *:not("#container, .readerbtn, #reader_preferences, #uil_blocker,iframe[name=\'mynovelreader-iframe\']")').remove();
-            $('link[rel="stylesheet"]').remove();
-        };
+        var host = location.host;
+        if (!host.match(/qidian\.com|zongheng\.com/)) {  // 只在起点、纵横等网站运行
+            return;
+        }
 
-        setTimeout(clean, 2000);
-        setTimeout(clean, 5000);
+        // 再次移除其它不相关的，起点，纵横中文有时候有问题
+        setTimeout(App.clean, 2000);
+        setTimeout(App.clean, 5000);
         // TM 用 addEventListener('load') 有问题
         window.onload = function() {
-            clean();
-            setTimeout(clean, 500);
+            App.clean();
+            setTimeout(App.clean, 500);
         };
     },
     toggle: function() {

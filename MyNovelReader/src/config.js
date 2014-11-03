@@ -159,13 +159,6 @@ var Config = {
         GM_setValue("menu_list_hiddden", bool);
     },
 
-    get menu_bar_hidden() {
-        return getBooleanConfig("menu_bar_hidden", false);
-    },
-    set menu_bar_hidden(bool) {
-        GM_setValue("menu_bar_hidden", bool);
-    },
-
     get hide_footer_nav() {
         return getBooleanConfig("hide_footer_nav", true);
     },

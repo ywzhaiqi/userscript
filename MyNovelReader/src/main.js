@@ -262,29 +262,41 @@ var App = {
         $(document).unbind("keydown");
 
         // remove body style
-        $('link[rel="stylesheet"], style, script').remove();
+        $('link[rel="stylesheet"], script').remove();
         $('body')
             .removeAttr('style')
             .removeAttr('bgcolor');
+
+        $('style').filter(function() {
+            var $style = $(this);
+            if($style.text().indexOf('#cVim-link-container') != -1) {  // chrome 的 cVim 扩展
+                return false;
+            }
+            return true;
+        }).remove();
     },
     initDocument: function(parser) {
         document.title = parser.docTitle;
         window.name = "MyNovelReader";
         document.body.innerHTML = $.nano(<%= res.mainHtml %>.uiTrans(), parser);
     },
+    clean: function() {
+        $('body > *:not("#container, .readerbtn, #reader_preferences, #uil_blocker,iframe[name=\'mynovelreader-iframe\']")').remove();
+        $('link[rel="stylesheet"]').remove();
+    },
     cleanAgain: function() {
-        // 再次移除其它不相关的，起点，纵横中文有时候有问题
-        var clean = function() {
-            $('body > *:not("#container, .readerbtn, #reader_preferences, #uil_blocker,iframe[name=\'mynovelreader-iframe\']")').remove();
-            $('link[rel="stylesheet"]').remove();
-        };
+        var host = location.host;
+        if (!host.match(/qidian\.com|zongheng\.com/)) {  // 只在起点、纵横等网站运行
+            return;
+        }
 
-        setTimeout(clean, 2000);
-        setTimeout(clean, 5000);
+        // 再次移除其它不相关的，起点，纵横中文有时候有问题
+        setTimeout(App.clean, 2000);
+        setTimeout(App.clean, 5000);
         // TM 用 addEventListener('load') 有问题
         window.onload = function() {
-            clean();
-            setTimeout(clean, 500);
+            App.clean();
+            setTimeout(App.clean, 500);
         };
     },
     toggle: function() {

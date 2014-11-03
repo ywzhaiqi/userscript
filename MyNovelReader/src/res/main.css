@@ -94,6 +94,7 @@ article h1 {
     margin: 6px;
 }
 img.blockImage {clear: both;float: none;display: block;margin-left: auto;margin-right: auto;}
+
 #menu-bar {
     border: solid rgba(0, 100, 255, .9);
     border-width: 3px 2px 3px 0px;
@@ -104,6 +105,13 @@ img.blockImage {clear: both;float: none;display: block;margin-left: auto;margin-
     width: 2px;
     z-index: 199;
     {menu-bar-hidden}
+}
+#menu-bar { 
+    top: 0px;
+    height: 100%;
+    width: 1px;
+    background: transparent;
+    border: none;
 }
 #menu {
     position: fixed;
