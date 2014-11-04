@@ -398,7 +398,7 @@ Rule.MPIV = [
 	// },
 	{name: "人人影视",
 		d: "yyets.com",
-		r: "(res\\.yyets\\.com/ftp/(?:attachment/)?\\d+/\\d+)/[ms]_(.*)",
+		r: "^(res\\.yyets\\.com.*?/ftp/(?:attachment/)?\\d+/\\d+)/[ms]_(.*)",
 		s: "http://$1/$2"
 	},
 

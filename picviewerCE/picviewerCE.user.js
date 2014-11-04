@@ -2,7 +2,7 @@
 // @name           picviewer CE
 // @author         NLF && ywzhaiqi
 // @description    NLF 的围观图修改版
-// @version        2014.11.4.0
+// @version        2014.11.4.1
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
@@ -522,7 +522,7 @@ Rule.MPIV = [
 	// },
 	{name: "人人影视",
 		d: "yyets.com",
-		r: "(res\\.yyets\\.com/ftp/(?:attachment/)?\\d+/\\d+)/[ms]_(.*)",
+		r: "^(res\\.yyets\\.com.*?/ftp/(?:attachment/)?\\d+/\\d+)/[ms]_(.*)",
 		s: "http://$1/$2"
 	},
 
@@ -2564,7 +2564,6 @@ GalleryC.prototype={
 		this.initZoom();
 	},
 
-	// ------------------ 我添加的部分 start -----------------------------
 	initToggleBar: function() {  // 是否显示切换 sidebar 按钮
 		/**
 		 * TODO：仿造下面的链接重新改造过？
@@ -2625,106 +2624,6 @@ GalleryC.prototype={
 			}
 		}
 	},
-
-	reload: function() {
-		// 函数在 LoadingAnimC 中
-		var data = this.getAllValidImgs();
-		// 设置当前选中的图片
-		data.target = {
-			src: this.selected.dataset.src
-		};
-
-		this.close(true);
-
-		this.load(data, null, true);
-	},
-	reloadNew: function() {
-		var newer = true;
-		var data = this.getAllValidImgs(newer);
-		if (data) {
-			this._appendThumbSpans(data);
-		}
-	},
-	lastImgNum: 0,
-	getAllValidImgs:function(newer){
-		var validImgs = [];
-
-		var imgs = document.getElementsByTagName('img'),
-		    container = document.querySelector('.pv-gallery-container'),
-		    preloadContainer = document.querySelector('.pv-gallery-preloaded-img-container');
-
-		// 排除库里面的图片
-		imgs = Array.prototype.slice.call(imgs).filter(function(img){
-		    return !(container.contains(img) || preloadContainer.contains(img));
-		});
-
-		var data = this.data;
-		var alreadyInGallery = function(img) {
-		        var src = img.src;
-		        return data.some(function(d) {
-		            return d.imgSrc == src;
-		        });
-		    };
-
-		imgs.forEach(function(img) {
-		    if (newer && alreadyInGallery(img)) return;
-
-		    var result = findPic(img);
-		    if (result) {
-		        validImgs.push(result);
-		    }
-		});
-
-		return validImgs;
-	},
-	scrollToEndAndReload: function() {  // 滚动主窗口到最底部，然后自动重载库的图片
-
-		window.scrollTo(0, 99999);
-
-		var self = this;
-		clearTimeout(self.reloadTimeout);
-		self.reloadTimeout = setTimeout(function(){
-			// self.reload();
-			self.reloadNew();
-		}, 1000);
-	},
-	exportImages: function () {  // 导出所有图片到新窗口
-		var nodes = document.querySelectorAll('.pv-gallery-sidebar-thumb-container[data-src]');
-		var arr = [].map.call(nodes, function(node){
-			return '<div><img src=' + node.dataset.src + ' /></div>'
-		});
-
-		var title = document.title;
-
-		var html = '\
-			<head>\
-				<title>' + title + ' 导出大图</title>\
-				<style>\
-					div { float: left; max-height: 180px; max-width: 320px; margin: 2px; }\
-					img { max-height: 180px; max-width: 320px; }\
-				</style>\
-			</head>\
-			<body>\
-				<p>【图片标题】：' + title + '</p>\
-				<p>【图片数量】：' + nodes.length + '</p>\
-		';
-
-		html += arr.join('\n') + '</body>'
-		GM_openInTab('data:text/html;charset=utf-8,' + encodeURIComponent(html));
-	},
-	copyImages: function(isAlert) {
-		var nodes = document.querySelectorAll('.pv-gallery-sidebar-thumb-container[data-src]');
-		var urls = [].map.call(nodes, function(node){
-			return node.dataset.src;
-		});
-
-		GM_setClipboard(urls.join('\n'));
-
-		if (isAlert) {
-			alert('已成功复制 ' + urls.length + ' 张大图地址');
-		}
-	},
-	// ------------------ 我添加的部分 end -----------------------------
 
 	getThumSpan:function(previous,relatedTarget){
 		var ret;
@@ -3397,6 +3296,103 @@ GalleryC.prototype={
 		return stop;
 	},
 
+	reload: function() {
+		// 函数在 LoadingAnimC 中
+		var data = this.getAllValidImgs();
+		// 设置当前选中的图片
+		data.target = {
+			src: this.selected.dataset.src
+		};
+
+		this.close(true);
+
+		this.load(data, null, true);
+	},
+	reloadNew: function() {
+		var newer = true;
+		var data = this.getAllValidImgs(newer);
+		if (data) {
+			this._appendThumbSpans(data);
+		}
+	},
+	getAllValidImgs:function(newer){
+		var validImgs = [];
+
+		var imgs = document.getElementsByTagName('img'),
+		    container = document.querySelector('.pv-gallery-container'),
+		    preloadContainer = document.querySelector('.pv-gallery-preloaded-img-container');
+
+		// 排除库里面的图片
+		imgs = Array.prototype.slice.call(imgs).filter(function(img){
+		    return !(container.contains(img) || preloadContainer.contains(img));
+		});
+
+		// 已经在图库里面的
+		var cache = {};
+		this.data.forEach(function(d) {
+			cache[d.imgSrc] = true;
+		});
+
+		imgs.forEach(function(img) {
+		    if (newer && cache[img.src]) return;
+
+		    var result = findPic(img);
+		    if (result) {
+		        validImgs.push(result);
+		    }
+
+		    cache[img.src] = true;
+		});
+
+		return validImgs;
+	},
+	scrollToEndAndReload: function() {  // 滚动主窗口到最底部，然后自动重载库的图片
+
+		window.scrollTo(0, 99999);
+
+		var self = this;
+		clearTimeout(self.reloadTimeout);
+		self.reloadTimeout = setTimeout(function(){
+			// self.reload();
+			self.reloadNew();
+		}, 1000);
+	},
+	exportImages: function () {  // 导出所有图片到新窗口
+		var nodes = document.querySelectorAll('.pv-gallery-sidebar-thumb-container[data-src]');
+		var arr = [].map.call(nodes, function(node){
+			return '<div><img src=' + node.dataset.src + ' /></div>'
+		});
+
+		var title = document.title;
+
+		var html = '\
+			<head>\
+				<title>' + title + ' 导出大图</title>\
+				<style>\
+					div { float: left; max-height: 180px; max-width: 320px; margin: 2px; }\
+					img { max-height: 180px; max-width: 320px; }\
+				</style>\
+			</head>\
+			<body>\
+				<p>【图片标题】：' + title + '</p>\
+				<p>【图片数量】：' + nodes.length + '</p>\
+		';
+
+		html += arr.join('\n') + '</body>'
+		GM_openInTab('data:text/html;charset=utf-8,' + encodeURIComponent(html));
+	},
+	copyImages: function(isAlert) {
+		var nodes = document.querySelectorAll('.pv-gallery-sidebar-thumb-container[data-src]');
+		var urls = [].map.call(nodes, function(node){
+			return node.dataset.src;
+		});
+
+		GM_setClipboard(urls.join('\n'));
+
+		if (isAlert) {
+			alert('已成功复制 ' + urls.length + ' 张大图地址');
+		}
+	},
 
 	Preload:function(ele,oriThis){
 		this.ele=ele;
@@ -6978,7 +6974,7 @@ var MPIV = (function() {
 	 *   {"r":"hotimg\\.com/image", "s":"/image/direct/"}
 	 *   把 image 替换为 direct ，就是 .replace(/image/, "direct")
 	 */
-	function replace(s, m, r) {
+	function replace(s, m, r, http) {
 		if(!m) return s;
 
 		if (r && s.startsWith('r;')) {  // 特殊的替换模式
@@ -6994,6 +6990,10 @@ var MPIV = (function() {
 
 		for(var i = m.length; i--;) {
 			s = s.replace('$'+i, m[i]);
+		}
+
+		if (!s.startsWith('http') && http) {
+			return http + s;
 		}
 
 		return s;
@@ -7070,7 +7070,7 @@ var MPIV = (function() {
 			}
 			if(!m || tn == 'IMG' && !('s' in h)) continue;
 			if('s' in h) {
-				urls = (Array.isArray(h.s) ? h.s : [h.s]).map(function(s) { if(typeof s == 'string') return (http || '') + decodeURIComponent(replace(s, m, h.r)); if(typeof s == 'function') return s(m, node); return s; });
+				urls = (Array.isArray(h.s) ? h.s : [h.s]).map(function(s) { if(typeof s == 'string') return decodeURIComponent(replace(s, m, h.r, http)); if(typeof s == 'function') return s(m, node); return s; });
 				if(Array.isArray(urls[0])) urls = urls[0];
 				if(urls[0] === false) continue;
 				urls = urls.map(function(u) { return u ? decodeURIComponent(u) : u; });

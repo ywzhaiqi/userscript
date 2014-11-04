@@ -1101,7 +1101,6 @@ GalleryC.prototype={
 		this.initZoom();
 	},
 
-	// ------------------ 我添加的部分 start -----------------------------
 	initToggleBar: function() {  // 是否显示切换 sidebar 按钮
 		/**
 		 * TODO：仿造下面的链接重新改造过？
@@ -1162,106 +1161,6 @@ GalleryC.prototype={
 			}
 		}
 	},
-
-	reload: function() {
-		// 函数在 LoadingAnimC 中
-		var data = this.getAllValidImgs();
-		// 设置当前选中的图片
-		data.target = {
-			src: this.selected.dataset.src
-		};
-
-		this.close(true);
-
-		this.load(data, null, true);
-	},
-	reloadNew: function() {
-		var newer = true;
-		var data = this.getAllValidImgs(newer);
-		if (data) {
-			this._appendThumbSpans(data);
-		}
-	},
-	lastImgNum: 0,
-	getAllValidImgs:function(newer){
-		var validImgs = [];
-
-		var imgs = document.getElementsByTagName('img'),
-		    container = document.querySelector('.pv-gallery-container'),
-		    preloadContainer = document.querySelector('.pv-gallery-preloaded-img-container');
-
-		// 排除库里面的图片
-		imgs = Array.prototype.slice.call(imgs).filter(function(img){
-		    return !(container.contains(img) || preloadContainer.contains(img));
-		});
-
-		var data = this.data;
-		var alreadyInGallery = function(img) {
-		        var src = img.src;
-		        return data.some(function(d) {
-		            return d.imgSrc == src;
-		        });
-		    };
-
-		imgs.forEach(function(img) {
-		    if (newer && alreadyInGallery(img)) return;
-
-		    var result = findPic(img);
-		    if (result) {
-		        validImgs.push(result);
-		    }
-		});
-
-		return validImgs;
-	},
-	scrollToEndAndReload: function() {  // 滚动主窗口到最底部，然后自动重载库的图片
-
-		window.scrollTo(0, 99999);
-
-		var self = this;
-		clearTimeout(self.reloadTimeout);
-		self.reloadTimeout = setTimeout(function(){
-			// self.reload();
-			self.reloadNew();
-		}, 1000);
-	},
-	exportImages: function () {  // 导出所有图片到新窗口
-		var nodes = document.querySelectorAll('.pv-gallery-sidebar-thumb-container[data-src]');
-		var arr = [].map.call(nodes, function(node){
-			return '<div><img src=' + node.dataset.src + ' /></div>'
-		});
-
-		var title = document.title;
-
-		var html = '\
-			<head>\
-				<title>' + title + ' 导出大图</title>\
-				<style>\
-					div { float: left; max-height: 180px; max-width: 320px; margin: 2px; }\
-					img { max-height: 180px; max-width: 320px; }\
-				</style>\
-			</head>\
-			<body>\
-				<p>【图片标题】：' + title + '</p>\
-				<p>【图片数量】：' + nodes.length + '</p>\
-		';
-
-		html += arr.join('\n') + '</body>'
-		GM_openInTab('data:text/html;charset=utf-8,' + encodeURIComponent(html));
-	},
-	copyImages: function(isAlert) {
-		var nodes = document.querySelectorAll('.pv-gallery-sidebar-thumb-container[data-src]');
-		var urls = [].map.call(nodes, function(node){
-			return node.dataset.src;
-		});
-
-		GM_setClipboard(urls.join('\n'));
-
-		if (isAlert) {
-			alert('已成功复制 ' + urls.length + ' 张大图地址');
-		}
-	},
-	// ------------------ 我添加的部分 end -----------------------------
 
 	getThumSpan:function(previous,relatedTarget){
 		var ret;
@@ -1934,6 +1833,103 @@ GalleryC.prototype={
 		return stop;
 	},
 
+	reload: function() {
+		// 函数在 LoadingAnimC 中
+		var data = this.getAllValidImgs();
+		// 设置当前选中的图片
+		data.target = {
+			src: this.selected.dataset.src
+		};
+
+		this.close(true);
+
+		this.load(data, null, true);
+	},
+	reloadNew: function() {
+		var newer = true;
+		var data = this.getAllValidImgs(newer);
+		if (data) {
+			this._appendThumbSpans(data);
+		}
+	},
+	getAllValidImgs:function(newer){
+		var validImgs = [];
+
+		var imgs = document.getElementsByTagName('img'),
+		    container = document.querySelector('.pv-gallery-container'),
+		    preloadContainer = document.querySelector('.pv-gallery-preloaded-img-container');
+
+		// 排除库里面的图片
+		imgs = Array.prototype.slice.call(imgs).filter(function(img){
+		    return !(container.contains(img) || preloadContainer.contains(img));
+		});
+
+		// 已经在图库里面的
+		var cache = {};
+		this.data.forEach(function(d) {
+			cache[d.imgSrc] = true;
+		});
+
+		imgs.forEach(function(img) {
+		    if (newer && cache[img.src]) return;
+
+		    var result = findPic(img);
+		    if (result) {
+		        validImgs.push(result);
+		    }
+
+		    cache[img.src] = true;
+		});
+
+		return validImgs;
+	},
+	scrollToEndAndReload: function() {  // 滚动主窗口到最底部，然后自动重载库的图片
+
+		window.scrollTo(0, 99999);
+
+		var self = this;
+		clearTimeout(self.reloadTimeout);
+		self.reloadTimeout = setTimeout(function(){
+			// self.reload();
+			self.reloadNew();
+		}, 1000);
+	},
+	exportImages: function () {  // 导出所有图片到新窗口
+		var nodes = document.querySelectorAll('.pv-gallery-sidebar-thumb-container[data-src]');
+		var arr = [].map.call(nodes, function(node){
+			return '<div><img src=' + node.dataset.src + ' /></div>'
+		});
+
+		var title = document.title;
+
+		var html = '\
+			<head>\
+				<title>' + title + ' 导出大图</title>\
+				<style>\
+					div { float: left; max-height: 180px; max-width: 320px; margin: 2px; }\
+					img { max-height: 180px; max-width: 320px; }\
+				</style>\
+			</head>\
+			<body>\
+				<p>【图片标题】：' + title + '</p>\
+				<p>【图片数量】：' + nodes.length + '</p>\
+		';
+
+		html += arr.join('\n') + '</body>'
+		GM_openInTab('data:text/html;charset=utf-8,' + encodeURIComponent(html));
+	},
+	copyImages: function(isAlert) {
+		var nodes = document.querySelectorAll('.pv-gallery-sidebar-thumb-container[data-src]');
+		var urls = [].map.call(nodes, function(node){
+			return node.dataset.src;
+		});
+
+		GM_setClipboard(urls.join('\n'));
+
+		if (isAlert) {
+			alert('已成功复制 ' + urls.length + ' 张大图地址');
+		}
+	},
 
 	Preload:function(ele,oriThis){
 		this.ele=ele;
