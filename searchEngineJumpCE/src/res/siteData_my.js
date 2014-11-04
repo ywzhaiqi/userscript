@@ -139,6 +139,7 @@
     Chrome 应用商店, https://chrome.google.com/webstore/search-extensions/%s?hl=zh-CN
     greasyfork, https://greasyfork.org/scripts/search?q=%s
     userscripts, https://www.google.com.hk/search?q=site:userscripts-mirror.org+inurl:scripts+inurl:show+%s, userscripts.org
+    jz5u 绿色, http://www.jz5u.com/soft/search.asp?act=topic&keyword=%s, gbk
     华彩软件, http://www.huacolor.com/search.asp?word=%s, gbk
     绿软联盟, http://www.xdowns.com/i.asp?q=%s, gbk
     绿软家园, http://www.downg.com/search.asp?action=s&sType=ResName&catalog=&keyword=%s, gbk

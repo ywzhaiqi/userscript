@@ -67,12 +67,14 @@
 
 下载-1
     搜索百度盘, https://www.google.com.hk/search?num=20&newwindow=1&hl=zh-CN&q=site:pan.baidu.com+%s, so.baiduyun.me
-    我乐盘, http://www.56pan.com/s.php?q=%s&wp=0
+    // 我乐盘, http://www.56pan.com/s.php?q=%s&wp=0
     人人影视, http://www.yyets.com/search/index?keyword=%s
+    丫丫下载站, http://www.yayaxz.com/search/%s
     我爱P2P, http://www.byhh.org/?topic_title=%s
     种子快搜, http://www.searchbt.net/btsearch.php?query=%s
+    btspread, http://www.btspread.com/search/%s
     下载搜索, https://www.google.com/cse?q=%s&newwindow=1&cx=006100883259189159113%3Atwgohm0sz8q
-    simpledCD, http://simplecd.me/search/entry/?query=%s
+    // simpledCD, http://simplecd.me/search/entry/?query=%s
     射手字幕, http://www.shooter.cn/search/%s
 
 书籍
