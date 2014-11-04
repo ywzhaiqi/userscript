@@ -11,6 +11,8 @@ var MPIV = (function() {
 	var cfg = {
 		thumbsonly: true,
 	};
+	// 我新加的
+	var rgxHTTPs = /^https?:\/\/(?:www\.)?/;
 
 	function loadRule() {
 		var rules = Rule.MPIV;
@@ -71,9 +73,11 @@ var MPIV = (function() {
 			var re = new RegExp(s.substring(1, mid), s.substr(end+1));
 			return m.input.replace(re, s.substring(mid+1, end));
 		}
+
 		for(var i = m.length; i--;) {
 			s = s.replace('$'+i, m[i]);
 		}
+
 		return s;
 	}
 
@@ -129,14 +133,17 @@ var MPIV = (function() {
 	}
 
 	function findInfo(url, node, noHtml, skipHost) {
-		for(var i = 0, len = hosts.length, tn = tag(node), h, m, html, urls; i < len && (h = hosts[i]); i++) {
+		for(var i = 0, len = hosts.length, tn = tag(node), h, m, html, urls, URL, http; i < len && (h = hosts[i]); i++) {
 			if(h.e && !matches(node, h.e) || h == skipHost) continue;
 			if(h.r) {
 				if(h.html && !noHtml && (tn == 'A' || tn == 'IMG' || h.e)) {
 					if(!html) html = node.outerHTML;
 					m = h.r.exec(html)
 				} else if(url) {
-					m = h.r.exec(url);
+					// 去掉前面的 https://
+					URL = url.replace(rgxHTTPs, '');
+					http = url.slice(0, url.length - URL.length);
+					m = h.r.exec(URL);
 				} else {
 					m = null;
 				}
@@ -145,7 +152,7 @@ var MPIV = (function() {
 			}
 			if(!m || tn == 'IMG' && !('s' in h)) continue;
 			if('s' in h) {
-				urls = (Array.isArray(h.s) ? h.s : [h.s]).map(function(s) { if(typeof s == 'string') return decodeURIComponent(replace(s, m, h.r)); if(typeof s == 'function') return s(m, node); return s; });
+				urls = (Array.isArray(h.s) ? h.s : [h.s]).map(function(s) { if(typeof s == 'string') return (http || '') + decodeURIComponent(replace(s, m, h.r)); if(typeof s == 'function') return s(m, node); return s; });
 				if(Array.isArray(urls[0])) urls = urls[0];
 				if(urls[0] === false) continue;
 				urls = urls.map(function(u) { return u ? decodeURIComponent(u) : u; });

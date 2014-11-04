@@ -375,12 +375,18 @@ GalleryC.prototype={
 			},
 
 			// new
+			// scaleZoomResized: {
+			// 	shown: false,
+			// 	count: 0,
+			// 	description: '缩放的图片，图片尺寸最少相差比例 ' + prefs.gallery.zoomresized + '%',
+			// 	name: '小缩放'
+			// },
 			scaleSmall: {
 				shown: true,
 				count: 0,
 				description: '缩放的图片，实际尺寸的高或宽都小于 ' + prefs.gallery.scaleSmallSize + ' 像素',
 				name: '小尺寸'
-			}
+			},
 		};
 		this.imgStatistics=imgStatistics;
 
@@ -729,7 +735,7 @@ GalleryC.prototype={
 					var checkbox = target.parentNode.firstChild;
 					checkbox.checked = !checkbox.checked;
 
-					prefs.gallery.autoScrollAndReload = checkbox.checked;
+					prefs.gallery.scrollEndAndLoad = checkbox.checked;
 					break;
 				case 'fullScreen':
 					if (target.classList.contains('fullscreenbtn')) {
@@ -1170,42 +1176,53 @@ GalleryC.prototype={
 		this.load(data, null, true);
 	},
 	reloadNew: function() {
-
+		var newer = true;
+		var data = this.getAllValidImgs(newer);
+		if (data) {
+			this._appendThumbSpans(data);
+		}
 	},
-	getAllValidImgs:function(){
+	lastImgNum: 0,
+	getAllValidImgs:function(newer){
+		var validImgs = [];
+
 		var imgs = document.getElementsByTagName('img'),
-			container = document.querySelector('.pv-gallery-container'),
-			preloadContainer = document.querySelector('.pv-gallery-preloaded-img-container'),
-			validImgs = [];
+		    container = document.querySelector('.pv-gallery-container'),
+		    preloadContainer = document.querySelector('.pv-gallery-preloaded-img-container');
 
-		arrayFn.forEach.call(imgs, function(img, index, imgs) {
-			// 排除库里面的图片
-			if (container.contains(img) || preloadContainer.contains(img)) return;
-
-			var result = findPic(img);
-			if (result) {
-				validImgs.push(result);
-			};
+		// 排除库里面的图片
+		imgs = Array.prototype.slice.call(imgs).filter(function(img){
+		    return !(container.contains(img) || preloadContainer.contains(img));
 		});
+
+		var data = this.data;
+		var alreadyInGallery = function(img) {
+		        var src = img.src;
+		        return data.some(function(d) {
+		            return d.imgSrc == src;
+		        });
+		    };
+
+		imgs.forEach(function(img) {
+		    if (newer && alreadyInGallery(img)) return;
+
+		    var result = findPic(img);
+		    if (result) {
+		        validImgs.push(result);
+		    }
+		});
+
 		return validImgs;
 	},
-	scrollToEndAndReload: function() {
-		if (!prefs.gallery.autoScrollAndReload) {
-			return;
-		}
+	scrollToEndAndReload: function() {  // 滚动主窗口到最底部，然后自动重载库的图片
 
-		// 滚动主窗口到最底部，然后自动重载库的图片
-		// TODO：
-		// 1、修正 滚动几页后不再滚动 的 bug。
-		// 2、关闭图库再打开，图片的顺序不太正确？
-		// 3、定位图片无效或不存在的 bug
 		window.scrollTo(0, 99999);
 
 		var self = this;
 		clearTimeout(self.reloadTimeout);
 		self.reloadTimeout = setTimeout(function(){
-			// window.removeEventListener('scroll', self.scrolled, false);
-			self.reload();
+			// self.reload();
+			self.reloadNew();
 		}, 1000);
 	},
 	exportImages: function () {  // 导出所有图片到新窗口
@@ -1314,7 +1331,6 @@ GalleryC.prototype={
 
 			thumb=document.createElement('img');
 			thumb.src=dataset(span_i,'thumbSrc') || dataset(span_i,'src') || prefs.icons.brokenImg_small;
-			//thumb.src='http://www.notexistwebsite.com/';
 			thumb.className='pv-gallery-sidebar-thumb';
 
 			dataset(span_i,'thumbLoaded','true');
@@ -1574,6 +1590,63 @@ GalleryC.prototype={
 
 	},
 
+	_appendThumbSpans: function(data, index) {  // 添加缩略图栏的 spans
+		var spanMark = '';
+		var iStatisCopy = this.iStatisCopy;
+
+		(data || this.data).forEach(function(item) {
+			iStatisCopy[item.type].count++;
+			spanMark += '<span class="pv-gallery-sidebar-thumb-container' +
+				'" data-type="' + item.type +
+				'" data-src="' + item.src +
+				(item.xhr ? '" data-xhr="' + encodeURIComponent(JSON.stringify(item.xhr)) : '') +
+				'" data-description="' + encodeURIComponent(item.description || '') +
+				'" data-thumb-src="' + item.imgSrc +
+				'" title="' + item.img.title +
+				'">' +
+				'<span class="pv-gallery-vertical-align-helper"></span>' +
+				'<span class="pv-gallery-sidebar-thumb-loading" title="正在读取中......"></span>' +
+				'</span>';
+		});
+
+		var thumbnails = this.eleMaps['sidebar-thumbnails-container'];
+		var lastIndex;
+		if (data) {
+			lastIndex = Array.prototype.slice.call(this.imgSpans).indexOf(this.selected);
+			thumbnails.innerHTML += spanMark;
+		} else {
+			thumbnails.innerHTML = spanMark;
+		}
+
+		//写入类别数据。
+		var gallery = this.gallery;
+		var input, label, iStatisCopy_i;
+
+		for (var i in iStatisCopy) {
+			if (!iStatisCopy.hasOwnProperty(i)) continue;
+			iStatisCopy_i = iStatisCopy[i];
+			input = gallery.querySelector('#pv-gallery-head-command-drop-list-item-category-' + i);
+			input.checked = iStatisCopy_i.shown;
+			if (iStatisCopy_i.count == 0) {
+				input.disabled = true;
+				input.parentNode.classList.add('pv-gallery-head-command-drop-list-item_disabled');
+			} else {
+				input.disabled = false;
+				input.parentNode.classList.remove('pv-gallery-head-command-drop-list-item_disabled');
+			};
+
+			label = gallery.querySelector('label[for="pv-gallery-head-command-drop-list-item-category-' + i + '"]');
+			label.textContent = label.textContent.replace(/（.*）/i, '') + '（' + iStatisCopy_i.count + '）';
+		};
+
+		this.imgSpans = thumbnails.children;
+
+		this.thumbScrollbar.reset();
+
+		this.select(this.imgSpans[index || lastIndex], true);
+
+		this.runOnce();
+	},
 	load:function(data, from, reload){
 		if(this.shown || this.minimized){//只允许打开一个,请先关掉当前已经打开的库
 
@@ -1616,62 +1689,10 @@ GalleryC.prototype={
 		this.clear();//还原对象的一些修改，以便复用。
 		this.show(reload);
 
-		//console.log(data);
-
 		this.data=data;
 		this.from=from;//如果来自frame，那么这个from应该保存了那个frame的窗口id，便于以后通信。
 
-		var spanMark='';
-		var data_i;
-		var iStatisCopy=this.iStatisCopy;
-		for(var i=0,ii=data.length;i<ii;i++){
-			data_i=data[i];
-			iStatisCopy[data_i.type].count++;
-			spanMark +=
-				 '<span class="pv-gallery-sidebar-thumb-container'+
-					'" data-type="' + data_i.type +
-					'" data-src="' + data_i.src +
-					(data_i.xhr ? '" data-xhr="' + encodeURIComponent(JSON.stringify(data_i.xhr)) : '') +
-					'" data-description="' + encodeURIComponent(data_i.description || '') +
-					'" data-thumb-src="' + data_i.imgSrc +
-					'" title="' + data_i.img.title +
-					'">'+
-					'<span class="pv-gallery-vertical-align-helper"></span>'+
-					'<span class="pv-gallery-sidebar-thumb-loading" title="正在读取中......"></span>'+
-				'</span>';
-		};
-
-
-		var thumbnails=this.eleMaps['sidebar-thumbnails-container'];
-		thumbnails.innerHTML=spanMark;
-
-		//写入类别数据。
-		var gallery=this.gallery;
-		var input,label,iStatisCopy_i;
-
-		for(var i in iStatisCopy){
-			if(!iStatisCopy.hasOwnProperty(i))continue;
-			iStatisCopy_i=iStatisCopy[i];
-			input=gallery.querySelector('#pv-gallery-head-command-drop-list-item-category-' + i);
-			input.checked=iStatisCopy_i.shown;
-			if(iStatisCopy_i.count==0){
-				input.disabled=true;
-				input.parentNode.classList.add('pv-gallery-head-command-drop-list-item_disabled');
-			}else{
-				input.disabled=false;
-				input.parentNode.classList.remove('pv-gallery-head-command-drop-list-item_disabled');
-			};
-
-			label=gallery.querySelector('label[for="pv-gallery-head-command-drop-list-item-category-' + i + '"]');
-			label.textContent=label.textContent.replace(/（.*）/i,'') + '（' + iStatisCopy_i.count + '）';
-		};
-
-		this.imgSpans=thumbnails.children;
-
-		this.thumbScrollbar.reset();
-		this.select(this.imgSpans[index],true);
-
-		this.runOnce();
+		this._appendThumbSpans(null, index);
 
 		this.switchThumbVisible();
 
@@ -1850,6 +1871,17 @@ GalleryC.prototype={
 		this.fitToScreen();
 		this.loadThumb();
 	},
+	_isLastSpan: function(span) {
+		if (!span) return true;
+
+		var index = Array.prototype.slice.call(this.imgSpans).indexOf(span);
+		if (index != -1) {
+			var total = this.imgSpans.length;
+			if (total - index < prefs.gallery.scrollEndAndLoad_num) {
+				return true;
+			}
+		}
+	},
 	arrowVisib:function(){//当当前选择元素的前面或者后面没有元素的时候隐藏控制箭头
 
 		var icps=this.eleMaps['img-controler-pre'].style;
@@ -1858,15 +1890,19 @@ GalleryC.prototype={
 		var scns=this.eleMaps['sidebar-controler-next'].style;
 
 		//下一张的箭头
-		if(this.getThumSpan()){
+		var nextSpan = this.getThumSpan();
+		if (nextSpan) {
 			icns.display='';
 			scns.display='';
 		}else{
 			icns.display='none';
 			scns.display='none';
-
-			this.scrollToEndAndReload();
 		};
+
+		// 最后几张图片，滚到底部添加新的图片
+		if (prefs.gallery.scrollEndAndLoad && this._isLastSpan(nextSpan)) {
+			this.scrollToEndAndReload();
+		}
 
 		//上一张的箭头
 		if(this.getThumSpan(true)){
@@ -1927,7 +1963,7 @@ GalleryC.prototype={
 				padding: 0;\
 				margin: 0;\
 				border: none;\
-				z-index:899999999;\
+				z-index:2147483647;\
 				background-color: transparent;\
 			}\
 			/*全局border-box*/\

@@ -61,3 +61,7 @@ picviewerCE.user.js
 
 - github 直接安装地址：[https://github.com/ywzhaiqi/userscript/raw/master/picviewerCE/picviewerCE.user.js](https://github.com/ywzhaiqi/userscript/raw/master/picviewerCE/picviewerCE.user.js)
 - greasyfork 地址：[https://greasyfork.org/zh-CN/scripts/5199-picviewer-ce](https://greasyfork.org/zh-CN/scripts/5199-picviewer-ce)
+
+### 其它说明
+
+- 七星浏览器（1.37.3.242）可能会额外筛选出未缩放的图片。在设置默认缩放为 125% 的前提下，由于其缩放 bug，造成实际上并未缩放的图片，在七星浏览器上尺寸会不相等，比如 119 * 119（120 * 120），详见 http://bbs.qixing123.com/thread-777-1-1.html

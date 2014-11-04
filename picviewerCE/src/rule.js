@@ -185,20 +185,6 @@ var siteInfo=[
 			return (ret.match(/(https?:\/\/.*)\/\d+px-.*/) || [])[1];
 		},
 	},
-	{name: "cnbeta",
-		enabled: true,
-		url: /^https?:\/\/www.cnbeta.com\//i,
-		getImage: function() {
-			var oldsrc = this.src,
-				newsrc = oldsrc;
-			// http://static.cnbetacdn.com/newsimg/2014/0922/19_1411376098.png_180x132.png
-			if (oldsrc.match(/(static.cnbetacdn.com\/.+)_\d+x\d+\.\w{2,4}$/)) {
-				newsrc = 'http://' + RegExp.$1;
-			}
-
-			return newsrc == oldsrc ? null : newsrc;
-		}
-	},
 	{name:"沪江碎碎",
 		enabled:true,
 		url:/^https?:\/\/([^.]+\.)*(?:yeshj\.com|hjenglish\.com|hujiang\.com)/i,
@@ -379,6 +365,11 @@ Rule.MPIV = [
 	    r: /(pixiv.net\/img\d+\/img\/.+\/\d+)_[ms]\.(\w{2,5})$/i,
 	    s: 'r;$1.$2'
 	},
+	{name: "500px",  // 规则来自 imagus，只有一半
+		d: "500px.com",
+		r: "^((?:(?:pp?cdn|s\\d\\.amazonaws\\.com/photos|gp\\d+\\.wac\\.edgecastcdn\\.net/806614/photos/photos)\\.500px|djlhggipcyllo\\.cloudfront)\\.(?:net|org)/\\d+/[\\da-f]{40}/)\\d+\\.",
+		s: "$12048.jpg"
+	},
 
 	// 常用站点
 	{name: '豆瓣',
@@ -398,7 +389,7 @@ Rule.MPIV = [
 		s: "http://$1$2"
 	},
 
-	// 视频
+	// 视频、新闻
 	// {name: "优酷电视剧",
 	// 	d: "youku.com",
 	// 	r: "www\\.youku\\.com\\/show_page\\/id_.*\\.html",

@@ -108,14 +108,23 @@ function findPic(img){
 
 		var imgCStyle=getComputedStyle(img);
 		var imgCS={
-			h:parseFloat(imgCStyle.height),
-			w:parseFloat(imgCStyle.width),
+			h: parseFloat(imgCStyle.height),
+			w: parseFloat(imgCStyle.width),
 		};
+		// 2014年11月3日，目前的七星浏览器存在缩放bug，会得到小数点，所以要四舍五入
+		// 还会造成实际上并未缩放的图片，在七星浏览器上，尺寸会不相等，比如 119 * 119（实际：120 * 120）
+		// if (!isNaN(imgCS.h)) imgCS.h = Math.round(imgCS.h);
+		// if (!isNaN(imgCS.w)) imgCS.w = Math.round(imgCS.w);
 
 		if(!(imgAS.w==imgCS.w && imgAS.h==imgCS.h)){//如果不是两者完全相等,那么被缩放了.
 			if(imgAS.h > prefs.floatBar.minSizeLimit.h || imgAS.w > prefs.floatBar.minSizeLimit.w){//最小限定判断.
 				src=img.src;
 				type='scale';
+
+				// // 图片尺寸相差
+				// if (!isNaN(imgCS.h) && (imgAS.h * imgAS.w / (imgCS.h * imgCS.w) * 100 - 100) < prefs.gallery.zoomresized) {
+				// 	type = 'scaleZoomResized'
+				// }
 				if (imgAS.h < prefs.gallery.scaleSmallSize && imgAS.w < prefs.gallery.scaleSmallSize) {
 					type = 'scaleSmall';
 				}
@@ -461,7 +470,6 @@ function keydown(event) {
 		})
 	}
 }
-
 
 matchedRule = getMatchedRule();
 

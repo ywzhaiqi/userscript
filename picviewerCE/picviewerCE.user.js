@@ -2,7 +2,7 @@
 // @name           picviewer CE
 // @author         NLF && ywzhaiqi
 // @description    NLF 的围观图修改版
-// @version        2014.11.2.0
+// @version        2014.11.4.0
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
@@ -16,7 +16,7 @@
 // @grant          GM_setClipboard
 // @grant          GM_xmlhttpRequest
 // @grant          GM_registerMenuCommand
-// @require        https://greasyfork.org/scripts/6158-gm-config-cn/code/GM_config%20CN.js?version=23267
+// @require        https://greasyfork.org/scripts/6158-gm-config-cn/code/GM_config%20CN.js?version=23710
 // @run-at         document-end
 
 // @include       http://*
@@ -74,16 +74,19 @@ var prefs={
 
 	gallery:{//图库相关设定
 		fitToScreen:true,//图片适应屏幕(适应方式为contain，非cover).
-		sidebarPosition: 'right',//'top' 'right' 'bottom' 'left'  四个可能值
+		sidebarPosition: 'bottom',//'top' 'right' 'bottom' 'left'  四个可能值
 			sidebarSize: 120,//侧栏的高（如果是水平放置）或者宽（如果是垂直放置）
 			sidebarToggle: true,  // 是否显示隐藏按钮
 		transition:true,//大图片区的动画。
 		preload:true,//对附近的图片进行预读。
 		max:5,//最多预读多少张（前后各多少张）
 
+		zoomresized: 25,  // 图片尺寸最少相差比例，单位：%
 		scaleSmallSize: 200,  // 图库的新类别，缩放的图片，尺寸的高或宽都小于该值
 
-		autoScrollAndReload: false, // 最后一张图片时，滚动主窗口到最底部，然后自动重载库的图片。还有bug，有待进一步测试
+		scrollEndAndLoad: false, // 滚动主窗口到最底部，然后自动重载库的图片。还有bug，有待进一步测试
+		scrollEndAndLoad_num: 3,  // 最后几张图片执行
+
 		autoZoom: true,  // 如果有放大，则把图片及 sidebar 部分的缩放改回 100%，增大可视面积（仅在 chrome 下有效）
 		descriptionLength: 32,  // 注释的最大宽度
 	},
@@ -306,20 +309,6 @@ var siteInfo=[
 			return (ret.match(/(https?:\/\/.*)\/\d+px-.*/) || [])[1];
 		},
 	},
-	{name: "cnbeta",
-		enabled: true,
-		url: /^https?:\/\/www.cnbeta.com\//i,
-		getImage: function() {
-			var oldsrc = this.src,
-				newsrc = oldsrc;
-			// http://static.cnbetacdn.com/newsimg/2014/0922/19_1411376098.png_180x132.png
-			if (oldsrc.match(/(static.cnbetacdn.com\/.+)_\d+x\d+\.\w{2,4}$/)) {
-				newsrc = 'http://' + RegExp.$1;
-			}
-
-			return newsrc == oldsrc ? null : newsrc;
-		}
-	},
 	{name:"沪江碎碎",
 		enabled:true,
 		url:/^https?:\/\/([^.]+\.)*(?:yeshj\.com|hjenglish\.com|hujiang\.com)/i,
@@ -500,6 +489,11 @@ Rule.MPIV = [
 	    r: /(pixiv.net\/img\d+\/img\/.+\/\d+)_[ms]\.(\w{2,5})$/i,
 	    s: 'r;$1.$2'
 	},
+	{name: "500px",  // 规则来自 imagus，只有一半
+		d: "500px.com",
+		r: "^((?:(?:pp?cdn|s\\d\\.amazonaws\\.com/photos|gp\\d+\\.wac\\.edgecastcdn\\.net/806614/photos/photos)\\.500px|djlhggipcyllo\\.cloudfront)\\.(?:net|org)/\\d+/[\\da-f]{40}/)\\d+\\.",
+		s: "$12048.jpg"
+	},
 
 	// 常用站点
 	{name: '豆瓣',
@@ -519,7 +513,7 @@ Rule.MPIV = [
 		s: "http://$1$2"
 	},
 
-	// 视频
+	// 视频、新闻
 	// {name: "优酷电视剧",
 	// 	d: "youku.com",
 	// 	r: "www\\.youku\\.com\\/show_page\\/id_.*\\.html",
@@ -1844,12 +1838,18 @@ GalleryC.prototype={
 			},
 
 			// new
+			// scaleZoomResized: {
+			// 	shown: false,
+			// 	count: 0,
+			// 	description: '缩放的图片，图片尺寸最少相差比例 ' + prefs.gallery.zoomresized + '%',
+			// 	name: '小缩放'
+			// },
 			scaleSmall: {
 				shown: true,
 				count: 0,
 				description: '缩放的图片，实际尺寸的高或宽都小于 ' + prefs.gallery.scaleSmallSize + ' 像素',
 				name: '小尺寸'
-			}
+			},
 		};
 		this.imgStatistics=imgStatistics;
 
@@ -2198,7 +2198,7 @@ GalleryC.prototype={
 					var checkbox = target.parentNode.firstChild;
 					checkbox.checked = !checkbox.checked;
 
-					prefs.gallery.autoScrollAndReload = checkbox.checked;
+					prefs.gallery.scrollEndAndLoad = checkbox.checked;
 					break;
 				case 'fullScreen':
 					if (target.classList.contains('fullscreenbtn')) {
@@ -2639,42 +2639,53 @@ GalleryC.prototype={
 		this.load(data, null, true);
 	},
 	reloadNew: function() {
-
+		var newer = true;
+		var data = this.getAllValidImgs(newer);
+		if (data) {
+			this._appendThumbSpans(data);
+		}
 	},
-	getAllValidImgs:function(){
+	lastImgNum: 0,
+	getAllValidImgs:function(newer){
+		var validImgs = [];
+
 		var imgs = document.getElementsByTagName('img'),
-			container = document.querySelector('.pv-gallery-container'),
-			preloadContainer = document.querySelector('.pv-gallery-preloaded-img-container'),
-			validImgs = [];
+		    container = document.querySelector('.pv-gallery-container'),
+		    preloadContainer = document.querySelector('.pv-gallery-preloaded-img-container');
 
-		arrayFn.forEach.call(imgs, function(img, index, imgs) {
-			// 排除库里面的图片
-			if (container.contains(img) || preloadContainer.contains(img)) return;
-
-			var result = findPic(img);
-			if (result) {
-				validImgs.push(result);
-			};
+		// 排除库里面的图片
+		imgs = Array.prototype.slice.call(imgs).filter(function(img){
+		    return !(container.contains(img) || preloadContainer.contains(img));
 		});
+
+		var data = this.data;
+		var alreadyInGallery = function(img) {
+		        var src = img.src;
+		        return data.some(function(d) {
+		            return d.imgSrc == src;
+		        });
+		    };
+
+		imgs.forEach(function(img) {
+		    if (newer && alreadyInGallery(img)) return;
+
+		    var result = findPic(img);
+		    if (result) {
+		        validImgs.push(result);
+		    }
+		});
+
 		return validImgs;
 	},
-	scrollToEndAndReload: function() {
-		if (!prefs.gallery.autoScrollAndReload) {
-			return;
-		}
+	scrollToEndAndReload: function() {  // 滚动主窗口到最底部，然后自动重载库的图片
 
-		// 滚动主窗口到最底部，然后自动重载库的图片
-		// TODO：
-		// 1、修正 滚动几页后不再滚动 的 bug。
-		// 2、关闭图库再打开，图片的顺序不太正确？
-		// 3、定位图片无效或不存在的 bug
 		window.scrollTo(0, 99999);
 
 		var self = this;
 		clearTimeout(self.reloadTimeout);
 		self.reloadTimeout = setTimeout(function(){
-			// window.removeEventListener('scroll', self.scrolled, false);
-			self.reload();
+			// self.reload();
+			self.reloadNew();
 		}, 1000);
 	},
 	exportImages: function () {  // 导出所有图片到新窗口
@@ -2783,7 +2794,6 @@ GalleryC.prototype={
 
 			thumb=document.createElement('img');
 			thumb.src=dataset(span_i,'thumbSrc') || dataset(span_i,'src') || prefs.icons.brokenImg_small;
-			//thumb.src='http://www.notexistwebsite.com/';
 			thumb.className='pv-gallery-sidebar-thumb';
 
 			dataset(span_i,'thumbLoaded','true');
@@ -3043,6 +3053,63 @@ GalleryC.prototype={
 
 	},
 
+	_appendThumbSpans: function(data, index) {  // 添加缩略图栏的 spans
+		var spanMark = '';
+		var iStatisCopy = this.iStatisCopy;
+
+		(data || this.data).forEach(function(item) {
+			iStatisCopy[item.type].count++;
+			spanMark += '<span class="pv-gallery-sidebar-thumb-container' +
+				'" data-type="' + item.type +
+				'" data-src="' + item.src +
+				(item.xhr ? '" data-xhr="' + encodeURIComponent(JSON.stringify(item.xhr)) : '') +
+				'" data-description="' + encodeURIComponent(item.description || '') +
+				'" data-thumb-src="' + item.imgSrc +
+				'" title="' + item.img.title +
+				'">' +
+				'<span class="pv-gallery-vertical-align-helper"></span>' +
+				'<span class="pv-gallery-sidebar-thumb-loading" title="正在读取中......"></span>' +
+				'</span>';
+		});
+
+		var thumbnails = this.eleMaps['sidebar-thumbnails-container'];
+		var lastIndex;
+		if (data) {
+			lastIndex = Array.prototype.slice.call(this.imgSpans).indexOf(this.selected);
+			thumbnails.innerHTML += spanMark;
+		} else {
+			thumbnails.innerHTML = spanMark;
+		}
+
+		//写入类别数据。
+		var gallery = this.gallery;
+		var input, label, iStatisCopy_i;
+
+		for (var i in iStatisCopy) {
+			if (!iStatisCopy.hasOwnProperty(i)) continue;
+			iStatisCopy_i = iStatisCopy[i];
+			input = gallery.querySelector('#pv-gallery-head-command-drop-list-item-category-' + i);
+			input.checked = iStatisCopy_i.shown;
+			if (iStatisCopy_i.count == 0) {
+				input.disabled = true;
+				input.parentNode.classList.add('pv-gallery-head-command-drop-list-item_disabled');
+			} else {
+				input.disabled = false;
+				input.parentNode.classList.remove('pv-gallery-head-command-drop-list-item_disabled');
+			};
+
+			label = gallery.querySelector('label[for="pv-gallery-head-command-drop-list-item-category-' + i + '"]');
+			label.textContent = label.textContent.replace(/（.*）/i, '') + '（' + iStatisCopy_i.count + '）';
+		};
+
+		this.imgSpans = thumbnails.children;
+
+		this.thumbScrollbar.reset();
+
+		this.select(this.imgSpans[index || lastIndex], true);
+
+		this.runOnce();
+	},
 	load:function(data, from, reload){
 		if(this.shown || this.minimized){//只允许打开一个,请先关掉当前已经打开的库
 
@@ -3085,62 +3152,10 @@ GalleryC.prototype={
 		this.clear();//还原对象的一些修改，以便复用。
 		this.show(reload);
 
-		//console.log(data);
-
 		this.data=data;
 		this.from=from;//如果来自frame，那么这个from应该保存了那个frame的窗口id，便于以后通信。
 
-		var spanMark='';
-		var data_i;
-		var iStatisCopy=this.iStatisCopy;
-		for(var i=0,ii=data.length;i<ii;i++){
-			data_i=data[i];
-			iStatisCopy[data_i.type].count++;
-			spanMark +=
-				 '<span class="pv-gallery-sidebar-thumb-container'+
-					'" data-type="' + data_i.type +
-					'" data-src="' + data_i.src +
-					(data_i.xhr ? '" data-xhr="' + encodeURIComponent(JSON.stringify(data_i.xhr)) : '') +
-					'" data-description="' + encodeURIComponent(data_i.description || '') +
-					'" data-thumb-src="' + data_i.imgSrc +
-					'" title="' + data_i.img.title +
-					'">'+
-					'<span class="pv-gallery-vertical-align-helper"></span>'+
-					'<span class="pv-gallery-sidebar-thumb-loading" title="正在读取中......"></span>'+
-				'</span>';
-		};
-
-
-		var thumbnails=this.eleMaps['sidebar-thumbnails-container'];
-		thumbnails.innerHTML=spanMark;
-
-		//写入类别数据。
-		var gallery=this.gallery;
-		var input,label,iStatisCopy_i;
-
-		for(var i in iStatisCopy){
-			if(!iStatisCopy.hasOwnProperty(i))continue;
-			iStatisCopy_i=iStatisCopy[i];
-			input=gallery.querySelector('#pv-gallery-head-command-drop-list-item-category-' + i);
-			input.checked=iStatisCopy_i.shown;
-			if(iStatisCopy_i.count==0){
-				input.disabled=true;
-				input.parentNode.classList.add('pv-gallery-head-command-drop-list-item_disabled');
-			}else{
-				input.disabled=false;
-				input.parentNode.classList.remove('pv-gallery-head-command-drop-list-item_disabled');
-			};
-
-			label=gallery.querySelector('label[for="pv-gallery-head-command-drop-list-item-category-' + i + '"]');
-			label.textContent=label.textContent.replace(/（.*）/i,'') + '（' + iStatisCopy_i.count + '）';
-		};
-
-		this.imgSpans=thumbnails.children;
-
-		this.thumbScrollbar.reset();
-		this.select(this.imgSpans[index],true);
-
-		this.runOnce();
+		this._appendThumbSpans(null, index);
 
 		this.switchThumbVisible();
 
@@ -3319,6 +3334,17 @@ GalleryC.prototype={
 		this.fitToScreen();
 		this.loadThumb();
 	},
+	_isLastSpan: function(span) {
+		if (!span) return true;
+
+		var index = Array.prototype.slice.call(this.imgSpans).indexOf(span);
+		if (index != -1) {
+			var total = this.imgSpans.length;
+			if (total - index < prefs.gallery.scrollEndAndLoad_num) {
+				return true;
+			}
+		}
+	},
 	arrowVisib:function(){//当当前选择元素的前面或者后面没有元素的时候隐藏控制箭头
 
 		var icps=this.eleMaps['img-controler-pre'].style;
@@ -3327,15 +3353,19 @@ GalleryC.prototype={
 		var scns=this.eleMaps['sidebar-controler-next'].style;
 
 		//下一张的箭头
-		if(this.getThumSpan()){
+		var nextSpan = this.getThumSpan();
+		if (nextSpan) {
 			icns.display='';
 			scns.display='';
 		}else{
 			icns.display='none';
 			scns.display='none';
-
-			this.scrollToEndAndReload();
 		};
+
+		// 最后几张图片，滚到底部添加新的图片
+		if (prefs.gallery.scrollEndAndLoad && this._isLastSpan(nextSpan)) {
+			this.scrollToEndAndReload();
+		}
 
 		//上一张的箭头
 		if(this.getThumSpan(true)){
@@ -3396,7 +3426,7 @@ GalleryC.prototype={
 				padding: 0;\
 				margin: 0;\
 				border: none;\
-				z-index:899999999;\
+				z-index:2147483647;\
 				background-color: transparent;\
 			}\
 			/*全局border-box*/\
@@ -6899,6 +6929,8 @@ var MPIV = (function() {
 	var cfg = {
 		thumbsonly: true,
 	};
+	// 我新加的
+	var rgxHTTPs = /^https?:\/\/(?:www\.)?/;
 
 	function loadRule() {
 		var rules = Rule.MPIV;
@@ -6959,9 +6991,11 @@ var MPIV = (function() {
 			var re = new RegExp(s.substring(1, mid), s.substr(end+1));
 			return m.input.replace(re, s.substring(mid+1, end));
 		}
+
 		for(var i = m.length; i--;) {
 			s = s.replace('$'+i, m[i]);
 		}
+
 		return s;
 	}
 
@@ -7017,14 +7051,17 @@ var MPIV = (function() {
 	}
 
 	function findInfo(url, node, noHtml, skipHost) {
-		for(var i = 0, len = hosts.length, tn = tag(node), h, m, html, urls; i < len && (h = hosts[i]); i++) {
+		for(var i = 0, len = hosts.length, tn = tag(node), h, m, html, urls, URL, http; i < len && (h = hosts[i]); i++) {
 			if(h.e && !matches(node, h.e) || h == skipHost) continue;
 			if(h.r) {
 				if(h.html && !noHtml && (tn == 'A' || tn == 'IMG' || h.e)) {
 					if(!html) html = node.outerHTML;
 					m = h.r.exec(html)
 				} else if(url) {
-					m = h.r.exec(url);
+					// 去掉前面的 https://
+					URL = url.replace(rgxHTTPs, '');
+					http = url.slice(0, url.length - URL.length);
+					m = h.r.exec(URL);
 				} else {
 					m = null;
 				}
@@ -7033,7 +7070,7 @@ var MPIV = (function() {
 			}
 			if(!m || tn == 'IMG' && !('s' in h)) continue;
 			if('s' in h) {
-				urls = (Array.isArray(h.s) ? h.s : [h.s]).map(function(s) { if(typeof s == 'string') return decodeURIComponent(replace(s, m, h.r)); if(typeof s == 'function') return s(m, node); return s; });
+				urls = (Array.isArray(h.s) ? h.s : [h.s]).map(function(s) { if(typeof s == 'string') return (http || '') + decodeURIComponent(replace(s, m, h.r)); if(typeof s == 'function') return s(m, node); return s; });
 				if(Array.isArray(urls[0])) urls = urls[0];
 				if(urls[0] === false) continue;
 				urls = urls.map(function(u) { return u ? decodeURIComponent(u) : u; });
@@ -7197,14 +7234,23 @@ function findPic(img){
 
 		var imgCStyle=getComputedStyle(img);
 		var imgCS={
-			h:parseFloat(imgCStyle.height),
-			w:parseFloat(imgCStyle.width),
+			h: parseFloat(imgCStyle.height),
+			w: parseFloat(imgCStyle.width),
 		};
+		// 2014年11月3日，目前的七星浏览器存在缩放bug，会得到小数点，所以要四舍五入
+		// 还会造成实际上并未缩放的图片，在七星浏览器上，尺寸会不相等，比如 119 * 119（实际：120 * 120）
+		// if (!isNaN(imgCS.h)) imgCS.h = Math.round(imgCS.h);
+		// if (!isNaN(imgCS.w)) imgCS.w = Math.round(imgCS.w);
 
 		if(!(imgAS.w==imgCS.w && imgAS.h==imgCS.h)){//如果不是两者完全相等,那么被缩放了.
 			if(imgAS.h > prefs.floatBar.minSizeLimit.h || imgAS.w > prefs.floatBar.minSizeLimit.w){//最小限定判断.
 				src=img.src;
 				type='scale';
+
+				// // 图片尺寸相差
+				// if (!isNaN(imgCS.h) && (imgAS.h * imgAS.w / (imgCS.h * imgCS.w) * 100 - 100) < prefs.gallery.zoomresized) {
+				// 	type = 'scaleZoomResized'
+				// }
 				if (imgAS.h < prefs.gallery.scaleSmallSize && imgAS.w < prefs.gallery.scaleSmallSize) {
 					type = 'scaleSmall';
 				}
@@ -7551,7 +7597,6 @@ function keydown(event) {
 	}
 }
 
-
 matchedRule = getMatchedRule();
 
 // 添加自定义样式
@@ -7585,50 +7630,80 @@ GM_config.init({
        href: 'https://greasyfork.org/zh-CN/scripts/5199-picviewer-ce',
        target: '_blank',
        textContent: 'picviewerCE 设置',
+       title: '点击此处打开主页'
     }),
+    isTabs: true,
+    skin: 'tab',
+    frameStyle: {
+        width: '480px',
+        zIndex:'2147483648',
+    },
     css: [
-        "#pv-prefs { background: #EEE; padding: 10px; }",
-        "#pv-prefs .field_label { font-size: 12px; font-weight: normal; padding-right: 20px;}",
-        "#pv-prefs .config_var { display: table-row; height: 25px; }",
-        "#pv-prefs .section_header { background: #414141; border: 1px solid #000; border-radius: 3px;",
-            " color: #FFF; font-size: 13pt;margin: 12px 0; padding: 5px 15px; }",
-        "#pv-prefs .config_var > * { display: table-cell; }",
+        "#pv-prefs input[type='text'] { width: 50px; } ",
+        "#pv-prefs label.size { width: 205px; }",
+        "#pv-prefs span.sep-x { margin-left: 0px !important; }",
+        "#pv-prefs label.sep-x { margin-right: 4px; }",
+        "#pv-prefs label.floatBar-key { margin-left: 20px; width: 100px; }",
+        "#pv-prefs input.color { width: 120px; }",
     ].join('\n'),
     fields: {
         // 浮动工具栏
         'floatBar.position': {
-            label: '浮动工具栏位置',
+            label: '位置：',
             type: 'select',
-            options: ['top left', 'top right', 'bottom right', 'bottom left'],
-            textContents: ['图片左上角', '图片右上角', '图片右下角', '图片左下角'],
+            options: {
+                'top left': '图片左上角',
+                'top right': '图片右上角',
+                'bottom right': '图片右下角',
+                'bottom left': '图片左下角'
+            },
             default: prefs.floatBar.position,
             section: ['浮动工具栏'],
+        },
+        'floatBar.showDelay': {
+            label: '显示延时',
+            type: 'int',
+            default: prefs.floatBar.showDelay,
+            after: ' 毫秒',
+        },
+        'floatBar.hideDelay': {
+            label: '隐藏延时',
+            type: 'int',
+            className: 'hideDelay',
+            default: prefs.floatBar.hideDelay,
+            after: ' 毫秒'
         },
         'floatBar.forceShow.size.w': {
             label: '非缩放图片，超过该尺寸，强制显示',
             type: 'int',
-            size: 2,
+            className: 'size',
             default: prefs.floatBar.forceShow.size.w,
             title: '在没有被缩放的图片上,但是大小超过下面设定的尺寸时,强制显示浮动框.(以便进行旋转,放大,翻转等等操作)..',
+            line: 'start',
         },
         'floatBar.forceShow.size.h': {
-            label: '',
+            label: ' x ',
             type: 'int',
-            size: 2,
+            className: 'sep-x',
+            after: ' 像素',
             default: prefs.floatBar.forceShow.size.h,
+            line: 'end',
         },
         'floatBar.minSizeLimit.w': {
             label: '缩放图片，小于该尺寸，不显示',
             type: 'int',
-            size: 2,
+            className: 'size',
             default: prefs.floatBar.minSizeLimit.w,
             title: '就算是图片被缩放了(看到的图片被设定了width或者height限定了大小,这种情4况下),如果没有被缩放的原图片小于设定值,那么也不显示浮动工具栏',
+            line: 'start',
         },
         'floatBar.minSizeLimit.h': {
-            label: '',
+            label: ' x ',
             type: 'int',
-            size: 2,
+            className: 'sep-x',
+            after: ' 像素',
             default: prefs.floatBar.minSizeLimit.h,
+            line: 'end',
         },
         // 按键
         'floatBar.keys.enable': {
@@ -7637,52 +7712,52 @@ GM_config.init({
             default: prefs.floatBar.keys.enable
         },
         'floatBar.keys.actual': {
-            label: '&nbsp;&nbsp;&nbsp;&nbsp;打开大图',
+            label: '打开大图',
             type: 'text',
-            size: 5,
+            className: 'floatBar-key',
             default: prefs.floatBar.keys.actual,
             title: '当出现悬浮条时按下此按键打开大图'
         },
         'floatBar.keys.current': {
-            label: '&nbsp;&nbsp;&nbsp;&nbsp;打开当前图片',
+            label: '打开当前图片',
             type: 'text',
-            size: 5,
+            className: 'floatBar-key',
             default: prefs.floatBar.keys.current,
             title: '当出现悬浮条时按下此按键打开当前显示的图片'
         },
         'floatBar.keys.magnifier': {
-            label: '&nbsp;&nbsp;&nbsp;&nbsp;打开放大镜观察',
+            label: '打开放大镜观察',
             type: 'text',
-            size: 5,
+            className: 'floatBar-key',
             default: prefs.floatBar.keys.magnifier,
             title: '当出现悬浮条时按下此按键打开放大镜观察'
         },
         'floatBar.keys.gallery': {
-            label: '&nbsp;&nbsp;&nbsp;&nbsp;打开图库',
+            label: '打开图库',
             type: 'text',
-            size: 5,
+            className: 'floatBar-key',
             default: prefs.floatBar.keys.gallery,
             title: '当出现悬浮条时按下此按键打开图库'
         },
 
         // 放大镜
         'magnifier.radius': {
-            label: '默认半径（像素）',
-            type: 'text',
-            size: 5,
+            label: '默认半径',
+            type: 'int',
             default: prefs.magnifier.radius,
             section: ['放大镜'],
+            after: ' 像素'
         },
         'magnifier.wheelZoom.enabled': {
             label: '启用滚轮缩放',
             type: 'checkbox',
             default: prefs.magnifier.wheelZoom.enabled,
         },
-        // 'magnifier.wheelZoom.range': {
-        //     label: '缩放的范围',
-        //     type: 'textarea',
-        //     default: prefs.magnifier.wheelZoom.range,
-        // },
+        'magnifier.wheelZoom.range': {
+            label: '滚轮缩放的范围',
+            type: 'textarea',
+            default: prefs.magnifier.wheelZoom.range.join(', '),
+        },
 
         // 图库
         'gallery.fitToScreen': {
@@ -7695,26 +7770,30 @@ GM_config.init({
         'gallery.sidebarPosition': {
             label: '缩略图栏位置',
             type: 'select',
-            options: ['bottom', 'right', 'left', 'top'],
-            textContents: ['底部', '右侧', '左侧', '顶部'],
+            options: {
+                'bottom': '底部',
+                'right': '右侧',
+                'left': '左侧',
+                'top': '顶部'
+            },
             default: prefs.gallery.sidebarPosition,
         },
         'gallery.sidebarSize': {
-            label: '缩略图栏高（像素）',
+            label: '缩略图栏高',
             type: 'int',
-            size: 5,
             default: prefs.gallery.sidebarSize,
-            title: '缩略图栏的高（如果是水平放置）或者宽（如果是垂直放置）'
+            title: '缩略图栏的高（如果是水平放置）或者宽（如果是垂直放置）',
+            after: ' 像素'
         },
         'gallery.max': {
-            label: '最多预读多少张图片',
+            label: '最多预读  ',
             title: '前后各多少张',
-            type: 'int',
-            size: 5,
-            default: prefs.gallery.max
+            type: 'number',
+            default: prefs.gallery.max,
+            after: ' 张图片'
         },
         'gallery.autoZoom': {
-            label: '缩放改回 100%（仅 chrome）',
+            label: '缩放改回 100%（chrome）',
             type: 'checkbox',
             default: prefs.gallery.autoZoom,
             title: '如果有放大，则把图片及 sidebar 部分的缩放改回 100%，增大可视面积（仅在 chrome 下有效）'
@@ -7726,7 +7805,23 @@ GM_config.init({
             type: 'checkbox',
             default: prefs.imgWindow.fitToScreen,
             section: ['图片窗口'],
-            title: '适应方式为contain，非cover'
+            title: '适应方式为contain，非cover',
+        },
+        'imgWindow.close.defaultTool': {
+            label: '打开窗口的时候默认选择的工具',
+            type: 'select',
+            options: {
+                'hand': '抓手',
+                'rotate': '旋转',
+                'zoom': '放大镜',
+            },
+            default: prefs.imgWindow.close.defaultTool,
+        },
+        'imgWindow.close.escKey': {
+            label: 'Esc键关闭',
+            type: 'checkbox',
+            default: prefs.imgWindow.close.escKey,
+            line: 'start',
         },
         'imgWindow.close.dblClickImgWindow': {
             label: '双击图片窗口关闭',
@@ -7736,19 +7831,41 @@ GM_config.init({
         'imgWindow.close.clickOutside': {
             label: '点击图片外部关闭',
             type: 'select',
-            options: ['', 'click', 'dblclick'],
-            textContents: ['无', '单击', '双击'],
+            options: {
+                '': '无',
+                'click': '单击',
+                'dblclick': '双击',
+            },
             default: prefs.imgWindow.close.clickOutside,
+            line: 'end',
         },
-        // 'imgWindow.zoom.mouseWheelZoom': {
-        //     label: '滚轮缩放比例',
-        //     type: 'select',
-        //     default: prefs.imgWindow.zoom.mouseWheelZoom,
-        // },
+        'imgWindow.overlayer.shown': {
+            label: '覆盖层是否显示',
+            type: 'checkbox',
+            default: prefs.imgWindow.overlayer.shown,
+        },
+        'imgWindow.overlayer.color': {
+            label: '覆盖层的颜色和不透明度',
+            type: 'text',
+            className: 'color',
+            default: prefs.imgWindow.overlayer.color,
+        },
+        'imgWindow.shiftRotateStep': {
+            label: '旋转的时候，按住shift键，旋转的步进',
+            type: 'int',
+            default: prefs.imgWindow.shiftRotateStep,
+            after: ' 度'
+        },
+        'imgWindow.zoom.range': {
+            label: '滚轮缩放比例',
+            type: 'textarea',
+            default: prefs.imgWindow.zoom.range.join(', '),
+            title: '缩放比例.(不要出现负数,谢谢-_-!~)'
+        },
 
         // 其它
         'waitImgLoad': {
-            label: '等图片完全载入后,才开始执行弹出,放大等操作',
+            label: '等图片完全载入后，才开始执行弹出放大等操作',
             type: 'checkbox',
             default: prefs.waitImgLoad,
             section: ['其它'],
@@ -7758,38 +7875,17 @@ GM_config.init({
             label: '调试模式',
             type: 'checkbox',
             default: prefs.debug
-        }
+        },
     },
     events: {
         open: function(doc, win, frame) {
-            frame.style.width = '500px';
-            frame.style.left = 'auto';
-            frame.style.right = '60px';
-
-            var create = GM_config.create,
-                getId = function(id) {
-                    return doc.getElementById(id);
-                };
-
-            // 调整尺寸到一行
-            var moveToOneLine = function(key) {
-                var widthNode = getId('pv-prefs_field_' + key + '.w'),
-                    heightNode = getId('pv-prefs_field_' + key + '.h');
-
-                widthNode.parentNode.appendChild(heightNode);
-                widthNode.title = '宽度（单位：像素）';
-                heightNode.title = '高度（单位：像素）';
-                getId('pv-prefs_' + key + '.h_var').style.display = 'none';
-            };
-
-            moveToOneLine('floatBar.forceShow.size');
-            moveToOneLine('floatBar.minSizeLimit');
         },
         save: function() {
             loadPrefs();
         }
     }
 });
+
 
 GM_registerMenuCommand('picviewerCE 设置', openPrefs);
 
@@ -7809,7 +7905,15 @@ function loadPrefs() {
             return previousValue[curKey];
         }, prefs) || prefs;
 
-        lastPref[lastKey] = GM_config.get(keyStr);
+        var value = GM_config.get(keyStr);
+        if (value) {
+            // 特殊的修正
+            if (keyStr == 'magnifier.wheelZoom.range' || keyStr == 'imgWindow.zoom.range') {
+                lastPref[lastKey] = value.split(/[,，]\s*/).map(function(s) { return parseFloat(s)});
+            } else {
+                lastPref[lastKey] = value;
+            }
+        }
     });
 
     debug = prefs.debug ? console.debug.bind(console) : function() {};

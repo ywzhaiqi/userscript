@@ -16,7 +16,7 @@
 // @grant          GM_setClipboard
 // @grant          GM_xmlhttpRequest
 // @grant          GM_registerMenuCommand
-// @require        https://greasyfork.org/scripts/6158-gm-config-cn/code/GM_config%20CN.js?version=23267
+// @require        https://greasyfork.org/scripts/6158-gm-config-cn/code/GM_config%20CN.js?version=23710
 // @run-at         document-end
 
 // @include       http://*

@@ -42,16 +42,19 @@ var prefs={
 
 	gallery:{//图库相关设定
 		fitToScreen:true,//图片适应屏幕(适应方式为contain，非cover).
-		sidebarPosition: 'right',//'top' 'right' 'bottom' 'left'  四个可能值
+		sidebarPosition: 'bottom',//'top' 'right' 'bottom' 'left'  四个可能值
 			sidebarSize: 120,//侧栏的高（如果是水平放置）或者宽（如果是垂直放置）
 			sidebarToggle: true,  // 是否显示隐藏按钮
 		transition:true,//大图片区的动画。
 		preload:true,//对附近的图片进行预读。
 		max:5,//最多预读多少张（前后各多少张）
 
+		zoomresized: 25,  // 图片尺寸最少相差比例，单位：%
 		scaleSmallSize: 200,  // 图库的新类别，缩放的图片，尺寸的高或宽都小于该值
 
-		autoScrollAndReload: false, // 最后一张图片时，滚动主窗口到最底部，然后自动重载库的图片。还有bug，有待进一步测试
+		scrollEndAndLoad: false, // 滚动主窗口到最底部，然后自动重载库的图片。还有bug，有待进一步测试
+		scrollEndAndLoad_num: 3,  // 最后几张图片执行
+
 		autoZoom: true,  // 如果有放大，则把图片及 sidebar 部分的缩放改回 100%，增大可视面积（仅在 chrome 下有效）
 		descriptionLength: 32,  // 注释的最大宽度
 	},

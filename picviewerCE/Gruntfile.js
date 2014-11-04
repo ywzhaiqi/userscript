@@ -6,7 +6,7 @@ module.exports = function(grunt) {
 	    'src/lib.js',
 	    'src/GalleryC.js', 'src/MagnifierC.js', 'src/ImgWindowC.js', 'src/LoadingAnimC.js', 'src/FloatBarC.js',
 	    'src/third party/xhrLoad.js', 'src/third party/MPIV.js',
-	    'src/main.js', 'src/prefsWin.js', 'src/footer.js'
+	    'src/main.js', 'src/prefs_config.js', 'src/footer.js'
 	];
 
 	grunt.initConfig({
