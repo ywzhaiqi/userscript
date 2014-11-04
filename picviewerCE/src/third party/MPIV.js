@@ -60,7 +60,7 @@ var MPIV = (function() {
 	 *   {"r":"hotimg\\.com/image", "s":"/image/direct/"}
 	 *   把 image 替换为 direct ，就是 .replace(/image/, "direct")
 	 */
-	function replace(s, m, r) {
+	function replace(s, m, r, http) {
 		if(!m) return s;
 
 		if (r && s.startsWith('r;')) {  // 特殊的替换模式
@@ -76,6 +76,10 @@ var MPIV = (function() {
 
 		for(var i = m.length; i--;) {
 			s = s.replace('$'+i, m[i]);
+		}
+
+		if (!s.startsWith('http') && http) {
+			return http + s;
 		}
 
 		return s;
@@ -152,7 +156,7 @@ var MPIV = (function() {
 			}
 			if(!m || tn == 'IMG' && !('s' in h)) continue;
 			if('s' in h) {
-				urls = (Array.isArray(h.s) ? h.s : [h.s]).map(function(s) { if(typeof s == 'string') return (http || '') + decodeURIComponent(replace(s, m, h.r)); if(typeof s == 'function') return s(m, node); return s; });
+				urls = (Array.isArray(h.s) ? h.s : [h.s]).map(function(s) { if(typeof s == 'string') return decodeURIComponent(replace(s, m, h.r, http)); if(typeof s == 'function') return s(m, node); return s; });
 				if(Array.isArray(urls[0])) urls = urls[0];
 				if(urls[0] === false) continue;
 				urls = urls.map(function(u) { return u ? decodeURIComponent(u) : u; });
