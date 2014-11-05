@@ -2,7 +2,7 @@
 // @name           picviewer CE
 // @author         NLF && ywzhaiqi
 // @description    NLF 的围观图修改版
-// @version        2014.11.5.0
+// @version        2014.11.5.1
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
@@ -1564,8 +1564,7 @@ GalleryC.prototype={
 						'<span class="pv-gallery-head-command-drop-list-item" data-command="enterCollection" title="查看所有收藏的图片">查看收藏</span>'+
 						'<span class="pv-gallery-head-command-drop-list-item" data-command="exportImages" title="导出所有图片的链接到新窗口">导出图片</span>'+
 						'<span class="pv-gallery-head-command-drop-list-item" data-command="copyImages" title="复制所有大图的地址">复制图片</span>'+
-						'<span class="pv-gallery-head-command-drop-list-item" data-command="reloadGalleryC" title="重新载入所有有效的图片">手动重载</span>'+
-						'<span class="pv-gallery-head-command-drop-list-item" title="最后一张图片时，滚动主窗口到最底部，然后自动重载库的图片（测试）">'+
+						'<span class="pv-gallery-head-command-drop-list-item" title="最后几张图片时，滚动主窗口到最底部，然后自动加载新的图片">'+
 							'<input type="checkbox"  data-command="scrollToEndAndReload"/>'+
 							'<label data-command="scrollToEndAndReload">自动重载</label>'+
 						'</span>'+
@@ -2191,9 +2190,6 @@ GalleryC.prototype={
 					break;
 				case 'copyImages':
 					self.copyImages(true);
-					break;
-				case 'reloadGalleryC':
-					self.reload();
 					break;
 				case 'scrollToEndAndReload':
 					var checkbox = target.parentNode.firstChild;
@@ -2953,9 +2949,14 @@ GalleryC.prototype={
 
 	},
 
+	_dataCache: {},
 	_appendThumbSpans: function(data, index) {  // 添加缩略图栏的 spans
 		var spanMark = '';
 		var iStatisCopy = this.iStatisCopy;
+
+		if (!index && this.selected) {
+			index = Array.prototype.slice.call(this.imgSpans).indexOf(this.selected);
+		}
 
 		(data || this.data).forEach(function(item) {
 			iStatisCopy[item.type].count++;
@@ -2973,14 +2974,20 @@ GalleryC.prototype={
 		});
 
 		var thumbnails = this.eleMaps['sidebar-thumbnails-container'];
-		if (data) {
-			if (!index) {
-				index = Array.prototype.slice.call(this.imgSpans).indexOf(this.selected);
-			}
+
+		if (data) {  // 新的
 			thumbnails.innerHTML += spanMark;
 		} else {
 			thumbnails.innerHTML = spanMark;
+
+			this._dataCache = {};
 		}
+
+		// 如果是新的，则添加，否则重置并添加。
+		var self = this;
+		(data || this.data).forEach(function(d) {
+			self._dataCache[d.imgSrc] = true;
+		});
 
 		//写入类别数据。
 		var gallery = this.gallery;
@@ -3061,6 +3068,7 @@ GalleryC.prototype={
 		this.switchThumbVisible();
 	},
 	clear:function(){
+		this._dataCache = {};
 
 		this.allLoading=[];//读取中的图片数组
 		this.iStatisCopy=cloneObject(this.imgStatistics,true);//图片统计副本
@@ -3234,7 +3242,8 @@ GalleryC.prototype={
 		this.fitToScreen();
 		this.loadThumb();
 	},
-	_isLastSpan: function(span) {
+	_isLastSpan: function(span) {  // 用于判断是否自动重载，是否是最后几个图片
+		if (this.selected.clientWidth == 0) return false;
 		if (!span) return true;
 
 		var index = Array.prototype.slice.call(this.imgSpans).indexOf(span);
@@ -3297,7 +3306,7 @@ GalleryC.prototype={
 		return stop;
 	},
 
-	reload: function() {
+	reload: function() {  // 重新加载所有图片到库里面
 		// 函数在 LoadingAnimC 中
 		var data = this.getAllValidImgs();
 		// 设置当前选中的图片
@@ -3309,10 +3318,10 @@ GalleryC.prototype={
 
 		this.load(data, null, true);
 	},
-	reloadNew: function() {
+	reloadNew: function() {  // 加载新的图片到库里面
 		var newer = true;
 		var data = this.getAllValidImgs(newer);
-		if (data) {
+		if (data.length) {
 			this._appendThumbSpans(data);
 		}
 	},
@@ -3329,20 +3338,17 @@ GalleryC.prototype={
 		});
 
 		// 已经在图库里面的
-		var cache = {};
-		this.data.forEach(function(d) {
-			cache[d.imgSrc] = true;
-		});
-
+		var self = this;
 		imgs.forEach(function(img) {
-		    if (newer && cache[img.src]) return;
+		    if (newer && self._dataCache[img.src]) return;
 
 		    var result = findPic(img);
 		    if (result) {
 		        validImgs.push(result);
+		        self.data.push(result);
 		    }
 
-		    cache[img.src] = true;
+		    self._dataCache[img.src] = true;
 		});
 
 		return validImgs;
@@ -7643,7 +7649,7 @@ GM_config.init({
         "#pv-prefs input[type='text'] { width: 50px; } ",
         "#pv-prefs label.size { width: 205px; }",
         "#pv-prefs span.sep-x { margin-left: 0px !important; }",
-        "#pv-prefs label.sep-x { margin-right: 4px; }",
+        "#pv-prefs label.sep-x { margin-right: 5px; }",
         "#pv-prefs label.floatBar-key { margin-left: 20px; width: 100px; }",
         "#pv-prefs input.color { width: 120px; }",
     ].join('\n'),
@@ -7799,6 +7805,12 @@ GM_config.init({
             default: prefs.gallery.autoZoom,
             title: '如果有放大，则把图片及 sidebar 部分的缩放改回 100%，增大可视面积（仅在 chrome 下有效）'
         },
+        'gallery.descriptionLength': {
+            label: '注释的最大长度',
+            type: 'int',
+            default: prefs.gallery.descriptionLength,
+            after: ' 个'
+        },
 
         // 图片窗口
         'imgWindow.fitToScreen': {
@@ -7907,7 +7919,7 @@ function loadPrefs() {
         }, prefs) || prefs;
 
         var value = GM_config.get(keyStr);
-        if (value) {
+        if (typeof value != 'undefined') {
             // 特殊的修正
             if (keyStr == 'magnifier.wheelZoom.range' || keyStr == 'imgWindow.zoom.range') {
                 lastPref[lastKey] = value.split(/[,，]\s*/).map(function(s) { return parseFloat(s)});

@@ -19,7 +19,7 @@ GM_config.init({
         "#pv-prefs input[type='text'] { width: 50px; } ",
         "#pv-prefs label.size { width: 205px; }",
         "#pv-prefs span.sep-x { margin-left: 0px !important; }",
-        "#pv-prefs label.sep-x { margin-right: 4px; }",
+        "#pv-prefs label.sep-x { margin-right: 5px; }",
         "#pv-prefs label.floatBar-key { margin-left: 20px; width: 100px; }",
         "#pv-prefs input.color { width: 120px; }",
     ].join('\n'),
@@ -175,6 +175,12 @@ GM_config.init({
             default: prefs.gallery.autoZoom,
             title: '如果有放大，则把图片及 sidebar 部分的缩放改回 100%，增大可视面积（仅在 chrome 下有效）'
         },
+        'gallery.descriptionLength': {
+            label: '注释的最大长度',
+            type: 'int',
+            default: prefs.gallery.descriptionLength,
+            after: ' 个'
+        },
 
         // 图片窗口
         'imgWindow.fitToScreen': {
@@ -283,7 +289,7 @@ function loadPrefs() {
         }, prefs) || prefs;
 
         var value = GM_config.get(keyStr);
-        if (value) {
+        if (typeof value != 'undefined') {
             // 特殊的修正
             if (keyStr == 'magnifier.wheelZoom.range' || keyStr == 'imgWindow.zoom.range') {
                 lastPref[lastKey] = value.split(/[,，]\s*/).map(function(s) { return parseFloat(s)});
