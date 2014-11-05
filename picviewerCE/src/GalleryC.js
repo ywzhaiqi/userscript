@@ -1509,9 +1509,10 @@ GalleryC.prototype={
 		});
 
 		var thumbnails = this.eleMaps['sidebar-thumbnails-container'];
-		var lastIndex;
 		if (data) {
-			lastIndex = Array.prototype.slice.call(this.imgSpans).indexOf(this.selected);
+			if (!index) {
+				index = Array.prototype.slice.call(this.imgSpans).indexOf(this.selected);
+			}
 			thumbnails.innerHTML += spanMark;
 		} else {
 			thumbnails.innerHTML = spanMark;
@@ -1542,9 +1543,7 @@ GalleryC.prototype={
 
 		this.thumbScrollbar.reset();
 
-		this.select(this.imgSpans[index || lastIndex], true);
-
-		this.runOnce();
+		this.select(this.imgSpans[index], true);
 	},
 	load:function(data, from, reload){
 		if(this.shown || this.minimized){//只允许打开一个,请先关掉当前已经打开的库
@@ -1593,8 +1592,9 @@ GalleryC.prototype={
 
 		this._appendThumbSpans(null, index);
 
-		this.switchThumbVisible();
+		this.runOnce();
 
+		this.switchThumbVisible();
 	},
 	clear:function(){
 

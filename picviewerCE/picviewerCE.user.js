@@ -2,7 +2,7 @@
 // @name           picviewer CE
 // @author         NLF && ywzhaiqi
 // @description    NLF 的围观图修改版
-// @version        2014.11.4.1
+// @version        2014.11.5.0
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
@@ -23,6 +23,7 @@
 // @include       https://*
 // @exclude       http://www.toodledo.com/tasks/*
 // @exclude       http*://maps.google.com*/*
+// @exclude       *://www.google.*/_/chrome/newtab*
 // ==/UserScript==
 
 ;(function(topObject,window,document,unsafeWindow){
@@ -2972,9 +2973,10 @@ GalleryC.prototype={
 		});
 
 		var thumbnails = this.eleMaps['sidebar-thumbnails-container'];
-		var lastIndex;
 		if (data) {
-			lastIndex = Array.prototype.slice.call(this.imgSpans).indexOf(this.selected);
+			if (!index) {
+				index = Array.prototype.slice.call(this.imgSpans).indexOf(this.selected);
+			}
 			thumbnails.innerHTML += spanMark;
 		} else {
 			thumbnails.innerHTML = spanMark;
@@ -3005,9 +3007,7 @@ GalleryC.prototype={
 
 		this.thumbScrollbar.reset();
 
-		this.select(this.imgSpans[index || lastIndex], true);
-
-		this.runOnce();
+		this.select(this.imgSpans[index], true);
 	},
 	load:function(data, from, reload){
 		if(this.shown || this.minimized){//只允许打开一个,请先关掉当前已经打开的库
@@ -3056,8 +3056,9 @@ GalleryC.prototype={
 
 		this._appendThumbSpans(null, index);
 
-		this.switchThumbVisible();
+		this.runOnce();
 
+		this.switchThumbVisible();
 	},
 	clear:function(){
 
@@ -7540,7 +7541,7 @@ function globalMouseoverHandler(e){
 	// 	}
 	// }
 
-	if (!result && target.nodeName != 'IMG') return;
+	if (!target || !result && target.nodeName != 'IMG') return;
 
 	if (!result) {
 		result = findPic(target);

@@ -414,7 +414,7 @@ function globalMouseoverHandler(e){
 	// 	}
 	// }
 
-	if (!result && target.nodeName != 'IMG') return;
+	if (!target || !result && target.nodeName != 'IMG') return;
 
 	if (!result) {
 		result = findPic(target);

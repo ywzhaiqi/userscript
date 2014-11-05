@@ -23,4 +23,5 @@
 // @include       https://*
 // @exclude       http://www.toodledo.com/tasks/*
 // @exclude       http*://maps.google.com*/*
+// @exclude       *://www.google.*/_/chrome/newtab*
 // ==/UserScript==
