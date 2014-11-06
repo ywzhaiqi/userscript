@@ -94,11 +94,3 @@
     海词, http://dict.cn/%s
     百度词典, http://dict.baidu.com/s?wd=%s&ie=utf-8&oe=utf-8
     汉典, http://www.zdic.net/search/?q=%s
-
-地图
-   Google 地图, http://ditu.google.cn/maps?q=%s
-   Google 地图（新）, https://maps.google.com/maps?q=%s, ditu.google.cn
-   百度地图, http://map.baidu.com/m?word=%s
-   搜狗地图, http://map.sogou.com/new/#lq=%s
-   必应地图, http://cn.bing.com/ditu/?q=%s&mkt=zh-CN
-   城市吧, http://www.city8.com/key_%s

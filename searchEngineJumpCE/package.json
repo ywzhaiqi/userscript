@@ -1,6 +1,6 @@
 {
     "name": "searchEngineJumpCE",
-    "version": "4.2.1.1",
+    "version": "4.2.1.2",
     "description": "方便的在各个引擎之间跳转。可自定义搜索列表的 NLF 修改版。",
     "main": "gulpfile.js",
     "directories": {

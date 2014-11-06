@@ -201,7 +201,7 @@ var rules = [
         }
     },
     {name: "wiki",
-        url: /^https?:\/\/..\.wikipedia\.org\/w\/index\.php(?!.*\?search=%s)/,
+        url: /^https?:\/\/..\.wikipedia\.org\/w\/index\.php(?!.*\?search=)/,
         enabled: true,
         engineList: "知识",
         style: '\
