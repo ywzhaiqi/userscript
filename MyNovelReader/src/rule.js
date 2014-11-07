@@ -570,7 +570,7 @@ Rule.specialSite = [
         ]
     },
     {siteName: "六月中文网，盗梦人小说网",
-        url: "^http://www\\.(?:6yzw\\.org|daomengren\\.com)/.*\\.html",
+        url: "^http://www\\.(?:6yzw\\.org|6yzw\\.com|daomengren\\.com)/.*\\.html",
         bookTitleSelector: ".con_top>a:last",
         contentRemove: "a[href]",
         contentReplace: [
@@ -958,15 +958,16 @@ Rule.specialSite = [
         contentReplace: "请记住本站： www.yqhhy.cc|更多，尽在言情后花园。"
     },
     {siteName: "六九中文",
-        url: "http://www.69zw.com/\\w+/\\d+/\\d+/\\d+.html",
+        url: "http://www.(?:69zw|kan7).com/\\w+/\\d+/\\d+/\\d+.html",
         titleSelector: ".chapter_title",
         bookTitleSelector: ".readhead h1",
         contentSelector: ".yd_text2",
         // titleReg: "(.*)?_(.*)-六九中文",
         contentReplace: [
             "[\\*]+本章节来源六九中文.*请到六九中文阅读最新章节[\\*]+|－\\\\[wＷ]+.*书友上传/－",
-            "\\请到 www，69zw，com 六*九*中*文*阅读/",
+            "\\\\请到 www.69zw.com 六\\*九.*?/",
             "【 注册会员可获私人书架，看书更方便！：】",
+            "首发<br />",
         ]
     },
     {siteName: "免费小说阅读网",

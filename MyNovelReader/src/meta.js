@@ -78,6 +78,7 @@
 // @include        http://www.qishuwu.com/*/*/
 // @include        http://www.wandoou.com/book/*/*.html
 // @include        http://www.6yzw.org/*/*.html
+// @include        http://www.6yzw.com/*/*.html
 // @include        http://www.daomengren.com/*/*.html
 // @include        http://muyuge.com/*/*.html
 // @include        http://www.muyuge.net/*/*.html
@@ -189,6 +190,7 @@
 // @include        http://www.yanmoxuan.org/book/*/*/*.html
 // @include        http://www.duyidu.com/xiaoshuo/*/*/*.html
 // @include        http://www.69zw.com/xiaoshuo/*/*/*.html
+// @include        http://www.kan7.com/xiaoshuo/*/*/*.html
 // @include        http://www.laishu.com/book/*/*/*.shtml
 // @include        http://www.bxwx.org/b/*/*/*.html
 // @include        http://www.bxzw.org/*/*/*/*.shtml
