@@ -87,5 +87,7 @@ var prefs={
 	//按住shift键，可以临时执行和这个设定相反的设定
 	framesPicOpenInTopWindow:true,
 
+	// lowLevel: true,  // 如果有多个图片，优先选择低一级的
+
 	debug: false,
 };

@@ -319,17 +319,6 @@ var siteInfo=[
 
 // 通配型规则,无视站点.
 var tprules=[
-	function(img, a) { // GoogleContent 规则，来自 Imagus 扩展
-		var reg = new RegExp('((?:(?:lh|gp|yt)\\d+\\.g(?:oogleuserconten|gph)|\\d\\.bp\\.blogspo)t\\.com/)(?:([_-](?:[\\w\\-]{11}/){4})[^/]+(/[^?#]+)?|([^=]+)).*');
-		var $ = reg.exec(this.src);
-		if ($) {
-			var url = true ?
-				$[1] + ($[4] ? $[4] + '=' : $[2]) + 's0' + ($[3] || '') : // 原图
-				$[1] + ($[4] ? $[4] + '=' : $[2]) + 's1024' + ($[3] || ''); // 1024 大小
-			return 'http://' + url;
-		}
-	},
-
 	function(img,a){ // 解决新的dz论坛的原图获取方式.
 		var reg=/(.+\/attachments?\/.+)\.thumb\.\w{2,5}$/i;
 		var oldsrc=this.src;
@@ -360,6 +349,15 @@ Rule.MPIV = [
 	// 	q: 'img[alt="preloading"][src*="/pic/item/"]',
 	// 	// description: './../../following-sibling::div[@class="ext-info"]/a',
 	// },
+	{name: "GoogleContent",  // 来自 Imagus 扩展
+		r: "^((?:(?:lh|gp|yt)\\d+\\.g(?:oogleuserconten|gph)|\\d\\.bp\\.blogspo)t\\.com/)(?:([_-](?:[\\w\\-]{11}/){4})[^/]+(/[^?#]+)?|([^=]+)).*",
+		s: function($, node) {
+			return [
+				// 'http://' + $[1] + ($[4] ? $[4] + '=' : $[2]) + 's0' + ($[3] || ''),    // 原图
+				'http://' + $[1] + ($[4] ? $[4] + '=' : $[2]) + 's1024' + ($[3] || '')  // 1024 大小
+			];
+		},
+	},
 	{name: "pixiv（部分）",
 	    d: 'pixiv.net',
 	    r: /(pixiv.net\/img\d+\/img\/.+\/\d+)_[ms]\.(\w{2,5})$/i,
@@ -403,7 +401,12 @@ Rule.MPIV = [
 	},
 
 	// 论坛
-	{name: "Firefox 中文社区",
+	{name: "firefox 扩展中心",
+		d: "addons.mozilla.org",
+		r: "addons.cdn.mozilla.net/user-media/previews/thumbs/",
+		s: "/thumbs/full/",
+	},
+	{name: "firefox 中文社区",
 		d: "firefox.net.cn",
 		r: "www.firefox.net.cn/attachment/thumb/",
 		s: "r;www.firefox.net.cn/attachment/"

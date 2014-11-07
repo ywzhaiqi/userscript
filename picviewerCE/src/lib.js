@@ -39,7 +39,7 @@ function isXPath(xpath) {
 	return xpath.startsWith('./') || xpath.startsWith('//') || xpath.startsWith('id(');
 }
 
-function getElementByNode(selector, contextNode, doc) {
+function getElementMix(selector, contextNode, doc) {
 	var ret;
 	if (!selector || !contextNode) return ret;
 	doc = doc || document;

@@ -26,13 +26,13 @@ function findPic(img){
 	var src,  // 大图地址
 		srcs,  // 备用的大图地址
 		type,  // 类别
-		imgSrc,  // img 节点的 src
+		imgSrc = img.src,  // img 节点的 src
 		xhr,
 		description;  // 图片的注释
 
 	if(!src && matchedRule){// 通过高级规则获取.
 		// 排除
-		if (matchedRule.exclude && matchedRule.exclude.test(img.src)) {
+		if (matchedRule.exclude && matchedRule.exclude.test(imgSrc)) {
 			return;
 		} else {
 			try{
@@ -55,7 +55,7 @@ function findPic(img){
 				}
 
 				if (matchedRule.description) {
-					var node = getElementByNode(matchedRule.description, img);
+					var node = getElementMix(matchedRule.description, img);
 					if (node) {
 						description = node.getAttribute('title') || node.textContent;
 					}
@@ -66,7 +66,7 @@ function findPic(img){
 
 	if (!src && !base64Img) { // 兼容 MPIV 脚本规则
 		var info = MPIV.parseNode(img);
-		if (info && info.r) {
+		if (info && info.url && (info.url != imgSrc)) {
 			type = 'rule';
 			src = info.url;
 			srcs = info.urls;
@@ -118,7 +118,7 @@ function findPic(img){
 
 		if(!(imgAS.w==imgCS.w && imgAS.h==imgCS.h)){//如果不是两者完全相等,那么被缩放了.
 			if(imgAS.h > prefs.floatBar.minSizeLimit.h || imgAS.w > prefs.floatBar.minSizeLimit.w){//最小限定判断.
-				src=img.src;
+				src=imgSrc;
 				type='scale';
 
 				// // 图片尺寸相差
@@ -131,7 +131,7 @@ function findPic(img){
 			};
 		}else{
 			if(prefs.floatBar.forceShow.enabled && (imgCS.w>=prefs.floatBar.forceShow.size.w && imgCS.h>=prefs.floatBar.forceShow.size.h)){
-				src=img.src;
+				src=imgSrc;
 				type='force';
 			};
 		};
@@ -143,7 +143,7 @@ function findPic(img){
 		src: src,                  // 得到的src
 		srcs: srcs,                // 多个 src，失败了会尝试下一个
 		type: type,                // 通过哪种方式得到的
-		imgSrc: imgSrc || img.src, // 处理的图片的src
+		imgSrc: imgSrc,            // 处理的图片的src
 		iPASrc: iPASrc,            // 图片的第一个父a元素的链接地址
 
 		xhr: xhr,

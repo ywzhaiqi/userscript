@@ -64,18 +64,16 @@ var MPIV = (function() {
 		if(!m) return s;
 
 		if (r && s.startsWith('r;')) {  // 特殊的替换模式
-			return m.input.replace(r, s.slice(2));
-		}
-
-		if(s.indexOf('/') === 0) {
+			s = m.input.replace(r, s.slice(2));
+		} else if(s.indexOf('/') === 0) {
 			var mid = /[^\\]\//.exec(s).index+1;
 			var end = s.lastIndexOf('/');
 			var re = new RegExp(s.substring(1, mid), s.substr(end+1));
-			return m.input.replace(re, s.substring(mid+1, end));
-		}
-
-		for(var i = m.length; i--;) {
-			s = s.replace('$'+i, m[i]);
+			s = m.input.replace(re, s.substring(mid+1, end));
+		} else {
+			for(var i = m.length; i--;) {
+				s = s.replace('$'+i, m[i]);
+			}
 		}
 
 		if (!s.startsWith('http') && http) {
@@ -179,7 +177,7 @@ var MPIV = (function() {
 				post: typeof h.post == 'function' ? h.post(m) : h.post,
 				follow: h.follow,
 				css: h.css,
-				manual: h.manual,
+				// manual: h.manual,
 				distinct: h.distinct,
 				// rect: rect(node, h.rect)
 			};

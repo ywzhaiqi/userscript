@@ -2,7 +2,7 @@
 // @name           picviewer CE
 // @author         NLF && ywzhaiqi
 // @description    NLF 的围观图修改版
-// @version        2014.11.5.1
+// @version        2014.11.7.0
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
@@ -119,6 +119,8 @@ var prefs={
 	//框架里面的图片在顶层窗口展示出来，但是当frame与顶层窗口domain不一样的时候，可能导致图片被反盗链拦截，
 	//按住shift键，可以临时执行和这个设定相反的设定
 	framesPicOpenInTopWindow:true,
+
+	// lowLevel: true,  // 如果有多个图片，优先选择低一级的
 
 	debug: false,
 };
@@ -444,17 +446,6 @@ var siteInfo=[
 
 // 通配型规则,无视站点.
 var tprules=[
-	function(img, a) { // GoogleContent 规则，来自 Imagus 扩展
-		var reg = new RegExp('((?:(?:lh|gp|yt)\\d+\\.g(?:oogleuserconten|gph)|\\d\\.bp\\.blogspo)t\\.com/)(?:([_-](?:[\\w\\-]{11}/){4})[^/]+(/[^?#]+)?|([^=]+)).*');
-		var $ = reg.exec(this.src);
-		if ($) {
-			var url = true ?
-				$[1] + ($[4] ? $[4] + '=' : $[2]) + 's0' + ($[3] || '') : // 原图
-				$[1] + ($[4] ? $[4] + '=' : $[2]) + 's1024' + ($[3] || ''); // 1024 大小
-			return 'http://' + url;
-		}
-	},
-
 	function(img,a){ // 解决新的dz论坛的原图获取方式.
 		var reg=/(.+\/attachments?\/.+)\.thumb\.\w{2,5}$/i;
 		var oldsrc=this.src;
@@ -485,6 +476,15 @@ Rule.MPIV = [
 	// 	q: 'img[alt="preloading"][src*="/pic/item/"]',
 	// 	// description: './../../following-sibling::div[@class="ext-info"]/a',
 	// },
+	{name: "GoogleContent",  // 来自 Imagus 扩展
+		r: "^((?:(?:lh|gp|yt)\\d+\\.g(?:oogleuserconten|gph)|\\d\\.bp\\.blogspo)t\\.com/)(?:([_-](?:[\\w\\-]{11}/){4})[^/]+(/[^?#]+)?|([^=]+)).*",
+		s: function($, node) {
+			return [
+				// 'http://' + $[1] + ($[4] ? $[4] + '=' : $[2]) + 's0' + ($[3] || ''),    // 原图
+				'http://' + $[1] + ($[4] ? $[4] + '=' : $[2]) + 's1024' + ($[3] || '')  // 1024 大小
+			];
+		},
+	},
 	{name: "pixiv（部分）",
 	    d: 'pixiv.net',
 	    r: /(pixiv.net\/img\d+\/img\/.+\/\d+)_[ms]\.(\w{2,5})$/i,
@@ -528,7 +528,12 @@ Rule.MPIV = [
 	},
 
 	// 论坛
-	{name: "Firefox 中文社区",
+	{name: "firefox 扩展中心",
+		d: "addons.mozilla.org",
+		r: "addons.cdn.mozilla.net/user-media/previews/thumbs/",
+		s: "/thumbs/full/",
+	},
+	{name: "firefox 中文社区",
 		d: "firefox.net.cn",
 		r: "www.firefox.net.cn/attachment/thumb/",
 		s: "r;www.firefox.net.cn/attachment/"
@@ -761,7 +766,7 @@ function isXPath(xpath) {
 	return xpath.startsWith('./') || xpath.startsWith('//') || xpath.startsWith('id(');
 }
 
-function getElementByNode(selector, contextNode, doc) {
+function getElementMix(selector, contextNode, doc) {
 	var ret;
 	if (!selector || !contextNode) return ret;
 	doc = doc || document;
@@ -6985,18 +6990,16 @@ var MPIV = (function() {
 		if(!m) return s;
 
 		if (r && s.startsWith('r;')) {  // 特殊的替换模式
-			return m.input.replace(r, s.slice(2));
-		}
-
-		if(s.indexOf('/') === 0) {
+			s = m.input.replace(r, s.slice(2));
+		} else if(s.indexOf('/') === 0) {
 			var mid = /[^\\]\//.exec(s).index+1;
 			var end = s.lastIndexOf('/');
 			var re = new RegExp(s.substring(1, mid), s.substr(end+1));
-			return m.input.replace(re, s.substring(mid+1, end));
-		}
-
-		for(var i = m.length; i--;) {
-			s = s.replace('$'+i, m[i]);
+			s = m.input.replace(re, s.substring(mid+1, end));
+		} else {
+			for(var i = m.length; i--;) {
+				s = s.replace('$'+i, m[i]);
+			}
 		}
 
 		if (!s.startsWith('http') && http) {
@@ -7100,7 +7103,7 @@ var MPIV = (function() {
 				post: typeof h.post == 'function' ? h.post(m) : h.post,
 				follow: h.follow,
 				css: h.css,
-				manual: h.manual,
+				// manual: h.manual,
 				distinct: h.distinct,
 				// rect: rect(node, h.rect)
 			};
@@ -7159,13 +7162,13 @@ function findPic(img){
 	var src,  // 大图地址
 		srcs,  // 备用的大图地址
 		type,  // 类别
-		imgSrc,  // img 节点的 src
+		imgSrc = img.src,  // img 节点的 src
 		xhr,
 		description;  // 图片的注释
 
 	if(!src && matchedRule){// 通过高级规则获取.
 		// 排除
-		if (matchedRule.exclude && matchedRule.exclude.test(img.src)) {
+		if (matchedRule.exclude && matchedRule.exclude.test(imgSrc)) {
 			return;
 		} else {
 			try{
@@ -7188,7 +7191,7 @@ function findPic(img){
 				}
 
 				if (matchedRule.description) {
-					var node = getElementByNode(matchedRule.description, img);
+					var node = getElementMix(matchedRule.description, img);
 					if (node) {
 						description = node.getAttribute('title') || node.textContent;
 					}
@@ -7199,7 +7202,7 @@ function findPic(img){
 
 	if (!src && !base64Img) { // 兼容 MPIV 脚本规则
 		var info = MPIV.parseNode(img);
-		if (info && info.r) {
+		if (info && info.url && (info.url != imgSrc)) {
 			type = 'rule';
 			src = info.url;
 			srcs = info.urls;
@@ -7251,7 +7254,7 @@ function findPic(img){
 
 		if(!(imgAS.w==imgCS.w && imgAS.h==imgCS.h)){//如果不是两者完全相等,那么被缩放了.
 			if(imgAS.h > prefs.floatBar.minSizeLimit.h || imgAS.w > prefs.floatBar.minSizeLimit.w){//最小限定判断.
-				src=img.src;
+				src=imgSrc;
 				type='scale';
 
 				// // 图片尺寸相差
@@ -7264,7 +7267,7 @@ function findPic(img){
 			};
 		}else{
 			if(prefs.floatBar.forceShow.enabled && (imgCS.w>=prefs.floatBar.forceShow.size.w && imgCS.h>=prefs.floatBar.forceShow.size.h)){
-				src=img.src;
+				src=imgSrc;
 				type='force';
 			};
 		};
@@ -7276,7 +7279,7 @@ function findPic(img){
 		src: src,                  // 得到的src
 		srcs: srcs,                // 多个 src，失败了会尝试下一个
 		type: type,                // 通过哪种方式得到的
-		imgSrc: imgSrc || img.src, // 处理的图片的src
+		imgSrc: imgSrc,            // 处理的图片的src
 		iPASrc: iPASrc,            // 图片的第一个父a元素的链接地址
 
 		xhr: xhr,
