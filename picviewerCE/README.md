@@ -3,6 +3,8 @@ picviewerCE.user.js
 
 [picViewer By NLF](http://userscripts-mirror.org/scripts/show/105741) 修改版，需要运行在 **Greasemonkey / Tampermonkey** 环境中。
 
+由于 picviewer 脚本比较复杂，在修改的过程中难免会尝试问题，不愿麻烦的请使用原版。
+
 ## 修改说明
 
 ### 修正
