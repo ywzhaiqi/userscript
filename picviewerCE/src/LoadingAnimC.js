@@ -49,9 +49,9 @@ LoadingAnimC.prototype={
 				xhrLoad.load({
 					url: this.data.src,
 					xhr: this.data.xhr,
-					cb: function(imgSrc, caption) {
+					cb: function(imgSrc, imgSrcs, caption) {
 						if (imgSrc) {
-							self.loadImg(imgSrc);
+							self.loadImg(imgSrc, imgSrcs);
 						} else {
 							self.error();
 						}

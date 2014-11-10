@@ -8,7 +8,7 @@ function ImgWindowC(img, data){
 };
 
 ImgWindowC.all=[];//所有的窗口对象
-ImgWindowC.styleZIndex=1000000000;//全局z-index;
+ImgWindowC.styleZIndex=2147483647;//全局z-index;
 ImgWindowC.zoomRange=prefs.imgWindow.zoom.range.slice(0).sort();//升序
 ImgWindowC.zoomRangeR=ImgWindowC.zoomRange.slice(0).reverse();//降序
 ImgWindowC.overlayer=null;

@@ -1269,7 +1269,7 @@ GalleryC.prototype={
 			xhrLoad.load({
 				url: src,
 				xhr: JSON.parse(decodeURIComponent(xhr)),
-				cb: function(imgSrc, caption) {
+				cb: function(imgSrc, imgSrcs, caption) {
 					if (imgSrc) {
 						dataset(ele, 'src', imgSrc);
 						dataset(ele, 'xhr', '');
@@ -1490,7 +1490,7 @@ GalleryC.prototype={
 		var spanMark = '';
 		var iStatisCopy = this.iStatisCopy;
 
-		if (!index && this.selected) {
+		if (typeof index == 'undefined' && this.selected) {
 			index = Array.prototype.slice.call(this.imgSpans).indexOf(this.selected);
 		}
 

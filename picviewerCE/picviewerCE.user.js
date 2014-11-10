@@ -2,7 +2,7 @@
 // @name           picviewer CE
 // @author         NLF && ywzhaiqi
 // @description    NLF 的围观图修改版
-// @version        2014.11.7.0
+// @version        2014.11.10.0
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
@@ -431,13 +431,13 @@ var siteInfo=[
 
 	// 需要 xhr 获取的
 	{name: '优美图',
-		url: /http:\/\/www\.topit\.me\//,
+		url: /http:\/\/(?:www\.)?topit\.me\//,
 		getImage: function(img, a) {  // 如果有 xhr，则应该返回 xhr 的 url
-			var oldsrc = this.src;
-			if (a && oldsrc.match(/topit\.me\/.*\.jpg$/)) {
+			if (a && a.href.match(/topit\.me\/item\/\d+/)) {
 				return a.href;
 			}
 		},
+		lazyAttr: 'data-original',  // 延迟加载技术让后面的图片是 blank.gif
 		xhr: {
 			q: ['a[download]', 'a#item-tip'],
 		}
@@ -446,12 +446,13 @@ var siteInfo=[
 
 // 通配型规则,无视站点.
 var tprules=[
-	function(img,a){ // 解决新的dz论坛的原图获取方式.
-		var reg=/(.+\/attachments?\/.+)\.thumb\.\w{2,5}$/i;
-		var oldsrc=this.src;
-		if (!oldsrc) return;
-		var newsrc=oldsrc.replace(reg,'$1');
-		if(oldsrc!=newsrc)return newsrc;
+	function(img, a) { // 解决新的dz论坛的原图获取方式.
+		var reg = /(.+\/attachments?\/.+)\.thumb\.\w{2,5}$/i;
+		var oldsrc = this.src;
+		if (oldsrc && reg.test(oldsrc)) {
+			var newsrc = oldsrc.replace(reg, '$1');
+			return oldsrc != newsrc ? newsrc : null;
+		}
 	},
 ];
 
@@ -2738,7 +2739,7 @@ GalleryC.prototype={
 			xhrLoad.load({
 				url: src,
 				xhr: JSON.parse(decodeURIComponent(xhr)),
-				cb: function(imgSrc, caption) {
+				cb: function(imgSrc, imgSrcs, caption) {
 					if (imgSrc) {
 						dataset(ele, 'src', imgSrc);
 						dataset(ele, 'xhr', '');
@@ -2959,7 +2960,7 @@ GalleryC.prototype={
 		var spanMark = '';
 		var iStatisCopy = this.iStatisCopy;
 
-		if (!index && this.selected) {
+		if (typeof index == 'undefined' && this.selected) {
 			index = Array.prototype.slice.call(this.imgSpans).indexOf(this.selected);
 		}
 
@@ -4663,7 +4664,7 @@ function ImgWindowC(img, data){
 };
 
 ImgWindowC.all=[];//所有的窗口对象
-ImgWindowC.styleZIndex=1000000000;//全局z-index;
+ImgWindowC.styleZIndex=2147483647;//全局z-index;
 ImgWindowC.zoomRange=prefs.imgWindow.zoom.range.slice(0).sort();//升序
 ImgWindowC.zoomRangeR=ImgWindowC.zoomRange.slice(0).reverse();//降序
 ImgWindowC.overlayer=null;
@@ -6289,9 +6290,9 @@ LoadingAnimC.prototype={
 				xhrLoad.load({
 					url: this.data.src,
 					xhr: this.data.xhr,
-					cb: function(imgSrc, caption) {
+					cb: function(imgSrc, imgSrcs, caption) {
 						if (imgSrc) {
-							self.loadImg(imgSrc);
+							self.loadImg(imgSrc, imgSrcs);
 						} else {
 							self.error();
 						}
@@ -6831,29 +6832,35 @@ var xhrLoad = function() {
 	 */
 	function parsePage(url, q, c, post, cb) {
 		downloadPage(url, post, function(html) {
-			var iurl, cap, doc = createDoc(html);
+			var iurl, iurls = [], cap, doc = createDoc(html);
+
 			if(typeof q == 'function') {
 				iurl = q(html, doc);
 			} else {
-				var inode = findNode(q, doc);
-				iurl = inode ? findFile(inode, url) : false;
+				var inodes = findNodes(q, doc);
+				inodes.forEach(function(node) {
+					iurls.push(findFile(node, url));
+				});
+				iurl = iurls.shift();
 			}
+
 			if(typeof c == 'function') {
 				cap = c(html, doc);
 			} else {
-				var cnode = findNode(c, doc);
-				cap = cnode ? findCaption(cnode) : false;
+				var cnodes = findNodes(c, doc);
+				cap = cnodes.length ? findCaption(cnode[0]) : false;
 			}
 
 			// 缓存
 			if (iurl) {
 				caches[url] = {
 					iurl: iurl,
+					iurls: iurls,
 					cap: cap
 				};
 			}
 
-			cb(iurl, cap);
+			cb(iurl, iurls, cap);
 		});
 	}
 
@@ -6886,14 +6893,17 @@ var xhrLoad = function() {
 		return doc;
 	}
 
-	function findNode(q, doc) {
-		var node;
+	function findNodes(q, doc) {
+		var nodes = [],
+			node;
 		if (!Array.isArray(q)) q = [q];
 		for (var i = 0, len = q.length; i < len; i++) {
 			node = qs(q[i], doc);
-			if (node) break;
+			if (node) {
+				nodes.push(node);
+			}
 		}
-		return node;
+		return nodes;
 	}
 
 	function findFile(n, url) {
@@ -6912,7 +6922,7 @@ var xhrLoad = function() {
 	_.load = function(opt) {
 		var info = caches[opt.url];
 		if (info) {
-			opt.cb(info.iurl, info.cap);
+			opt.cb(info.iurl, info.iruls, info.cap);
 			return;
 		}
 
@@ -7187,7 +7197,7 @@ function findPic(img){
 				xhr = matchedRule.xhr;
 
 				if (matchedRule.lazyAttr) {  // 由于采用了延迟加载技术，所以图片可能为 loading.gif
-					imgSrc = img.getAttribute(matchedRule.lazyAttr);
+					imgSrc = img.getAttribute(matchedRule.lazyAttr) || img.src;
 				}
 
 				if (matchedRule.description) {

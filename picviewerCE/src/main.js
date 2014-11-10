@@ -51,7 +51,7 @@ function findPic(img){
 				xhr = matchedRule.xhr;
 
 				if (matchedRule.lazyAttr) {  // 由于采用了延迟加载技术，所以图片可能为 loading.gif
-					imgSrc = img.getAttribute(matchedRule.lazyAttr);
+					imgSrc = img.getAttribute(matchedRule.lazyAttr) || img.src;
 				}
 
 				if (matchedRule.description) {

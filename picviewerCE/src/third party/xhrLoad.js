@@ -13,29 +13,35 @@ var xhrLoad = function() {
 	 */
 	function parsePage(url, q, c, post, cb) {
 		downloadPage(url, post, function(html) {
-			var iurl, cap, doc = createDoc(html);
+			var iurl, iurls = [], cap, doc = createDoc(html);
+
 			if(typeof q == 'function') {
 				iurl = q(html, doc);
 			} else {
-				var inode = findNode(q, doc);
-				iurl = inode ? findFile(inode, url) : false;
+				var inodes = findNodes(q, doc);
+				inodes.forEach(function(node) {
+					iurls.push(findFile(node, url));
+				});
+				iurl = iurls.shift();
 			}
+
 			if(typeof c == 'function') {
 				cap = c(html, doc);
 			} else {
-				var cnode = findNode(c, doc);
-				cap = cnode ? findCaption(cnode) : false;
+				var cnodes = findNodes(c, doc);
+				cap = cnodes.length ? findCaption(cnode[0]) : false;
 			}
 
 			// 缓存
 			if (iurl) {
 				caches[url] = {
 					iurl: iurl,
+					iurls: iurls,
 					cap: cap
 				};
 			}
 
-			cb(iurl, cap);
+			cb(iurl, iurls, cap);
 		});
 	}
 
@@ -68,14 +74,17 @@ var xhrLoad = function() {
 		return doc;
 	}
 
-	function findNode(q, doc) {
-		var node;
+	function findNodes(q, doc) {
+		var nodes = [],
+			node;
 		if (!Array.isArray(q)) q = [q];
 		for (var i = 0, len = q.length; i < len; i++) {
 			node = qs(q[i], doc);
-			if (node) break;
+			if (node) {
+				nodes.push(node);
+			}
 		}
-		return node;
+		return nodes;
 	}
 
 	function findFile(n, url) {
@@ -94,7 +103,7 @@ var xhrLoad = function() {
 	_.load = function(opt) {
 		var info = caches[opt.url];
 		if (info) {
-			opt.cb(info.iurl, info.cap);
+			opt.cb(info.iurl, info.iruls, info.cap);
 			return;
 		}
 

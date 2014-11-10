@@ -304,13 +304,13 @@ var siteInfo=[
 
 	// 需要 xhr 获取的
 	{name: '优美图',
-		url: /http:\/\/www\.topit\.me\//,
+		url: /http:\/\/(?:www\.)?topit\.me\//,
 		getImage: function(img, a) {  // 如果有 xhr，则应该返回 xhr 的 url
-			var oldsrc = this.src;
-			if (a && oldsrc.match(/topit\.me\/.*\.jpg$/)) {
+			if (a && a.href.match(/topit\.me\/item\/\d+/)) {
 				return a.href;
 			}
 		},
+		lazyAttr: 'data-original',  // 延迟加载技术让后面的图片是 blank.gif
 		xhr: {
 			q: ['a[download]', 'a#item-tip'],
 		}
@@ -319,12 +319,13 @@ var siteInfo=[
 
 // 通配型规则,无视站点.
 var tprules=[
-	function(img,a){ // 解决新的dz论坛的原图获取方式.
-		var reg=/(.+\/attachments?\/.+)\.thumb\.\w{2,5}$/i;
-		var oldsrc=this.src;
-		if (!oldsrc) return;
-		var newsrc=oldsrc.replace(reg,'$1');
-		if(oldsrc!=newsrc)return newsrc;
+	function(img, a) { // 解决新的dz论坛的原图获取方式.
+		var reg = /(.+\/attachments?\/.+)\.thumb\.\w{2,5}$/i;
+		var oldsrc = this.src;
+		if (oldsrc && reg.test(oldsrc)) {
+			var newsrc = oldsrc.replace(reg, '$1');
+			return oldsrc != newsrc ? newsrc : null;
+		}
 	},
 ];
 
