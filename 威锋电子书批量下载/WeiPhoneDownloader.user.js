@@ -2,7 +2,7 @@
 // @name           WeiPhoneDownloadHelper
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
-// @version        1.2.1
+// @version        1.3.0
 // @description    批量下载威锋论坛的电子书
 // @homepageURL    https://greasyfork.org/scripts/668/
 // @updateURL      https://greasyfork.org/scripts/668/code.meta.js
@@ -13,9 +13,9 @@
 // @include        http://bbs.feng.com/forum.php*
 // @run-at         document-end
 // @grant          GM_addStyle
+// @require        http://cdn.staticfile.org/jquery/2.1.1/jquery.min.js
 // ==/UserScript==
 
-var $ = jQuery = unsafeWindow.jQuery;
 
 var RES = getMStr(function(){
 	var html;
@@ -194,6 +194,6 @@ function getMStr(fn) {
         // console.log(matched);
         ret[matched[1]] = matched[2];
     };
-    
+
     return ret;
 }
