@@ -287,7 +287,6 @@ var UI = {
                 default:
                     break;
             }
-            // UI.refreshMainStyle();
         }, 300);
         $form.on("input", "input", preview);
 
@@ -365,9 +364,7 @@ var UI = {
     preferencesSaveHandler: function(){
         var $form = $("#preferences");
 
-        var form = document.getElementById('preferences');
-
-        Config.setDisableAutoLaunch(form.elements.namedItem("disable-auto-launch").checked);
+        Config.setDisableAutoLaunch($form.find("#disable-auto-launch").get(0).checked);
 
         Config.cn2tw = $form.find("#enable-cn2tw").get(0).checked;
         Config.booklink_enable = $form.find("#booklink-enable").get(0).checked;

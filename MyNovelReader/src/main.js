@@ -424,6 +424,10 @@ var App = {
     },
     registerKeys: function() {
         key('enter', function(event) {
+            if (UI.$prefs) {
+                return;
+            }
+
             App.openUrl(App.indexUrl, "主页链接没有找到".uiTrans());
             App.copyCurTitle();
 

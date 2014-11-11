@@ -62,11 +62,11 @@ function parseHTML(str) {
     return doc;
 }
 
-function toRE(obj, flags) {
+function toRE(obj, flag) {
     if (obj instanceof RegExp) {
         return obj;
     } else {
-        return new RegExp(obj, (flags || 'ig'));
+        return new RegExp(obj, (flag || 'ig'));
     }
 }
 
