@@ -243,7 +243,7 @@ var UI = {
         $form.find("#remain-height").get(0).value = Config.remain_height;
         $form.find("#extra_css").get(0).value = Config.extra_css;
         $form.find("#custom_siteinfo").get(0).value = Config.customSiteinfo;
-        $form.find("#custom_replace_rules").get(0).value = Config.customReplaceRules;
+        UI._rules = $form.find("#custom_replace_rules").get(0).value = Config.customReplaceRules;
 
         // 界面语言
         var $lang = $form.find("#lang");
@@ -400,21 +400,23 @@ var UI = {
 
         Config.customSiteinfo = $form.find("#custom_siteinfo").get(0).value;
 
-        // 自定义替换规则
+        // 自定义替换规则直接生效
         var rules = $form.find("#custom_replace_rules").get(0).value;
         Config.customReplaceRules = rules;
+        if (rules != UI._rules) {
+            var contentHtml = App.oArticles.join('\n');
+            if (rules) {
+                // 转换规则
+                rules = Rule.parseCustomReplaceRules(rules);
+                // 替换
+                contentHtml = Parser.prototype.replaceHtml(contentHtml, rules);
+            }
 
-        var oContentHtml = App.oArticles.join('\n');
-        if (rules) {
-            var text = oContentHtml;
-            // 转换规则
-            rules = Rule.parseCustomReplaceRules(rules);
-            // 替换
-            text = Parser.prototype.replaceHtml(text, rules);
+            UI.$content.html(contentHtml);
 
-            UI.$content.html(text);
-        } else {
-            UI.$content.html(oContentHtml);
+            App.resetCache();
+
+            UI._rules = rules;
         }
 
         UI.hide();

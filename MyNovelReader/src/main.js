@@ -368,13 +368,15 @@ var App = {
             }
 
             App.pageNum += 1;
-            // 更新缓存变量
-            App.menuItems = App.$chapterList.find("div");
-            App.scrollItems = $("article");
+            App.resetCache();
         }
 
         App.oArticles.push(chapter[0].outerHTML);
         App.parsers.push(parser);
+    },
+    resetCache: function() {  // 更新缓存变量
+        App.menuItems = App.$chapterList.find("div");
+        App.scrollItems = $("article");
     },
     registerControls: function() {
         // 内容滚动
