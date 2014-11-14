@@ -100,9 +100,14 @@ Opera 12 的暴力猴旧版本有个问题，请更新至新版。
 }, ]
 ```
 
-#### 旧版（会被弃用）
+#### 旧版规则（已弃用）
 
 安装 https://userscripts.org/scripts/show/169728 后在里面添加，说明在其中。
+
+### 可参考的脚本或扩展
+
+- [Tategaki Novel](https://greasyfork.org/zh-CN/scripts/882-tategaki-novel)，小说横排。
+    - 测试链接：http://www.pixiv.net/novel/show.php?id=4547114
 
 ### 更新
 
