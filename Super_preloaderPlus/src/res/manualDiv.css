@@ -1,0 +1,54 @@
+#sp-sp-manualdiv {
+    line-height: 1.6!important;
+    opacity: 1!important;
+    position: relative!important;
+    float: none!important;
+    top: 0!important;
+    left: 0!important;
+    z-index: 1000!important;
+    min-width: 366px!important;
+    width: auto!important;
+    text-align: center!important;
+    font-size: 14px!important;
+    padding: 3px 0!important;
+    margin: 5px 10px 8px;
+    clear: both!important;
+    border-top: 1px solid #ccc!important;
+    border-bottom: 1px solid #ccc!important;
+    -moz-border-radius: 30px!important;
+    border-radius: 30px!important;
+    background-color: #F5F5F5!important;
+    -moz-box-shadow: inset 0 10px 16px #fff, 0 2px 3px rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow: inset 0 10px 16px #fff, 0 2px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 10px 16px #fff, 0 2px 3px rgba(0, 0, 0, 0.1);
+}
+.sp-sp-md-span {
+    font-weight: bold!important;
+    margin: 0 5px!important;
+}
+#sp-sp-md-number {
+    width: 50px!important;
+    vertical-align: middle!important;
+    display: inline-block!important;
+    text-align: left!important;
+}
+#sp-sp-md-imgnext {
+    padding: 0!important;
+    margin: 0 0 0 5px!important;
+    vertical-align: middle!important;
+    display: inline-block!important;
+}
+#sp-sp-manualdiv:hover {
+    cursor: pointer;
+}
+#sp-sp-md-someinfo {
+    position: absolute!important;
+    right: 16px!important;
+    bottom: 1px!important;
+    font-size: 10px!important;
+    text-shadow: white 0 1px 0!important;
+    color: #5A5A5A!important;
+    font-style: italic!important;
+    z-index: -1!important;
+    background: none!important;
+}

@@ -12,9 +12,10 @@
 // @grant        GM_xmlhttpRequest
 // @grant        GM_registerMenuCommand
 
-// @include      http*
+// @include      http://*
+// @include      https://*
 // @exclude      http*://mail.google.com/*
-// @exclude      http*://maps.google*   
+// @exclude      http*://maps.google*
 // @exclude      http*://www.google.com/reader*
 // @exclude      http*://www.google.com/calendar*
 // @exclude      https://docs.google.com/*
@@ -22,6 +23,7 @@
 // @exclude      http*://www.dropbox.com/*
 // @exclude      http*://www.toodledo.com/*
 // @exclude      http://cloud.feedly.com/*
+// @exclude      http*://www.inoreader.com/*
 // @exclude      http://weibo.com/*
 // @exclude      http://w.qq.com/*
 // @exclude      http://web2.qq.com/*
@@ -34,4 +36,7 @@
 // @exclude      http://www.youku.com/
 // @exclude      http://v.youku.com/*
 // @exclude      http://www.iqiyi.com/*
+
+// 在 iframe 中禁用
+// @exclude     https://cn.bing.com/rms/*
 // ==/UserScript==

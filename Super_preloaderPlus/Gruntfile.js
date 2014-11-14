@@ -1,7 +1,39 @@
 module.exports = function(grunt) {
 
+	var res = {
+		get: function(path) {
+			return res.wrap(res.read('./src/res/' + path));
+		},
+		read: function (path) {
+		    var str = grunt.file.read(path, { encoding: 'utf-8' });
+		    return str;
+		},
+		wrap: function(str) {
+		    return "'" +
+		            str.trim()
+		                .replace(/\\/g, '\\\\')
+		                .replace(/\r?\n/g, '\\n')
+		                .replace(/'/g, "\\'") +
+		            "'";
+		},
+	};
+
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
+		res: {
+			get FloatWindowCSS() {
+				return res.get('FloatWindow.css');
+			},
+			get FloatWindowHTML() {
+				return res.get('FloatWindow.html');
+			},
+			get manualDivCSS() {
+				return res.get('manualDiv.css');
+			},
+			get separatorCSS() {
+				return res.get('separator.css');
+			}
+		},
 		concat: {
 			dist: {
 				options: {
@@ -38,11 +70,18 @@ module.exports = function(grunt) {
 		},
 		watch: {
 			files: ['src/**/*.js'],
-			tasks: [ 'jshint', 'concat']
+			tasks: [
+				// 'jshint',
+				'concat'
+			]
 		}
 	});
 
-	grunt.registerTask('default', ['jshint', 'concat', 'watch']);
+	grunt.registerTask('default', [
+		// 'jshint',
+		'concat',
+		'watch'
+	]);
 
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-watch');
