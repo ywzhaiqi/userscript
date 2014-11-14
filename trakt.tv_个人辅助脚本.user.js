@@ -11,28 +11,28 @@
 
 var enableOtherURL = true;
 
-// 无法在线播放的链接规则
+// 无法在线播放的规则
 var rules = {
-	'criminal minds': {
-		name: '犯罪心理',
-		// 存在在线播放的地址
-		// yyets: 'http://www.yyets.com/resource/11003',
-	},
-	'hawaii five0': {
-		name: '天堂执法者',
-		yyets: 'http://www.yyets.com/resource/10998',
-	},
-	'castle 2009': {
-		name: '灵书妙探',
-		yyets: 'http://www.yyets.com/resource/10996',
-	},
-	'the big bang theory': {
-		name: '生活大爆炸',
-		yyets: 'http://www.yyets.com/resource/11005'
-	},
-	'the voice us': {
-		name: '美国之声',
-	},
+    'criminal minds': {
+        name: '犯罪心理',
+        // 存在在线播放的地址
+        // yyets: 'http://www.yyets.com/resource/11003',
+    },
+    'hawaii five0': {
+        name: '天堂执法者',
+        yyets: 'http://www.yyets.com/resource/10998',
+    },
+    'castle 2009': {
+        name: '灵书妙探',
+        yyets: 'http://www.yyets.com/resource/10996',
+    },
+    'the big bang theory': {
+        name: '生活大爆炸',
+        yyets: 'http://www.yyets.com/resource/11005'
+    },
+    'the voice us': {
+        name: '美国之声',
+    },
     'marvels agents of shield': {
         name: '神盾局特工',
     },
@@ -46,39 +46,51 @@ var rules = {
     'ncis': {
         name: '海军罪案调查处',
         yyets: 'http://www.yyets.com/resource/11001'
+    },
+    '2 broke girls': {
+        name: '破产姐妹'
+    },
+    'elementary': {
+        name: '基本演绎法'
+    },
+    'white collar': {
+        name: '妙警贼探',
+    },
+    'one piece': {
+        name: '海贼王',
     }
 };
 
 var ns = {
-	init: function() {
-		ns.run();
-	},
-	run: function() {
-		$('a[href^="/show/"]').each(ns.addLink);
-	},
-	addLink: function(i, link) {
-		var $link = $(link);
-			url = $link.attr('href');
+    init: function() {
+        ns.run();
+    },
+    run: function() {
+        $('a[href^="/show/"]').each(ns.addLink);
+    },
+    addLink: function(i, link) {
+        var $link = $(link);
+            url = $link.attr('href');
 
-		var match = url.match(/\/show\/(.*?)\/season/);
-		if (!match) {
-			console.error('无法从链接中找到电视剧的名称：%s', url);
-			return;
-		}
+        var match = url.match(/\/show\/(.*?)\/season/);
+        if (!match) {
+            console.error('无法从链接中找到电视剧的名称：%s', url);
+            return;
+        }
 
-		var name = match[1].replace(/-/g, ' ');
-		var info = ns.getInfo(name);
+        var name = match[1].replace(/-/g, ' ');
+        var info = ns.getInfo(name);
 
-		$('<a>').attr({
-			href: info.url,
-			title: info.title,
-			target: '_blank'
-		}).text(info.text).appendTo($link.prev());
-	},
-	getInfo: function(name) {
-		var url, text, title;
-		var rule = rules[name];
-		if (rule) {
+        $('<a>').attr({
+            href: info.url,
+            title: info.title,
+            target: '_blank'
+        }).text(info.text).appendTo($link.prev());
+    },
+    getInfo: function(name) {
+        var url, text, title;
+        var rule = rules[name];
+        if (rule) {
             Object.keys(rule).some(function(key) {
                 if (key == 'name') {
                     name = rule.name
@@ -89,20 +101,18 @@ var ns = {
                     return true;
                 }
             });
+        }
 
-            // title = '人人影视';
-		}
+        if (!url) {
+            url = 'http://www.soku.com/v?keyword=' + name;
+        }
 
-		if (!url) {
-			url = 'http://www.soku.com/v?keyword=' + name;
-		}
-
-		return {
-			url: url,
-			text: text || 'sk',
-			title: title || '搜库'
-		};
-	}
+        return {
+            url: url,
+            text: text || 'sk',
+            title: title || '搜库'
+        };
+    }
 };
 
 ns.init();
