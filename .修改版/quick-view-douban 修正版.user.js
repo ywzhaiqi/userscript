@@ -3,7 +3,7 @@
 // @namespace      http://vivyli.com
 // @modified       ywzhaiqi
 // @include        *
-// @version        2.2
+// @version        2.3
 // @updateURL      https://userscripts.org/scripts/source/176991.meta.js
 // @downloadURL    https://userscripts.org/scripts/source/176991.user.js
 // @description    see douban book movie music in every webpage by selecting text
@@ -20,10 +20,33 @@ var isMovieClicked = false;
 var isMusicClicked = false;
 var q = null;
 var userAgent = 'known';
-initialize();
 
-document.addEventListener('mousedown', clean, false);
-document.addEventListener('mouseup', showIcon, false);
+startup();
+
+function startup() {
+    images();
+    css();
+    checkUserAgent();
+
+    document.addEventListener('mousedown', clean, false);
+    document.addEventListener('mouseup', showIcon, false);
+}
+
+function shutdown() {
+    imgDouban = null;
+
+    ['douban-view'].forEach(function(id) {
+        var node = document.getElementById(id);
+        if (node) {
+            node.parentNode.removeChild(node);
+        }
+    });
+
+    clean();
+
+    document.removeEventListener('mousedown', clean, false);
+    document.removeEventListener('mouseup', showIcon, false);
+}
 
 function clean(event) {
     var divInfo = getId('divInfo');
@@ -535,14 +558,6 @@ function clickedInsideID(target, id) {
     }
 
     return null;
-}
-
-// initialize
-
-function initialize() {
-    images();
-    css();
-    checkUserAgent();
 }
 
 function checkUserAgent() {
