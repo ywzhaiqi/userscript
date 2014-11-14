@@ -20,7 +20,7 @@ function toRE(obj, flag) {
 	} else if (obj instanceof Array) {
 		return new RegExp(obj[0], obj[1]);
 	} else if (typeof obj === 'string') {
-		if (obj.indexOf('.*') == -1) {
+		if (obj.indexOf('*') != -1 && obj.indexOf('.*') == -1) {
 			obj = wildcardToRegExpStr(obj);
 		}
 		return new RegExp(obj);

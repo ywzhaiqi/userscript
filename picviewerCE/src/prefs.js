@@ -85,7 +85,7 @@ var prefs={
 
 	//框架里面的图片在顶层窗口展示出来，但是当frame与顶层窗口domain不一样的时候，可能导致图片被反盗链拦截，
 	//按住shift键，可以临时执行和这个设定相反的设定
-	framesPicOpenInTopWindow:true,
+	framesPicOpenInTopWindow: true,
 
 	// lowLevel: true,  // 如果有多个图片，优先选择低一级的
 

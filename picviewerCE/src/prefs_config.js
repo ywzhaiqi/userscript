@@ -17,6 +17,7 @@ GM_config.init({
     },
     css: [
         "#pv-prefs input[type='text'] { width: 50px; } ",
+        "#pv-prefs input[type='number'] { width: 50px; } ",
         "#pv-prefs label.size { width: 205px; }",
         "#pv-prefs span.sep-x { margin-left: 0px !important; }",
         "#pv-prefs label.sep-x { margin-right: 5px; }",
@@ -26,7 +27,7 @@ GM_config.init({
     fields: {
         // 浮动工具栏
         'floatBar.position': {
-            label: '位置：',
+            label: '显示位置',
             type: 'select',
             options: {
                 'top left': '图片左上角',
@@ -131,14 +132,14 @@ GM_config.init({
             default: prefs.magnifier.wheelZoom.enabled,
         },
         'magnifier.wheelZoom.range': {
-            label: '滚轮缩放的范围',
+            label: '滚轮缩放的倍率',
             type: 'textarea',
             default: prefs.magnifier.wheelZoom.range.join(', '),
         },
 
         // 图库
         'gallery.fitToScreen': {
-            label: '图片适应屏幕',
+            label: '对图片进行缩放以适应屏幕',
             type: 'checkbox',
             default: prefs.gallery.fitToScreen,
             section: ['图库'],
@@ -154,20 +155,21 @@ GM_config.init({
                 'top': '顶部'
             },
             default: prefs.gallery.sidebarPosition,
+            line: 'start',
         },
         'gallery.sidebarSize': {
-            label: '缩略图栏高',
+            label: '高度',
             type: 'int',
             default: prefs.gallery.sidebarSize,
             title: '缩略图栏的高（如果是水平放置）或者宽（如果是垂直放置）',
-            after: ' 像素'
+            after: ' 像素',
+            line: 'end',
         },
         'gallery.max': {
-            label: '最多预读  ',
-            title: '前后各多少张',
+            label: '最多预读 ',
             type: 'number',
             default: prefs.gallery.max,
-            after: ' 张图片'
+            after: ' 张图片（前后各多少张）'
         },
         'gallery.autoZoom': {
             label: '缩放改回 100%（chrome）',
@@ -176,10 +178,10 @@ GM_config.init({
             title: '如果有放大，则把图片及 sidebar 部分的缩放改回 100%，增大可视面积（仅在 chrome 下有效）'
         },
         'gallery.descriptionLength': {
-            label: '注释的最大长度',
+            label: '注释的最大宽度',
             type: 'int',
             default: prefs.gallery.descriptionLength,
-            after: ' 个'
+            after: ' 个字符'
         },
 
         // 图片窗口
@@ -191,7 +193,7 @@ GM_config.init({
             title: '适应方式为contain，非cover',
         },
         'imgWindow.close.defaultTool': {
-            label: '打开窗口的时候默认选择的工具',
+            label: '打开窗口时默认选择的工具',
             type: 'select',
             options: {
                 'hand': '抓手',
@@ -279,7 +281,7 @@ function openPrefs() {
 }
 
 function loadPrefs() {
-    // 根据 GM_config 的设置载入设置到 prefs
+    // 根据 GM_config 的 key 载入设置到 prefs
     Object.keys(GM_config.fields).forEach(function(keyStr) {
         var keys = keyStr.split('.');
         var lastKey = keys.pop();
@@ -290,7 +292,7 @@ function loadPrefs() {
 
         var value = GM_config.get(keyStr);
         if (typeof value != 'undefined') {
-            // 特殊的修正
+            // 特殊的
             if (keyStr == 'magnifier.wheelZoom.range' || keyStr == 'imgWindow.zoom.range') {
                 lastPref[lastKey] = value.split(/[,，]\s*/).map(function(s) { return parseFloat(s)});
             } else {

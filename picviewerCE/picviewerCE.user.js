@@ -2,7 +2,7 @@
 // @name           picviewer CE
 // @author         NLF && ywzhaiqi
 // @description    NLF 的围观图修改版
-// @version        2014.11.10.0
+// @version        2014.11.14.0
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
@@ -118,7 +118,7 @@ var prefs={
 
 	//框架里面的图片在顶层窗口展示出来，但是当frame与顶层窗口domain不一样的时候，可能导致图片被反盗链拦截，
 	//按住shift键，可以临时执行和这个设定相反的设定
-	framesPicOpenInTopWindow:true,
+	framesPicOpenInTopWindow: true,
 
 	// lowLevel: true,  // 如果有多个图片，优先选择低一级的
 
@@ -463,7 +463,8 @@ Rule.Imagus = {};
 
 /**
  * 兼容 Mouseover Popup Image Viewer 脚本的规则（非完全）
- * 1、新增了特殊的替换模式：已 r; 开头
+ * 1、新增了特殊的替换模式：以 r; 开头。
+ * 2、已去除 http:// 头，后面会加上。
  */
 Rule.MPIV = [
 	// 图片
@@ -528,7 +529,7 @@ Rule.MPIV = [
 		s: "http://$1/$2"
 	},
 
-	// 论坛
+	// 论坛 BBS
 	{name: "firefox 扩展中心",
 		d: "addons.mozilla.org",
 		r: "addons.cdn.mozilla.net/user-media/previews/thumbs/",
@@ -540,7 +541,15 @@ Rule.MPIV = [
 		s: "r;www.firefox.net.cn/attachment/"
 	},
 
-	// 游戏
+	// 软件 SoftWare
+	{name: "非凡软件站",
+		d: "www.crsky.com",
+		r: /pic\.crsky\.com.*_s\.gif$/i,
+		s: '/_s././',
+		example: "http://www.crsky.com/soft/5357.html",
+	},
+
+	// 游戏 Game
 	{name: "天极网",
 		d: "game.yesky.com",
 		r: /_\d+x\d+\.([a-z]+)$/i,
@@ -554,7 +563,7 @@ Rule.MPIV = [
 	    example: "http://dota2.sgamer.com/albums/201407/8263_330866.html",
 	},
 
-	// sex 漫画
+	// 漫画
 	{name: "nhentai",
 	    d: "nhentai.net",
 	    r: /\/(\d+)t(\.[a-z]+)$/i,
@@ -748,7 +757,7 @@ function toRE(obj, flag) {
 	} else if (obj instanceof Array) {
 		return new RegExp(obj[0], obj[1]);
 	} else if (typeof obj === 'string') {
-		if (obj.indexOf('.*') == -1) {
+		if (obj.indexOf('*') != -1 && obj.indexOf('.*') == -1) {
 			obj = wildcardToRegExpStr(obj);
 		}
 		return new RegExp(obj);
@@ -7660,6 +7669,7 @@ GM_config.init({
     },
     css: [
         "#pv-prefs input[type='text'] { width: 50px; } ",
+        "#pv-prefs input[type='number'] { width: 50px; } ",
         "#pv-prefs label.size { width: 205px; }",
         "#pv-prefs span.sep-x { margin-left: 0px !important; }",
         "#pv-prefs label.sep-x { margin-right: 5px; }",
@@ -7669,7 +7679,7 @@ GM_config.init({
     fields: {
         // 浮动工具栏
         'floatBar.position': {
-            label: '位置：',
+            label: '显示位置',
             type: 'select',
             options: {
                 'top left': '图片左上角',
@@ -7774,14 +7784,14 @@ GM_config.init({
             default: prefs.magnifier.wheelZoom.enabled,
         },
         'magnifier.wheelZoom.range': {
-            label: '滚轮缩放的范围',
+            label: '滚轮缩放的倍率',
             type: 'textarea',
             default: prefs.magnifier.wheelZoom.range.join(', '),
         },
 
         // 图库
         'gallery.fitToScreen': {
-            label: '图片适应屏幕',
+            label: '对图片进行缩放以适应屏幕',
             type: 'checkbox',
             default: prefs.gallery.fitToScreen,
             section: ['图库'],
@@ -7797,20 +7807,21 @@ GM_config.init({
                 'top': '顶部'
             },
             default: prefs.gallery.sidebarPosition,
+            line: 'start',
         },
         'gallery.sidebarSize': {
-            label: '缩略图栏高',
+            label: '高度',
             type: 'int',
             default: prefs.gallery.sidebarSize,
             title: '缩略图栏的高（如果是水平放置）或者宽（如果是垂直放置）',
-            after: ' 像素'
+            after: ' 像素',
+            line: 'end',
         },
         'gallery.max': {
-            label: '最多预读  ',
-            title: '前后各多少张',
+            label: '最多预读 ',
             type: 'number',
             default: prefs.gallery.max,
-            after: ' 张图片'
+            after: ' 张图片（前后各多少张）'
         },
         'gallery.autoZoom': {
             label: '缩放改回 100%（chrome）',
@@ -7819,10 +7830,10 @@ GM_config.init({
             title: '如果有放大，则把图片及 sidebar 部分的缩放改回 100%，增大可视面积（仅在 chrome 下有效）'
         },
         'gallery.descriptionLength': {
-            label: '注释的最大长度',
+            label: '注释的最大宽度',
             type: 'int',
             default: prefs.gallery.descriptionLength,
-            after: ' 个'
+            after: ' 个字符'
         },
 
         // 图片窗口
@@ -7834,7 +7845,7 @@ GM_config.init({
             title: '适应方式为contain，非cover',
         },
         'imgWindow.close.defaultTool': {
-            label: '打开窗口的时候默认选择的工具',
+            label: '打开窗口时默认选择的工具',
             type: 'select',
             options: {
                 'hand': '抓手',
@@ -7922,7 +7933,7 @@ function openPrefs() {
 }
 
 function loadPrefs() {
-    // 根据 GM_config 的设置载入设置到 prefs
+    // 根据 GM_config 的 key 载入设置到 prefs
     Object.keys(GM_config.fields).forEach(function(keyStr) {
         var keys = keyStr.split('.');
         var lastKey = keys.pop();
@@ -7933,7 +7944,7 @@ function loadPrefs() {
 
         var value = GM_config.get(keyStr);
         if (typeof value != 'undefined') {
-            // 特殊的修正
+            // 特殊的
             if (keyStr == 'magnifier.wheelZoom.range' || keyStr == 'imgWindow.zoom.range') {
                 lastPref[lastKey] = value.split(/[,，]\s*/).map(function(s) { return parseFloat(s)});
             } else {
