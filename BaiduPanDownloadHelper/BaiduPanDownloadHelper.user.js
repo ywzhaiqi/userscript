@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             baidupan@ywzhaiqi@gmail.com
 // @name           BaiduPanDownloadHelper
-// @version        3.7.8
+// @version        3.7.9
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @description    批量导出百度盘的下载链接
@@ -53,7 +53,7 @@ var Config = {  // 默认的设置
 
 var TPLS = {
     normal: '{dlink}',
-    aria2c: 'aria2c -c -x 10 -s 10 --out "{server_filename}" "{dlink}" --user-agent="netdisk" ' + 
+    aria2c: 'aria2c -c -x 10 -s 10 --out "{server_filename}" "{dlink}" --user-agent="netdisk" ' +
          '--header="Cookie:' + document.cookie.replace(/; /g, ';') + '"',
 };
 
@@ -112,7 +112,7 @@ var mHome = (function(){  // 个人主页
 
             var restUrl = 'http://pan.baidu.com/api/download?channel=chunlei&clienttype=0&web=1&bdstoken=' + FileUtils.bdstoken,
                 data = {
-                    sign: FileUtils.base64Encode(FileUtils.sign2(FileUtils.sign3, FileUtils.sign1)), 
+                    sign: FileUtils.base64Encode(FileUtils.sign2(FileUtils.sign3, FileUtils.sign1)),
                     fidlist: "[" + fs_ids.join(',') + "]",
                     type: 'dlink',
                     timestamp: FileUtils.timestamp
@@ -179,7 +179,7 @@ var mHome = (function(){  // 个人主页
         var commonService = require("common:widget/commonService/commonService.js")
         commonService.getWidgets('common:widget/downloadProxyPcs/downloadProxyPcs.js', function () {
             var downloadManager = require("common:widget/downloadManager/downloadManager.js");
-            downloadManager.SIZE_THRESHOLD =  Number.MAX_VALUE; 
+            downloadManager.SIZE_THRESHOLD =  Number.MAX_VALUE;
         });
     };
 
@@ -188,8 +188,7 @@ var mHome = (function(){  // 个人主页
         // var fs_ids = dataCenter.get('selectedList'),  // ["812801091852241", "860551491728460"]
         var fs_ids = [],
             fileList = [];
-        
-        // 不兼容于 GM 2.0+
+
         var nodes = dataCenter.get('selectedItemList')
         $(nodes).each(function(i, div){
             var $div = $(div);
@@ -221,7 +220,7 @@ var mHome = (function(){  // 个人主页
             callback = function(result) {
                 // console.log(result);
                 // console.log(fileList)
-                
+
                 if (!result.dlink) return;
 
                 if (!isSimplePanel) {  // 以前的导出方式
@@ -314,11 +313,11 @@ var Pan = {
     determineCurrentPageType: function() {
         var pageType = null;
         var loc = window.location.href.toLowerCase();
-        if (loc.indexOf('/disk/home') != -1) 
+        if (loc.indexOf('/disk/home') != -1)
         {
             pageType = 'diskHome';
         }
-        else if (loc.indexOf('/share/link') != -1 || loc.indexOf('/s/') != -1) 
+        else if (loc.indexOf('/share/link') != -1 || loc.indexOf('/s/') != -1)
         {
             var type = unsafeWindow.yunData.SHAREPAGETYPE;
             if (type == 'multi_file') {
@@ -326,16 +325,16 @@ var Pan = {
             } else if (type == 'single_file_page') {
                 pageType = 'shareOne';
             }
-        } 
-        else if (loc.indexOf('/share/home') != -1) 
+        }
+        else if (loc.indexOf('/share/home') != -1)
         {
             pageType = 'shareHome';
-        } 
-        else if (loc.indexOf('/pcloud/album/info') != -1) 
+        }
+        else if (loc.indexOf('/pcloud/album/info') != -1)
         {
             pageType = 'albumInfo';
-        } 
-        else if (loc.indexOf('/pcloud/album/file') != -1) 
+        }
+        else if (loc.indexOf('/pcloud/album/file') != -1)
         {
             pageType = 'albumFile';
         } else if (loc.indexOf('/share/init?') != -1) {  // 分享的初始页面，用于输入密码等
@@ -350,7 +349,7 @@ var Pan = {
             this.pageType = pageType;
 
             if (typeof(this[pageProcessor]) == 'function') {
-                
+
                 this.allPageProcessor();
 
                 this[pageProcessor]();
@@ -519,7 +518,7 @@ var Pan = {
                 var path = Utils.r1(/startTransferVideo\("(.*?)"\)/, data),
                     share_uk = Utils.r1(/FileUtils.share_uk="(.*?)"/, data),  // FileUtils.share_uk
                     share_id = Utils.r1(/FileUtils.share_id="(.*?)"/, data);  // FileUtils.share_id
-                
+
                 var postData = {
                     path: "",
                     filelist: $.stringify([parseDirPath(path)]),
@@ -552,7 +551,7 @@ var Pan = {
                     doTransferVideo(urls);
                     return false;
                 });
-        }, 1000); 
+        }, 1000);
     },
     albumInfoPageProcessor: function() {
         var self = this;
@@ -565,7 +564,7 @@ var Pan = {
         var getList = function() {
             var nowPage = $('#albumPage .page-input-wrap > input').val();
                 _mPage.nowPage = parseInt(nowPage);
-            var restUrl = "/pcloud/album/listfile?album_id=" + _mAlbumId + "&query_uk=" + _mUk + 
+            var restUrl = "/pcloud/album/listfile?album_id=" + _mAlbumId + "&query_uk=" + _mUk +
                 "&start=" + (_mPage.nowPage - 1) * 60 + "&limit=" + _mPage.limit;
 
             $.get(restUrl, function(result){
@@ -614,9 +613,9 @@ var Pan = {
     shareInitPageProcessor: function() {
         // 来自 https://greasyfork.org/scripts/1002-网盘自动填写提取密码
         // 因为 Scriptish 0.1.11 的 bug，同一个作者的2个脚本只能安装一个
-        
+
         var sCode = location.hash.slice(1).trim();  // 抓取提取码
-        if (!/^[a-z0-9]{4}$/.test(sCode))  // 检查是否为合法格式 
+        if (!/^[a-z0-9]{4}$/.test(sCode))  // 检查是否为合法格式
             return;
         // console.log('抓取到的提取码: ', sCode);
         setTimeout(function() {
@@ -636,7 +635,7 @@ var Pan = {
                     .click(UI.preferencesShow.bind(UI))
                     .appendTo('.pulldown.more-info .content');
                 // 扩展菜单的高度
-                GM_addStyle('.module-header .info .more-info .content { height: 310px; }');
+                GM_addStyle('.module-header .info .more-info .content { height: auto; }');
             }, 1000);
         }
 
@@ -652,7 +651,7 @@ var Pan = {
             msg: "正在获取中，请稍后...",
             sticky: true
         });
-        
+
         this.getCheckedItems();
     },
     addRightContextMenu: function(){
@@ -799,7 +798,7 @@ var Pan = {
 
             if (item.isdir == 1) {
                 htmls.push(template(self.dir_tpl, item));
-                
+
                 if (Array.isArray(item.children)) {
                     item.children.forEach(function(i) {
                         i.padding_left = "15px";
@@ -920,10 +919,7 @@ var prefs = {
 
     getQuickLinks: function() {
         var quickLinks = GM_getValue('quickLinks');
-        if (typeof quickLinks === 'undefined') {
-            quickLinks = 'Books=/Books\n小说=/Books/小说';
-        }
-        return quickLinks;
+        return quickLinks || '';
     },
     setQuickLinks: function(val) {
         GM_setValue('quickLinks', val);
@@ -966,6 +962,7 @@ var UI = {
         this.$prefs.find('#isSimplePanel').attr('checked', prefs.getIsSimplePanel());
         this.$prefs.find('#aria2RPC').val(prefs.getAria2RPC());
         this.$prefs.find('#quickLinks').val(prefs.getQuickLinks());
+        this.$prefs.find('#quickLinks').attr('placeholder', 'Books=/Books\n小说=/Books/小说');
     },
     preferencesSaveHandler: function() {
         prefs.setRmoveYunGuanjia(this.$prefs.find('#removeYunGuanjia')[0].checked);
@@ -1310,7 +1307,7 @@ function getMStr(fn) {
         // console.log(matched);
         ret[matched[1]] = matched[2];
     }
-    
+
     return ret;
 }
 
