@@ -21,12 +21,6 @@ if (window.name === 'superpreloader-iframe') {
 }
 
 // GM 兼容
-var GM_getValue = this.GM_getValue,
-	GM_setValue = this.GM_setValue,
-	GM_registerMenuCommand = this.GM_registerMenuCommand,
-	GM_xmlhttpRequest = this.GM_xmlhttpRequest,
-	GM_addStyle = this.GM_addStyle;
-
 gmCompatible();
 
 /////////////////////设置(请注意开关的缩进关系..子开关一般在父开关为true的时候才会生效.)//////////////////////
@@ -3153,10 +3147,9 @@ var SITEINFO=[
 	},
 	{name: '和邪社|你的ACG生活 文不在长.内涵则明 图不在色.意淫则灵',
 		url: /^http:\/\/www\.hexieshe\.com\//i,
-		exampleUrl: 'http://www.hexieshe.com/',
 		nextLink: '//div[@class="pagebar"]/a[text()="Next"]',
 		autopager: {
-			pageElement: 'id("centent")',
+			pageElement: '//section[@id="centent"] | //section[@id="single"]//div[@class="entry"]',
 		}
 	},
 	{name: 'haruhichan',

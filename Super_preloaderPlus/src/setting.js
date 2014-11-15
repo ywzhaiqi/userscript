@@ -72,7 +72,7 @@ var setup = function(){
 		GM_setValue('SITEINFO_D.autopager.enable', SITEINFO_D.autopager.enable = !!$('SITEINFO_D-a_enable').checked);
 		GM_setValue('SITEINFO_D.autopager.force_enable', SITEINFO_D.autopager.force_enable = !!$('SITEINFO_D-a_force_enable').checked);
 
-		GM_setValue('debug', xbug = !!$('debug').checked);
+		GM_setValue('debug', xbug = $('debug').checked);
 		debug = xbug ? console.log.bind(console) : function() {};
 
 		GM_setValue('dblclick_pause', $('dblclick_pause').checked);

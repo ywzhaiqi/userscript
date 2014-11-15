@@ -12,6 +12,8 @@
 // @grant        GM_setValue
 // @grant        GM_xmlhttpRequest
 // @grant        GM_registerMenuCommand
+//  Tampermonkey 下有时候会运行在 document-start ???
+// @run-at       document-end
 
 // @include      http://*
 // @include      https://*
@@ -66,12 +68,6 @@ if (window.name === 'superpreloader-iframe') {
 }
 
 // GM 兼容
-var GM_getValue = this.GM_getValue,
-	GM_setValue = this.GM_setValue,
-	GM_registerMenuCommand = this.GM_registerMenuCommand,
-	GM_xmlhttpRequest = this.GM_xmlhttpRequest,
-	GM_addStyle = this.GM_addStyle;
-
 gmCompatible();
 
 /////////////////////设置(请注意开关的缩进关系..子开关一般在父开关为true的时候才会生效.)//////////////////////
@@ -3198,10 +3194,9 @@ var SITEINFO=[
 	},
 	{name: '和邪社|你的ACG生活 文不在长.内涵则明 图不在色.意淫则灵',
 		url: /^http:\/\/www\.hexieshe\.com\//i,
-		exampleUrl: 'http://www.hexieshe.com/',
 		nextLink: '//div[@class="pagebar"]/a[text()="Next"]',
 		autopager: {
-			pageElement: 'id("centent")',
+			pageElement: '//section[@id="centent"] | //section[@id="single"]//div[@class="entry"]',
 		}
 	},
 	{name: 'haruhichan',
@@ -6298,7 +6293,7 @@ AutoPager.prototype = {
 // 主要用于 chrome 原生下检查更新，也可用于手动检查更新
 var scriptInfo = {
 	version: '6.4.6',
-	updateTime: '2014/11/14',
+	updateTime: '2014/11/15',
 	homepageURL: 'https://greasyfork.org/scripts/293-super-preloaderplus-one',
 	downloadUrl: 'https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js',
 	metaUrl: 'https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js',
@@ -6369,7 +6364,7 @@ var setup = function(){
 		GM_setValue('SITEINFO_D.autopager.enable', SITEINFO_D.autopager.enable = !!$('SITEINFO_D-a_enable').checked);
 		GM_setValue('SITEINFO_D.autopager.force_enable', SITEINFO_D.autopager.force_enable = !!$('SITEINFO_D-a_force_enable').checked);
 
-		GM_setValue('debug', xbug = !!$('debug').checked);
+		GM_setValue('debug', xbug = $('debug').checked);
 		debug = xbug ? console.log.bind(console) : function() {};
 
 		GM_setValue('dblclick_pause', $('dblclick_pause').checked);
@@ -6539,7 +6534,7 @@ function findCurSiteInfo() {
 
 			nextlink = getElement(SII.nextLink || 'auto;');
 			if (!nextlink) {
-				debug('无法找到下一页链接,跳过规则:', SII, '继续查找其他规则');
+				debug('无法找到下一页链接，跳过该规则，继续查找其他规则');
 				continue;
 			}
 

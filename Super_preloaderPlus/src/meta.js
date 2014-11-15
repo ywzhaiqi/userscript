@@ -11,6 +11,8 @@
 // @grant        GM_setValue
 // @grant        GM_xmlhttpRequest
 // @grant        GM_registerMenuCommand
+//  Tampermonkey 下有时候会运行在 document-start ???
+// @run-at       document-end
 
 // @include      http://*
 // @include      https://*

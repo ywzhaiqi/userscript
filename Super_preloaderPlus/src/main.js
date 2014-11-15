@@ -81,7 +81,7 @@ function findCurSiteInfo() {
 
 			nextlink = getElement(SII.nextLink || 'auto;');
 			if (!nextlink) {
-				debug('无法找到下一页链接,跳过规则:', SII, '继续查找其他规则');
+				debug('无法找到下一页链接，跳过该规则，继续查找其他规则');
 				continue;
 			}
 
