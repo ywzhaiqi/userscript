@@ -4,6 +4,7 @@
 // @authuer      ywzhaiqi
 // @description  百度搜索反跳转，增加了翻页脚本的支持、不刷新页面的支持。
 // @include      http://www.baidu.com/*
+// @include      https://www.baidu.com/*
 // @homepageURL  https://greasyfork.org/scripts/1771/
 // @updateURL    https://greasyfork.org/scripts/1771/code.meta.js
 // @downloadURL  https://greasyfork.org/scripts/1771/code.user.js
@@ -11,7 +12,7 @@
 // updateURL     https://userscripts.org/scripts/source/161812.meta.js
 // downloadURL   https://userscripts.org/scripts/source/161812.user.js
 // @icon         http://tb.himg.baidu.com/sys/portrait/item/d4346e6f65313332ac06
-// @version      2014.08.19
+// @version      2014.11.19
 // @grant        GM_xmlhttpRequest
 // @run-at       document-end
 // @note         2014-08-19，小幅调整
@@ -106,7 +107,7 @@ addMutationObserver('#wrapper_wrapper', function(){
 // }
 
 // var url = location.href;
-// 
+//
 // // 添加不刷新页面的支持
 // if (url.match(/^https?:\/\/www\.baidu\.com\/[^#]*($|#wd=)/)) {
 //  addMutationObserver('#wrapper_wrapper', function(){
@@ -142,7 +143,7 @@ addMutationObserver('#wrapper_wrapper', function(){
 //  addEventListener('DOMContentLoaded', function(){
 //      checkDocument();
 
-        
+
 //  }, false);
 // }
 
