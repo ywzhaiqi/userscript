@@ -9,37 +9,51 @@
 // @noframes
 // ==/UserScript==
 
+var noReferrerHost = [
+    'www.56.com'
+];
 
-// 添加导出按钮
-var $result = $('#result');
-var observer = new MutationObserver(function(){
-    $result.find('span[style="color:red"]:contains("[")').each(function() {
-        var $sep = $(this)
-            ul = $sep.prev().find('ul');
-
-        $('<li>')
-            .append($('<a href="javascript:void">复制到剪贴板</a>').click(function() {
-                copyLinks($sep[0].textContent);
-            }))
-            .appendTo(ul);
-
-        $('<li>')
-            .append($('<a href="javascript:void">用 IDM 下载</a>').click(function() {
-                launchIDM($sep[0].textContent);
-            }))
-            .appendTo(ul);
-
-        // $('<li>')
-        //     .append($('<a href="javascript:void">IDM 格式导出</a>').click(function() {
-        //         exportIDM($sep[0].textContent);
-        //     }))
-        //     .appendTo(ul);
+function init() {
+    var locationHref = location.href;
+    var isNoReferer = noReferrerHost.some(function(host) {
+        return locationHref.indexOf(host) != -1;
     });
 
-    observer.disconnect();
-});
-observer.observe($result[0], {childList: true});
+    if (isNoReferer) {
+        alert('该站点为 noreferer 下载，需要点击一次下载链接才能成功下载');
+        return;
+    }
 
+    // 添加导出按钮
+    var $result = $('#result');
+    var observer = new MutationObserver(function(){
+        $result.find('span[style="color:red"]:contains("[")').each(function() {
+            var $sep = $(this)
+                ul = $sep.prev().find('ul');
+
+            $('<li>')
+                .append($('<a href="javascript:void">复制到剪贴板</a>').click(function() {
+                    copyLinks($sep[0].textContent);
+                }))
+                .appendTo(ul);
+
+            $('<li>')
+                .append($('<a href="javascript:void">用 IDM 下载</a>').click(function() {
+                    launchIDM($sep[0].textContent);
+                }))
+                .appendTo(ul);
+
+            // $('<li>')
+            //     .append($('<a href="javascript:void">IDM 格式导出</a>').click(function() {
+            //         exportIDM($sep[0].textContent);
+            //     }))
+            //     .appendTo(ul);
+        });
+
+        observer.disconnect();
+    });
+    observer.observe($result[0], {childList: true});
+}
 
 function copyLinks(type) {
     var data = getData(type);
@@ -82,18 +96,24 @@ function getData(type) {
     }
 }
 
-function getLinkHash() {  // 根据类型对所有链接进行分类
+function getLinkHash(isNoReferer) {  // 根据类型对所有链接进行分类
     var linkHash = {},
         curArr;
+
     // 分段和链接
     $('span[style="color:red"]:contains("["), #result > a[rel="noreferrer"], #result > div > a[rel="noreferrer"]').each(function(i, el) {
         var $el = $(this);
         if (el.nodeName == 'SPAN') {
             curArr = linkHash[el.textContent] = [];
         } else {
+            var url = $el.attr('href');
+            if (isNoReferer) {
+                url = 'https://noreferer.flvxz.com/' + url.replace(/^https?:\/\//i, '');
+            }
+
             curArr.push({
                 title: $el.text(),
-                url: $el.attr('href')
+                url: url
             });
         }
     });
@@ -136,3 +156,6 @@ function alerts(msg, closeTime) {
         div.style.display = 'none';
     }, closeTime || 2000);
 }
+
+
+init();
