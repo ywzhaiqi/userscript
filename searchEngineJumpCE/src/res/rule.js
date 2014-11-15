@@ -215,8 +215,25 @@ var rules = [
             where: 'beforeBegin'
         }
     },
+    {name: "wiki（中文）",
+        url: /^https?:\/\/zh\.wikipedia\.org\/(?:zh-|wiki\/|w\/index.php\?search=)/,
+        enabled: true,
+        engineList: "知识",
+        style: '\
+              border-top:1px solid #D9E1F7;\
+              border-bottom:1px solid #D9E1F7;\
+              padding-left: 0;\
+        ',
+        insertIntoDoc: {
+            keyword: function() {
+                return document.evaluate("//span[@dir='auto']", document, null, 9, null).singleNodeValue.textContent;
+            },
+            target: 'css;#siteNotice',
+            where: 'beforeBegin'
+        }
+    },
     {name: "wiki",
-        url: /^https?:\/\/(?:en|zh|ja)\.wikipedia\.org\/(?:zh-|wiki\/|w\/index.php\?search=)/,
+        url: /^https?:\/(?:.(?!zh))*\.wikipedia\.org\/(?:zh-|wiki\/|w\/index.php\?search=)/,
         enabled: true,
         engineList: "知识",
         style: '\

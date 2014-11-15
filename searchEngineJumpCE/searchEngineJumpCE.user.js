@@ -4,7 +4,7 @@
 // @author         NLF && ywzhaiqi
 // @contributor    ted423
 // @description    方便的在各个引擎之间跳转。可自定义搜索列表的 NLF 修改版。
-// @version        4.2.1.2
+// @version        4.2.1.3
 // @namespace      http://userscripts.org/users/NLF
 // @homepage       https://github.com/ywzhaiqi/userscript
 // homepage       http://userscripts.org/scripts/show/84970
@@ -27,7 +27,8 @@
 // @include        /^https?:\/\/baike\.baidu\.com\/(?:sub)?view\//
 // @include        /^https?:\/\/[a-z]{2,3}\.baike\.com\/[a-z]/
 // @include        /^https?:\/\/..\.wikipedia\.org\/w\/index\.php(?!.*\?search=)/
-// @include        /^https?:\/\/(?:en|zh|ja)\.wikipedia\.org\/(?:zh-|wiki\/|w\/index.php\?search=)/
+// @include        /^https?:\/\/zh\.wikipedia\.org\/(?:zh-|wiki\/|w\/index.php\?search=)/
+// @include        /^https?:\/(?:.(?!zh))*\.wikipedia\.org\/(?:zh-|wiki\/|w\/index.php\?search=)/
 // @include        /^https?:\/\/zhidao\.baidu\.com\/search/
 // @include        /^https?:\/\/zhidao\.baidu\.com\/question/
 // @include        /^https?:\/\/www\.zhihu\.com\/search\?/
@@ -411,8 +412,25 @@ var rules = [
             where: 'beforeBegin'
         }
     },
+    {name: "wiki（中文）",
+        url: /^https?:\/\/zh\.wikipedia\.org\/(?:zh-|wiki\/|w\/index.php\?search=)/,
+        enabled: true,
+        engineList: "知识",
+        style: '\
+              border-top:1px solid #D9E1F7;\
+              border-bottom:1px solid #D9E1F7;\
+              padding-left: 0;\
+        ',
+        insertIntoDoc: {
+            keyword: function() {
+                return document.evaluate("//span[@dir='auto']", document, null, 9, null).singleNodeValue.textContent;
+            },
+            target: 'css;#siteNotice',
+            where: 'beforeBegin'
+        }
+    },
     {name: "wiki",
-        url: /^https?:\/\/(?:en|zh|ja)\.wikipedia\.org\/(?:zh-|wiki\/|w\/index.php\?search=)/,
+        url: /^https?:\/(?:.(?!zh))*\.wikipedia\.org\/(?:zh-|wiki\/|w\/index.php\?search=)/,
         enabled: true,
         engineList: "知识",
         style: '\
