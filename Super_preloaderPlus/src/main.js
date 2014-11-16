@@ -61,7 +61,7 @@ var SP = {
                 console.error('自定义站点规则错误', prefs.custom_siteinfo);
                 // alert('自定义站点规则错误');
             }
-            
+
             if (Array.isArray(infos)) {
                 SITEINFO = infos.concat(SITEINFO);
             }
@@ -116,7 +116,7 @@ function init(window, document) {
     var nextlink;
     var prelink;
     //===============
-    
+
     var SSS = {};
 
     var findCurSiteInfo = function() {
@@ -128,7 +128,7 @@ function init(window, document) {
 
         debug('高级规则数量:', ii);
 
-        for (i = 0; i < ii; i++) {
+        for (var i = 0; i < ii; i++) {
             SII = SITEINFO[i];
             Rurl = toRE(SII.url);
             if (Rurl.test(url)) {
@@ -247,7 +247,7 @@ function init(window, document) {
     };
 
     findCurSiteInfo();
-    
+
     //上下页都没有找到啊
     if (!nextlink && !prelink) {
         debug('未找到相关链接, JS执行停止. 共耗时' + (new Date() - startTime) + '毫秒');
@@ -340,7 +340,7 @@ function init(window, document) {
     };
 
     loadLocalSetting();
-    
+
     if (!SSS.hasRule) {
         SSS.a_force = true;
     }

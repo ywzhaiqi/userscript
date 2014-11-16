@@ -20,12 +20,6 @@ if (window.name === 'superpreloader-iframe') { // 搜狗,iframe里面怎么不�
 }
 
 // GM 兼容
-var GM_getValue = this.GM_getValue,
-    GM_setValue = this.GM_setValue,
-    GM_registerMenuCommand = this.GM_registerMenuCommand,
-    GM_xmlhttpRequest = this.GM_xmlhttpRequest,
-    GM_addStyle = this.GM_addStyle;
-
 gmCompatible();
 
 /////////////////////设置(请注意开关的缩进关系..子开关一般在父开关为true的时候才会生效.)//////////////////////
@@ -3494,9 +3488,9 @@ var SITEINFO=[
         url: "^https?://github\\.com/search",
         nextLink: "//div[@class='pagination']/a[@rel='next']",
         autopager: {
-        	pageElement: "id('code_search_results issue_search_results')|//div[@class='sort-bar']/following-sibling::*[following-sibling::span[@class='search-foot-note']]",
-        	insertBefore: "//div[@class='pagination']",
-        	stylish: 'li.repo-list-item { text-align: left; }'
+            pageElement: "id('code_search_results issue_search_results')|//div[@class='sort-bar']/following-sibling::*[following-sibling::span[@class='search-foot-note']]",
+            insertBefore: "//div[@class='pagination']",
+            stylish: 'li.repo-list-item { text-align: left; }'
         }
     },
     {
