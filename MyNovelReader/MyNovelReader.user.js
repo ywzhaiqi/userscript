@@ -974,9 +974,11 @@ Rule.specialSite = [
     },
     {siteName: "乡村小说网",
         url: '^http://www\\.xiangcunxiaoshuo\\.com/shu/\\d+/\\d+\\.html',
-        bookTitleSelector: '.read_m > .list',
+        // bookTitleSelector: '.read_m > .list',
+        titleReg: '(.*?)_(.*?)_.*_.*',
         contentSelector: '.yd_text2',
         contentReplace: [
+            '[ｗＷw]+．２３ｕＳ．(?:ｃｏＭ|com)',
         ]
     },
 
