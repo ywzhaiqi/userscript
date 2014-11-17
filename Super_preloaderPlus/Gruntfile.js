@@ -1,51 +1,64 @@
 module.exports = function(grunt) {
 
-	grunt.initConfig({
-		pkg: grunt.file.readJSON('package.json'),
-		concat: {
-			dist: {
-				options: {
-					banner: '(function() {\n',
-					footer: '\n})();',
-					separator: '\n\n',
-					process: true
-				},
-				src: [
-					'src/meta.js', 'src/rule.js', 'src/libs.js',
-					'src/FloatWindow.js', 'src/prefetcher.js', 'src/autopager.js',
-					'src/setting.js', 'src/main.js'
-				],
-				dest: '<%= pkg.name %>.user.js'
-			},
-		},
-		jshint: {
-			beforeconcat: ['gruntfile.js', 'src/*.js'],
-			afterconcat: ['<%= pkg.name %>.user.js'],
-			options: {
-				'browser': true,
-				'multistr': true,
-				'evil': true,
-				'globals': {
-					'GM_addStyle': true,
-					'GM_getValue': true,
-					'GM_setValue': true,
-					'GM_xmlhttpRequest': true,
-					'GM_openInTab': true,
-					'GM_setClipboard': true,
-					'GM_registerMenuCommand': true
-				}
-			}
-		},
-		watch: {
-			files: ['src/**/*.js'],
-			tasks: [ 'jshint', 'concat']
-		}
-	});
+    var concatOptions = {
+        banner: '(function() {\n',
+        footer: '\n})();',
+        separator: '\n\n//----------------------------------\n',
+        process: true
+    };
 
-	grunt.registerTask('default', ['jshint', 'concat', 'watch']);
+    grunt.initConfig({
+        pkg: grunt.file.readJSON('package.json'),
+        concat: {
+            dist: {
+                options: concatOptions,
+                src: ['src/meta.js', 'src/rule.js', 'src/main.js'],
+                dest: '<%= pkg.name %>.user.js'
+            },
+        },
+        watch: {
+            files: ['src/**/*.js'],
+            tasks: ['default']
+        }
+    })
 
-	grunt.loadNpmTasks('grunt-contrib-concat');
-	grunt.loadNpmTasks('grunt-contrib-watch');
-	grunt.loadNpmTasks('grunt-contrib-jshint');
 
-};
+    grunt.registerTask('split', 'split file', function () {
+        grunt.file.expand('src/*').forEach(function(path){
+            grunt.file.delete(path);
+        });
+
+        var source = grunt.file.read('super_preloaderplus_one.user.js');
+
+        // 去除首行和尾行
+        source = source.replace(/^\(function\(\).*/, '')
+            .replace(/\}\)\(\);$/, '');
+
+        var arr = source.split(/\n\/\/\-+/);
+
+        arr.forEach(function (text, index) {
+            if (index === 0) {
+                grunt.file.write('src/meta.js', text);
+            } else {
+                var match = text.match(/\n\/\/\s*(.*)/);
+                var name = match ? match[1] : ('split' + index + '.js' );
+                grunt.file.write('src/' + name, text);
+            }
+        });
+
+        // grunt.log.writeln();
+    });
+
+
+    grunt.registerTask('default', [
+        //'jshint',
+        'concat',
+    ])
+
+    grunt.registerTask('watch', ['watch'])
+
+    grunt.loadNpmTasks('grunt-contrib-concat')
+    grunt.loadNpmTasks('grunt-contrib-clean')
+    grunt.loadNpmTasks('grunt-contrib-watch')
+
+}

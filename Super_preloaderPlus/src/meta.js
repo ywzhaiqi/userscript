@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         <%= pkg.name %>
+// @name         Super_preloaderPlus_one
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
@@ -35,3 +35,13 @@
 // @exclude      http://v.youku.com/*
 // @exclude      http://www.iqiyi.com/*
 // ==/UserScript==
+
+
+// 主要用于 chrome 原生下检查更新，也可用于手动检查更新
+var scriptInfo = {
+    version: '<%= pkg.version %>',
+    updateTime: '<%= grunt.template.today("yyyy/m/d") %>',
+    homepageURL: 'https://greasyfork.org/scripts/293-super-preloaderplus-one',
+    downloadUrl: 'https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js',
+    metaUrl: 'https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js',
+};
