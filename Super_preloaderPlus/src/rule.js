@@ -51,6 +51,7 @@ var prefs={
     sepStartN: 2,            // 翻页导航上的,从几开始计数.(貌似有人在意这个,所以弄个开关出来,反正简单.-_-!!)
 
     // 新增或修改的
+    forceTargetWindow: GM_getValue('forceTargetWindow', true),  // 下一页的链接设置成在新标签页打开
     debug: GM_getValue('debug', false),
     enableHistory: GM_getValue('enableHistory', false),    // 把下一页链接添加到历史记录
     autoGetPreLink: false,   // 一开始不自动查找上一页链接，改为调用时再查找
@@ -171,6 +172,9 @@ var SITEINFO=[
                     if (elem.className != oClassName)
                         elem.className = oClassName;
                 });
+            },
+            filter: function() {  // 在添加内容到页面后运行
+
             },
             startFilter: function(win, doc) {  // 只作用一次
                 // 移除 Google 重定向
@@ -2827,33 +2831,34 @@ var SITEINFO=[
             }
         }
     },
-    {name: 'SF在线漫画',
-        url:/http:\/\/comic\.sfacg\.com\/HTML\/.+/i,
-        siteExample:'http://comic.sfacg.com/HTML/HZDLQ/243/?p=2',
-        preLink:{
-            startAfter:'?p=',
-            inc:-1,
-            min:1,
-        },
-        nextLink:{
-            startAfter:'?p=',
-            mFails:[/http:\/\/comic\.sfacg\.com\/HTML\/.+\//i,'?p=1'],
-            inc:1,
-            isLast:function(doc,win,lhref){
-                var pageSel=doc.getElementById('pageSel');
-                if(pageSel){
-                    var s2os=pageSel.options;
-                    var s2osl=s2os.length;
-                    if(pageSel.selectedIndex==s2osl-1)return true;
-                }
-            },
-        },
-        autopager:{
-            pageElement:'//img[@id="curPic"]',
-            useiframe:true,
-            replaceE: 'id("Pages")'
-        }
-    },
+    // 已失效
+    // {name: 'SF在线漫画',
+    //     url:/http:\/\/comic\.sfacg\.com\/HTML\/.+/i,
+    //     siteExample:'http://comic.sfacg.com/HTML/ZXCHZ/001/#p=2',
+    //     preLink:{
+    //         startAfter:'#p=',
+    //         inc:-1,
+    //         min:1,
+    //     },
+    //     nextLink:{
+    //         startAfter:'#p=',
+    //         mFails:[/http:\/\/comic\.sfacg\.com\/HTML\/.+\//i,'#p=1'],
+    //         inc:1,
+    //         isLast:function(doc,win,lhref){
+    //             var pageSel=doc.getElementById('pageSel');
+    //             if(pageSel){
+    //                 var s2os=pageSel.options;
+    //                 var s2osl=s2os.length;
+    //                 if(pageSel.selectedIndex==s2osl-1)return true;
+    //             }
+    //         },
+    //     },
+    //     autopager:{
+    //         pageElement:'//img[@id="curPic"]',
+    //         useiframe:true,
+    //         replaceE: 'id("Pages")'
+    //     }
+    // },
     {name: '热血漫画',
         url: /^http:\/\/www\.rexuedongman\.com\/comic\//i,
         siteExample: 'http://www.rexuedongman.com/comic/2957/36463/index.html?p=2',
