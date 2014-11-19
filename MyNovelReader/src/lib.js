@@ -123,6 +123,18 @@ Function.prototype.getMStr = function() {  // 多行String
     return lines;
 };
 
+if (typeof String.prototype.startsWith != 'function') {
+    String.prototype.startsWith = function(str) {
+        return this.slice(0, str.length) == str;
+    };
+}
+
+if (typeof String.prototype.contains != 'function') {
+    String.prototype.contains = function(str) {
+        return this.indexOf(str) != -1;
+    };
+}
+
 
 /*
  * jQuery Easing v1.3 - http://gsgd.co.uk/sandbox/jquery/easing/

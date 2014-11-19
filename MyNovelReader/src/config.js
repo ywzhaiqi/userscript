@@ -225,4 +225,15 @@ var Config = {
     set picNightModeCheck(bool) {
         GM_setValue('picNightModeCheck', bool);
     },
+
+    get split_content() {
+        if (_.isUndefined(this._split_content)) {
+            this._split_content = GM_getValue('split_content', true);
+        }
+        return this._split_content;
+    },
+    set split_content(bool) {
+        this._split_content = bool;
+        GM_setValue('split_content', bool);
+    },
 };

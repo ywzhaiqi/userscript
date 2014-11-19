@@ -239,6 +239,7 @@ var UI = {
         $form.find("#font-size").get(0).value = Config.font_size;
         $form.find("#content_width").get(0).value = Config.content_width;
         $form.find("#text_line_height").get(0).value = Config.text_line_height;
+        $form.find("#split_content").get(0).checked = Config.split_content;
 
         $form.find("#remain-height").get(0).value = Config.remain_height;
         $form.find("#extra_css").get(0).value = Config.extra_css;
@@ -387,6 +388,7 @@ var UI = {
         Config.text_line_height = $form.find("#text_line_height").get(0).value;
         Config.content_width = $form.find("#content_width").get(0).value;
         Config.remain_height = $form.find("#remain-height").get(0).value;
+        Config.split_content = $form.find("#split_content").get(0).value;
 
         Config.menu_list_hiddden = $form.find("#hide-menu-list").get(0).checked;
         UI.hideMenuList(Config.menu_list_hiddden);

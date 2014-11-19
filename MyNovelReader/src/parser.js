@@ -71,6 +71,8 @@ Parser.prototype = {
 
         return this;
     },
+
+    // 获取书名和章节标题
     getTitles: function(){
         var info = this.info,
             chapterTitle,
@@ -270,6 +272,8 @@ Parser.prototype = {
 
         return curTitle;
     },
+
+    // 获取和处理内容
     getContent: function(callback){
         if(_.isUndefined(callback)){
             callback = function() {};
@@ -376,38 +380,28 @@ Parser.prototype = {
             $div.find(info.contentRemove).remove();
         }
 
-        // 给独立的文本添加 <p></p>
-        var wrapTextNodes = function($div) {
-            function getTextNodesIn(node, includeWhitespaceNodes) {
-                var textNodes = [],
-                    nonWhitespaceMatcher = /\S/;
-
-                function getTextNodes(node) {
-                    if (node.nodeType == 3) {
-                        if (includeWhitespaceNodes || nonWhitespaceMatcher.test(node.nodeValue)) {
-                            textNodes.push(node);
-                        }
-                    } else if (node.nodeType == 1 && node.nodeName == 'P') {
-                        return;
-                    } else {
-                        for (var i = 0, len = node.childNodes.length; i < len; ++i) {
-                            getTextNodes(node.childNodes[i]);
-                        }
-                    }
-                }
-
-                getTextNodes(node);
-                return textNodes;
+        // 把一大块的文本分段
+        if (Config.split_content) {
+            var $p = $div.find('> p'),
+                $newP;
+            if ($p.length == 0 ) {
+                $newP = $div;
+            } else if ($p.length == 1) {
+                $newP = $p;
             }
 
-            var textNodes = getTextNodesIn($div.get(0));
-            $(textNodes).wrap("<p></p>");
-        };
+            if ($newP) {
+                $newP.replaceWith('<p>' + this.splitContent($newP.html()).join('</p>\n<p>') + '</p>');
+            }
+        }
+
+        // 给独立的文本加上 p
+        $div.contents().filter(function(el) {
+            return this.nodeType == 3 && this.textContent != '\n';
+        }).wrap('<p>');
 
         if(contentHandle){
             $div.filter('br').remove();
-
-            wrapTextNodes($div);
 
             $div.find('*').removeAttr('style');
         }
@@ -512,6 +506,28 @@ Parser.prototype = {
         }
         return text;
     },
+    splitContent: function (text) {  // 有些章节整个都集中在一起，没有分段，整个函数用于简易分段
+        var hasMark = false,
+            lines = []
+            charCotainer = [];
+
+        text.split('').forEach(function(c) {
+            charCotainer.push(c);
+
+            if (c == '“') {
+                hasMark = true;
+            } else if (c == '”') {
+                hasMark = false;
+            } else if (c == '。' && !hasMark) {
+                lines.push(charCotainer.join(''));
+                charCotainer = [];
+            }
+        });
+
+        return lines;
+    },
+
+    // 获取上下页及目录页链接
     getPrevUrl: function(){
         var url = '',
             link, selector;
