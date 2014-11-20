@@ -63,7 +63,7 @@ Rule.specialSite = [
     },
     // 特殊站点，需再次获取且跨域。添加 class="reader-ajax"，同时需要 src, charset
     {siteName: "起点中文、起点女生、起点文学",
-        url: "^http://(www|read|readbook)\\.(qidian|qdmm|qdwenxue)\\.com/BookReader/.*",
+        url: "^http://(www|read|readbook|wwwploy)\\.(qidian|qdmm|qdwenxue)\\.com/BookReader/.*",
         // titleReg: "小说:(.*?)(?:独家首发)/(.*?)/.*",
         titleSelector: "#lbChapterName",
         bookTitleSelector: ".page_site > a:last",
@@ -632,7 +632,7 @@ Rule.specialSite = [
             '顶点小说.23us.。',
             '\\(顶点小说\\)',
             '看最新最全',
-            'ｗＷｗ．２３ｕＳ．ｃｏＭ',
+            '[wｗＷ]{1,3}．２３ｕＳ．(?:ｃｏＭ|com)',
             '看.*?最新章节到长风文学',
         ]
     },
@@ -1184,6 +1184,7 @@ Rule.replace = {
     "fu道人家":"妇道人家", "放sōng'xià来":"放松下来",
     "奸yin掳掠":"奸淫掳掠",
     "空dangdang":"空荡荡",
+    "突发qing况": "突发情况",
     "yin奉阳违":"阴奉阳违", "一yin一阳":"一阴一阳",
 
     // === 双字替换 ===

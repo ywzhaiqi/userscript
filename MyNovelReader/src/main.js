@@ -805,11 +805,11 @@ var BookLinkMe = {
         var link = $('font:contains("贴吧")').parent().get(0);
         if (!link) return;
 
-        console.log('GM_xmlhttpRequest', link.href);
-
+        var tiebaUrl = 'http://tieba.baidu.com/f?kw=' + $('h1').text();
+        console.log('GM_xmlhttpRequest', tiebaUrl);
         GM_xmlhttpRequest({
             method: "GET",
-            url: link.href,
+            url: tiebaUrl,
             onload: function(response) {
                 var doc = parseHTML(response.responseText);
                 BookLinkMe.load(doc);

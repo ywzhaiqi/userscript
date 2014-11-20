@@ -27,6 +27,7 @@
 
 // @include        http://read.qidian.com/*,*.aspx
 // @include        http://readbook.qidian.com/bookreader/*,*.html
+// @include        http://wwwploy.qidian.com/BookReader/*,*.aspx
 // @include        http://free.qidian.com/Free/ReadChapter.aspx?*
 // @include        http://www.qdmm.com/BookReader/*,*.aspx
 // @include        http://www.qdwenxue.com/BookReader/*,*.aspx
