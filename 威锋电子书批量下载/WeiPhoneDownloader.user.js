@@ -2,7 +2,7 @@
 // @name           WeiPhoneDownloadHelper
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
-// @version        1.3.0
+// @version        1.3.1
 // @description    批量下载威锋论坛的电子书
 // @homepageURL    https://greasyfork.org/scripts/668/
 // @updateURL      https://greasyfork.org/scripts/668/code.meta.js
@@ -12,10 +12,10 @@
 // @include        http://bbs.feng.com/thread-htm-fid-*.html
 // @include        http://bbs.feng.com/forum.php*
 // @run-at         document-end
-// @grant          GM_addStyle
-// @require        http://cdn.staticfile.org/jquery/2.1.1/jquery.min.js
+// @grant          none
 // ==/UserScript==
 
+var $ = jQuery;
 
 var RES = getMStr(function(){
 	var html;
@@ -73,7 +73,7 @@ var RES = getMStr(function(){
 
 var locationHref = location.href;
 
-locationHref.match(/thread-htm-fid|mod=forumdisplay/) != -1 && (function(){
+locationHref.match(/thread-htm-fid|mod=forumdisplay/) && (function(){
 
 	$('#bbs_top_news, #forum_rules_224').hide();
 
@@ -93,11 +93,17 @@ locationHref.match(/thread-htm-fid|mod=forumdisplay/) != -1 && (function(){
 		"同步推",
 		"赢iPad mini",
 		"得iPhone",
-		"iPad mini2大奖"
+		"iPad mini2大奖",
+        "删档封测火爆开启"
 	];
 
 	// 隐藏置顶广告的行
 	$('tbody[id^="stickthread_"]').each(function(row){
+        if ($(this).find('span[id^="rushtimer_"]').length) {
+            $(this).hide();
+            return;
+        }
+
 		var text = $(this).text();
 		for (var i = 0, l = hideText.length; i < l; i++) {
 			if (text.indexOf(hideText[i]) != -1) {
@@ -108,7 +114,7 @@ locationHref.match(/thread-htm-fid|mod=forumdisplay/) != -1 && (function(){
 	});
 })()
 
-locationHref.match(/read-htm-tid|mod=viewthread/) != -1 && (function(){
+locationHref.match(/read-htm-tid|mod=viewthread/) && (function(){
 
 	var attachSelector = '.attnm > a, span[id^="attach_"] > a';
 
@@ -116,7 +122,8 @@ locationHref.match(/read-htm-tid|mod=viewthread/) != -1 && (function(){
 
 	var preUrl = location.origin;
 
-	GM_addStyle(RES.cssText)
+	$('<style>').html(RES.cssText)
+			.appendTo('head');
 
 	jQuery(RES.html).appendTo('body');
 	$('#closeButton').click(function(){
@@ -144,7 +151,7 @@ locationHref.match(/read-htm-tid|mod=viewthread/) != -1 && (function(){
 				$('#batchPublish').show();
 
 				// 高亮选中文本
-				var selection = unsafeWindow.getSelection();
+				var selection = window.getSelection();
 				var range = document.createRange();
 				range.selectNodeContents($('#batchedlink')[0]);
 				selection.removeAllRanges();
