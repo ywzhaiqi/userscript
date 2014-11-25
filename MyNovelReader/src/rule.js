@@ -1150,6 +1150,17 @@ Rule.specialSite = [
             }
         }
 	},
+
+    {siteName: '乐文小说',
+        url: /http:\/\/www\.lwxs520\.com\/books\/\d+\/\d+\/\d+.html/,
+        siteExample: 'http://www.lwxs520.com/books/2/2329/473426.html',
+        contentRemove: '#content>:not(p)',
+        contentReplace: [
+            /\(未完待续.+/g,
+            /乐文小说网值得.+/g,
+            '()'
+        ]
+    }
 ];
 
 // ===== 小说拼音字、屏蔽字修复 =====

@@ -228,6 +228,7 @@
 // @include        http://www.shushuw.cn/shu/*/*.html
 // @include        http://www.78xs.com/article/*/*/*.shtml
 // @include        http://www.miaobige.com/book/*/*.html
+// @include        http://www.lwxs520.com/books/*/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html
@@ -1410,6 +1411,17 @@ Rule.specialSite = [
             }
         }
 	},
+
+    {siteName: '乐文小说',
+        url: /http:\/\/www\.lwxs520\.com\/books\/\d+\/\d+\/\d+.html/,
+        siteExample: 'http://www.lwxs520.com/books/2/2329/473426.html',
+        contentRemove: '#content>:not(p)',
+        contentReplace: [
+            /\(未完待续.+/g,
+            /乐文小说网值得.+/g,
+            '()'
+        ]
+    }
 ];
 
 // ===== 小说拼音字、屏蔽字修复 =====
