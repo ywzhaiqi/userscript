@@ -1117,6 +1117,39 @@ Rule.specialSite = [
     //     url: "http://www\\.yawen8\\.com/\\w+/\\d+/\\d+\\.html",
     //     contentSelector: "#content .txtc"
     // }
+    
+	{siteName:'妙笔阁',
+		url:/^http:\/\/www\.miaobige\.com\/book\/\d_\d+\/\d+\.html/i,
+		siteExample:'http://www.miaobige.com/book/5_1586/1006320.html',
+        // 有的会提示防采集章节
+        fInit: function () {
+            $('<script>')
+                .text('$(document).unbind("contextmenu selectstart")')
+                .appendTo(document.body);
+        },
+        contentReplace: '妙笔阁，无弹窗，更新快，记住www.miaobige.com',
+        contentPatch: function(fakeStub){
+            var txt = fakeStub.find('#content'),
+                mNewLink;
+
+            if (0 === txt.text().trim().indexOf('防采集章节，')) {
+                mNewLink = txt.html().match(/http:\/\/www\.miaobige\.com\/book\/(\d)_(\d+)\/(\d+)\.html/i);
+                if (mNewLink) {
+                    txt .addClass(READER_AJAX)
+                        .attr({
+                            src: '/js/ajaxtxt.asp',
+                            charset: 'gbk'
+                        })
+                        .data('post', {
+                            sid: mNewLink[2],
+                            zid: mNewLink[3],
+                            cid: mNewLink[1]
+                        })
+                        .text('请等待加载…');
+                }
+            }
+        }
+	},
 ];
 
 // ===== 小说拼音字、屏蔽字修复 =====

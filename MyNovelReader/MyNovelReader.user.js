@@ -227,6 +227,7 @@
 // @include        http://www.caihongwenxue.com/Html/Book/*/*/*.html
 // @include        http://www.shushuw.cn/shu/*/*.html
 // @include        http://www.78xs.com/article/*/*/*.shtml
+// @include        http://www.miaobige.com/book/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html
@@ -1376,6 +1377,39 @@ Rule.specialSite = [
     //     url: "http://www\\.yawen8\\.com/\\w+/\\d+/\\d+\\.html",
     //     contentSelector: "#content .txtc"
     // }
+    
+	{siteName:'妙笔阁',
+		url:/^http:\/\/www\.miaobige\.com\/book\/\d_\d+\/\d+\.html/i,
+		siteExample:'http://www.miaobige.com/book/5_1586/1006320.html',
+        // 有的会提示防采集章节
+        fInit: function () {
+            $('<script>')
+                .text('$(document).unbind("contextmenu selectstart")')
+                .appendTo(document.body);
+        },
+        contentReplace: '妙笔阁，无弹窗，更新快，记住www.miaobige.com',
+        contentPatch: function(fakeStub){
+            var txt = fakeStub.find('#content'),
+                mNewLink;
+
+            if (0 === txt.text().trim().indexOf('防采集章节，')) {
+                mNewLink = txt.html().match(/http:\/\/www\.miaobige\.com\/book\/(\d)_(\d+)\/(\d+)\.html/i);
+                if (mNewLink) {
+                    txt .addClass(READER_AJAX)
+                        .attr({
+                            src: '/js/ajaxtxt.asp',
+                            charset: 'gbk'
+                        })
+                        .data('post', {
+                            sid: mNewLink[2],
+                            zid: mNewLink[3],
+                            cid: mNewLink[1]
+                        })
+                        .text('请等待加载…');
+                }
+            }
+        }
+	},
 ];
 
 // ===== 小说拼音字、屏蔽字修复 =====
@@ -2788,12 +2822,14 @@ Parser.prototype = {
             var url = ajaxScript.attr('src');
             if(!url) return;
             var charset = ajaxScript.attr('charset') || 'utf-8';
+
             C.log('Ajax 获取内容: ', url, ". charset=" + charset);
 
-            GM_xmlhttpRequest({
+            var reqObj = {
                 url: url,
                 method: "GET",
                 overrideMimeType: "text/html;charset=" + charset,
+                headers: {},
                 onload: function(res){
                     var text = res.responseText;
                     if (text.indexOf('{"CID":') === 0) {  // 创世中文
@@ -2808,7 +2844,18 @@ Parser.prototype = {
                     self.content = self.handleContentText(text, self.info);
                     callback(self);
                 }
-            });
+            };
+
+            // Jixun: Allow post data
+            var postData = ajaxScript.data('post');
+            
+            if (postData) {
+                reqObj.method = 'POST';
+                reqObj.data = $.param(postData);
+                reqObj.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+            }
+
+            GM_xmlhttpRequest(reqObj);
         }else{
             this.content = this.handleContentText(this.$content.html(), this.info);
             callback(this);
@@ -3358,6 +3405,10 @@ var App = {
         } else {
             console.error("当前页面没有找到内容");
         }
+
+        // 初始化, 取消页面限制等
+        if (App.site.fInit)
+            App.site.fInit();
     },
     processPage: function(parser) {
         // 对 Document 进行处理
