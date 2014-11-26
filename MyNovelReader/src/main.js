@@ -162,6 +162,10 @@ var App = {
         } else {
             console.error("当前页面没有找到内容");
         }
+
+        // 初始化, 取消页面限制等
+        if (App.site.fInit)
+            App.site.fInit();
     },
     processPage: function(parser) {
         // 对 Document 进行处理
