@@ -9,26 +9,31 @@
 // @require     http://cdn.staticfile.org/zepto/1.1.4/zepto.min.js
 // ==/UserScript==
 
-var enableOtherURL = true;
+// 优先的类别
+var enableType = 'yyets';
 
 // 无法在线播放的规则
 var rules = {
     'criminal minds': {
         name: '犯罪心理',
         // 存在在线播放的地址
-        // yyets: 'http://www.yyets.com/resource/11003',
+        yyets: 'http://www.yyets.com/resource/11003',
+        yyxz: 'http://www.yayaxz.com/resource/11003'
     },
     'hawaii five0': {
         name: '天堂执法者',
         yyets: 'http://www.yyets.com/resource/10998',
+        yyxz: 'http://www.yayaxz.com/resource/10998'
     },
     'castle 2009': {
         name: '灵书妙探',
         yyets: 'http://www.yyets.com/resource/10996',
+        yyxz: 'http://www.yayaxz.com/resource/10996',
     },
     'the big bang theory': {
         name: '生活大爆炸',
-        yyets: 'http://www.yyets.com/resource/11005'
+        yyets: 'http://www.yyets.com/resource/11005',
+        yyxz: 'http://www.yayaxz.com/resource/11005'
     },
     'the voice us': {
         name: '美国之声',
@@ -45,7 +50,8 @@ var rules = {
     },
     'ncis': {
         name: '海军罪案调查处',
-        yyets: 'http://www.yyets.com/resource/11001'
+        yyets: 'http://www.yyets.com/resource/11001',
+        yyxz: 'http://www.yayaxz.com/resource/11001'
     },
     '2 broke girls': {
         name: '破产姐妹'
@@ -91,16 +97,16 @@ var ns = {
         var url, text, title;
         var rule = rules[name];
         if (rule) {
-            Object.keys(rule).some(function(key) {
-                if (key == 'name') {
-                    name = rule.name
-                } else if (enableOtherURL){
-                    url = rule[key];
-                    text = key;
-                    title = url;
-                    return true;
-                }
-            });
+            name = rule.name;
+
+            // 如果有优先的先选择优先的，否则选择第一个
+            var keys = Object.keys(rule);
+            keys.splice(keys.indexOf('name'), 1);
+            var key = (keys.indexOf(enableType) != -1) ? enableType : keys[0];
+
+            url = rule[key];
+            text = key;
+            title = url;
         }
 
         if (!url) {
