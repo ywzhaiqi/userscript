@@ -295,12 +295,14 @@ Parser.prototype = {
             var url = ajaxScript.attr('src');
             if(!url) return;
             var charset = ajaxScript.attr('charset') || 'utf-8';
+
             C.log('Ajax 获取内容: ', url, ". charset=" + charset);
 
-            GM_xmlhttpRequest({
+            var reqObj = {
                 url: url,
                 method: "GET",
                 overrideMimeType: "text/html;charset=" + charset,
+                headers: {},
                 onload: function(res){
                     var text = res.responseText;
                     if (text.indexOf('{"CID":') === 0) {  // 创世中文
@@ -315,7 +317,18 @@ Parser.prototype = {
                     self.content = self.handleContentText(text, self.info);
                     callback(self);
                 }
-            });
+            };
+
+            // Jixun: Allow post data
+            var postData = ajaxScript.data('post');
+            
+            if (postData) {
+                reqObj.method = 'POST';
+                reqObj.data = $.param(postData);
+                reqObj.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+            }
+
+            GM_xmlhttpRequest(reqObj);
         }else{
             this.content = this.handleContentText(this.$content.html(), this.info);
             callback(this);

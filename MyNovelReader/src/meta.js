@@ -228,6 +228,7 @@
 // @include        http://www.caihongwenxue.com/Html/Book/*/*/*.html
 // @include        http://www.shushuw.cn/shu/*/*.html
 // @include        http://www.78xs.com/article/*/*/*.shtml
+// @include        http://www.miaobige.com/book/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html
