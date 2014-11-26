@@ -2,7 +2,7 @@
 // @name           WeiPhoneDownloadHelper
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
-// @version        1.3.1
+// @version        1.3.2
 // @description    批量下载威锋论坛的电子书
 // @homepageURL    https://greasyfork.org/scripts/668/
 // @updateURL      https://greasyfork.org/scripts/668/code.meta.js
@@ -40,6 +40,7 @@ var RES = getMStr(function(){
 			position:fixed;
 			top:80px;
 			right:8px;
+			z-index: 100;
 		}
 		#batchPublish {
 			position:fixed;
@@ -116,22 +117,24 @@ locationHref.match(/thread-htm-fid|mod=forumdisplay/) && (function(){
 
 locationHref.match(/read-htm-tid|mod=viewthread/) && (function(){
 
-	var attachSelector = '.attnm > a, span[id^="attach_"] > a';
+	var preUrl = location.origin,
+		attachSelector = '.attnm > a, span[id^="attach_"] > a',
+		$attachs = $(attachSelector);
 
-	if (jQuery(attachSelector).size() == 0) return;
+	if ($attachs.size() == 0) {
+		return;
+	}
 
-	var preUrl = location.origin;
+	$('<style>').html(RES.cssText).appendTo('head');
 
-	$('<style>').html(RES.cssText)
-			.appendTo('head');
+	$(RES.html).appendTo('body');
 
-	jQuery(RES.html).appendTo('body');
 	$('#closeButton').click(function(){
 		$('#batchPublish').hide();
 	})
 
-	jQuery('#downloadButton').click(function(){
-		var links = jQuery.makeArray(jQuery(attachSelector))
+	$('#downloadButton').attr('title', '共 ' + $attachs.size() + ' 个附件').click(function(){
+		var links = $.makeArray($(attachSelector))
 			$batchNotice = $('#batchNotice');
 		var downUrls = [];
 
@@ -171,8 +174,8 @@ locationHref.match(/read-htm-tid|mod=viewthread/) && (function(){
 				var m = link.getAttribute('onclick').match(/jQuery.get\('(.*?)',/);
 				if (m) {
 					var url = m[1];
-					jQuery.get(url, {}, function(data){
-						var downUrl = jQuery('<div>').html(data).find('a:first').attr('href');
+					$.get(url, {}, function(data){
+						var downUrl = $('<div>').html(data).find('a:first').attr('href');
 						downUrl = preUrl + downUrl;
 						downUrls.push(downUrl)
 
