@@ -88,6 +88,7 @@
 // @include        http://www.23zw.com/olread/*/*/*.html
 // @include        http://www.50zw.com/book_*/*.html
 // @include        http://www.xiangcunxiaoshuo.com/shu/*/*.html
+// @include        http://www.lwxs520.com/books/*/*/*.html
 
 // www.sodu.so
 // @include        http://www.jiaodu8.com/*/*/*/*.html

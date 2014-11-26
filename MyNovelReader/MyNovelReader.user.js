@@ -88,6 +88,7 @@
 // @include        http://www.23zw.com/olread/*/*/*.html
 // @include        http://www.50zw.com/book_*/*.html
 // @include        http://www.xiangcunxiaoshuo.com/shu/*/*.html
+// @include        http://www.lwxs520.com/books/*/*/*.html
 
 // www.sodu.so
 // @include        http://www.jiaodu8.com/*/*/*/*.html
@@ -891,7 +892,6 @@ Rule.specialSite = [
             '顶点小说.23us.。',
             '\\(顶点小说\\)',
             '看最新最全',
-            '[wｗＷ]{1,3}．２３ｕＳ．(?:ｃｏＭ|com)',
             '看.*?最新章节到长风文学',
         ]
     },
@@ -1338,6 +1338,13 @@ Rule.specialSite = [
             '【最新更新】',
         ]
     },
+    {siteName: "乐文小说网",
+        url: "^http://www\\.lwxs520\\.com/books/.*\\.html",
+        contentReplace: [
+            '喜欢乐文小说网就上www.*(?:ＣＯＭ|com)',
+            '\\(LＷXＳ５２０。\\)',
+        ]
+    },
 
     // ===== 特殊的获取下一页链接
     {siteName: "看书啦",
@@ -1431,6 +1438,9 @@ Rule.replace = {
     "uutxt\\.org|3vbook\\.cn|www\\.qbwx\\.com|WWw\\.YaNkuai\\.com|www\\.btzw\\.com|www\\.23uS\\.com": "",
     "txt53712/": "",
     "\xa0{4,12}":"\xa0\xa0\xa0\xa0\xa0\xa0\xa0",
+
+    // === 通用去广告
+    "[wｗＷ]{1,3}[．\\.]２３ｕＳ[．\\.](?:ｃｏＭ|com)": "",
 
     // === 星号屏蔽字还原 ===
     "十有(\\*{2})":"十有八九","十有bā'九":"十有八九",  "\\*{2}不离十":"八九不离十",
