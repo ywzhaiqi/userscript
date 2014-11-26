@@ -2,7 +2,7 @@
 // @name           Flvxz
 // @namespace      https://github.com/ywzhaiqi
 // @version        0.1
-// @description    flvxz.com 复制到剪贴板或导出 IDM。其中 "用 IDM 下载" 需要注册协议，配合 addToIDM.ahk 实现。
+// @description    flvxz.com 复制到剪贴板或使用 IDM 下载。其中 "用 IDM 下载" 需要注册协议，配合 addToIDM.ahk 实现。
 // @include        http://*flvxz.com/?url=*
 // @grant          GM_setClipboard
 // @require        http://cdn.staticfile.org/jquery/2.1.1/jquery.min.js
@@ -112,7 +112,7 @@ function getLinkHash(isNoReferer) {  // 根据类型对所有链接进行分类
             }
 
             curArr.push({
-                title: $el.text(),
+                title: safeTitle($el.text()),
                 url: url
             });
         }
@@ -121,6 +121,9 @@ function getLinkHash(isNoReferer) {  // 根据类型对所有链接进行分类
     return linkHash;
 }
 
+function safeTitle(title) {
+    return title.replace(/[\\\|\:\*\"\?\<\>]/g,"_");
+}
 
 function saveAs(data, filename) {
     var blob = new Blob([data], {
