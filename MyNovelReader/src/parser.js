@@ -321,7 +321,7 @@ Parser.prototype = {
 
             // Jixun: Allow post data
             var postData = ajaxScript.data('post');
-            
+
             if (postData) {
                 reqObj.method = 'POST';
                 reqObj.data = $.param(postData);
@@ -393,9 +393,26 @@ Parser.prototype = {
             $div.find(info.contentRemove).remove();
         }
 
+        // 给独立的文本加上 p
+        $div.contents().filter(function() {
+            return this.nodeType == 3 &&
+                this.textContent != '\n' &&
+                (!this.nextElementSibling || this.nextElementSibling.nodeName != 'A') &&
+                (!this.previousElementSibling || this.previousElementSibling.nodeName != 'A');
+        }).wrap('<p>');
+
+        // 删除无效的 p，排除对大块文本的判断
+        $div.find('p').filter(function() {
+            // 有效文本（排除注释、换行符、空白）个数为 0
+            return $(this).contents().filter(function() {
+                return this.nodeType != 8 &&
+                        !this.textContent.match(/^\s*$/);
+            }).size() == 0;
+        }).remove();
+
         // 把一大块的文本分段
         if (Config.split_content) {
-            var $p = $div.find('> p'),
+            var $p = $div.find('p'),
                 $newP;
             if ($p.length == 0 ) {
                 $newP = $div;
@@ -408,10 +425,7 @@ Parser.prototype = {
             }
         }
 
-        // 给独立的文本加上 p
-        $div.contents().filter(function(el) {
-            return this.nodeType == 3 && this.textContent != '\n';
-        }).wrap('<p>');
+
 
         if(contentHandle){
             $div.filter('br').remove();

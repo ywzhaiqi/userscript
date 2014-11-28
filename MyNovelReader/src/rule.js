@@ -304,6 +304,14 @@ Rule.specialSite = [
             }
         }
     },
+    {siteName: '凤舞文学网',
+        url: '^http://www\\.qiuwu\\.net/html/\\d+/\\d+/\\d+\\.html',
+        contentReplace: [
+            {
+                '<img src="/keywd/R43.gif">':'爱', '<img src="/keywd/A13.gif">': '情', '<img src="/keywd/D10.gif">': '床', '<img src="/keywd/Y19.gif">': '奸', '<img src="/keywd/H21.gif">': '屁', '<img src="/keywd/Z23.gif">': '逼', '<img src="/keywd/G42.gif">': '身', '<img src="/keywd/Y2.gif">':'性', '<img src="/keywd/D32.gif">':'热', '<img src="/keywd/I44.gif">':'挺', '<img src="/keywd/H30.gif">':'贱', '<img src="/keywd/H25.gif">':'荡', '<img src="/keywd/V7.gif">':'肉',
+            }
+        ]
+    },
     {siteName: "书迷楼",
         url: /^http:\/\/www\.shumilou\.com\/.*html$/,
         titleReg: /(.*) (.*?) 书迷楼/,
@@ -318,6 +326,7 @@ Rule.specialSite = [
             '\\(\\.\\)R?U',
             {'<p>\\?\\?': '<p>'},
             '\\(www.\\)',
+            '章节更新最快'
         ],
         fixImage: true,
         contentPatch: function(fakeStub){
@@ -1079,9 +1088,11 @@ Rule.specialSite = [
         ]
     },
     {siteName: "乐文小说网",
-        url: "^http://www\\.lwxs520\\.com/books/.*\\.html",
+        url: /http:\/\/www\.lwxs520\.com\/books\/\d+\/\d+\/\d+.html/,
+        siteExample: 'http://www.lwxs520.com/books/2/2329/473426.html',
         contentReplace: [
             '喜欢乐文小说网就上www.*(?:ＣＯＭ|com)',
+            '爱玩爱看就来乐文小说网.*',
             '\\(LＷXＳ５２０。\\)',
         ]
     },
