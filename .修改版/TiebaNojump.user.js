@@ -2,7 +2,7 @@
 // @name        TiebaNojump
 // @namespace   https://github.com/ywzhaiqi
 // @include     http://tieba.baidu.com/p/*
-// @version     1
+// @version     1.1
 // @grant       none
 // ==/UserScript==
 
@@ -10,9 +10,9 @@
 function run() {
     var urls = document.querySelectorAll('a[href^="http://jump.bdimg.com/safecheck"]');
     for (var i = 0; i < urls.length; i++) {
-        var url = urls[i].innerHTML;
-        if (url.indexOf("http") < 0)
-            url = "http://" + urls[i].innerHTML;
+        var url = urls[i].textContent;
+        if (url.indexOf("http") == -1)
+            url = "http://" + url;
         urls[i].setAttribute("href", url);
     }
 }
