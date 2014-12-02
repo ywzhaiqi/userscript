@@ -1,7 +1,7 @@
 网页
     Google, https://www.google.com.hk/search?q=%s&ie=utf-8
-    // wen.lu, https://wen.lu/search?q=%s&hl=zh-CN&safe=off&ie=utf-8&oe=utf-8
-    百度, http://www.baidu.com/s?wd=%s&ie=utf-8
+    // awk.so, https://awk.so/#num=30&newwindow=1&q=%s&hl=zh-CN&safe=off&ie=utf-8, www.google.com.hk
+    百度, https://www.baidu.com/s?wd=%s&ie=utf-8
     必应, https://cn.bing.com/search?q=%s
     360搜索, http://www.so.com/s?ie=utf-8&q=%s
 
@@ -84,7 +84,7 @@
     亚马逊（英）, http://www.amazon.com/s/ref=nb_sb_noss?field-keywords=%s, www.amazon.cn
     Google 书籍, http://books.google.com/books?q=%s, www.google.com
     多看, http://www.duokan.com/search/%s/1
-    百度盘（主页）, http://pan.baidu.com/disk/home?adapt=pc#dir/key=%s
+    百度盘（主页）, https://pan.baidu.com/disk/home?adapt=pc#dir/key=%s
 
 翻译-爱词霸
     google翻译, https://translate.google.com/?q=%s
