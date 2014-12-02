@@ -1,6 +1,6 @@
 {
   "name": "picviewer CE",
-  "version": "2014.11.14.0",
+  "version": "2014.12.02.0",
   "description": "NLF 的围观图修改版",
   "main": "picviewerCE.user.js",
   "author": "NLF && ywzhaiqi",
