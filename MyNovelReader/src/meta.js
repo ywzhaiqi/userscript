@@ -114,6 +114,7 @@
 // @include        http://www.d586.com/*/*/
 // @include        http://www.bookgew.com/Html/Book/*/*/*.htm
 // @include        http://read.shuhaha.com/Html/Book/*/*/*.html
+// @include        http://www.shuhaha.com/Html/Book/*/*/*.html
 // @include        http://www.biqi.me/files/article/html/*/*/*.html
 // @include        http://www.ttzw.com/book/*/*.html
 // @include        http://www.uukanshu.com/*/*/*.html

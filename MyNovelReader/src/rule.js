@@ -707,9 +707,14 @@ Rule.specialSite = [
         ]
     },
     {siteName: "书哈哈小说网",
-        url: "http://read\\.shuhaha\\.com/Html/Book/\\d+/\\d+/\\d+\\.html",
+        url: "http://(read|www)\\.shuhaha\\.com/Html/Book/\\d+/\\d+/\\d+\\.html",
         titleSelector: "#htmltimu",
         bookTitleSelector: [".srcbox > a:nth-child(2)", /目录$/],
+        contentReplace: [
+            '‘‘', '’’',
+            '（\\.shuh&amp;n）',
+            /<p[^>]*>(&nbsp;){4}网<\/p>/gi
+        ]
     },
     {siteName: "SF 轻小说",
         url: '^http://book.sfacg.com/Novel/\\d+/\\d+/\\d+/',
