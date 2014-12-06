@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           BaiduPanHelper
-// @version        0.0.2
+// @version        0.0.3
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @description
@@ -157,7 +157,7 @@ var moveDialog = (function() {
         // 刷新自动补全的路径
         $('.list > div[data-extname="dir"]').map(function() {
             var $this = $(this),
-                dirName = $this.find('.name').attr('title');
+                dirName = $this.find('.name-text').text();
 
             var value = isSearchPage ?
                     $this.find('.search-feild').data('path') + '/' + dirName :
@@ -191,7 +191,7 @@ var moveDialog = (function() {
         $input.autocomplete({
             lookup: paths,
             onSelect: function (suggestion) {
-                $checkbox.prop('checked', true);
+                $checkbox[0].click();
             }
         });
 
