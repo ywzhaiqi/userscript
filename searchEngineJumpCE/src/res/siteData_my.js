@@ -2,7 +2,8 @@
     Google, https://www.google.com.hk/search?q=%s&ie=utf-8&safe=off
     // Google, https://www.google.com/ncr#num=30&newwindow=1&safe=off&hl=zh-CN&q=%s
     // wen.lu, https://wen.lu/search?q=%s&hl=zh-CN&safe=off&ie=utf-8, www.google.com.hk
-    百度, http://www.baidu.com/s?wd=%s&ie=utf-8
+    // awk.so, https://awk.so/#num=30&newwindow=1&q=%s&hl=zh-CN&safe=off&ie=utf-8, www.google.com.hk
+    百度, https://www.baidu.com/s?wd=%s&ie=utf-8
     必应, https://cn.bing.com/search?q=%s
     360, http://www.so.com/s?ie=utf-8&q=%s
     搜狗, http://www.sogou.com/web?query=%s
