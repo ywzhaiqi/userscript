@@ -718,8 +718,10 @@ Rule.specialSite = [
         contentSelector: "#BookText",
         contentRemove: 'a[href*="www.shuhaha.com"]',
         contentReplace: [
-            /访问:.*?\..*?。/gi
-        ],
+            '‘‘', '’’',
+            '（\\.shuh&amp;n）',
+            /<p[^>]*>(&nbsp;){4}网<\/p>/gi
+        ]
     },
     {siteName: "SF 轻小说",
         url: '^http://book.sfacg.com/Novel/\\d+/\\d+/\\d+/',
