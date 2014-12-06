@@ -75,4 +75,5 @@
 
 etc
     AMO, https://addons.mozilla.org/zh-CN/firefox/search/?q=%s
-    射手字幕, http://shooter.cn/search/%s
+    // 射手字幕, http://www.shooter.cn/search/%s
+    字幕, http://www.subom.net/search/%s

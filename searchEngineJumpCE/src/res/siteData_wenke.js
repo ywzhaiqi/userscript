@@ -64,7 +64,8 @@ ACG
     动漫花园, http://share.dmhy.org/topics/list?keyword=%s
     VeryCD, http://www.verycd.com/search/entries/%s
     人人影视, http://www.yyets.com/search/index?keyword=%s
-    射手字幕, http://shooter.cn/search/%s
+    // 射手字幕, http://www.shooter.cn/search/%s
+    字幕, http://www.subom.net/search/%s
     idown, http://idown.org/search/search.php?ie=GB2312&q=%s, gbk
     盘搜, http://www.pansou.com/s.php?wp=0&op=&ty=gn&op=gn&q=%s
     我乐盘, http://www.56pan.com/s.php?q=%s

@@ -75,7 +75,8 @@
     btspread, http://www.btspread.com/search/%s
     下载搜索, https://www.google.com/cse?q=%s&newwindow=1&cx=006100883259189159113%3Atwgohm0sz8q
     // simpledCD, http://simplecd.me/search/entry/?query=%s
-    射手字幕, http://www.shooter.cn/search/%s
+    // 射手字幕, http://www.shooter.cn/search/%s
+    字幕, http://www.subom.net/search/%s
 
 书籍
     豆瓣读书, http://book.douban.com/subject_search?search_text=%s&cat=1001, www.douban.com

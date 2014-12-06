@@ -119,7 +119,8 @@
     bt 天堂, http://www.bttiantang.com/s.php?q=%s
     我爱P2P, http://www.byhh.org/?topic_title=%s
     VeryCD, http://www.verycd.com/search/folders/%s
-    射手字幕, http://www.shooter.cn/search/%s
+    // 射手字幕, http://www.shooter.cn/search/%s
+    字幕, http://www.subom.net/search/%s
     影视--下载搜索
         丫丫下载站, http://www.yayaxz.com/search/%s
         天天美剧, http://www.ttmeiju.com/search.php?keyword=%s&range=0&mozcharset=gbk
