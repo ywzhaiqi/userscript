@@ -718,30 +718,6 @@ var SITEINFO=[
             pageElement: '//div[@class="content"]',
         }
     },
-    {name: '土豆网 - 个人主页_视频',
-        url: /^http:\/\/www\.tudou\.com\/home\/item\//i,
-        exampleUrl: 'http://www.tudou.com/home/item/loveqiaolin',
-        nextLink:{
-            startAfter: '?page=',
-            mFails:[/^http:\/\/www\.tudou\.com\/home\/item\/.+/i,'?page=1&sort=1'],
-            inc:1,
-            isLast: function(doc,win,lhref){
-                var document = unsafeWindow.document;
-                var last = document.querySelector('#page ol:last-child');
-                var maxNum = last.textContent;
-                var m = lhref.match(/\?page=(\d+)/i);
-                if (m) {
-                    return m[1] >= maxNum;
-                }
-            },
-        },
-        autopager: {
-            pageElement: 'id("main")/div[@class="mod mod_program_list"]/div[@class="c"]',
-            useiframe: true,
-            itimeout: 1000,
-            filter: 'css;#page'
-        }
-    },
     {name: '搜狐视频 搜索',
         url: /^http:\/\/so\.tv\.sohu\.com\/mts\?&wd=/i,
         exampleUrl: 'http://so.tv.sohu.com/mts?&wd=%u6211%u662F%u7279%u79CD%u5175%u4E4B%u706B%u51E4%u51F0',
