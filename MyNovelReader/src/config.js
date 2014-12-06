@@ -236,4 +236,11 @@ var Config = {
         this._split_content = bool;
         GM_setValue('split_content', bool);
     },
+
+    get scrollAnimate() {
+        return GM_getValue('scrollAnimate', false);
+    },
+    set scrollAnimate(bool) {
+        GM_setValue('scrollAnimate', bool);
+    },
 };

@@ -89,6 +89,7 @@
 // @include        http://www.50zw.com/book_*/*.html
 // @include        http://www.xiangcunxiaoshuo.com/shu/*/*.html
 // @include        http://www.lwxs520.com/books/*/*/*.html
+// @include        http://www.zashu.net/books/*/*/*.html
 
 // www.sodu.so
 // @include        http://www.jiaodu8.com/*/*/*/*.html
@@ -114,6 +115,7 @@
 // @include        http://www.d586.com/*/*/
 // @include        http://www.bookgew.com/Html/Book/*/*/*.htm
 // @include        http://read.shuhaha.com/Html/Book/*/*/*.html
+// @include        http://www.shuhaha.com/Html/Book/*/*/*.html
 // @include        http://www.biqi.me/files/article/html/*/*/*.html
 // @include        http://www.ttzw.com/book/*/*.html
 // @include        http://www.uukanshu.com/*/*/*.html

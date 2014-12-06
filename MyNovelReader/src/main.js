@@ -512,9 +512,13 @@ var App = {
             offsetTop = $(elem).offset().top - parseInt($(elem).css("margin-top"), 10);
         }
 
-        $("html, body").stop().animate({
-            scrollTop: offsetTop
-        }, 750, "easeOutExpo");
+        if (Config.scrollAnimate) {
+            $("html, body").stop().animate({
+                scrollTop: offsetTop
+            }, 750, "easeOutExpo");
+        } else {
+            $("html, body").stop().scrollTop(offsetTop);
+        }
     },
     openUrl: function(url, errorMsg) {
         if (url) {
@@ -771,7 +775,7 @@ var BookLinkMe = {
         }
     },
     addUnreadButton: function(){  // 添加一键打开所有未读链接
-        var $parent = $('td[colspan="2"]:contains("未读"):first');
+        var $parent = $('td[colspan="2"]:contains("未读"):first, td[colspan="2"]:contains("未讀"):first');
         if(!$parent.length) return;
 
         var openAllUnreadLinks = function(event){

@@ -425,8 +425,6 @@ Parser.prototype = {
             }
         }
 
-
-
         if(contentHandle){
             $div.filter('br').remove();
 

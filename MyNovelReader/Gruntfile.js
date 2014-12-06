@@ -2,11 +2,11 @@ module.exports = function(grunt) {
 
     function readResource(filename) {
         var str = grunt.file.read('./src/res/' + filename, { encoding: 'utf-8' });
-        return "'" +
-                str.replace(/\\/g, '\\\\')
-                  .replace(/[\n\r]+/g, '\\n')
-                  .replace(/'/g, "\\'") +
-                  "'";
+        return  "'" +
+                    str.replace(/\\/g, '\\\\')
+                       .replace(/[\n\r]+/g, '\\n')
+                       .replace(/'/g, "\\'") +
+                "'";
     }
 
     grunt.initConfig({
@@ -65,8 +65,8 @@ module.exports = function(grunt) {
         var source = grunt.file.read('src/meta.js');
 
         var lines = source.match(new RegExp("// @include.*://.*?/", 'ig'));
-        var hosts = lines.map(function(line) { return
-            line.match(/:\/\/(.*?)\//)[1].replace(/\*/g, '');
+        var hosts = lines.map(function(line) {
+            return line.match(/:\/\/(.*?)\//)[1].replace(/\*/g, '');
         });
 
         var unique = function(a){var o={},r=[],t;for(var i=0,l=a.length;i<l;i++){t=a[i];if(!o[t]){o[t]=true;r.push(t);}}return r;};
@@ -79,7 +79,7 @@ module.exports = function(grunt) {
     grunt.registerTask('default', [
         //'jshint',
         'concat',
-        'watch'
+        // 'watch'
     ]);
 
     grunt.loadNpmTasks('grunt-contrib-jshint');

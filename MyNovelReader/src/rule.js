@@ -308,7 +308,12 @@ Rule.specialSite = [
         url: '^http://www\\.qiuwu\\.net/html/\\d+/\\d+/\\d+\\.html',
         contentReplace: [
             {
-                '<img src="/keywd/R43.gif">':'爱', '<img src="/keywd/A13.gif">': '情', '<img src="/keywd/D10.gif">': '床', '<img src="/keywd/Y19.gif">': '奸', '<img src="/keywd/H21.gif">': '屁', '<img src="/keywd/Z23.gif">': '逼', '<img src="/keywd/G42.gif">': '身', '<img src="/keywd/Y2.gif">':'性', '<img src="/keywd/D32.gif">':'热', '<img src="/keywd/I44.gif">':'挺', '<img src="/keywd/H30.gif">':'贱', '<img src="/keywd/H25.gif">':'荡', '<img src="/keywd/V7.gif">':'肉',
+                '<img src="/keywd/R43.gif">':'爱', '<img src="/keywd/A13.gif">': '情', '<img src="/keywd/D10.gif">': '床',
+                '<img src="/keywd/Y19.gif">': '奸', '<img src="/keywd/H21.gif">': '屁', '<img src="/keywd/Z23.gif">': '逼',
+                '<img src="/keywd/G42.gif">': '身', '<img src="/keywd/Y2.gif">':'性', '<img src="/keywd/D32.gif">':'热',
+                '<img src="/keywd/I44.gif">':'挺', '<img src="/keywd/H30.gif">':'贱', '<img src="/keywd/H25.gif">':'荡',
+                '<img src="/keywd/V7.gif">':'肉', '<img src="/keywd/O22.gif">':'吮', '<img src="/keywd/H9.gif">':'春',
+                '<img src="/keywd/K36.gif">':'日', '<img src="/keywd/O15.gif">':'胸', '<img src="/keywd/S31.gif">':'欲',
             }
         ]
     },
@@ -707,9 +712,14 @@ Rule.specialSite = [
         ]
     },
     {siteName: "书哈哈小说网",
-        url: "http://read\\.shuhaha\\.com/Html/Book/\\d+/\\d+/\\d+\\.html",
+        url: "http://(?:read|www)\\.shuhaha\\.com/Html/Book/\\d+/\\d+/\\d+\\.html",
         titleSelector: "#htmltimu",
         bookTitleSelector: [".srcbox > a:nth-child(2)", /目录$/],
+        contentSelector: "#BookText",
+        contentRemove: 'a[href*="www.shuhaha.com"]',
+        contentReplace: [
+            /访问:.*?\..*?。/gi
+        ],
     },
     {siteName: "SF 轻小说",
         url: '^http://book.sfacg.com/Novel/\\d+/\\d+/\\d+/',
@@ -732,6 +742,17 @@ Rule.specialSite = [
         contentSelector: '.yd_text2',
         contentReplace: [
             '[ｗＷw]+．２３ｕＳ．(?:ｃｏＭ|com)',
+        ]
+    },
+    {siteName: "杂书网",
+        url: "^http://www\\.zashu\\.net/books/\\d+/\\d+/\\d+\\.html",
+        contentReplace: [
+            "吋煜牝咱更新最快去杂书网",
+            "吋煜牝咱看书神器",
+            "吋煜牝咱看.*?最新章节，去杂书网杠杠的",
+            "吋煜牝咱《顶》《点》小说 .23Ｘ.Ｃom",
+            "吋煜牝咱",
+            "看小说“杂书网zashu.net”",
         ]
     },
 
@@ -847,6 +868,7 @@ Rule.specialSite = [
             "小说网不跳字",
             "\\.com",
             "BAIDU_CLB_fillSlot\\(.*",
+            "--小-说-www-23wx-com",
         ]
     },
     // ============== 内容需要2次获取的 =========================
@@ -1073,6 +1095,8 @@ Rule.specialSite = [
         url: "http://www\\.cfwx\\.net/files/article/html/\\d+/\\d+/\\d+\\.html",
         titleSelector: '.title',
         bookTitleSelector: '.linkleft > a:last',
+        contentReplace: [
+        ]
     },
     {siteName: "云来阁",
         url: "http://www\\.yunlaige\\.com/html/\\d+/\\d+/\\d+\\.html",
@@ -1085,6 +1109,7 @@ Rule.specialSite = [
             '《更新最快小说网站：雲来阁http://WWW.YunLaiGe.COM》',
             '◢百度搜索雲来阁，最新最快的小说更新◣',
             '【最新更新】',
+            '值得您收藏。。',
         ]
     },
     {siteName: "乐文小说网",
@@ -1094,6 +1119,7 @@ Rule.specialSite = [
             '喜欢乐文小说网就上www.*(?:ＣＯＭ|com)',
             '爱玩爱看就来乐文小说网.*',
             '\\(LＷXＳ５２０。\\)',
+            'Ｍ.LＷxＳ520.com&nbsp;乐文移动网'
         ]
     },
 
@@ -1224,10 +1250,11 @@ Rule.replace = {
     "\\[\\]":"",
     "如果您觉得网不错就多多分享本站谢谢各位读者的支持": "",
     "全文字无广告|\\(看书窝&nbsp;看书窝&nbsp;无弹窗全文阅读\\)": "",
-    "。。。　看最新最全小说": "",
+    "。。+[\\s　]*看最新最全小说": "",
     "水印广告测试": "",
     "\\(平南文学网\\)":"",  "讀蕶蕶尐說網":"",
     "比奇提示：如何快速搜自己要找的书籍":"",  "《百度书名\\+比奇》即可快速直达":"",
+    "[:《〈｜~]长.风.文~?学.*?net": "",
 
     "\\(一秒记住小说界\\）|\\*一秒记住\\*":"",
     "uutxt\\.org|3vbook\\.cn|www\\.qbwx\\.com|WWw\\.YaNkuai\\.com|www\\.btzw\\.com|www\\.23uS\\.com": "",
