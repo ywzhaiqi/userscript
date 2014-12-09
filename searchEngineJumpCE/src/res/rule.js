@@ -57,6 +57,21 @@ var rules = [
             where: 'beforeBegin',
         },
     },
+    {name: "awk.so网页搜索",
+        enabled: true,
+        url: /^https?:\/\/awk\.so\//i,
+        engineList: 'web',
+        style: '\
+            border-bottom: 1px solid #E5E5E5;\
+            border-top: 1px solid #E5E5E5;\
+            padding-left: 135px;\
+            ',
+        insertIntoDoc: {
+            keyword: '//input[@name="q"]',
+            target: 'css;#rcnt',
+            where: 'beforeBegin',
+        },
+    },
     {name: "baidu 网页搜索",
         // 新增了百度简洁搜索：http://www.baidu.com/s?wd=firefox&ie=utf-8&tn=baidulocal
         url: /^https?:\/\/www\.baidu\.com\/(?:s|baidu|)/,
@@ -1467,7 +1482,7 @@ var rules = [
     },
     {name: "射手字幕",
         url: /^https?:\/\/shooter\.cn\/search/,
-        engineList: "web",
+        engineList: "下载",
         enabled: true,
         style: "\
             margin:0 auto;\
@@ -1480,6 +1495,22 @@ var rules = [
             where: 'afterEnd'
         }
     },
+    {name: "Subom字幕",
+        url: /^https?:\/\/www\.subom\.net\/search/,
+        engineList: "下载",
+        enabled: true,
+        style: "\
+            margin:0 auto;\
+            word-break:keep-all;\
+            white-space:nowrap;\
+            ",
+        insertIntoDoc: {
+            keyword: 'css;#search_box',
+            target: 'css;#container_bd',
+            where: 'beforeBegin'
+        }
+    },
+
 ];
 
 rules.default = {
