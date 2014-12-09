@@ -311,7 +311,7 @@ Parser.prototype = {
                     } else {
                         text = text.replace(/document.write(ln)?\('/, "")
                                 .replace("');", "")
-                                .replace(/[\n\r]/g, '</p><p>');
+                                .replace(/[\n\r]+/g, '</p><p>');
                     }
 
                     self.content = self.handleContentText(text, self.info);
@@ -338,7 +338,6 @@ Parser.prototype = {
         if(!text) return null;
 
         // 贴吧的内容处理比较耗时间
-
         C.group('开始内容处理');
         C.time('内容处理');
 
@@ -532,6 +531,10 @@ Parser.prototype = {
         return text;
     },
     splitContent: function (text) {  // 有些章节整个都集中在一起，没有分段，整个函数用于简易分段
+        if (text.indexOf('。') == -1) {
+            return [text];
+        }
+
         var hasMark = false,
             lines = []
             charCotainer = [];

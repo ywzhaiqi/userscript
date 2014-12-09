@@ -314,6 +314,8 @@ Rule.specialSite = [
                 '<img src="/keywd/I44.gif">':'挺', '<img src="/keywd/H30.gif">':'贱', '<img src="/keywd/H25.gif">':'荡',
                 '<img src="/keywd/V7.gif">':'肉', '<img src="/keywd/O22.gif">':'吮', '<img src="/keywd/H9.gif">':'春',
                 '<img src="/keywd/K36.gif">':'日', '<img src="/keywd/O15.gif">':'胸', '<img src="/keywd/S31.gif">':'欲',
+                '<img src="/keywd/F20.gif">':'射', '<img src="/keywd/N12.gif">':'禁', '<img src="/keywd/R26.gif">':'殿',
+                '<img src="/keywd/N12.gif">':'禁', '<img src="/keywd/X6.gif">':'诱',
             }
         ]
     },
@@ -744,16 +746,17 @@ Rule.specialSite = [
         contentSelector: '.yd_text2',
         contentReplace: [
             '[ｗＷw]+．２３ｕＳ．(?:ｃｏＭ|com)',
+            '乡&amp;村&amp;.*?\\.co[mＭ]',
         ]
     },
     {siteName: "杂书网",
         url: "^http://www\\.zashu\\.net/books/\\d+/\\d+/\\d+\\.html",
         contentReplace: [
-            "吋煜牝咱更新最快去杂书网",
+            "吋煜牝咱.*?杂书网(?:杠杠的)?",
             "吋煜牝咱看书神器",
-            "吋煜牝咱看.*?最新章节，去杂书网杠杠的",
             "吋煜牝咱《顶》《点》小说 .23Ｘ.Ｃom",
             "吋煜牝咱",
+            "飝现洅咱",
             "看小说“杂书网zashu.net”",
         ]
     },
