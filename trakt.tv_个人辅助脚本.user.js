@@ -64,6 +64,10 @@ var rules = {
     },
     'one piece': {
         name: '海贼王',
+    },
+    'the mentalist': {
+        name: '超感神探',
+        qq: 'http://v.qq.com/search.html?ms_key=超感神探',
     }
 };
 
