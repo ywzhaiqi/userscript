@@ -15,10 +15,11 @@
 // @grant          GM_xmlhttpRequest
 // @grant          GM_getResourceText
 // @run-at         document-end
-// @resource iconData.json https://raw.githubusercontent.com/ywzhaiqi/userscript/master/searchEngineJumpCE/src/res/iconData.json?version=1413552677000
+// @resource iconData.json https://raw.githubusercontent.com/ywzhaiqi/userscript/master/searchEngineJumpCE/src/res/iconData.json?version=1418126146000
 
 // @include        /^https?:\/\/(?:www|encrypted)\.google(?:stable)?\..{2,9}\/(?:webhp|search|#|$|\?)(?:.(?!tbm=))*$/
 // @include        /^https?:\/\/wen\.lu\//
+// @include        /^https?:\/\/awk\.so\//
 // @include        /^https?:\/\/www\.baidu\.com\/(?:s|baidu|)/
 // @include        /^https?:\/\/[^.]*\.bing\.com\/search/
 // @include        /^https?:\/\/www\.so\.com\/s\?/
@@ -105,6 +106,7 @@
 // @include        /^https?:\/\/search\.t\.qq\.com\/index|user\.php\?(?!.*QQ%E6%97)/
 // @include        /^https?:\/\/s\.weibo\.com\/weibo|user\//
 // @include        /^https?:\/\/shooter\.cn\/search/
+// @include        /^https?:\/\/www\.subom\.net\/search/
 // @exclude        http*://services.addons.mozilla.org/*
 
 // ==/UserScript==
@@ -242,6 +244,21 @@ var rules = [
     {name: "wen.lu网页搜索",
         enabled: true,
         url: /^https?:\/\/wen\.lu\//i,
+        engineList: 'web',
+        style: '\
+            border-bottom: 1px solid #E5E5E5;\
+            border-top: 1px solid #E5E5E5;\
+            padding-left: 135px;\
+            ',
+        insertIntoDoc: {
+            keyword: '//input[@name="q"]',
+            target: 'css;#rcnt',
+            where: 'beforeBegin',
+        },
+    },
+    {name: "awk.so网页搜索",
+        enabled: true,
+        url: /^https?:\/\/awk\.so\//i,
         engineList: 'web',
         style: '\
             border-bottom: 1px solid #E5E5E5;\
@@ -1664,7 +1681,7 @@ var rules = [
     },
     {name: "射手字幕",
         url: /^https?:\/\/shooter\.cn\/search/,
-        engineList: "web",
+        engineList: "下载",
         enabled: true,
         style: "\
             margin:0 auto;\
@@ -1677,6 +1694,22 @@ var rules = [
             where: 'afterEnd'
         }
     },
+    {name: "Subom字幕",
+        url: /^https?:\/\/www\.subom\.net\/search/,
+        engineList: "下载",
+        enabled: true,
+        style: "\
+            margin:0 auto;\
+            word-break:keep-all;\
+            white-space:nowrap;\
+            ",
+        insertIntoDoc: {
+            keyword: 'css;#search_box',
+            target: 'css;#container_bd',
+            where: 'beforeBegin'
+        }
+    },
+
 ];
 
 rules.default = {
