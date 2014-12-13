@@ -315,7 +315,8 @@ Rule.specialSite = [
                 '<img src="/keywd/V7.gif">':'肉', '<img src="/keywd/O22.gif">':'吮', '<img src="/keywd/H9.gif">':'春',
                 '<img src="/keywd/K36.gif">':'日', '<img src="/keywd/O15.gif">':'胸', '<img src="/keywd/S31.gif">':'欲',
                 '<img src="/keywd/F20.gif">':'射', '<img src="/keywd/N12.gif">':'禁', '<img src="/keywd/R26.gif">':'殿',
-                '<img src="/keywd/N12.gif">':'禁', '<img src="/keywd/X6.gif">':'诱',
+                '<img src="/keywd/N12.gif">':'禁', '<img src="/keywd/X6.gif">':'诱', '<img src="/keywd/U46.gif">': '娇',
+                '<img src="/keywd/M24.gif">': '操',
             }
         ]
     },
@@ -333,7 +334,9 @@ Rule.specialSite = [
             '\\(\\.\\)R?U',
             {'<p>\\?\\?': '<p>'},
             '\\(www.\\)',
-            '章节更新最快'
+            '章节更新最快',
+            '-乐-读-小-说--乐读x-',
+            '《乐》《读》小说.乐读.Com',
         ],
         fixImage: true,
         contentPatch: function(fakeStub){
@@ -626,14 +629,18 @@ Rule.specialSite = [
         }
     },
     {siteName: "顶点小说",
-        url: "^http://www\\.(?:23us|xs222)\\.com/html/\\d+/\\d+/\\d+\\.html$",
+        url: "^http://www\\.(?:23us|23wx|xs222)\\.com/html/\\d+/\\d+/\\d+\\.html$",
         titleReg: "(.*?)-\\S*\\s(.*?)-顶点小说",
         titlePos: 0,
         indexSelector: "#footlink a:contains('返回目录')",
         prevSelector: "#footlink a:contains('上一页')",
         nextSelector: "#footlink a:contains('下一页')",
         contentSelector: "#contents",
-        contentReplace: "\\(看小说到顶点小说网.*\\)|\\(\\)|【记住本站只需一秒钟.*】",
+        contentReplace: [
+            "\\(顶\\)\\(点\\)小说",
+            "www.23[Ｗw][Ｘx].[Ｃc]om",
+            "\\(看小说到顶点小说网.*\\)|\\(\\)|【记住本站只需一秒钟.*】",
+        ],
         contentPatch: function(fakeStub){
             var temp=fakeStub.find('title').text();
             var realtitle = temp.replace(/第.*卷\s/,'');
@@ -754,7 +761,7 @@ Rule.specialSite = [
         contentReplace: [
             "吋煜牝咱.*?杂书网(?:杠杠的)?",
             "吋煜牝咱看书神器",
-            "吋煜牝咱《顶》《点》小说 .23Ｘ.Ｃom",
+            "(?:吋煜牝咱|飝现洅咱).*?[Ｃc]om",
             "吋煜牝咱",
             "飝现洅咱",
             "看小说“杂书网zashu.net”",
@@ -868,12 +875,14 @@ Rule.specialSite = [
             "网站升级完毕！感谢对给力文学网的支持！",
             "（百度搜索给力文学网更新最快最稳定\\)",
             "【sogou,360,soso搜免费下载小说】",
+            "\\[乐\\]\\[读\\]小说.２3.[Ｃc]m",
             "给力文学网",
             "看最快更新",
             "小说网不跳字",
             "\\.com",
             "BAIDU_CLB_fillSlot\\(.*",
             "--小-说-www-23wx-com",
+            "&nbsp;&nbsp;，请",
         ]
     },
     // ============== 内容需要2次获取的 =========================
@@ -1101,6 +1110,8 @@ Rule.specialSite = [
         titleSelector: '.title',
         bookTitleSelector: '.linkleft > a:last',
         contentReplace: [
+            '《长》《风》文学 www.cfwＸ.net',
+            '（长\\)\\(风）（文学）www.cＦＷx.net',
         ]
     },
     {siteName: "云来阁",

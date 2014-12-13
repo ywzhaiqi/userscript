@@ -150,6 +150,7 @@
 // @include        http://www.wobudu.com/*/*.html
 // @include        http://www.qb5.com/xiaoshuo/*/*/*.html
 // @include        http://www.23us.com/html/*/*/*.html
+// @include        http://www.23wx.com/html/*/*/*.html
 // @include        http://www.xs222.com/html/*/*/*.html
 // @include        http://www.bixiage.com/*/*/*/*.html
 // @include        http://www.ranwenxiaoshuo.com/files/article/html/*/*/*.html
