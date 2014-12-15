@@ -2,10 +2,10 @@
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
-// @version        4.9.1
+// @version        4.9.2
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
-// @contributor    Roger Au, shyangs
+// @contributor    Roger Au, shyangs, JixunMoe
 // @description    小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
 // @description:zh-CN  小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
 // @license        GPL version 3
@@ -231,7 +231,7 @@
 // @include        http://www.caihongwenxue.com/Html/Book/*/*/*.html
 // @include        http://www.shushuw.cn/shu/*/*.html
 // @include        http://www.78xs.com/article/*/*/*.shtml
-// @include        http://www.miaobige.com/book/*/*.html
+// @include        http://www.miaobige.com/*/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html
@@ -1442,7 +1442,7 @@ Rule.specialSite = [
     // }
 
 	{siteName:'妙笔阁',
-		url:/^http:\/\/www\.miaobige\.com\/book\/\d_\d+\/\d+\.html/i,
+		url:/^http:\/\/www\.miaobige\.com\/.*\.html/i,
 		siteExample:'http://www.miaobige.com/book/5_1586/1006320.html',
         // 有的会提示防采集章节
         fInit: function () {

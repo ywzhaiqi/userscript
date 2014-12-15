@@ -1178,7 +1178,7 @@ Rule.specialSite = [
     // }
 
 	{siteName:'妙笔阁',
-		url:/^http:\/\/www\.miaobige\.com\/book\/\d_\d+\/\d+\.html/i,
+		url:/^http:\/\/www\.miaobige\.com\/.*\.html/i,
 		siteExample:'http://www.miaobige.com/book/5_1586/1006320.html',
         // 有的会提示防采集章节
         fInit: function () {
