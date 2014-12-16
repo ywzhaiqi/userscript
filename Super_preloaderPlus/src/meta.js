@@ -14,7 +14,7 @@
 
 // @include      http*
 // @exclude      http*://mail.google.com/*
-// @exclude      http*://maps.google*   
+// @exclude      http*://maps.google*
 // @exclude      http*://www.google.com/reader*
 // @exclude      http*://www.google.com/calendar*
 // @exclude      https://docs.google.com/*
@@ -34,6 +34,7 @@
 // @exclude      http://www.youku.com/
 // @exclude      http://v.youku.com/*
 // @exclude      http://www.iqiyi.com/*
+// @exclude      http://www.duokan.com/reader/*
 // ==/UserScript==
 
 

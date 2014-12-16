@@ -140,6 +140,16 @@ var moveDialog = (function() {
         $checkbox,
         paths = [];
 
+    function setSelectPath(path) {
+        if (path) {
+            fileTreeView.obtain.getSelectPath = function() {
+                return path;
+            };
+        } else {
+            delete fileTreeView.obtain.getSelectPath;
+        }
+    }
+
     function refreshPaths() {
         paths.length = 0;
 
@@ -204,14 +214,12 @@ var moveDialog = (function() {
             if (this.checked) {
                 var path = $input.val();
                 if (path) {
-                    fileTreeView.obtain.getSelectPath = function() {
-                        return path;
-                    };
+                    setSelectPath(path);
                 } else {
                     $input.focus();
                 }
             } else {
-                delete fileTreeView.obtain.getSelectPath;
+                setSelectPath();
             }
         };
 
@@ -243,6 +251,8 @@ var moveDialog = (function() {
 
     function dialogShow() {
         refreshPaths();
+
+        setSelectPath();
     }
 
     function init() {

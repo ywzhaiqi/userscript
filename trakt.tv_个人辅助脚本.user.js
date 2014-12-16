@@ -10,7 +10,7 @@
 // ==/UserScript==
 
 // 优先的类别
-var enableType = 'yyxz';
+var enableType = 'yyets';
 
 // 无法在线播放的规则
 var rules = {

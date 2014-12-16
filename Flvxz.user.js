@@ -4,6 +4,7 @@
 // @version        0.1
 // @description    flvxz.com 复制到剪贴板或使用 IDM 下载。其中 "用 IDM 下载" 需要注册协议，配合 addToIDM.ahk 实现。
 // @include        http://*flvxz.com/?url=*
+// @include        http://*flv.cn/?url=*
 // @grant          GM_setClipboard
 // @require        http://cdn.staticfile.org/jquery/2.1.1/jquery.min.js
 // @noframes
