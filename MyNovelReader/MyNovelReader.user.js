@@ -2,7 +2,7 @@
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
-// @version        4.9.2
+// @version        4.9.1
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe
@@ -33,6 +33,8 @@
 // @include        http://www.qdwenxue.com/BookReader/*,*.aspx
 // @include        http://chuangshi.qq.com/read/bookreader/*.html
 // @include        http://chuangshi.qq.com/*bk/*/*.html
+// @include        http://yunqi.qq.com/*bk/*/*.html
+// @include        http://dushu.qq.com/read.html?bid=*
 // @include        http://www.jjwxc.net/onebook.php?novelid=*
 // @include        http://book.zongheng.com/chapter/*/*.html
 // @include        http://www.xxsy.net/books/*/*.html
@@ -232,6 +234,7 @@
 // @include        http://www.shushuw.cn/shu/*/*.html
 // @include        http://www.78xs.com/article/*/*/*.shtml
 // @include        http://www.miaobige.com/*/*/*.html
+// @include        http://www.woaixiaoshuo.com/xiaoshuo/*/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html
@@ -394,15 +397,20 @@ Rule.specialSite = [
         }
     },
     {siteName: "创世中文网",
-        url: "^http://chuangshi\\.qq\\.com/",
+        url: "^http://(?:chuangshi|yunqi)\\.qq\\.com/|^http://dushu\\.qq\\.com/read.html\\?bid=",
         titleReg: "(.*?)_(.*)_创世中文",
+
+        nextSelector: '#rightFloatBar_nextChapterBtn',
+        prevSelector: '#rightFloatBar_preChapterBtn',
+        indexSelector: '',
+
         contentSelector: ".bookreadercontent",
         // contentSelector: "#chaptercontainer",
         contentHandle: false,
         useiframe: true,
-        mutationSelector: "#chaptercontainer",  // 内容生成监视器
-        mutationChildCount: 1,
-        timeout: 500,
+            mutationSelector: "#chaptercontainer",  // 内容生成监视器
+            mutationChildCount: 1,
+            timeout: 500,
         contentRemove: '> p:last',
         // contentPatch: function(fakeStub){
         //     var $body = fakeStub.find('body');
@@ -626,7 +634,7 @@ Rule.specialSite = [
     {siteName: "百晓生",
         url: /^http:\/\/www\.bxs\.cc\/\d+\/\d+\.html/,
         titleReg: /(.*?)\d*,(.*)/,
-        contentRemove: 'a',
+        contentRemove: 'a, #txtright',
         contentReplace: [
             /一秒记住【】www.zaidu.cc，本站为您提供热门小说免费阅读。/ig,
             /（文&nbsp;學馆w&nbsp;ww.w&nbsp;xguan.c&nbsp;om）/ig,
@@ -643,6 +651,7 @@ Rule.specialSite = [
             /文[学學][馆館]|www\.biquge\.cc|(http:\/\/)?www\.Bxs\.cc|(请牢记)?soudu．org/ig,
             /请搜索，小说更好更新更快!|最快文字更新无弹窗无广|\(即可找到本站\)|无广告看着就是爽!|更多全本txt小说请到下载|∷更新快∷∷纯文字∷/ig,
             /永久网址，请牢记！/ig,
+            /&nbsp;&gt;<\/p>/ig,
         ],
     },
     {siteName: "浩奇文学网",
@@ -1395,12 +1404,22 @@ Rule.specialSite = [
     {siteName: "乐文小说网",
         url: /http:\/\/www\.lwxs520\.com\/books\/\d+\/\d+\/\d+.html/,
         siteExample: 'http://www.lwxs520.com/books/2/2329/473426.html',
+        contentRemove: '#content>:not(p)',
         contentReplace: [
             '喜欢乐文小说网就上www.*(?:ＣＯＭ|com)',
             '爱玩爱看就来乐文小说网.*',
             '\\(LＷXＳ５２０。\\)',
-            'Ｍ.LＷxＳ520.com&nbsp;乐文移动网'
+            'Ｍ.LＷxＳ520.com&nbsp;乐文移动网',
+            /\(未完待续.+/g,
+            /乐文小说网值得.+/g,
+            '\\(\\)',
         ]
+    },
+    {siteName: '我爱小说',
+        url: '^http://www\\.woaixiaoshuo\\.com/xiaoshuo/\\d+/\\d+/\\d+\\.html',
+        bookTitleSelector: '#lbox > b',
+        contentSelector: '#readbox',
+        contentRemove: '#papgbutton, #content',
     },
 
     // ===== 特殊的获取下一页链接
@@ -1474,16 +1493,6 @@ Rule.specialSite = [
         }
 	},
 
-    {siteName: '乐文小说',
-        url: /http:\/\/www\.lwxs520\.com\/books\/\d+\/\d+\/\d+.html/,
-        siteExample: 'http://www.lwxs520.com/books/2/2329/473426.html',
-        contentRemove: '#content>:not(p)',
-        contentReplace: [
-            /\(未完待续.+/g,
-            /乐文小说网值得.+/g,
-            '()'
-        ]
-    }
 ];
 
 // ===== 小说拼音字、屏蔽字修复 =====

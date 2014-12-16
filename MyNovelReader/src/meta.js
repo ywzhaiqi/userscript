@@ -33,6 +33,8 @@
 // @include        http://www.qdwenxue.com/BookReader/*,*.aspx
 // @include        http://chuangshi.qq.com/read/bookreader/*.html
 // @include        http://chuangshi.qq.com/*bk/*/*.html
+// @include        http://yunqi.qq.com/*bk/*/*.html
+// @include        http://dushu.qq.com/read.html?bid=*
 // @include        http://www.jjwxc.net/onebook.php?novelid=*
 // @include        http://book.zongheng.com/chapter/*/*.html
 // @include        http://www.xxsy.net/books/*/*.html
@@ -232,6 +234,7 @@
 // @include        http://www.shushuw.cn/shu/*/*.html
 // @include        http://www.78xs.com/article/*/*/*.shtml
 // @include        http://www.miaobige.com/*/*/*.html
+// @include        http://www.woaixiaoshuo.com/xiaoshuo/*/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html
