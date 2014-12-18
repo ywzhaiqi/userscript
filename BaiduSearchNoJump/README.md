@@ -1,6 +1,8 @@
 BaiduSearchNoJump
 ================
 
+**此脚本已舍弃**
+
 百度搜索反跳转。最早改自 [百度搜索反跳转](http://userscripts.org:8080/scripts/show/161812)，已和原版完全不一样。
 
 - 放弃原服务器解析的方法，改用 HEAD 方式。

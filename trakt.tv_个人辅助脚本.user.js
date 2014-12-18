@@ -67,7 +67,8 @@ var rules = {
     },
     'the mentalist': {
         name: '超感神探',
-        qq: 'http://v.qq.com/search.html?ms_key=超感神探',
+        qiyi: 'http://www.iqiyi.com/a_19rrhc4811.html',
+        // qq: 'http://v.qq.com/search.html?ms_key=超感神探',
     }
 };
 
