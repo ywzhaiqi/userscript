@@ -2,12 +2,13 @@
 // @name         Search Hepler
 // @namespace    https://github.com/ywzhaiqi
 // @author       ywzhaiqi
-// @version      0.1
+// @version      0.2
 // @description  让一些特殊的搜索支持搜索串
 // @include      http://kindleren.com/search.php?mod=forum&mq=*
+// @include      http://shuzi.taobao.com/item/search---50094067.htm?q=*
 // @grant        GM_addStyle
 // @require      http://cdn.staticfile.org/zepto/1.1.4/zepto.min.js
-// @run-at       document-end
+// @run-at       document-start
 // @noframes
 // ==/UserScript==
 
@@ -23,16 +24,33 @@ function getParam(name, url) {
     return matches ? decodeURIComponent(matches[1]) : ""
 }
 
+function goSearch(param, input, submit) {
+    $(function() {
+        var search = getParam(param, location.href);
+        if (search) {
+            $(input).val(search);
+            $(submit).click();
+        }
+    });
+}
+
+// 运行在 document-start，详见 taobao 函数
+function goSearch2(url, param) {
+    var search = getParam(param, location.href);
+    if (search) {
+        location.href = url.replace('%s', search);
+    }
+}
+
 
 var ns = {
     kindleren: function() {
-        var search = getParam('mq', location.href);
-
-        $('#scform_srchtxt').val(search);
-        $('#scform_submit').click();
+        goSearch('mq', '#scform_srchtxt', '#scform_submit');
     },
+    taobao: function() {  // 解决乱码问题
+        goSearch2('http://shuzi.taobao.com/item/search-.htm?q=%s&isbook=ebook', 'q');
+    }
 };
-
 
 function run() {  // 自动运行符合 host 的函数
     var host = location.host;
