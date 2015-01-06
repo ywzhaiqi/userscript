@@ -4,7 +4,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.4.8
+// @version      6.4.9
 // @homepageURL  https://greasyfork.org/scripts/293-super-preloaderplus-one
 
 // @grant        GM_addStyle
@@ -15,7 +15,7 @@
 
 // @include      http*
 // @exclude      http*://mail.google.com/*
-// @exclude      http*://maps.google*   
+// @exclude      http*://maps.google*
 // @exclude      http*://www.google.com/reader*
 // @exclude      http*://www.google.com/calendar*
 // @exclude      https://docs.google.com/*
@@ -35,17 +35,19 @@
 // @exclude      http://www.youku.com/
 // @exclude      http://v.youku.com/*
 // @exclude      http://www.iqiyi.com/*
+// @exclude      http://www.duokan.com/reader/*
 // ==/UserScript==
 
 
 // 主要用于 chrome 原生下检查更新，也可用于手动检查更新
 var scriptInfo = {
-    version: '6.4.8',
-    updateTime: '2014/11/17',
+    version: '6.4.9',
+    updateTime: '2015/1/7',
     homepageURL: 'https://greasyfork.org/scripts/293-super-preloaderplus-one',
     downloadUrl: 'https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js',
     metaUrl: 'https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js',
 };
+
 
 //----------------------------------
 // rule.js
@@ -256,8 +258,8 @@ var SITEINFO=[
         // url: "^https?://www\\.baidu\\.com/(s|baidu|#wd=)",
         url: "^https?://www\\.baidu\\.com/",
         enable:true,
-        nextLink:'//p[@id="page"]/a[contains(text(),"下一页")][@href]',
-        preLink:'//p[@id="page"]/a[contains(text(),"上一页")][@href]',
+        nextLink:'//div[@id="page"]/a[contains(text(),"下一页")][@href]',
+        preLink:'//div[@id="page"]/a[contains(text(),"上一页")][@href]',
         autopager: {
             pageElement: 'css;div#content_left > *',
             HT_insert:['css;div#content_left',2],
@@ -439,7 +441,7 @@ var SITEINFO=[
         }
     },
 
-    // ================ news ===========================
+    // ================ news、Reading ===========================
     {name: '新浪新闻',
         url: /^http:\/\/[a-z]+\.sina\.com\.cn\//i,
         exampleUrl: 'http://news.sina.com.cn/c/sd/2013-11-08/165728658916.shtml',
@@ -712,12 +714,23 @@ var SITEINFO=[
         pageElement: 'id("ctrlfscont")',
         exampleUrl: 'http://china.cankaoxiaoxi.com/roll10/2014/0817/464381.shtml',
     },
-
+    {name: '中国网山东频道',
+        url: '^http://sd\\.china\\.com\\.cn/.*\\.html',
+        autopager: {
+            pageElement: 'css;.content',
+                relatedObj: true,
+        }
+    },
     {name: '凯迪社区',
         url: '^http://club\\.kdnet\\.net/list\\.asp',
         nextLink: 'auto;',
         pageElement: '//div[@class="lf w840px"]/div[@class="list-table"]/table',
         exampleUrl: 'http://club.kdnet.net/list.asp?t=0&boardid=1&selTimeLimit=0&action=&topicmode=0&s=&page=1',
+    },
+    {name: '木木文摘',
+        url: 'http://www\\.85nian\\.net/',
+        nextLink: 'auto;',
+        pageElement: 'css;.entry-content'
     },
 
     //--- 国外新闻
@@ -766,30 +779,6 @@ var SITEINFO=[
         nextLink: '//div[@class="page-nav-bar"]/a[text()="下一页>"]',
         autopager: {
             pageElement: '//div[@class="content"]',
-        }
-    },
-    {name: '土豆网 - 个人主页_视频',
-        url: /^http:\/\/www\.tudou\.com\/home\/item\//i,
-        exampleUrl: 'http://www.tudou.com/home/item/loveqiaolin',
-        nextLink:{
-            startAfter: '?page=',
-            mFails:[/^http:\/\/www\.tudou\.com\/home\/item\/.+/i,'?page=1&sort=1'],
-            inc:1,
-            isLast: function(doc,win,lhref){
-                var document = unsafeWindow.document;
-                var last = document.querySelector('#page ol:last-child');
-                var maxNum = last.textContent;
-                var m = lhref.match(/\?page=(\d+)/i);
-                if (m) {
-                    return m[1] >= maxNum;
-                }
-            },
-        },
-        autopager: {
-            pageElement: 'id("main")/div[@class="mod mod_program_list"]/div[@class="c"]',
-            useiframe: true,
-            itimeout: 1000,
-            filter: 'css;#page'
         }
     },
     {name: '搜狐视频 搜索',
@@ -3849,8 +3838,8 @@ var REALPAGE_SITE_PATTERN = ['search?', 'search_', 'forum', 'thread'];
 //----------------------------------
 // 主要用于 chrome 原生下检查更新，也可用于手动检查更新
 var scriptInfo = {
-    version: '6.4.8',
-    updateTime: '2014/11/17',
+    version: '6.4.9',
+    updateTime: '2015/1/7',
     homepageURL: 'https://greasyfork.org/scripts/293-super-preloaderplus-one',
     downloadUrl: 'https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js',
     metaUrl: 'https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js',

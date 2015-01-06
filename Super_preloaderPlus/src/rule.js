@@ -206,8 +206,8 @@ var SITEINFO=[
         // url: "^https?://www\\.baidu\\.com/(s|baidu|#wd=)",
         url: "^https?://www\\.baidu\\.com/",
         enable:true,
-        nextLink:'//p[@id="page"]/a[contains(text(),"下一页")][@href]',
-        preLink:'//p[@id="page"]/a[contains(text(),"上一页")][@href]',
+        nextLink:'//div[@id="page"]/a[contains(text(),"下一页")][@href]',
+        preLink:'//div[@id="page"]/a[contains(text(),"上一页")][@href]',
         autopager: {
             pageElement: 'css;div#content_left > *',
             HT_insert:['css;div#content_left',2],
@@ -389,7 +389,7 @@ var SITEINFO=[
         }
     },
 
-    // ================ news ===========================
+    // ================ news、Reading ===========================
     {name: '新浪新闻',
         url: /^http:\/\/[a-z]+\.sina\.com\.cn\//i,
         exampleUrl: 'http://news.sina.com.cn/c/sd/2013-11-08/165728658916.shtml',
@@ -662,12 +662,23 @@ var SITEINFO=[
         pageElement: 'id("ctrlfscont")',
         exampleUrl: 'http://china.cankaoxiaoxi.com/roll10/2014/0817/464381.shtml',
     },
-
+    {name: '中国网山东频道',
+        url: '^http://sd\\.china\\.com\\.cn/.*\\.html',
+        autopager: {
+            pageElement: 'css;.content',
+                relatedObj: true,
+        }
+    },
     {name: '凯迪社区',
         url: '^http://club\\.kdnet\\.net/list\\.asp',
         nextLink: 'auto;',
         pageElement: '//div[@class="lf w840px"]/div[@class="list-table"]/table',
         exampleUrl: 'http://club.kdnet.net/list.asp?t=0&boardid=1&selTimeLimit=0&action=&topicmode=0&s=&page=1',
+    },
+    {name: '木木文摘',
+        url: 'http://www\\.85nian\\.net/',
+        nextLink: 'auto;',
+        pageElement: 'css;.entry-content'
     },
 
     //--- 国外新闻
