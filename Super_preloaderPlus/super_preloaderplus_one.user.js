@@ -4,7 +4,7 @@
 // @namespace    https://github.com/ywzhaiqi
 // @description  预读+翻页..全加速你的浏览体验...
 // @author       ywzhaiqi && NLF(原作者)
-// @version      6.4.9
+// @version      6.5.0
 // @homepageURL  https://greasyfork.org/scripts/293-super-preloaderplus-one
 
 // @grant        GM_addStyle
@@ -41,8 +41,8 @@
 
 // 主要用于 chrome 原生下检查更新，也可用于手动检查更新
 var scriptInfo = {
-    version: '6.4.9',
-    updateTime: '2015/1/7',
+    version: '6.5.0',
+    updateTime: '2015/1/10',
     homepageURL: 'https://greasyfork.org/scripts/293-super-preloaderplus-one',
     downloadUrl: 'https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js',
     metaUrl: 'https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js',
@@ -3838,8 +3838,8 @@ var REALPAGE_SITE_PATTERN = ['search?', 'search_', 'forum', 'thread'];
 //----------------------------------
 // 主要用于 chrome 原生下检查更新，也可用于手动检查更新
 var scriptInfo = {
-    version: '6.4.9',
-    updateTime: '2015/1/7',
+    version: '6.5.0',
+    updateTime: '2015/1/10',
     homepageURL: 'https://greasyfork.org/scripts/293-super-preloaderplus-one',
     downloadUrl: 'https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js',
     metaUrl: 'https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js',
@@ -4144,6 +4144,8 @@ function init(window, document) {
                 height:13px!important;\
                 background:none!important;\
                 cursor:pointer!important;\
+                visibility: visible !important;\
+                position: static !important;\
             }\
             #sp-fw-container input[type="button"] {\
                 border:1px solid #ccc!important;\

@@ -145,6 +145,8 @@ function init(window, document) {
                 height:13px!important;\
                 background:none!important;\
                 cursor:pointer!important;\
+                visibility: visible !important;\
+                position: static !important;\
             }\
             #sp-fw-container input[type="button"] {\
                 border:1px solid #ccc!important;\

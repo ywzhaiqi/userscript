@@ -1,6 +1,6 @@
 {
   "name": "Super_preloaderPlus_one",
-  "version": "6.4.9",
+  "version": "6.5.0",
   "devDependencies": {
     "grunt": "~0.4.5",
     "grunt-contrib-concat": "~0.4.0",
