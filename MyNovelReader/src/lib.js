@@ -19,6 +19,7 @@ function toggleConsole(debug) {
     } else {
         C = {
             log: nullFn,
+            debug: nullFn,
             error: nullFn,
             group: nullFn,
             groupCollapsed: nullFn,
