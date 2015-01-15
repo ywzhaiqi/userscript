@@ -2,7 +2,7 @@
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
-// @version        4.9.1
+// @version        4.9.2
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe
@@ -275,7 +275,13 @@ var Rule = {
     nextSelector: "a[rel='next'], a:contains('下一页'), a:contains('下一章'), a:contains('下一节'), a:contains('下页')",
     prevSelector: "a[rel='prev'], a:contains('上一页'), a:contains('上一章'), a:contains('上一节'), a:contains('上页')",
     // 忽略的下一页链接，匹配 href
-    nextUrlIgnore: /(?:(?:index|list|last|LastPage|end)\.)|BuyChapterUnLogin|BookReader\/vip,|^javascript:|book\.zongheng\.com\/readmore|\/0\.html$|www\.shumilou\.com\/to-n-[a-z]+-\d+\.html/i,
+    nextUrlIgnore: [
+        /(?:(?:index|list|last|LastPage|end)\.)|BuyChapterUnLogin|BookReader\/vip,|^javascript:/i,
+        /book\.zongheng\.com\/readmore/i,
+        /www\.shumilou\.com\/to-n-[a-z]+-\d+\.html/i,
+        /read\.qidian\.com\/BookReader\/\d+,0\.aspx$/i,
+        /\/0\.html$/i,
+    ],
     nextUrlCompare: /\/\d+(_\d+)?\.html?$|\/wcxs-\d+-\d+\/$|chapter-\d+\.html$/i,  // 忽略的下一页链接（特殊），跟上一页比较
 
     // 按顺序匹配，匹配到则停止。econtains 完全相等
@@ -358,7 +364,7 @@ Rule.specialSite = [
         },
         contentRemove: "span[id^='ad_']",
         contentPatch: function(fakeStub){
-            fakeStub.find('#maincontent  script[src$=".txt"]').addClass('reader-ajax');
+            fakeStub.find('#maincontent script[src$=".txt"]').addClass('reader-ajax');
         },
     },
     {siteName: "起点中文网免费频道",
@@ -558,14 +564,16 @@ Rule.specialSite = [
         nextSelector: "a#htmlxiazhang",
         prevSelector: "a#htmlshangzhang",
         indexSelector: "a#htmlmulu",
-        contentReplace: {
-            'ilo-full-src="\\S+\\.jpg" ': "",
-            '(<center>)?<?img src..(http://www.wcxiaoshuo.com)?(/sss/\\S+\\.jpg).(>| alt."\\d+_\\d+_\\d*\\.jpg" />)(</center>)?': '$3',
-            "/sss/da.jpg": "打", "/sss/maws.jpg": "吗？", "/sss/baw.jpg": "吧？", "/sss/wuc.jpg": "无", "/sss/maosu.jpg": "：“", "/sss/cuow.jpg": "错", "/sss/ziji.jpg": "自己", "/sss/shenme.jpg": "什么", "/sss/huiqub.jpg": "回去", "/sss/sjian.jpg": "时间", "/sss/zome.jpg": "怎么", "/sss/zhido.jpg": "知道", "/sss/xiaxin.jpg": "相信", "/sss/faxian.jpg": "发现", "/sss/shhua.jpg": "说话", "/sss/dajiex.jpg": "大姐", "/sss/dongxi.jpg": "东西", "/sss/erzib.jpg": "儿子", "/sss/guolair.jpg": "过来", "/sss/xiabang.jpg": "下班", "/sss/zangfl.jpg": "丈夫", "/sss/dianhua.jpg": "电话", "/sss/huilaim.jpg": "回来", "/sss/xiawu.jpg": "下午", "/sss/guoquu.jpg": "过去", "/sss/shangba.jpg": "上班", "/sss/mingtn.jpg": "明天", "/sss/nvrenjj.jpg": "女人", "/sss/shangwo.jpg": "上午", "/sss/shji.jpg": "手机", "/sss/xiaoxinyy.jpg": "小心", "/sss/furene.jpg": "夫人", "/sss/gongzih.jpg": "公子", "/sss/xiansg.jpg": "先生", "/sss/penyouxi.jpg": "朋友", "/sss/xiaoje.jpg": "小姐", "/sss/xifup.jpg": "媳妇", "/sss/nvxudjj.jpg": "女婿", "/sss/xondi.jpg": "兄弟", "/sss/lagong.jpg": "老公", "/sss/lapo.jpg": "老婆", "/sss/meimeid.jpg": "妹妹", "/sss/jiejiev.jpg": "姐姐", "/sss/jiemeiv.jpg": "姐妹", "/sss/xianggx.jpg": "相公", "/sss/6shenumev.jpg": "什么", "/sss/cuoaw.jpg": "错", "/sss/fpefnyoturxi.jpg": "朋友", "/sss/vfsjgigarn.jpg": "时间", "/sss/zzhiedo3.jpg": "知道", "/sss/zibjib.jpg": "自己", "/sss/qdonglxi.jpg": "东西", "/sss/hxiapxint.jpg": "相信", "/sss/fezrormre.jpg": "怎么", "/sss/nvdrfenfjfj.jpg": "女人", "/sss/jhiheejeieev.jpg": "姐姐", "/sss/xdifagojge.jpg": "小姐", "/sss/gggugolgair.jpg": "过来", "/sss/maoashu.jpg": "：“", "/sss/gnxnifawhu.jpg": "下午", "/sss/rgtugoqgugu.jpg": "过去", "/sss/khjukilkaim.jpg": "回来", "/sss/gxhigfadnoxihnyy.jpg": "小心", "/sss/bkbskhhuka.jpg": "说话", "/sss/xeieavnfsg.jpg": "先生", "/sss/yuhhfuiuqub.jpg": "回去", "/sss/pdianphua.jpg": "电话", "/sss/fabxianr.jpg": "发现", "/sss/feilrpto.jpg": "老婆", "/sss/gxronfdri.jpg": "兄弟", "/sss/flfaggofng.jpg": "老公", "/sss/tymyigngtyn.jpg": "明天", "/sss/dfshfhhfjfi.jpg": "手机", "/sss/gstjhranjgwjo.jpg": "上午", "/sss/fmgeyimehid.jpg": "妹妹", "/sss/gxgihftutp.jpg": "媳妇", "/sss/cerztifb.jpg": "儿子", "/sss/gfxgigagbfadng.jpg":"下班", "/sss/gstjhranjg.jpg":"下午", "/sss/hjeirerm6eihv.jpg": "姐妹", "/sss/edajihexr.jpg": "大姐", "/sss/wesfhranrrgba.jpg": "上班", "/sss/gfognggzigh.jpg": "公子", "/sss/frurtefne.jpg": "夫人", "/sss/fzagnggfbl.jpg": "丈夫", "/sss/nvdxfudfjfj.jpg": "女婿", "/sss/xdidafnggx.jpg": "相公", "/sss/zenme.jpg": "怎么", "/sss/gongzi.jpg": "公子", "/sss/ddefr.jpg": "",
-            ".*ddefr\\.jpg.*|无(?:错|.*cuoa?w\\.jpg.*)小说网不[少跳]字|w[a-z\\.]*om?|.*由[【无*错】].*会员手打[\\s\\S]*": "",
-            "无错不跳字|无广告看着就是爽!|一秒记住.*|全文免费阅读.*|8 9 阅阅 读 网|看小说最快更新|“小#说看本书无广告更新最快”": "",
-            "【 .{1,10} 】":""
-        },
+        contentReplace: [
+            'ilo-full-src="\\S+\\.jpg" ',
+            {
+                '(<center>)?<?img src..(http://www.wcxiaoshuo.com)?(/sss/\\S+\\.jpg).(>| alt."\\d+_\\d+_\\d*\\.jpg" />)(</center>)?': '$3',
+                "/sss/da.jpg": "打", "/sss/maws.jpg": "吗？", "/sss/baw.jpg": "吧？", "/sss/wuc.jpg": "无", "/sss/maosu.jpg": "：“", "/sss/cuow.jpg": "错", "/sss/ziji.jpg": "自己", "/sss/shenme.jpg": "什么", "/sss/huiqub.jpg": "回去", "/sss/sjian.jpg": "时间", "/sss/zome.jpg": "怎么", "/sss/zhido.jpg": "知道", "/sss/xiaxin.jpg": "相信", "/sss/faxian.jpg": "发现", "/sss/shhua.jpg": "说话", "/sss/dajiex.jpg": "大姐", "/sss/dongxi.jpg": "东西", "/sss/erzib.jpg": "儿子", "/sss/guolair.jpg": "过来", "/sss/xiabang.jpg": "下班", "/sss/zangfl.jpg": "丈夫", "/sss/dianhua.jpg": "电话", "/sss/huilaim.jpg": "回来", "/sss/xiawu.jpg": "下午", "/sss/guoquu.jpg": "过去", "/sss/shangba.jpg": "上班", "/sss/mingtn.jpg": "明天", "/sss/nvrenjj.jpg": "女人", "/sss/shangwo.jpg": "上午", "/sss/shji.jpg": "手机", "/sss/xiaoxinyy.jpg": "小心", "/sss/furene.jpg": "夫人", "/sss/gongzih.jpg": "公子", "/sss/xiansg.jpg": "先生", "/sss/penyouxi.jpg": "朋友", "/sss/xiaoje.jpg": "小姐", "/sss/xifup.jpg": "媳妇", "/sss/nvxudjj.jpg": "女婿", "/sss/xondi.jpg": "兄弟", "/sss/lagong.jpg": "老公", "/sss/lapo.jpg": "老婆", "/sss/meimeid.jpg": "妹妹", "/sss/jiejiev.jpg": "姐姐", "/sss/jiemeiv.jpg": "姐妹", "/sss/xianggx.jpg": "相公", "/sss/6shenumev.jpg": "什么", "/sss/cuoaw.jpg": "错", "/sss/fpefnyoturxi.jpg": "朋友", "/sss/vfsjgigarn.jpg": "时间", "/sss/zzhiedo3.jpg": "知道", "/sss/zibjib.jpg": "自己", "/sss/qdonglxi.jpg": "东西", "/sss/hxiapxint.jpg": "相信", "/sss/fezrormre.jpg": "怎么", "/sss/nvdrfenfjfj.jpg": "女人", "/sss/jhiheejeieev.jpg": "姐姐", "/sss/xdifagojge.jpg": "小姐", "/sss/gggugolgair.jpg": "过来", "/sss/maoashu.jpg": "：“", "/sss/gnxnifawhu.jpg": "下午", "/sss/rgtugoqgugu.jpg": "过去", "/sss/khjukilkaim.jpg": "回来", "/sss/gxhigfadnoxihnyy.jpg": "小心", "/sss/bkbskhhuka.jpg": "说话", "/sss/xeieavnfsg.jpg": "先生", "/sss/yuhhfuiuqub.jpg": "回去", "/sss/pdianphua.jpg": "电话", "/sss/fabxianr.jpg": "发现", "/sss/feilrpto.jpg": "老婆", "/sss/gxronfdri.jpg": "兄弟", "/sss/flfaggofng.jpg": "老公", "/sss/tymyigngtyn.jpg": "明天", "/sss/dfshfhhfjfi.jpg": "手机", "/sss/gstjhranjgwjo.jpg": "上午", "/sss/fmgeyimehid.jpg": "妹妹", "/sss/gxgihftutp.jpg": "媳妇", "/sss/cerztifb.jpg": "儿子", "/sss/gfxgigagbfadng.jpg":"下班", "/sss/gstjhranjg.jpg":"下午", "/sss/hjeirerm6eihv.jpg": "姐妹", "/sss/edajihexr.jpg": "大姐", "/sss/wesfhranrrgba.jpg": "上班", "/sss/gfognggzigh.jpg": "公子", "/sss/frurtefne.jpg": "夫人", "/sss/fzagnggfbl.jpg": "丈夫", "/sss/nvdxfudfjfj.jpg": "女婿", "/sss/xdidafnggx.jpg": "相公", "/sss/zenme.jpg": "怎么", "/sss/gongzi.jpg": "公子", "/sss/ddefr.jpg": "",
+            },
+            ".*ddefr\\.jpg.*|无(?:错|.*cuoa?w\\.jpg.*)小说网不[少跳]字|w[a-z\\.]*om?|.*由[【无*错】].*会员手打[\\s\\S]*",
+            "无错不跳字|无广告看着就是爽!|一秒记住.*|全文免费阅读.*|8 9 阅阅 读 网|看小说最快更新|“小#说看本书无广告更新最快”",
+            "[`\\*［\\[《〈\\{｜]无.错.小说.[Ｗw]+.*?com",
+        ],
         contentPatch: function(fakeStub){
             // 去除内容开头、结尾的重复标题
             var title = fakeStub.find("#htmltimu").text().replace(/\s+/, "\\s*");
@@ -597,7 +605,7 @@ Rule.specialSite = [
         titleReg: /(.*) (.*?) 书迷楼/,
         titlePos: 1,
         contentSelector: "#content",
-        contentRemove: 'a',
+        contentRemove: 'a, center',
         contentReplace: [
             'div lign="ener"&gt;|.*更多章节请到网址隆重推荐去除广告全文字小说阅读器',
             '起点中文网www.qidian.com欢迎广大书.*',
@@ -621,6 +629,7 @@ Rule.specialSite = [
         url: /^http:\/\/www\.binhuo\.com\/html\/[\d\/]+\.html$/,
         titleReg: /(.*?)最新章节,(.*?)-.*/,
         fixImage: true,
+        contentRemove: 'font[color="red"]',
         contentReplace: {
             "&lt;冰火#中文.*|冰火中文&nbsp;(www.)?binhuo.com(?:【首发】|)|冰.火.中文|绿色小说|lvsexs|冰火中文": "",
             "LU5.ｃｏM|lU５.com|LU5.com":"",
@@ -910,8 +919,6 @@ Rule.specialSite = [
         nextSelector: "#footlink a:contains('下一页')",
         contentSelector: "#contents",
         contentReplace: [
-            "\\(顶\\)\\(点\\)小说",
-            "www.23[Ｗw][Ｘx].[Ｃc]om",
             "\\(看小说到顶点小说网.*\\)|\\(\\)|【记住本站只需一秒钟.*】",
         ],
         contentPatch: function(fakeStub){
@@ -1036,9 +1043,43 @@ Rule.specialSite = [
             "吋煜牝咱看书神器",
             "(?:吋煜牝咱|飝现洅咱).*?[Ｃc]om",
             "吋煜牝咱",
-            "飝现洅咱",
+            "飝现洅咱", "殢萾嘎匝",
             "看小说“杂书网zashu.net”",
+            "手机站：m.zashu.net 电脑站：www.zashu.net",
         ]
+    },
+
+    // === 内容补丁
+    {siteName: "给力文学小说阅读网",
+        url: "^http://www\\.geiliwx\\.com/.*\\.shtml",
+        titleReg: "-?(.*)_(.*)最新章节_给力",
+        titlePos: 1,
+        contentRemove: 'h1, font[color], center',
+        contentReplace: [
+            "网站升级完毕！感谢对给力文学网的支持！",
+            "（百度搜索给力文学网更新最快最稳定\\)",
+            "【sogou,360,soso搜免费下载小说】",
+            "\\[乐\\]\\[读\\]小说.２3.[Ｃc]m",
+            "给力文学网",
+            "看最快更新",
+            "小说网不跳字",
+            "\\.com",
+            "BAIDU_CLB_fillSlot\\(.*",
+            "--小-说-www-23wx-com",
+            "&nbsp;&nbsp;，请",
+        ],
+        contentPatch: function(d) {
+            if (!d.find('#content').length) {
+                var html = d.find('body').html();
+                var content = html.match(/<!--go-->([\s\S]*?)<!--over-->/i)[1];
+
+                content = $('<div id="content">').html(content);
+                if (content.find('#adright').size()) {
+                    content = content.find('#adright')
+                }
+                content.appendTo(d.find('body'));
+            }
+        }
     },
 
     // ================== 采用 iframe 方式获取的 ====================
@@ -1129,35 +1170,14 @@ Rule.specialSite = [
         titleReg: "(.*) - (.*) - 找小说网",
         titlePos: 1,
         useiframe: true,
-        timeout: 500,
+            timeout: 500,
         contentRemove: "div[style]"
     },
     {siteName: "ABC小说网",
         url: "^http://www\\.bookabc\\.net/.*\\.html",
         useiframe: true
     },
-    {siteName: "给力文学小说阅读网",
-        url: "^http://www\\.geiliwx\\.com/.*\\.shtml",
-        titleReg: "-?(.*)_(.*)最新章节_给力",
-        titlePos: 1,
-        // titleSelector: 'h1',
-        // bookTitleSelector: '#breadCrumb>a:eq(1)',
-        useiframe: true,
-        contentRemove: 'h1, font[color="blue"]',
-        contentReplace: [
-            "网站升级完毕！感谢对给力文学网的支持！",
-            "（百度搜索给力文学网更新最快最稳定\\)",
-            "【sogou,360,soso搜免费下载小说】",
-            "\\[乐\\]\\[读\\]小说.２3.[Ｃc]m",
-            "给力文学网",
-            "看最快更新",
-            "小说网不跳字",
-            "\\.com",
-            "BAIDU_CLB_fillSlot\\(.*",
-            "--小-说-www-23wx-com",
-            "&nbsp;&nbsp;，请",
-        ]
-    },
+
     // ============== 内容需要2次获取的 =========================
     {siteName: "手打吧",
         url: /^http:\/\/shouda8\.com\/\w+\/\d+\.html/,
@@ -1399,6 +1419,7 @@ Rule.specialSite = [
             '◢百度搜索雲来阁，最新最快的小说更新◣',
             '【最新更新】',
             '值得您收藏。。',
+            '小说“小说章节',
         ]
     },
     {siteName: "乐文小说网",
@@ -1495,6 +1516,12 @@ Rule.specialSite = [
 
 ];
 
+// ===== 全局移除 =====
+Rule.replaceNew = [
+    /[;\(]顶.{0,2}点.小说/ig,
+    /www.23＋?[Ｗw][Ｘx].[Ｃc]om/ig,
+];
+
 // ===== 小说拼音字、屏蔽字修复 =====
 Rule.replace = {
     // ===格式整理===
@@ -1544,6 +1571,7 @@ Rule.replace = {
     "\\(平南文学网\\)":"",  "讀蕶蕶尐說網":"",
     "比奇提示：如何快速搜自己要找的书籍":"",  "《百度书名\\+比奇》即可快速直达":"",
     "[:《〈｜~]长.风.文~?学.*?net": "",
+    "~无~错~小~说": "",
 
     "\\(一秒记住小说界\\）|\\*一秒记住\\*":"",
     "uutxt\\.org|3vbook\\.cn|www\\.qbwx\\.com|WWw\\.YaNkuai\\.com|www\\.btzw\\.com|www\\.23uS\\.com": "",
@@ -1574,7 +1602,7 @@ Rule.replace = {
     "dān\\s*xīn":"当心", "dang校": "党校", "da子": "鞑子", "大tui":"大腿", "dǎ\\s*suàn":"打算", "dengdai":"等待", "diao丝": "屌丝", "d[úu](?:\\s|&nbsp;|<br/>)*l[ìi]": "独立", "d[uú]\\s{0,2}c[áa]i":"独裁",  "d?[iì]f[āa]ng":"地方", "d[ìi]\\s*d[ūu]":"帝都", "di国":"帝国", "du[oò]落":"堕落", "坠luò":"坠落",
     "f[ǎa]ngf[óo]":"仿佛", "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "f[èe]nn[ùu]":"愤怒", "fǎn\\s*yīng":"反应",
     "gao潮": "高潮", "高氵朝":"高潮", "gāo\\s*xìng\\s*":"高兴", "干chai": "干柴", "勾yin":"勾引", "gu[oò]ch[ée]ng":"过程", "gu[āa]n\\s*x[iì]":"关系", "g[ǎa]nji[àa]o":"感觉", "国wu院":"国务院", "gù\\s*yì\\s*":"故意", "guofen":"过分",
-    "hā\\s*hā\\s*":"哈哈", "h[aǎ]ode":"好的", "hù士":"护士", "há'guó":"韩国", "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "h[ǎa]oxi[àa]ng":"好像", "hu[áa]ngs[èe]":"黄色", "皇d[ìi]":"皇帝", "昏昏yu睡":"昏昏欲睡", "回dang":"回荡", "huí\\s*qù\\s*":"回去", "hé\\s*shì\\s*":"合适",
+    "hā\\s*hā\\s*":"哈哈", "h[aǎ]ode":"好的", "hù士":"护士", "火qiang":"火枪", "há'guó":"韩国", "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "h[ǎa]oxi[àa]ng":"好像", "hu[áa]ngs[èe]":"黄色", "皇d[ìi]":"皇帝", "昏昏yu睡":"昏昏欲睡", "回dang":"回荡", "huí\\s*qù\\s*":"回去", "hé\\s*shì\\s*":"合适",
     "jian(臣|细)":"奸$1", "jiànmiàn":"见面", "jian货":"贱货", "jing察":"警察", "j[ìi]nháng":"进行", "jīng\\s*guò":"经过", "ji烈":"激烈", "j[iì](nv|女)": "妓女", "jirou": "鸡肉", "ji者":"记者", "jì\\s*xù\\s*":"继续", "ju花":"菊花","j[īi]动":"激动", "jili[èe]":"激烈", "肌r[òo]u":"肌肉","ji射":"激射", "ji[ēe]ch[uù]":"接触", "jiù\\s*shì":"就是", "j[ùu]li[èe]": "剧烈", "jǐng惕": "警惕", "节cao":"节操", "浸yin":"浸淫", "jù\\s*jué\\s*":"拒绝",
     "k[ěe]n[ée]ng": "可能", "开bao": "开苞",  "k[àa]o近": "靠近", "口wen":"口吻", "kankan":"看看",
     "ling辱": "凌辱", "luan蛋": "卵蛋", "脸sè": "脸色", "lu出":"露出", "流máng":"流氓", "lun理":"伦理", "lì\\s*qì":"力气",
@@ -1608,7 +1636,7 @@ Rule.replace = {
         "mǎi": "买", "mài": "卖", "máo": "毛", "mā": "妈", "méng": "蒙", "mén": "门", "miè": "灭", "mí": "迷", "mì": "蜜", "mō": "摸",
         "nǎi": "奶", "nèn": "嫩", "niào": "尿", "niē": "捏", "nòng": "弄", "nǚ": "女",
         "pào": "炮", "piàn": "片",
-        "qiāng": "枪", "qíng": "情", "qīn": "亲", "qiú": "求", "quán": "全",
+        "qi[āa]ng": "枪", "qíng": "情", "qīn": "亲", "qiú": "求", "quán": "全",
         "rén":"人", "rì": "日", "rǔ": "乳",
         "sāo":"骚", "sǎo": "骚", "sè": "色",  "shā": "杀", "shēn":"呻", "shén":"神", "shè": "射", "shǐ": "屎", "shì": "侍", "sǐ": "死", "sī": "私", "shǔn": "吮", "sǔn": "吮", "sū": "酥",
         "tān":"贪", "tiǎn": "舔", "tǐng":"挺", "tǐ": "体", "tǒng": "捅", "tōu": "偷", "tou": "偷", "tuǐ": "腿", "tūn": "吞", "tún": "臀", "tiáo":"调", "tài":"态",
@@ -1620,10 +1648,6 @@ Rule.replace = {
         "ri":"日", "se":"色", "yu":"欲", "xing":"性",
         "jing":"精", "ting":"挺",
     };
-
-    for (var prop in oneWordReplace) {
-        Rule.replace['([^a-z\\s])' + prop + '(?![a-z\\s])'] = '$1' + oneWordReplace[prop];
-    }
 
     var replaceOthers = {
         // ===误替换还原===
@@ -1637,7 +1661,11 @@ Rule.replace = {
         "圞|垩|卝|龘":""
     };
 
-    $.extend(Rule.replace, replaceOthers);
+    _.each(oneWordReplace, function(value, key) {
+        Rule.replace['([^a-z\\s])' + key + '(?![a-z\\s])'] = '$1' + value;
+    });
+
+    _.extend(Rule.replace, replaceOthers);
 })();
 
 
@@ -2133,6 +2161,28 @@ if (typeof String.prototype.contains != 'function') {
     };
 }
 
+function saveAs(data, filename) {
+    if(!filename) filename = 'console.json'
+
+    if (typeof data == 'object') {
+        data = JSON.stringify(data, undefined, 4);
+    }
+
+    var blob = new Blob([data], { type: 'application/octet-stream' });
+    var url = window.URL.createObjectURL(blob);
+    var saveas = document.createElement('a');
+    saveas.href = url;
+    saveas.style.display = 'none';
+    document.body.appendChild(saveas);
+    saveas.download = filename;
+    saveas.click();
+    setTimeout(function() {
+        saveas.parentNode.removeChild(saveas);
+    }, 1000)
+    document.addEventListener('unload', function() {
+        window.URL.revokeObjectURL(url);
+    });
+}
 
 /*
  * jQuery Easing v1.3 - http://gsgd.co.uk/sandbox/jquery/easing/
@@ -2493,9 +2543,9 @@ var UI = {
                     $(target).val(key);
                 }
                 break;
-            // case 'saveAsTxt':
-            //     Download.saveAsTxt();
-            //     break;
+            case 'saveAsTxt':
+                App.saveAsTxt();
+                break;
             default:
                 break;
         }
@@ -2615,7 +2665,7 @@ var Res = {
     CSS_MAIN: '@font-face {\n    font-family: "FontAwesome";\n    src: url({fontawesomeWoff});\n    font-weight: normal;\n    font-style: normal;\n}\nbody > a { display:none !important; }\n.hidden {\n    display: none;\n}\n.quiet-mode {\n    display: none;\n}\nbody {\n    background: #F3F2EE;\n    color: #1F0909;\n    padding: 0px;\n    margin: 0px;\n    font-family: "Microsoft YaHei UI", 微软雅黑, 新宋体, 宋体, arial;\n}\na { color: #065488; }\na:link { text-decoration: none; }\n#mynovelreader-content {\n    width: {content_width};\n    font-size: {font_size};\n    font-family: {font_family};\n    line-height: {text_line_height};\n    margin-left:auto;\n    margin-right:auto;\n    padding-bottom: 15px;\n}\narticle {\n    margin-top: 55px;\n    word-wrap: break-word;\n}\narticle h1 {\n    clear: both;\n    line-height: 50px;\n    font-size: {title_font_size};\n    font-weight: normal;\n    margin: 25px -20px;\n    padding: 0 20px 10px;\n    border-bottom: 1px solid rgba(0,0,0,.25);\n    font-weight: normal;\n    text-transform: none;\n}\n.chapter-footer-nav {\n    text-align:center;\n    font-size:0.9em;\n    margin:-10px 0px 30px 0px;\n}\n#loading {\n    color: white;\n    text-align: center;\n    font: 12px "微软雅黑", "宋体", "Times New Roman", "Verdana";\n    margin-top: 20px;\n    margin-left: auto;\n    margin-right: auto;\n    width: 376px;\n    height: 32px;\n    line-height: 32px;\n    border-radius: 20px;\n    border: 1px solid #666;\n    background-color: #333;\n}\n#loading img {\n    vertical-align: middle;\n}\n#loading a {\n    color: white;\n}\n#preferencesBtn{\n    position: fixed;\n    top: 10px;\n    right: 10px;\n    z-index: 1597;\n}\n#alert {\n    position: fixed;\n    z-index: 100;\n    float: auto;\n    width: auto;\n    height: auto;\n    top: 10px;\n    left: 500px;\n    background: rgba(215, 240, 253, 0.65);\n    color: #2d7091;\n    border: 1px solid rgba(45,112,145,0.3);\n    border-radius: 4px;\n    text-shadow: 0 1px 0 #fff;\n}\n#alert p {\n    font-size: 13px;\n    margin: 6px;\n}\nimg.blockImage {clear: both;float: none;display: block;margin-left: auto;margin-right: auto;}\n#menu-bar {\n    border: solid rgba(0, 100, 255, .9);\n    border-width: 3px 2px 3px 0px;\n    position: fixed;\n    left: 0px;\n    top: 40%;\n    height: 100px;\n    width: 2px;\n    z-index: 199;\n    {menu-bar-hidden}\n}\n#menu-bar { \n    top: 0px;\n    height: 100%;\n    width: 1px;\n    background: transparent;\n    border: none;\n}\n#menu {\n    position: fixed;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    z-index: 100;\n    width: 270px;\n    max-width: 100%;\n    background: #333;\n    overflow-y: auto;\n}\n#menu:after {\n    content: "";\n    display: block;\n    position: absolute;\n    top: 46px;\n    bottom: 0;\n    right: 0;\n    width: 1px;\n    background: rgba(0,0,0,0.6);\n    box-shadow: 0 0 5px 2px rgba(0,0,0,0.6);\n}\n#header{\n    color: #777;\n    margin-top: 0;\n    border-top: 1px solid rgba(0,0,0,0.3);\n    background: #404040;\n    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);\n    text-shadow: 0 1px 0 rgba(0,0,0,0.5);\n    padding: 10px 12px;\n    text-transform: uppercase;\n    font-weight: bold;\n    font-size: 20px;\n}\n#header a {\n    color: #777777;\n}\n#divider {\n    position: relative;\n    z-index: 300;\n    border-top: 1px solid rgba(255,255,255,0.01);\n    border-bottom: 1px solid rgba(0,0,0,0.3);\n    margin: 0;\n    height: 4px;\n    background: rgba(0,0,0,0.2);\n    box-shadow: 0 1px 0 rgba(255,255,255,0.05), inset 0 1px 3px rgba(0,0,0,0.3);\n}\n#chapter-list {\n    position: relative;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    z-index: 200;\n    margin: 0;\n    padding: 0;\n    cursor: pointer;\n    list-style: none;\n    overflow-y: auto;\n}\n.chapter {\n    list-style: none;\n}\n.chapter:last-child {\n    border-bottom: 1px solid rgba(0,0,0,0.3);\n    box-shadow: 0 1px 0 rgba(255,255,255,0.05);\n}\n.chapter div {\n    color: #ccc;\n    font-size: 15px;\n    padding: 8px 20px;\n    border-top: 1px solid rgba(0,0,0,0.3);\n    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);\n    text-shadow: 0 1px 0 rgba(0,0,0,0.5);\n    display: block;\n    text-decoration: none;\n    text-overflow: ellipsis;\n    overflow: hidden;\n    white-space: nowrap;\n    cursor: pointer;\n}\n.chapter div:before {\n    content: "\\f105";\n    width: 20px;\n    margin-left: -10px;\n    float: left;\n    font-family: "FontAwesome" !important;\n    text-align: center;\n}\n.chapter div:hover {\n    background: #404040;\n    color: #fff;\n    outline: 0;\n}\n.chapter.active div {\n    background: #1a1a1a;\n    color: #fff;\n    font-size: 16px;\n    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);\n}\n::-webkit-scrollbar {\n    height: 9px !important;\n    width: 9px !important;\n}\n::-webkit-scrollbar-thumb {\n    background-color: #7D7D7D !important;\n    border-radius: 3px !important;\n}\n::-webkit-scrollbar-track-piece {\n    background-color: rgba(0,0,0,.25) !important;\n}'
         .replace('{fontawesomeWoff}', fontawesomeWoff),
 
-    preferencesHTML: '<form id="preferences" name="preferences">\n    <div id="setting_table1">\n        <span id="top-buttons">\n            <input title="部分选项需要刷新页面才能生效" id="save_button" value="√ 确认" type="button">\n            <input title="取消本次设定，所有选项还原" id="close_button" value="X 取消" type="button">\n        </span>\n        <div class="form-row">\n            <label>\n                界面语言<select id="lang">\n                </select>\n            </label>\n            <label title="将小说网页文本转换为繁体。\\n\\n注意：内置的繁简转换表，只收录了简单的单字转换，启用本功能后，如有错误转换的情形，请利用脚本的自订字词取代规则来修正。\\n例如：「千里之外」，会错误转换成「千里之外」，你可以加入规则「千里之外=千里之外」来自行修正。">\n                <input type="checkbox" id="enable-cn2tw" name="enable-cn2tw"/>网页：转繁体\n            </label>\n            <label id="quietMode" class="right" title="隐藏其他，只保留正文，适用于全屏状态下">\n                <input class="key" type="button" id="quietModeKey"/>安静模式\n            </label>\n        </div>\n        <div class="form-row">\n            <label title="不影响 booklink.me 的启用">\n                <input type="checkbox" id="disable-auto-launch" name="disable-auto-launch"/>强制手动启用\n            </label>\n            <label title="booklink.me 点击的网站强制启用">\n                <input type="checkbox" id="booklink-enable" name="booklink-enable"/>booklink 自动启用\n            </label>\n            <label>\n                <input type="checkbox" id="debug" name="debug"/>调试模式\n            </label>\n            <a href="https://greasyfork.org/scripts/292-my-novel-reader/feedback" target="_blank">反馈地址</a>\n        </div>\n        <div class="form-row">\n            <label title="图片章节用夜间模式没法看，这个选项在启动时会自动切换到缺省皮肤">\n                <input type="checkbox" id="pic-nightmode-check" name="pic-nightmode-check"/>\n                夜间模式的图片章节检测\n            </label>\n            <label>\n                <input type="checkbox" id="copyCurTitle"/>\n                打开目录复制当前标题\n            </label>\n        </div>\n        <div class="form-row">\n            <label title="通过快捷键切换">\n                <input type="checkbox" id="hide-menu-list"/>隐藏左侧章节列表\n            </label>\n            <label>\n                <input type="checkbox" id="hide-footer-nav"/>隐藏底部导航栏\n            </label>\n        </div>\n        <div class="form-row">\n            <label>\n                左侧导航栏切换快捷键：\n            </label>\n            <input class="key" type="button" id="setHideMenuListKey" />\n            <label title="通过快捷键切换或在 Greasemonkey 用户脚本命令处打开设置窗口">\n                <input type="checkbox" id="hide-preferences-button"/>隐藏设置按钮\n            </label>\n            <input class="key" type="button" id="openPreferencesKey"/>\n        </div>\n        <div class="form-row">\n            <label>\n                距离底部\n                <input type="textbox" id="remain-height" name="remain-height" size="5"/>\n                px 加载下一页\n            </label>\n            <label>\n                <input type="checkbox" id="add-nextpage-to-history"/>添加下一页到历史记录\n            </label>\n            <label>\n                <input type="checkbox" id="enable-dblclick-pause"/>双击暂停翻页\n            </label>\n        </div>\n        <div class="form-row">\n            <label>\n                <select id="skin">\n                </select>\n            </label>\n            <label>\n                字体\n                <input type="textbox" id="font-family" style="min-width:200px;"/>\n            </label>\n            <br/><br/>\n            <label>\n                字体大小\n                <input type="textbox" id="font-size" name="font-size" size="6"/>\n            </label>\n            <label>\n                行高\n                <input type="textbox" id="text_line_height" size="6"/>\n            </label>\n            <label>\n                行宽\n                <input type="textbox" id="content_width" size="6"/>\n            </label>\n        </div>\n        <div class="form-row">\n            <label title="把一大块未分段的内容文本按照句号分段">\n                <input type="checkbox" id="split_content"/>对一坨内容进行强制分段（测试）\n            </label>\n            <label>\n                <input type="checkbox" id="scroll_animate"/>章节滚动效果\n            </label>\n        </div>\n        <div class="form-row">\n            <div class="prefs_title">自定义样式</div>\n            <textarea id="extra_css" class="prefs_textarea" placeholder="自定义样式"></textarea>\n        </div>\n    </div>\n    <div id="setting_table2">\n        <div class="form-row" title="详见脚本代码的 Rule.specialSite">\n            <div class="prefs_title">自定义站点规则</div>\n            <textarea id="custom_siteinfo" class="prefs_textarea" placeholder="自定义站点规则" />\n        </div>\n        <div class="form-row" title="一行一个，每行的第一个 = 为分隔符。\\n保存后生效">\n            <div class="prefs_title">自定义替换规则</div>\n            <textarea id="custom_replace_rules" class="prefs_textarea" placeholder="b[āà]ng=棒" />\n        </div>\n    </div>\n</form>'
+    preferencesHTML: '<form id="preferences" name="preferences">\n    <div id="setting_table1">\n        <span id="top-buttons">\n            <input title="部分选项需要刷新页面才能生效" id="save_button" value="√ 确认" type="button">\n            <input title="取消本次设定，所有选项还原" id="close_button" value="X 取消" type="button">\n        </span>\n        <div class="form-row">\n            <label>\n                界面语言<select id="lang">\n                </select>\n            </label>\n            <label title="将小说网页文本转换为繁体。\\n\\n注意：内置的繁简转换表，只收录了简单的单字转换，启用本功能后，如有错误转换的情形，请利用脚本的自订字词取代规则来修正。\\n例如：「千里之外」，会错误转换成「千里之外」，你可以加入规则「千里之外=千里之外」来自行修正。">\n                <input type="checkbox" id="enable-cn2tw" name="enable-cn2tw"/>网页：转繁体\n            </label>\n            <label id="quietMode" class="right" title="隐藏其他，只保留正文，适用于全屏状态下">\n                <input class="key" type="button" id="quietModeKey"/>安静模式\n            </label>\n        </div>\n        <div class="form-row">\n            <label title="不影响 booklink.me 的启用">\n                <input type="checkbox" id="disable-auto-launch" name="disable-auto-launch"/>强制手动启用\n            </label>\n            <label title="booklink.me 点击的网站强制启用">\n                <input type="checkbox" id="booklink-enable" name="booklink-enable"/>booklink 自动启用\n            </label>\n            <label>\n                <input type="checkbox" id="debug" name="debug"/>调试模式\n            </label>\n            <a href="https://greasyfork.org/scripts/292-my-novel-reader/feedback" target="_blank">反馈地址</a>\n        </div>\n        <div class="form-row">\n            <label title="图片章节用夜间模式没法看，这个选项在启动时会自动切换到缺省皮肤">\n                <input type="checkbox" id="pic-nightmode-check" name="pic-nightmode-check"/>\n                夜间模式的图片章节检测\n            </label>\n            <label>\n                <input type="checkbox" id="copyCurTitle"/>\n                打开目录复制当前标题\n            </label>\n        </div>\n        <div class="form-row">\n            <label title="通过快捷键切换">\n                <input type="checkbox" id="hide-menu-list"/>隐藏左侧章节列表\n            </label>\n            <label>\n                <input type="checkbox" id="hide-footer-nav"/>隐藏底部导航栏\n            </label>\n            <label class="right" title="导出之后的所有章节">\n                <input type="button" id="saveAsTxt" value="存为 txt（测试）" />\n            </label>\n        </div>\n        <div class="form-row">\n            <label>\n                左侧导航栏切换快捷键：\n            </label>\n            <input class="key" type="button" id="setHideMenuListKey" />\n            <label title="通过快捷键切换或在 Greasemonkey 用户脚本命令处打开设置窗口">\n                <input type="checkbox" id="hide-preferences-button"/>隐藏设置按钮\n            </label>\n            <input class="key" type="button" id="openPreferencesKey"/>\n        </div>\n        <div class="form-row">\n            <label>\n                距离底部\n                <input type="textbox" id="remain-height" name="remain-height" size="5"/>\n                px 加载下一页\n            </label>\n            <label>\n                <input type="checkbox" id="add-nextpage-to-history"/>添加下一页到历史记录\n            </label>\n            <label>\n                <input type="checkbox" id="enable-dblclick-pause"/>双击暂停翻页\n            </label>\n        </div>\n        <div class="form-row">\n            <label>\n                <select id="skin">\n                </select>\n            </label>\n            <label>\n                字体\n                <input type="textbox" id="font-family" style="min-width:200px;"/>\n            </label>\n            <br/><br/>\n            <label>\n                字体大小\n                <input type="textbox" id="font-size" name="font-size" size="6"/>\n            </label>\n            <label>\n                行高\n                <input type="textbox" id="text_line_height" size="6"/>\n            </label>\n            <label>\n                行宽\n                <input type="textbox" id="content_width" size="6"/>\n            </label>\n        </div>\n        <div class="form-row">\n            <label title="把一大块未分段的内容文本按照句号分段">\n                <input type="checkbox" id="split_content"/>对一坨内容进行强制分段\n            </label>\n            <label>\n                <input type="checkbox" id="scroll_animate"/>章节滚动效果\n            </label>\n        </div>\n        <div class="form-row">\n            <div class="prefs_title">自定义样式</div>\n            <textarea id="extra_css" class="prefs_textarea" placeholder="自定义样式"></textarea>\n        </div>\n    </div>\n    <div id="setting_table2">\n        <div class="form-row" title="详见脚本代码的 Rule.specialSite">\n            <div class="prefs_title">自定义站点规则</div>\n            <textarea id="custom_siteinfo" class="prefs_textarea" placeholder="自定义站点规则" />\n        </div>\n        <div class="form-row" title="一行一个，每行的第一个 = 为分隔符。\\n保存后生效">\n            <div class="prefs_title">自定义替换规则</div>\n            <textarea id="custom_replace_rules" class="prefs_textarea" placeholder="b[āà]ng=棒" />\n        </div>\n    </div>\n</form>'
         .uiTrans().replace(/\\n/g, '\n'),
 
     preferencesCSS: '.body {\n     color:#333;\n     margin: 0 auto;\n     background: white;\n     padding: 10px;\n     height: 420px;\n     overflow-y: auto;\n }\n #top-buttons {\n     background: none repeat scroll 0% 0% rgb(255, 255, 255);\n     display: block;\n     position: absolute;\n     top: -35px;\n     border-right: 12px solid rgb(224, 224, 224);\n     border-top: 12px solid rgb(224, 224, 224);\n     border-left: 12px solid rgb(224, 224, 224);\n     text-align: center;\n }\n input {\n     font-size: 12px;\n     margin-right: 3px;\n     vertical-align: middle;\n }\n .form-row {\n     overflow: hidden;\n     padding: 8px 12px;\n     margin-top: 3px;\n     font-size: 11px;\n }\n .form-row label {\n     padding-right: 10px;\n }\n .form-row input {\n     vertical-align: middle;\n     margin-top: 0px;\n }\n textarea, .form-row input {\n     padding: 2px 4px;\n     border: 1px solid #e5e5e5;\n     background: #fff;\n     border-radius: 4px;\n     color: #666;\n     -webkit-transition: all linear .2s;\n     transition: all linear .2s;\n }\n textarea {\n     width: 100%;\n     overflow: auto;\n     vertical-align: top;\n }\n textarea:focus, input:focus {\n     border-color: #99baca;\n     outline: 0;\n     background: #f5fbfe;\n     color: #666;\n }\n .prefs_title {\n     font-size: 12px;\n     font-weight: bold;\n }\n .prefs_textarea {\n     font-size: 12px;\n     margin-top: 5px;\n     height: 100px;\n }\n .right {\n    float: right;\n }',
@@ -2628,6 +2678,9 @@ function Parser(){
 
 Parser.prototype = {
     constructor: Parser,
+    get contentTxt() {  // callback 才有用
+        return $('<div>').html(this.content).text().trim();
+    },
 
     init: function (info, doc, curPageUrl) {
         this.info = info || {};
@@ -2639,6 +2692,8 @@ Parser.prototype = {
         // 设置初始值
         this.isTheEnd = false;
         this.isSection = false;
+
+        C.debug('开始解析页面');
 
         this.applyPatch();
     },
@@ -2663,11 +2718,14 @@ Parser.prototype = {
 
         if(this.info.contentSelector){
             $content = this.$doc.find(this.info.contentSelector);
-        }else{  // 按照顺序选取
+        }
+
+        if (!$content || !$content.length) {
+            // 按照顺序选取
             var selectors = Rule.contentSelectors;
             for(var i = 0, l = selectors.length; i < l; i++){
                 $content = this.$doc.find(selectors[i]);
-                if($content.length > 0){
+                if($content.length){
                     C.log("自动查找内容选择器: " + selectors[i]);
                     break;
                 }
@@ -2675,6 +2733,7 @@ Parser.prototype = {
         }
 
         this.$content = $content;
+        C.debug($content);
 
         return $content.size() > 0;
     },
@@ -2968,7 +3027,7 @@ Parser.prototype = {
 
         // 拼音字、屏蔽字修复
         if(contentHandle){
-            text = this.replaceHtml(text, Rule.replace);
+            text = this.replaceHtml(text);
         }
 
         /* Turn all double br's into p's */
@@ -3083,7 +3142,7 @@ Parser.prototype = {
 
         return text;
     },
-    replaceHtml: function(text, replaceRule) {
+    replaceHtml: function(text) {
         // 先提取出 img
         var imgs = {};
         var i = 0;
@@ -3092,7 +3151,11 @@ Parser.prototype = {
             return "{" + (i++) + "}";
         });
 
-        text = this.contentReplacements(text, replaceRule);
+        // 移除文字广告等
+        text = this.replaceText(text, Rule.replaceNew);
+
+        // 修正拼音字等
+        text = this.contentReplacements(text, Rule.replace);
 
         // 还原图片
         text = $.nano(text, imgs);
@@ -3103,7 +3166,7 @@ Parser.prototype = {
         if (!text) return text;
 
         for (var key in rule) {
-            text = text.replace(new RegExp(key, "ig"), rule[key]);
+            text = text.replace(toRE(key, "ig"), rule[key]);
         }
         return text;
     },
@@ -3294,7 +3357,7 @@ Parser.prototype = {
 
         switch(true){
             case url === '':
-            case Rule.nextUrlIgnore.test(url):
+            case Rule.nextUrlIgnore.some(function(re) { return toRE(re).test(url) }):
             case url === this.indexUrl:
             case url === this.prevUrl:
             case url === this.curPageUrl:
@@ -3984,7 +4047,7 @@ var App = {
             // App.$loading.html("<a href='" + App.curPageUrl  + "'>无法使用阅读模式，请手动点击下一页</a>").show();
         }
     },
-    httpRequest: function(nextUrl) {
+    httpRequest: function(nextUrl, callback) {
         C.log("获取下一页: " + nextUrl);
         GM_xmlhttpRequest({
             url: nextUrl,
@@ -3992,7 +4055,11 @@ var App = {
             overrideMimeType: "text/html;charset=" + document.characterSet,
             onload: function(res) {
                 var doc = parseHTML(res.responseText);
-                App.beforeLoad(doc);
+                if (_.isFunction(callback)) {
+                    callback(doc);
+                } else {
+                    App.beforeLoad(doc);
+                }
             }
         });
     },
@@ -4113,6 +4180,57 @@ var App = {
                 image.className += " blockImage";
             }
         }
+    },
+
+    isSaveing: false,
+    saveAsTxt: function() {
+        if (App.site.useiframe) {
+            alert('暂不支持');
+            return;
+        }
+
+        if (!App.isSaveing) {
+            alert('正在保存，请稍后');
+            return;
+        }
+        App.isSaveing = true;
+
+        var chapters = [];
+        var fileName;
+
+        var toTxt = function(parser) {
+            var html = $.nano('### {chapterTitle}\n\n{contentTxt}', parser);
+            chapters.push(html);
+        };
+
+        var getOnePage = function (parser, nextUrl) {
+            if (parser) {
+                toTxt(parser);
+                nextUrl = parser.nextUrl;
+            }
+
+            if (!nextUrl) {
+                console.log('全部获取完毕');
+                saveAs(chapters.join('\n\n'), fileName);
+                App.isSaveing = false;
+                return;
+            }
+
+            if (App.site.useiframe) {
+                // App.iframeRequest(nextUrl);
+            } else {
+                App.httpRequest(nextUrl, function(doc) {
+                    var par = new Parser(App.site, doc, nextUrl);
+                    par.getAll(getOnePage)
+                });
+            }
+        };
+
+        App.parsers.forEach(toTxt);
+        // 保存后面的章节
+        var lastParser = App.parsers[App.parsers.length - 1];
+        fileName = lastParser.bookTitle + '.txt';
+        getOnePage(null, lastParser.nextUrl);
     }
 };
 

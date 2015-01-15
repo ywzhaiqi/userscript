@@ -630,7 +630,7 @@ var App = {
             // App.$loading.html("<a href='" + App.curPageUrl  + "'>无法使用阅读模式，请手动点击下一页</a>").show();
         }
     },
-    httpRequest: function(nextUrl) {
+    httpRequest: function(nextUrl, callback) {
         C.log("获取下一页: " + nextUrl);
         GM_xmlhttpRequest({
             url: nextUrl,
@@ -638,7 +638,11 @@ var App = {
             overrideMimeType: "text/html;charset=" + document.characterSet,
             onload: function(res) {
                 var doc = parseHTML(res.responseText);
-                App.beforeLoad(doc);
+                if (_.isFunction(callback)) {
+                    callback(doc);
+                } else {
+                    App.beforeLoad(doc);
+                }
             }
         });
     },
@@ -759,6 +763,57 @@ var App = {
                 image.className += " blockImage";
             }
         }
+    },
+
+    isSaveing: false,
+    saveAsTxt: function() {
+        if (App.site.useiframe) {
+            alert('暂不支持');
+            return;
+        }
+
+        if (!App.isSaveing) {
+            alert('正在保存，请稍后');
+            return;
+        }
+        App.isSaveing = true;
+
+        var chapters = [];
+        var fileName;
+
+        var toTxt = function(parser) {
+            var html = $.nano('### {chapterTitle}\n\n{contentTxt}', parser);
+            chapters.push(html);
+        };
+
+        var getOnePage = function (parser, nextUrl) {
+            if (parser) {
+                toTxt(parser);
+                nextUrl = parser.nextUrl;
+            }
+
+            if (!nextUrl) {
+                console.log('全部获取完毕');
+                saveAs(chapters.join('\n\n'), fileName);
+                App.isSaveing = false;
+                return;
+            }
+
+            if (App.site.useiframe) {
+                // App.iframeRequest(nextUrl);
+            } else {
+                App.httpRequest(nextUrl, function(doc) {
+                    var par = new Parser(App.site, doc, nextUrl);
+                    par.getAll(getOnePage)
+                });
+            }
+        };
+
+        App.parsers.forEach(toTxt);
+        // 保存后面的章节
+        var lastParser = App.parsers[App.parsers.length - 1];
+        fileName = lastParser.bookTitle + '.txt';
+        getOnePage(null, lastParser.nextUrl);
     }
 };
 

@@ -350,9 +350,9 @@ var UI = {
                     $(target).val(key);
                 }
                 break;
-            // case 'saveAsTxt':
-            //     Download.saveAsTxt();
-            //     break;
+            case 'saveAsTxt':
+                App.saveAsTxt();
+                break;
             default:
                 break;
         }

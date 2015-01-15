@@ -5,6 +5,9 @@ function Parser(){
 
 Parser.prototype = {
     constructor: Parser,
+    get contentTxt() {  // callback 才有用
+        return $('<div>').html(this.content).text().trim();
+    },
 
     init: function (info, doc, curPageUrl) {
         this.info = info || {};
@@ -16,6 +19,8 @@ Parser.prototype = {
         // 设置初始值
         this.isTheEnd = false;
         this.isSection = false;
+
+        C.debug('开始解析页面');
 
         this.applyPatch();
     },
@@ -40,11 +45,14 @@ Parser.prototype = {
 
         if(this.info.contentSelector){
             $content = this.$doc.find(this.info.contentSelector);
-        }else{  // 按照顺序选取
+        }
+
+        if (!$content || !$content.length) {
+            // 按照顺序选取
             var selectors = Rule.contentSelectors;
             for(var i = 0, l = selectors.length; i < l; i++){
                 $content = this.$doc.find(selectors[i]);
-                if($content.length > 0){
+                if($content.length){
                     C.log("自动查找内容选择器: " + selectors[i]);
                     break;
                 }
@@ -52,6 +60,7 @@ Parser.prototype = {
         }
 
         this.$content = $content;
+        C.debug($content);
 
         return $content.size() > 0;
     },
@@ -345,7 +354,7 @@ Parser.prototype = {
 
         // 拼音字、屏蔽字修复
         if(contentHandle){
-            text = this.replaceHtml(text, Rule.replace);
+            text = this.replaceHtml(text);
         }
 
         /* Turn all double br's into p's */
@@ -460,7 +469,7 @@ Parser.prototype = {
 
         return text;
     },
-    replaceHtml: function(text, replaceRule) {
+    replaceHtml: function(text) {
         // 先提取出 img
         var imgs = {};
         var i = 0;
@@ -469,7 +478,11 @@ Parser.prototype = {
             return "{" + (i++) + "}";
         });
 
-        text = this.contentReplacements(text, replaceRule);
+        // 移除文字广告等
+        text = this.replaceText(text, Rule.replaceNew);
+
+        // 修正拼音字等
+        text = this.contentReplacements(text, Rule.replace);
 
         // 还原图片
         text = $.nano(text, imgs);
@@ -480,7 +493,7 @@ Parser.prototype = {
         if (!text) return text;
 
         for (var key in rule) {
-            text = text.replace(new RegExp(key, "ig"), rule[key]);
+            text = text.replace(toRE(key, "ig"), rule[key]);
         }
         return text;
     },
@@ -671,7 +684,7 @@ Parser.prototype = {
 
         switch(true){
             case url === '':
-            case Rule.nextUrlIgnore.test(url):
+            case Rule.nextUrlIgnore.some(function(re) { return toRE(re).test(url) }):
             case url === this.indexUrl:
             case url === this.prevUrl:
             case url === this.curPageUrl:
