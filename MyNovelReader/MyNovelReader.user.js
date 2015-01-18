@@ -2,7 +2,7 @@
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
-// @version        4.9.3
+// @version        4.9.4
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe
@@ -572,7 +572,8 @@ Rule.specialSite = [
             },
             ".*ddefr\\.jpg.*|无(?:错|.*cuoa?w\\.jpg.*)小说网不[少跳]字|w[a-z\\.]*om?|.*由[【无*错】].*会员手打[\\s\\S]*",
             "无错不跳字|无广告看着就是爽!|一秒记住.*|全文免费阅读.*|8 9 阅阅 读 网|看小说最快更新|“小#说看本书无广告更新最快”",
-            "[`\\*［\\[《〈\\{｜]无.错.小说.[Ｗw]+.*?com",
+            "[`\\*［\\[《〈\\{｜%\\($]无.错.小说.{1,2}[Ｗw]+.*?com",
+            "<无-错>",
         ],
         contentPatch: function(fakeStub){
             // 去除内容开头、结尾的重复标题
@@ -1520,6 +1521,8 @@ Rule.specialSite = [
 Rule.replaceNew = [
     /[;\(]顶.{0,2}点.小说/ig,
     /www.23＋?[Ｗw][Ｘx].[Ｃc]om/ig,
+    /乐文移动网/g,
+    /》长>风》/g,
 ];
 
 // ===== 小说拼音字、屏蔽字修复 =====
@@ -3143,7 +3146,7 @@ Parser.prototype = {
 
         return text;
     },
-    replaceHtml: function(text) {
+    replaceHtml: function(text, replaceRule) {  // replaceRule 给“自定义替换规则直接生效”用
         // 先提取出 img
         var imgs = {};
         var i = 0;
@@ -3152,11 +3155,14 @@ Parser.prototype = {
             return "{" + (i++) + "}";
         });
 
-        // 移除文字广告等
-        text = this.replaceText(text, Rule.replaceNew);
+        if (!replaceRule) {
+            // 移除文字广告等
+            text = this.replaceText(text, Rule.replaceNew);
+            replaceRule = Rule.replace;
+        }
 
         // 修正拼音字等
-        text = this.contentReplacements(text, Rule.replace);
+        text = this.contentReplacements(text, replaceRule);
 
         // 还原图片
         text = $.nano(text, imgs);
@@ -4190,10 +4196,13 @@ var App = {
             return;
         }
 
-        if (!App.isSaveing) {
+        if (App.isSaveing) {
             alert('正在保存，请稍后');
             return;
+        } else {
+            alert('开始一章章获取内容，请耐心等待');
         }
+
         App.isSaveing = true;
 
         var chapters = [];
@@ -4220,6 +4229,7 @@ var App = {
             if (App.site.useiframe) {
                 // App.iframeRequest(nextUrl);
             } else {
+                console.log('[存为txt]正在获取：', nextUrl)
                 App.httpRequest(nextUrl, function(doc) {
                     var par = new Parser(App.site, doc, nextUrl);
                     par.getAll(getOnePage)

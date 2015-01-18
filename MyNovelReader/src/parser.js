@@ -469,7 +469,7 @@ Parser.prototype = {
 
         return text;
     },
-    replaceHtml: function(text) {
+    replaceHtml: function(text, replaceRule) {  // replaceRule 给“自定义替换规则直接生效”用
         // 先提取出 img
         var imgs = {};
         var i = 0;
@@ -478,11 +478,14 @@ Parser.prototype = {
             return "{" + (i++) + "}";
         });
 
-        // 移除文字广告等
-        text = this.replaceText(text, Rule.replaceNew);
+        if (!replaceRule) {
+            // 移除文字广告等
+            text = this.replaceText(text, Rule.replaceNew);
+            replaceRule = Rule.replace;
+        }
 
         // 修正拼音字等
-        text = this.contentReplacements(text, Rule.replace);
+        text = this.contentReplacements(text, replaceRule);
 
         // 还原图片
         text = $.nano(text, imgs);

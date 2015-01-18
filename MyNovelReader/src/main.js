@@ -772,10 +772,13 @@ var App = {
             return;
         }
 
-        if (!App.isSaveing) {
+        if (App.isSaveing) {
             alert('正在保存，请稍后');
             return;
+        } else {
+            alert('开始一章章获取内容，请耐心等待');
         }
+
         App.isSaveing = true;
 
         var chapters = [];
@@ -802,6 +805,7 @@ var App = {
             if (App.site.useiframe) {
                 // App.iframeRequest(nextUrl);
             } else {
+                console.log('[存为txt]正在获取：', nextUrl)
                 App.httpRequest(nextUrl, function(doc) {
                     var par = new Parser(App.site, doc, nextUrl);
                     par.getAll(getOnePage)
