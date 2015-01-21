@@ -37,6 +37,13 @@ picviewerCE.user.js
 
 ![设置界面](https://github.com/ywzhaiqi/userscript/raw/master/picviewerCE/config.png)
 
+## 支持的站点（示例）
+
+*注：排名不分顺序。非全部列出*
+
+- [ZOL产品报价](http://detail.zol.com.cn/240/239857/pic.shtml)
+- [优美图](http://www.topit.me/)
+
 ## 鼠标手势调用（FireGesture）
 
 ### 打开原图

@@ -422,6 +422,13 @@ Rule.MPIV = [
 		example: "http://www.crsky.com/soft/5357.html",
 	},
 
+	{name: "zol",
+		d: "detail.zol.com.cn",
+		r: /(\w+\.zol-img\.com\.cn\/product\/\d+)_\d+x\d+\/(.*\.jpg)/i,
+		s: "$1/$2",
+		// s: "$1_800x600/$2",
+		example: "http://detail.zol.com.cn/240/239857/pic.shtml"
+	},
 	// 游戏 Game
 	{name: "天极网",
 		d: "game.yesky.com",

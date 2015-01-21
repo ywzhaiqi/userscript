@@ -2,7 +2,7 @@
 // @name           picviewer CE
 // @author         NLF && ywzhaiqi
 // @description    NLF 的围观图修改版
-// @version        2014.12.02.0
+// @version        2015.01.21.0
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
@@ -549,6 +549,13 @@ Rule.MPIV = [
 		example: "http://www.crsky.com/soft/5357.html",
 	},
 
+	{name: "zol",
+		d: "detail.zol.com.cn",
+		r: /(\w+\.zol-img\.com\.cn\/product\/\d+)_\d+x\d+\/(.*\.jpg)/i,
+		s: "$1/$2",
+		// s: "$1_800x600/$2",
+		example: "http://detail.zol.com.cn/240/239857/pic.shtml"
+	},
 	// 游戏 Game
 	{name: "天极网",
 		d: "game.yesky.com",
