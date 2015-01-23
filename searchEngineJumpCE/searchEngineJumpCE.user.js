@@ -20,6 +20,7 @@
 // @include        /^https?:\/\/(?:www|encrypted)\.google(?:stable)?\..{2,9}\/(?:webhp|search|#|$|\?)(?:.(?!tbm=))*$/
 // @include        /^https?:\/\/wen\.lu\//
 // @include        /^https?:\/\/awk\.so\//
+// @include        /^https?:\/\/e\.glgoo\.com\/(?:webhp|search|#|$|\?)/
 // @include        /^https?:\/\/www\.baidu\.com\/(?:s|baidu|)/
 // @include        /^https?:\/\/[^.]*\.bing\.com\/search/
 // @include        /^https?:\/\/www\.so\.com\/s\?/
@@ -259,6 +260,21 @@ var rules = [
     {name: "awk.so网页搜索",
         enabled: true,
         url: /^https?:\/\/awk\.so\//i,
+        engineList: 'web',
+        style: '\
+            border-bottom: 1px solid #E5E5E5;\
+            border-top: 1px solid #E5E5E5;\
+            padding-left: 135px;\
+            ',
+        insertIntoDoc: {
+            keyword: '//input[@name="q"]',
+            target: 'css;#rcnt',
+            where: 'beforeBegin',
+        },
+    },
+    {name: "glgoo网页搜索",
+        enabled: true,
+        url: /^https?:\/\/e\.glgoo\.com\/(?:webhp|search|#|$|\?)/i,
         engineList: 'web',
         style: '\
             border-bottom: 1px solid #E5E5E5;\
