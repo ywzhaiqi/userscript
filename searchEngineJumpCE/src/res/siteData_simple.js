@@ -89,7 +89,7 @@
     百度盘（主页）, https://pan.baidu.com/disk/home?adapt=pc#dir/key=%s
 
 翻译-爱词霸
-    google翻译, https://translate.google.com/?q=%s
+    google翻译, http://translate.google.cn/?q=%s
     百度翻译, http://fanyi.baidu.com/#auto/zh/%s
     有道词典, http://dict.youdao.com/search?q=%s
     爱词霸, http://www.iciba.com/%s
