@@ -2,7 +2,7 @@
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
-// @version        4.9.4
+// @version        4.9.5
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe
@@ -235,6 +235,7 @@
 // @include        http://www.78xs.com/article/*/*/*.shtml
 // @include        http://www.miaobige.com/*/*/*.html
 // @include        http://www.woaixiaoshuo.com/xiaoshuo/*/*/*.html
+// @include        http://www.ty2016.com/book/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html
@@ -277,6 +278,7 @@ var Rule = {
     // 忽略的下一页链接，匹配 href
     nextUrlIgnore: [
         /(?:(?:index|list|last|LastPage|end)\.)|BuyChapterUnLogin|BookReader\/vip,|^javascript:/i,
+        /free\.qidian\.com\/Free\/ShowBook\.aspx\?bookid=/i,
         /book\.zongheng\.com\/readmore/i,
         /www\.shumilou\.com\/to-n-[a-z]+-\d+\.html/i,
         /read\.qidian\.com\/BookReader\/\d+,0\.aspx$/i,
@@ -526,6 +528,17 @@ Rule.specialSite = [
     //     contentSelector: "div > span.middle, #texts",
     //     contentHandle: false,
     // },
+    {siteName: "天涯书库",
+        url: /www\.ty2016\.com\/.+\.html$/,
+        titleSelector: "h1",
+        bookTitleSelector: ".crumb a[href='./']",
+
+        indexSelector: "td a[href='./']",
+
+        contentSelector: "#main",
+        contentRemove: '.crumb, table',
+        contentHandle: false,
+    },
 
     // {siteName: "易读",
     //     url: "http://www.yi-see.com/read_\\d+_\\d+.html",
@@ -572,8 +585,8 @@ Rule.specialSite = [
             },
             ".*ddefr\\.jpg.*|无(?:错|.*cuoa?w\\.jpg.*)小说网不[少跳]字|w[a-z\\.]*om?|.*由[【无*错】].*会员手打[\\s\\S]*",
             "无错不跳字|无广告看着就是爽!|一秒记住.*|全文免费阅读.*|8 9 阅阅 读 网|看小说最快更新|“小#说看本书无广告更新最快”",
-            "[`\\*［\\[《〈\\{｜%\\($]无.错.小说.{1,2}[Ｗw]+.*?com",
-            "<无-错>",
+            "[`\\*［\\[《〈\\{｜%\\($\\*-？=]?无.错.小说.{1,2}[Ｗw]+.*?co[mＭ]",
+            "<无-错>", "—无—错—小说",
         ],
         contentPatch: function(fakeStub){
             // 去除内容开头、结尾的重复标题
@@ -597,7 +610,7 @@ Rule.specialSite = [
                 '<img src="/keywd/K36.gif">':'日', '<img src="/keywd/O15.gif">':'胸', '<img src="/keywd/S31.gif">':'欲',
                 '<img src="/keywd/F20.gif">':'射', '<img src="/keywd/N12.gif">':'禁', '<img src="/keywd/R26.gif">':'殿',
                 '<img src="/keywd/N12.gif">':'禁', '<img src="/keywd/X6.gif">':'诱', '<img src="/keywd/U46.gif">': '娇',
-                '<img src="/keywd/M24.gif">': '操',
+                '<img src="/keywd/M24.gif">': '操', '<img src="/keywd/B4.gif">':'骚', '<img src="/keywd/O3.gif">':'阴',
             }
         ]
     },
@@ -618,6 +631,7 @@ Rule.specialSite = [
             '章节更新最快',
             '-乐-读-小-说--乐读x-',
             '《乐》《读》小说.乐读.Com',
+            '纯文字在线阅读本站域名手机同步阅读请访问',
         ],
         fixImage: true,
         contentPatch: function(fakeStub){
@@ -868,6 +882,7 @@ Rule.specialSite = [
             "\\[☆更.新.最.快☆无.弹.窗☆全.免.费\\]",
             '\\(.*?平南文学网\\)',
             '｛首发｝|【首发】',
+            '=长=风',
             { "。\\.": "。" },
         ]
     },
@@ -1042,7 +1057,7 @@ Rule.specialSite = [
         contentReplace: [
             "吋煜牝咱.*?杂书网(?:杠杠的)?",
             "吋煜牝咱看书神器",
-            "(?:吋煜牝咱|飝现洅咱).*?[Ｃc]om",
+            "(?:吋煜牝咱|飝现洅咱|茇阺畱匝).*?[Ｃc]om",
             "吋煜牝咱",
             "飝现洅咱", "殢萾嘎匝",
             "看小说“杂书网zashu.net”",

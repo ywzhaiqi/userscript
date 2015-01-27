@@ -235,6 +235,7 @@
 // @include        http://www.78xs.com/article/*/*/*.shtml
 // @include        http://www.miaobige.com/*/*/*.html
 // @include        http://www.woaixiaoshuo.com/xiaoshuo/*/*/*.html
+// @include        http://www.ty2016.com/book/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html
