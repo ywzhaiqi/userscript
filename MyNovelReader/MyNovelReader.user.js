@@ -2,7 +2,7 @@
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
-// @version        4.9.5
+// @version        4.9.6
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe
@@ -236,6 +236,13 @@
 // @include        http://www.miaobige.com/*/*/*.html
 // @include        http://www.woaixiaoshuo.com/xiaoshuo/*/*/*.html
 // @include        http://www.ty2016.com/book/*/*.html
+// @include        http://wx.ty2016.com/*/*/*.html
+// @include        http://www.my285.com/*/*/*/*.htm
+// @include        http://www.5858xs.com/html/*/*/*.html
+// @include        http://book.58xs.com/html/*/*/*.html
+// @include        http://book.mihua.net/*/*/*/*.html
+// @include        http://www.hjwzw.com/Book/Read/*,*
+// @include        http://www.365essay.com/*/*.htm
 
 // @exclude        */List.htm
 // @exclude        */List.html
@@ -585,7 +592,8 @@ Rule.specialSite = [
             },
             ".*ddefr\\.jpg.*|无(?:错|.*cuoa?w\\.jpg.*)小说网不[少跳]字|w[a-z\\.]*om?|.*由[【无*错】].*会员手打[\\s\\S]*",
             "无错不跳字|无广告看着就是爽!|一秒记住.*|全文免费阅读.*|8 9 阅阅 读 网|看小说最快更新|“小#说看本书无广告更新最快”",
-            "[`\\*［\\[《〈\\{｜%\\($\\*-？=]?无.错.小说.{1,2}[Ｗw]+.*?co[mＭ]",
+            // "[`\\*［\\[《〈\\{｜%\\($\\*-？=]?无.错.小说.{1,2}[Ｗw]+.*?co[mＭ]",
+            "[\\x20-\\x7e]?无.错.小说.{1,2}[Ｗw]+.*?co[mＭ]",
             "<无-错>", "—无—错—小说",
         ],
         contentPatch: function(fakeStub){
@@ -1457,6 +1465,48 @@ Rule.specialSite = [
         bookTitleSelector: '#lbox > b',
         contentSelector: '#readbox',
         contentRemove: '#papgbutton, #content',
+    },
+    {siteName: "米花在线书库",
+        url: /book\.mihua\.net\/\w+\/\d+\/\d+\/.+\.html/,
+        titleSelector: "#title",
+        contentSelector: "#viewbook"
+    },
+    {siteName: "58小说网",
+        url: /^http:\/\/(www|book)\.(58)?58xs\.com\/html\/\d+\/\d+\/\d+\.html/,
+        titleSelector: "h1",
+        indexSelector: "#footlink > a:eq(1)",
+        prevSelector: "#footlink > a:eq(0)",
+        nextSelector: "#footlink > a:eq(2)",
+        contentSelector: "#content",
+        contentRemove: ".f1, .c1"
+    },
+    {siteName: "天天美文网",
+        url: /www\.365essay\.com\/\w+\/.+.htm/,
+        titleSelector: ".title > h1",
+        contentSelector: "#zoomc td",
+        contentRemove: ".page-bottomc"
+    },
+    {siteName: "天涯武库",
+        url: /wx\.ty2016\.com\/.+\.html$/,
+        bookTitleSelector: "td[width='800'][height='25']>a[href='./']",
+        titleSelector: "strong>font",
+        indexSelector: "td a[href='./']",
+        nextSelector: "td[width='28%'] a",
+
+        contentSelector: "td[width='760'] p",
+        contentHandle: false,
+    },
+    {siteName: "黄金屋中文网",
+        url: /www\.hjwzw\.com\/Book\/Read\/\d+,\d+$/,
+        titleSelector: "h1",
+        indexSelector: "td a[href='./']",
+        contentSelector: "#AllySite+div",
+        contentRemove: "b, b+p"
+    },
+    {siteName: "梦远书城",
+        url: /www\.my285\.com(?:\/\w+){3,5}\/\d+\.htm$/,
+        useiframe: true,
+        contentSelector: "table:eq(2) tr:eq(3)",
     },
 
     // ===== 特殊的获取下一页链接

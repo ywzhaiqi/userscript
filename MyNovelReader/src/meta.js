@@ -236,6 +236,13 @@
 // @include        http://www.miaobige.com/*/*/*.html
 // @include        http://www.woaixiaoshuo.com/xiaoshuo/*/*/*.html
 // @include        http://www.ty2016.com/book/*/*.html
+// @include        http://wx.ty2016.com/*/*/*.html
+// @include        http://www.my285.com/*/*/*/*.htm
+// @include        http://www.5858xs.com/html/*/*/*.html
+// @include        http://book.58xs.com/html/*/*/*.html
+// @include        http://book.mihua.net/*/*/*/*.html
+// @include        http://www.hjwzw.com/Book/Read/*,*
+// @include        http://www.365essay.com/*/*.htm
 
 // @exclude        */List.htm
 // @exclude        */List.html
