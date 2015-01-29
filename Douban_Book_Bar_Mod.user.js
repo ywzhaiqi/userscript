@@ -11,7 +11,7 @@
 // @include     *://product.suning.com/*
 // @include     *://www.duokan.com/book/*
 // @include     *://shuziitem.taobao.com/item.htm*
-// @version     ver 1.1.4
+// @version     ver 1.1.5
 // @grant       GM_xmlhttpRequest
 // @grant       GM_addStyle
 // ==/UserScript==
@@ -324,13 +324,18 @@
 
         getISBN           : function () {
             var scanItems = document.querySelectorAll ( "div.show_info_left" );
+            if (!scanItems.length) {
+                scanItems = document.querySelectorAll('ul[name="Infodetail_pub"] > li > span');
+            }
+
             try {
                 for ( var i = 0 ; i < scanItems.length ; i++ ) {
                     if ( scanItems[i].textContent === "ＩＳＢＮ" || scanItems[i].textContent === "ISBN" ) {
                         return scanItems[i].nextElementSibling.innerHTML;
+                    } else if (scanItems[i].textContent.indexOf('I S B N：') == 0) {
+                        return scanItems[i].textContent.replace('I S B N：', '');
                     }
                 }
-
             } catch (e) {
                 return null;
             }
