@@ -85,7 +85,6 @@ var App = {
             //     return false;
             case Config.booklink_enable && /booklink\.me/.test(referrer):
                 return true;
-            case Config.getDisableAutoLaunch():
             case locationHost == 'tieba.baidu.com':
                 var title = $('.core_title_txt').text();
                 if (title.match(Rule.titleRegExp)) {
@@ -93,6 +92,8 @@ var App = {
                 } else {
                     return -1;
                 }
+            case Config.getDisableAutoLaunch():
+                return false;
             case GM_getValue("auto_enable"):
             case config.soduso && /www\.sodu\.so/.test(referrer):
                 return true;

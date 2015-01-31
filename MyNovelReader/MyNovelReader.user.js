@@ -2,7 +2,7 @@
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
-// @version        4.9.6
+// @version        4.9.7
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe
@@ -92,6 +92,11 @@
 // @include        http://www.xiangcunxiaoshuo.com/shu/*/*.html
 // @include        http://www.lwxs520.com/books/*/*/*.html
 // @include        http://www.zashu.net/books/*/*/*.html
+// @include        http://www.piaotian.net/html/*/*/*.html
+// @include        http://www.yunlaige.com/html/*/*/*.html
+// @include        http://www.cfwx.net/files/article/html/*/*/*.html
+// @include        http://www.qiuwu.net/html/*/*/*.html
+// @include        http://www.xs84.com/*_*/*
 
 // www.sodu.so
 // @include        http://www.jiaodu8.com/*/*/*/*.html
@@ -110,8 +115,6 @@
 
 // 其它网站
 // @include        http://book.sfacg.com/Novel/*/*/*/
-// @include        http://www.yunlaige.com/html/*/*/*.html
-// @include        http://www.cfwx.net/files/article/html/*/*/*.html
 // @include        http://www.7dsw.com/book/*/*/*.html
 // @include        http://www.geiliwx.com/GeiLi/*/*/*.shtml*
 // @include        http://www.d586.com/*/*/
@@ -146,7 +149,6 @@
 // @include        http://dukeba.com/book/*/*/*.shtml
 // @include        http://www.wenchangshuyuan.com/html/*/*/*.html
 // @include        http://www.pofeng.net/xiaoshuo/*/*.html
-// @include        http://www.piaotian.net/html/*/*/*.html
 // @include        http://www.epzww.com/book/*/*
 // @include        http://tw.xiaoshuokan.com/haokan/*/*.html
 // @include        http://www.wobudu.com/*/*.html
@@ -177,7 +179,6 @@
 // @include        http://www.qmshu.com/html/*/*/*.html
 // @include        http://dlzw.cc/article-*-*.html
 // @include        http://www.shushu5.com/read/*/*.html
-// @include        http://www.qiuwu.net/html/*/*/*.html
 // @include        http://www.xiaoyanwenxue.com/files/article/html/*/*/*.html
 // @include        http://www.3gsc.com.cn/bookcon/*_*_*
 // @include        http://www.bj-ibook.cn/book/*/*/*.htm
@@ -301,7 +302,7 @@ var Rule = {
         "#text_area", "#chapter_content", "#chapterContent", "#partbody",
         "#article_content", "#BookTextRead", "#booktext", "#BookText", "#readtext", "#text_c", "#txt_td", "#TXT", "#txt", "#zjneirong",
         ".novel_content", ".readmain_inner", ".noveltext", ".booktext",
-        "#contentTxt", "#oldtext", "#a_content", "#contents", "#content2", "#content", ".content"],
+        "#contentTxt", "#oldtext", "#a_content", "#contents", "#content2", "#contentts", "#content", ".content"],
 
     // (测试)尝试查找书名。顶部章节导航的最后一个链接可能是书名。
     bookTitleSelector: ".h1title > .shuming > a[title], .chapter_nav > div:first > a:last",
@@ -592,8 +593,7 @@ Rule.specialSite = [
             },
             ".*ddefr\\.jpg.*|无(?:错|.*cuoa?w\\.jpg.*)小说网不[少跳]字|w[a-z\\.]*om?|.*由[【无*错】].*会员手打[\\s\\S]*",
             "无错不跳字|无广告看着就是爽!|一秒记住.*|全文免费阅读.*|8 9 阅阅 读 网|看小说最快更新|“小#说看本书无广告更新最快”",
-            // "[`\\*［\\[《〈\\{｜%\\($\\*-？=]?无.错.小说.{1,2}[Ｗw]+.*?co[mＭ]",
-            "[\\x20-\\x7e]?无.错.小说.{1,2}[Ｗw]+.*?co[mＭ]",
+            "[\\x20-\\x7e》]?无(?:.|&gt;)错.小说.{1,2}[Ｗw]+.*?[cＣ][oＯ][mＭ]",
             "<无-错>", "—无—错—小说",
         ],
         contentPatch: function(fakeStub){
@@ -1444,6 +1444,8 @@ Rule.specialSite = [
             '【最新更新】',
             '值得您收藏。。',
             '小说“小说章节',
+            '纯文字在线阅读本站域名',
+            '手机同步阅读请访问',
         ]
     },
     {siteName: "乐文小说网",
@@ -3574,7 +3576,6 @@ var App = {
             //     return false;
             case Config.booklink_enable && /booklink\.me/.test(referrer):
                 return true;
-            case Config.getDisableAutoLaunch():
             case locationHost == 'tieba.baidu.com':
                 var title = $('.core_title_txt').text();
                 if (title.match(Rule.titleRegExp)) {
@@ -3582,6 +3583,8 @@ var App = {
                 } else {
                     return -1;
                 }
+            case Config.getDisableAutoLaunch():
+                return false;
             case GM_getValue("auto_enable"):
             case config.soduso && /www\.sodu\.so/.test(referrer):
                 return true;

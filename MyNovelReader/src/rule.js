@@ -26,7 +26,7 @@ var Rule = {
         "#text_area", "#chapter_content", "#chapterContent", "#partbody",
         "#article_content", "#BookTextRead", "#booktext", "#BookText", "#readtext", "#text_c", "#txt_td", "#TXT", "#txt", "#zjneirong",
         ".novel_content", ".readmain_inner", ".noveltext", ".booktext",
-        "#contentTxt", "#oldtext", "#a_content", "#contents", "#content2", "#content", ".content"],
+        "#contentTxt", "#oldtext", "#a_content", "#contents", "#content2", "#contentts", "#content", ".content"],
 
     // (测试)尝试查找书名。顶部章节导航的最后一个链接可能是书名。
     bookTitleSelector: ".h1title > .shuming > a[title], .chapter_nav > div:first > a:last",
@@ -317,8 +317,7 @@ Rule.specialSite = [
             },
             ".*ddefr\\.jpg.*|无(?:错|.*cuoa?w\\.jpg.*)小说网不[少跳]字|w[a-z\\.]*om?|.*由[【无*错】].*会员手打[\\s\\S]*",
             "无错不跳字|无广告看着就是爽!|一秒记住.*|全文免费阅读.*|8 9 阅阅 读 网|看小说最快更新|“小#说看本书无广告更新最快”",
-            // "[`\\*［\\[《〈\\{｜%\\($\\*-？=]?无.错.小说.{1,2}[Ｗw]+.*?co[mＭ]",
-            "[\\x20-\\x7e]?无.错.小说.{1,2}[Ｗw]+.*?co[mＭ]",
+            "[\\x20-\\x7e》]?无(?:.|&gt;)错.小说.{1,2}[Ｗw]+.*?[cＣ][oＯ][mＭ]",
             "<无-错>", "—无—错—小说",
         ],
         contentPatch: function(fakeStub){
@@ -1169,6 +1168,8 @@ Rule.specialSite = [
             '【最新更新】',
             '值得您收藏。。',
             '小说“小说章节',
+            '纯文字在线阅读本站域名',
+            '手机同步阅读请访问',
         ]
     },
     {siteName: "乐文小说网",

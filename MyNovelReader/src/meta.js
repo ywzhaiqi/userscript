@@ -92,6 +92,11 @@
 // @include        http://www.xiangcunxiaoshuo.com/shu/*/*.html
 // @include        http://www.lwxs520.com/books/*/*/*.html
 // @include        http://www.zashu.net/books/*/*/*.html
+// @include        http://www.piaotian.net/html/*/*/*.html
+// @include        http://www.yunlaige.com/html/*/*/*.html
+// @include        http://www.cfwx.net/files/article/html/*/*/*.html
+// @include        http://www.qiuwu.net/html/*/*/*.html
+// @include        http://www.xs84.com/*_*/*
 
 // www.sodu.so
 // @include        http://www.jiaodu8.com/*/*/*/*.html
@@ -110,8 +115,6 @@
 
 // 其它网站
 // @include        http://book.sfacg.com/Novel/*/*/*/
-// @include        http://www.yunlaige.com/html/*/*/*.html
-// @include        http://www.cfwx.net/files/article/html/*/*/*.html
 // @include        http://www.7dsw.com/book/*/*/*.html
 // @include        http://www.geiliwx.com/GeiLi/*/*/*.shtml*
 // @include        http://www.d586.com/*/*/
@@ -146,7 +149,6 @@
 // @include        http://dukeba.com/book/*/*/*.shtml
 // @include        http://www.wenchangshuyuan.com/html/*/*/*.html
 // @include        http://www.pofeng.net/xiaoshuo/*/*.html
-// @include        http://www.piaotian.net/html/*/*/*.html
 // @include        http://www.epzww.com/book/*/*
 // @include        http://tw.xiaoshuokan.com/haokan/*/*.html
 // @include        http://www.wobudu.com/*/*.html
@@ -177,7 +179,6 @@
 // @include        http://www.qmshu.com/html/*/*/*.html
 // @include        http://dlzw.cc/article-*-*.html
 // @include        http://www.shushu5.com/read/*/*.html
-// @include        http://www.qiuwu.net/html/*/*/*.html
 // @include        http://www.xiaoyanwenxue.com/files/article/html/*/*/*.html
 // @include        http://www.3gsc.com.cn/bookcon/*_*_*
 // @include        http://www.bj-ibook.cn/book/*/*/*.htm
