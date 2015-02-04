@@ -14,6 +14,26 @@
      1、仓库用度盘投稿助手 https://greasyfork.org/zh-CN/scripts/3285/code
  */
 
+function createNewFile(fileInfo, callback) {
+    // from function sendCreateNewFileMessage
+
+    // var fileInfo = {
+    //     name: '仓库用度盘投稿助手.user.js',
+    //     size: 10909,
+    //     md5: '8dcfb3a2faab530c2a52ed02ca4b31a1'
+    // };
+
+    var data = {
+        path: '/1/' + fileInfo.name,
+        isdir: 0,
+        size: fileInfo.size,
+        block_list: fileInfo.md5 ? '["' + fileInfo.md5 + '"]' : "[]",
+        method: "post"
+    };
+
+    var RestAPI_CREATE = "/api/create?a=commit";
+    $.post(RestAPI_CREATE, data, callback)
+}
 
 // 测试网址  Books(Verycd Share): http://yun.baidu.com/share/home?uk=2214641459&view=share#category/type=0
 // 2014年11月12日
@@ -71,8 +91,109 @@ var shareHome = {  // 他人分享主页
                 callback();
             }
         });
-    }
+    },
 };
+
+// 运行在他人分享主页
+// 获取一页并转存。使用方法：ns.run(21)
+var ns = {
+    stop: false,
+
+    parseDirPath: function(path) {
+        return path.substring(path.indexOf(":/") + 1);
+    },
+    getOnePageData: function(currentPage, callback) {
+        // var deferred = $.Deferred();
+        var url = "/pcloud/feed/getsharelist",
+            pageSize = 60;
+
+        currentPage -= 1;
+
+        var data = {
+            category: 0,
+            auth_type: 1,
+            request_location: 'share_home',
+            start: currentPage * 60,
+            limit: 60,
+            query_uk: FileUtils.SHARE_DATAS.currentUK
+        };
+
+        $.getJSON(url, data, function(ret) {
+            if (ret && ret.errno == 0) {
+                // deferred.resolve(ret.records, ret.total_count);
+                console.log(ret)
+                callback && callback(ret.records, ret.total_count);
+            } else {
+                console.error('获取第 %s 页错误，错误信息：', currentPage, ret);
+                // deferred.reject();
+                callback();
+            }
+        });
+
+        // return deferred;
+    },
+    doTransfer: function(records, callback) {
+        var record = records.shift();
+        if (!record) {
+            callback();
+            return;
+        }
+
+        var share_uk = record.uk,
+            share_id = record.shareid,
+            path = decodeURIComponent(record.filelist[0].path);
+
+        var postData = {
+            path: "",
+            filelist: $.stringify([ns.parseDirPath(path)]),
+            type: 1
+        };
+
+        // disk.api.RestAPI.TRANSFER
+        $.post("/share/transfer?channel=chunlei&clienttype=0&web=1" + "&from=" + encodeURIComponent(share_uk) + "&shareid=" + share_id, postData, function(data) {
+            var ret = null;
+            try {
+                ret = $.parseJSON(data);
+            } catch (C) {
+                ret = null;
+            }
+
+            if (ret && !ret.errno) {
+                console.log('转存成功', ret.info[0].path);
+            } else {
+                console.error('转存错误', ret);
+            }
+
+            ns.doTransfer(records, callback);
+        });
+    },
+
+    run: function (startPage) {
+        console.log('开始转存第 %s 页', startPage);
+
+        ns.getOnePageData(startPage, function(records) {
+            if (!records.length) {
+                console.log('全部转存完毕，请到我的百度盘 - 我的资源目录下查看');
+                return
+            }
+
+            ns.doTransfer(records, function() {
+                console.log('第 %s 页转存完毕', startPage);
+                if (ns.stop) {
+                    console.log('已被停止');
+                } else {
+                    startPage += 1;
+                    ns.run(startPage)
+                }
+            });
+        });
+    }
+
+    // // 转存当前页所有条目
+    // var arr = $('a.file-handler').map(function() { return $(this).attr('href') }).toArray();
+    // doTransferVideo(arr);
+};
+
 
 var diskHome = {  // 个人网盘主页
     SAVE_TIMEOUT: 3 * 1000,
@@ -281,6 +402,7 @@ var moveDialog = (function() {
         init: init
     }
 })()
+
 
 
 function getParam(name, url) {

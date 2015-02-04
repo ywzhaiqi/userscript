@@ -7,7 +7,7 @@
 // @include      http://kindleren.com/search.php?mod=forum&mq=*
 // @include      http://shuzi.taobao.com/item/search---50094067.htm?q=*
 // @grant        GM_addStyle
-// @require      http://cdn.staticfile.org/zepto/1.1.4/zepto.min.js
+// @require      http://cdn.staticfile.org/jquery/2.1.1/jquery.min.js
 // @run-at       document-start
 // @noframes
 // ==/UserScript==

@@ -28,7 +28,7 @@ function init() {
     // 添加导出按钮
     var $result = $('#result');
     var observer = new MutationObserver(function(){
-        $result.find('span[style="color:red"]:contains("[")').each(function() {
+        $result.find('span.quality:contains("[")').each(function() {
             var $sep = $(this)
                 ul = $sep.prev().find('ul');
 
