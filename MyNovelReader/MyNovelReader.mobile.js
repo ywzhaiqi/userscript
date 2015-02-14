@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader For Opera Mobile
-// @version        2015.1.29
+// @version        2015.2.10
 // @namespace
 // @author         ywzhaiqi@gmail.com
 // @description    小说阅读脚本，实现清爽阅读。2种模式：自定义站点配置和自动站点配置。
@@ -63,6 +63,7 @@
 // @include        http://www.yunlaige.com/html/*/*/*.html
 // @include        http://www.cfwx.net/files/article/html/*/*/*.html
 // @include        http://www.qiuwu.net/html/*/*/*.html
+// @include        http://www.xs84.com/*_*/*
 
 // @exclude        */List.html
 // @exclude        */List.shtml
@@ -79,7 +80,6 @@
  - 手打吧、泡书吧、17k、看下、青帝、侠客、
  - 其它通用小说网站。（没有站点配置的，例如：红袖添香）
 */
-
 
 (function(CSS){
 
@@ -114,7 +114,7 @@
 		 // 同上。
 		contentSelector: ["#bmsy_content", "#bookpartinfo", "#htmlContent", "#chapter_content", "#chapterContent", "#partbody",
             "#article_content", ".novel_content", ".noveltext", "#booktext", "#BookText", "#readtext", "#text_c", "#txt_td",
-            "#contentTxt", "#oldtext", "#a_content", "#contents", "#content2", "#content", ".content"],
+            "#contentTxt", "#oldtext", "#a_content", "#contentts", "#contents", "#content2", "#content", ".content"],
 
 		contentRemove: "script, iframe, a, font[color]",
 		contentReplace: /最新章节|百度搜索|小说章节|全文字手打|“”&nbsp;看|无.弹.窗.小.说.网|追书网/g,
@@ -1407,6 +1407,7 @@
         "3vbook\\.cn": "",
         "txt53712/": "",
         "\xa0{4,12}":"\xa0\xa0\xa0\xa0\xa0\xa0\xa0",
+        "『上小说巴士\\[www.xs84.com\\]看本书』": "",
 
         // === 星号屏蔽字还原 ===
         "十有(\\*{2})":"十有八九", "\\*{2}不离十":"八九不离十",
