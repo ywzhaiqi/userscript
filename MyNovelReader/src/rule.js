@@ -303,7 +303,7 @@ Rule.specialSite = [
         contentReplace: "\\(.*燃文小说.*\\)|【 注册会员可获私人书架，看书更方便！永久地址： 】 "
     },
     {siteName: "无错小说网",
-        url: /^http:\/\/www\.wcxiaoshuo\.com\/wcxs[-\d]+\//,
+        url: /^http:\/\/www\.(?:wcxiaoshuo|xiaoshuoz)\.com\/wcxs[-\d]+\//,
         titleReg: /(.*?)最新章节.*?-(.*?)-.*/,
         titlePos: 1,
         nextSelector: "a#htmlxiazhang",
@@ -318,7 +318,10 @@ Rule.specialSite = [
             ".*ddefr\\.jpg.*|无(?:错|.*cuoa?w\\.jpg.*)小说网不[少跳]字|w[a-z\\.]*om?|.*由[【无*错】].*会员手打[\\s\\S]*",
             "无错不跳字|无广告看着就是爽!|一秒记住.*|全文免费阅读.*|8 9 阅阅 读 网|看小说最快更新|“小#说看本书无广告更新最快”",
             "[\\x20-\\x7e》]?无(?:.|&gt;)错.小说.{1,2}[Ｗw]+.*?[cＣ][oＯ][mＭ]",
-            "<无-错>", "—无—错—小说",
+            "<无-错>",
+            "—无—错—小说",
+            "\\+无\\+错\\+",
+            "＋无＋错＋小说＋3Ｗ.＋＋com",
         ],
         contentPatch: function(fakeStub){
             // 去除内容开头、结尾的重复标题
@@ -796,6 +799,21 @@ Rule.specialSite = [
             "手机站：m.zashu.net 电脑站：www.zashu.net",
         ]
     },
+    {siteName: "小说巴士",
+        url: "^http://www\\.xs84\\.com/\\d+_\\d+/",
+        bookTitleSelector: ".con_top a:last",
+        contentReplace: [
+            "§推荐一个无广告的小说站.*? §",
+            "☆本站最快更新.*?☆",
+            "纯文字在线阅读.*?</br>",
+        ],
+        contentPatch: function() {
+            $('<script>')
+                .text('clearInterval(show);')
+                .appendTo('body')
+                .remove();
+        }
+    },
 
     // === 内容补丁
     {siteName: "给力文学小说阅读网",
@@ -1234,6 +1252,12 @@ Rule.specialSite = [
         useiframe: true,
         contentSelector: "table:eq(2) tr:eq(3)",
     },
+    {siteName: "更新吧",
+        url: "^http://www\\.gengxin8\\.com/read/\\d+/\\d+.html$",
+        bookTitleSelector: '.left a:last',
+        contentSelector: "#chaptertxt",
+        useiframe: true,
+    },
 
     // ===== 特殊的获取下一页链接
     {siteName: "看书啦",
@@ -1314,6 +1338,7 @@ Rule.replaceNew = [
     /www.23＋?[Ｗw][Ｘx].[Ｃc]om/ig,
     /乐文移动网/g,
     /》长>风》/g,
+    /热门推荐:、、、、、、、/g,
 ];
 
 // ===== 小说拼音字、屏蔽字修复 =====

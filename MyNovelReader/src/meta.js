@@ -55,6 +55,7 @@
 // booklink.me
 // @include        http://www.shumilou.com/*/*.html
 // @include        http://www.wcxiaoshuo.com/wcxs-*-*/
+// @include        http://www.xiaoshuoz.com/wcxs-*-*/
 // @include        http://www.ranwen.cc/*/*/*/*.html
 // @include        http://www.ranwen.net/files/article/*/*/*.html
 // @include        http://www.64mi.com/*/*/*/*.html
@@ -97,6 +98,7 @@
 // @include        http://www.cfwx.net/files/article/html/*/*/*.html
 // @include        http://www.qiuwu.net/html/*/*/*.html
 // @include        http://www.xs84.com/*_*/*
+// @include        http://www.geiliwx.com/GeiLi/*/*/*.shtml*
 
 // www.sodu.so
 // @include        http://www.jiaodu8.com/*/*/*/*.html
@@ -116,7 +118,6 @@
 // 其它网站
 // @include        http://book.sfacg.com/Novel/*/*/*/
 // @include        http://www.7dsw.com/book/*/*/*.html
-// @include        http://www.geiliwx.com/GeiLi/*/*/*.shtml*
 // @include        http://www.d586.com/*/*/
 // @include        http://www.bookgew.com/Html/Book/*/*/*.htm
 // @include        http://read.shuhaha.com/Html/Book/*/*/*.html
@@ -244,6 +245,7 @@
 // @include        http://book.mihua.net/*/*/*/*.html
 // @include        http://www.hjwzw.com/Book/Read/*,*
 // @include        http://www.365essay.com/*/*.htm
+// @include        http://www.gengxin8.com/read/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html
