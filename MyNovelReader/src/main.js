@@ -225,10 +225,10 @@ var App = {
         App.isEnabled = true;
         UI.addButton();
 
-        // 如果已经把当前焦点链接添加到历史记录，则滚动到顶部
-        if (Config.addToHistory) {
-            window.scrollTo(0, 0);
-        }
+        // // 如果已经把当前焦点链接添加到历史记录，则滚动到顶部
+        // if (Config.addToHistory) {
+        //     window.scrollTo(0, 0);
+        // }
 
         // 有些图片网站高度随着图片加载而变长
         setTimeout(App.scroll, 1000);
@@ -786,7 +786,7 @@ var App = {
         var fileName;
 
         var toTxt = function(parser) {
-            var html = $.nano('### {chapterTitle}\n\n{contentTxt}', parser);
+            var html = $.nano('{chapterTitle}\n\n{contentTxt}', parser);
             chapters.push(html);
         };
 

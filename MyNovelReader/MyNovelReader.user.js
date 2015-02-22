@@ -2,7 +2,7 @@
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
-// @version        4.9.8
+// @version        4.9.9
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe
@@ -56,6 +56,7 @@
 // @include        http://www.shumilou.com/*/*.html
 // @include        http://www.wcxiaoshuo.com/wcxs-*-*/
 // @include        http://www.xiaoshuoz.com/wcxs-*-*/
+// @include        http://www.quledu.com/wcxs-*-*/
 // @include        http://www.ranwen.cc/*/*/*/*.html
 // @include        http://www.ranwen.net/files/article/*/*/*.html
 // @include        http://www.64mi.com/*/*/*/*.html
@@ -246,6 +247,7 @@
 // @include        http://www.hjwzw.com/Book/Read/*,*
 // @include        http://www.365essay.com/*/*.htm
 // @include        http://www.gengxin8.com/read/*/*.html
+// @include        http://www.365xs.org/books/*/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html
@@ -581,7 +583,7 @@ Rule.specialSite = [
         contentReplace: "\\(.*燃文小说.*\\)|【 注册会员可获私人书架，看书更方便！永久地址： 】 "
     },
     {siteName: "无错小说网",
-        url: /^http:\/\/www\.(?:wcxiaoshuo|xiaoshuoz)\.com\/wcxs[-\d]+\//,
+        url: /^http:\/\/www\.(?:wcxiaoshuo|xiaoshuoz|quledu)\.com\/wcxs[-\d]+\//,
         titleReg: /(.*?)最新章节.*?-(.*?)-.*/,
         titlePos: 1,
         nextSelector: "a#htmlxiazhang",
@@ -1084,6 +1086,8 @@ Rule.specialSite = [
             "§推荐一个无广告的小说站.*? §",
             "☆本站最快更新.*?☆",
             "纯文字在线阅读.*?</br>",
+            "www.X S 8 4.com",
+            "《》 www.obr />",
         ],
         contentPatch: function() {
             $('<script>')
@@ -1447,8 +1451,7 @@ Rule.specialSite = [
         titleSelector: '.title',
         bookTitleSelector: '.linkleft > a:last',
         contentReplace: [
-            '《长》《风》文学 www.cfwＸ.net',
-            '（长\\)\\(风）（文学）www.cＦＷx.net',
+            '[《（\\+［]长.{1,2}风.{1,2}文学 www.*?net',
         ]
     },
     {siteName: "云来阁",
@@ -1466,6 +1469,8 @@ Rule.specialSite = [
             '小说“小说章节',
             '纯文字在线阅读本站域名',
             '手机同步阅读请访问',
+            '\\(云来阁小说文学网www.yunlaige.com\\)',
+            '【本书作者推荐：(?:百度搜索)?云来閣，免费观看本书最快的VIP章节】',
         ]
     },
     {siteName: "乐文小说网",
@@ -1535,6 +1540,13 @@ Rule.specialSite = [
         bookTitleSelector: '.left a:last',
         contentSelector: "#chaptertxt",
         useiframe: true,
+    },
+    {siteName: "乐文小说网",
+        url: "http://www\\.365xs\\.org/books/\\d+/\\d+/\\d+\\.html",
+        titleSelector: ".kfyd h1",
+        bookTitleSelector: "ul.bread-crumbs a:last",
+        contentSelector: "#content",
+        // contentReplace: []
     },
 
     // ===== 特殊的获取下一页链接
@@ -3743,10 +3755,10 @@ var App = {
         App.isEnabled = true;
         UI.addButton();
 
-        // 如果已经把当前焦点链接添加到历史记录，则滚动到顶部
-        if (Config.addToHistory) {
-            window.scrollTo(0, 0);
-        }
+        // // 如果已经把当前焦点链接添加到历史记录，则滚动到顶部
+        // if (Config.addToHistory) {
+        //     window.scrollTo(0, 0);
+        // }
 
         // 有些图片网站高度随着图片加载而变长
         setTimeout(App.scroll, 1000);
@@ -4304,7 +4316,7 @@ var App = {
         var fileName;
 
         var toTxt = function(parser) {
-            var html = $.nano('### {chapterTitle}\n\n{contentTxt}', parser);
+            var html = $.nano('{chapterTitle}\n\n{contentTxt}', parser);
             chapters.push(html);
         };
 

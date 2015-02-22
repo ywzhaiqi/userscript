@@ -56,6 +56,7 @@
 // @include        http://www.shumilou.com/*/*.html
 // @include        http://www.wcxiaoshuo.com/wcxs-*-*/
 // @include        http://www.xiaoshuoz.com/wcxs-*-*/
+// @include        http://www.quledu.com/wcxs-*-*/
 // @include        http://www.ranwen.cc/*/*/*/*.html
 // @include        http://www.ranwen.net/files/article/*/*/*.html
 // @include        http://www.64mi.com/*/*/*/*.html
@@ -246,6 +247,7 @@
 // @include        http://www.hjwzw.com/Book/Read/*,*
 // @include        http://www.365essay.com/*/*.htm
 // @include        http://www.gengxin8.com/read/*/*.html
+// @include        http://www.365xs.org/books/*/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html
