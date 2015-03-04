@@ -322,6 +322,7 @@ Rule.specialSite = [
             "—无—错—小说",
             "\\+无\\+错\\+",
             "＋无＋错＋小说＋3Ｗ.＋＋com",
+            "无错小说 www.quled[Ｕu].com",
         ],
         contentPatch: function(fakeStub){
             // 去除内容开头、结尾的重复标题
@@ -604,8 +605,8 @@ Rule.specialSite = [
         contentReplace: "全.{0,2}本.{0,2}小.{0,2}说.{0,2}网.{0,2}|[ｗWw ]+.{1,10}[CｃcǒOｍMМ ]+",
     },
     {siteName: "手牵手小说网",
-        url: "^http://www\\.sqsxs\\.com/\\d+/\\d+/\\d+\\.html",
-        titleReg: "(.*?)最新章节_\\S* (.*)_手牵手小说网",
+        url: "^http://www\\.sqsxs\\.com/.*\\d+/\\d+/\\d+\\.html",
+        bookTitleSelector: '#sitebar a:last',
         contentReplace: [
             "◆免费◆",
             "★百度搜索，免费阅读万本★|访问下载txt小说.百度搜.|免费电子书下载|\\(百度搜\\)|『文學吧x吧.』|¤本站网址：¤",
@@ -641,8 +642,9 @@ Rule.specialSite = [
             /(百度搜索 )?本书名 \+ 盗梦人 看最快更新/ig,
             "520xs.com ”520小说“小说章节更新最快",
             "本文由　……　首发",
-            "看最新最全小说",
-            "（首发）",
+            "看最新最全小说|最快更新，(?:无弹窗)?阅读请。",
+            "（首发）|【首发】",
+            "纯文字在线阅读本站域名  手机同步阅读请访问",
             "&amp;nbsp",
         ]
     },
@@ -687,6 +689,7 @@ Rule.specialSite = [
             '\\(顶点小说\\)',
             '看最新最全',
             '看.*?最新章节到长风文学',
+            'R1152',
         ]
     },
     {siteName: '笔下阁',
@@ -808,6 +811,9 @@ Rule.specialSite = [
             "纯文字在线阅读.*?</br>",
             "www.X S 8 4.com",
             "《》 www.obr />",
+            "。。 w.2.obr",
+            "\\[w w w.x s.*?.c o m 小说.*?\\]",
+            "╂上.*?╂",
         ],
         contentPatch: function() {
             $('<script>')
@@ -1091,7 +1097,7 @@ Rule.specialSite = [
         contentSelector: ".bookcontent",
     },
     {siteName: "努努书坊",
-        url: "http://book\\.kanunu\\.org/.*/\\d+/\\d+\\.html",
+        url: "http://(?:book\\.kanunu\\.org|www\\.kanunu8\\.com)/.*/\\d+\\.html",
         titleReg: /(.*) - (.*) - 小说在线阅读 - .* - 努努书坊/,
         titlePos: 1,
         contentSelector: "table:eq(4) p",
@@ -1343,12 +1349,13 @@ Rule.specialSite = [
 ];
 
 // ===== 全局移除 =====
-Rule.replaceNew = [
+Rule.replaceAll = [
     /[;\(]顶.{0,2}点.小说/ig,
     /www.23＋?[Ｗw][Ｘx].[Ｃc]om/ig,
     /乐文移动网/g,
     /》长>风》/g,
-    /热门推荐:、、、、、、、/g,
+    /热门推荐:、+/g,
+    /h2&gt;/g,
 ];
 
 // ===== 小说拼音字、屏蔽字修复 =====
@@ -1432,7 +1439,7 @@ Rule.replace = {
     "f[ǎa]ngf[óo]":"仿佛", "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "f[èe]nn[ùu]":"愤怒", "fǎn\\s*yīng":"反应",
     "gao潮": "高潮", "高氵朝":"高潮", "gāo\\s*xìng\\s*":"高兴", "干chai": "干柴", "勾yin":"勾引", "gu[oò]ch[ée]ng":"过程", "gu[āa]n\\s*x[iì]":"关系", "g[ǎa]nji[àa]o":"感觉", "国wu院":"国务院", "gù\\s*yì\\s*":"故意", "guofen":"过分",
     "hā\\s*hā\\s*":"哈哈", "h[aǎ]ode":"好的", "hù士":"护士", "火qiang":"火枪", "há'guó":"韩国", "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "h[ǎa]oxi[àa]ng":"好像", "hu[áa]ngs[èe]":"黄色", "皇d[ìi]":"皇帝", "昏昏yu睡":"昏昏欲睡", "回dang":"回荡", "huí\\s*qù\\s*":"回去", "hé\\s*shì\\s*":"合适",
-    "jian(臣|细)":"奸$1", "jiànmiàn":"见面", "jian货":"贱货", "jing察":"警察", "j[ìi]nháng":"进行", "jīng\\s*guò":"经过", "ji烈":"激烈", "j[iì](nv|女)": "妓女", "jirou": "鸡肉", "ji者":"记者", "jì\\s*xù\\s*":"继续", "ju花":"菊花","j[īi]动":"激动", "jili[èe]":"激烈", "肌r[òo]u":"肌肉","ji射":"激射", "ji[ēe]ch[uù]":"接触", "jiù\\s*shì":"就是", "j[ùu]li[èe]": "剧烈", "jǐng惕": "警惕", "节cao":"节操", "浸yin":"浸淫", "jù\\s*jué\\s*":"拒绝", "jue色":"角色",
+    "jian(臣|细)":"奸$1", "奸yin":"奸淫", "jiànmiàn":"见面", "jian货":"贱货", "jing察":"警察", "j[ìi]nháng":"进行", "jīng\\s*guò":"经过", "ji烈":"激烈", "j[iì](nv|女)": "妓女", "jirou": "鸡肉", "ji者":"记者", "jì\\s*xù\\s*":"继续", "ju花":"菊花","j[īi]动":"激动", "jili[èe]":"激烈", "肌r[òo]u":"肌肉","ji射":"激射", "ji[ēe]ch[uù]":"接触", "jiù\\s*shì":"就是", "j[ùu]li[èe]": "剧烈", "jǐng惕": "警惕", "节cao":"节操", "浸yin":"浸淫", "jù\\s*jué\\s*":"拒绝", "jue色":"角色",
     "k[ěe]n[ée]ng": "可能", "开bao": "开苞",  "k[àa]o近": "靠近", "口wen":"口吻", "kankan":"看看",
     "ling辱": "凌辱", "luan蛋": "卵蛋", "脸sè": "脸色", "lu出":"露出", "流máng":"流氓", "lun理":"伦理", "lì\\s*qì":"力气",
     "m[ǎa]ny[ìi]":"满意", "m[ǎa]sh[àa]ng":"马上", "m[ée]iy[oǒ]u":"没有", "mei国": "美国", "m[íi]ngb[áa]i":"明白", "迷huan": "迷幻", "mi茫":"迷茫", "mó\\s*yàng":"模样", "m[íi]n\\s{0,2}zh[ǔu]": "民主", "迷jian": "迷奸", "mimi糊糊":"迷迷糊糊", "末(?:\\s|<br/?>)*ì":"末日", "面se":"面色", "mengmeng":"蒙蒙",

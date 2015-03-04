@@ -6,6 +6,7 @@ function Parser(){
 Parser.prototype = {
     constructor: Parser,
     get contentTxt() {  // callback 才有用
+        // textContent 第二段不对劲会被合并到第一段？
         return $('<div>').html(this.content).text().trim();
     },
 
@@ -370,14 +371,18 @@ Parser.prototype = {
         // 去除内容中的标题
         if(this.chapterTitle && Rule.titleRegExp.test(this.chapterTitle)){
             try {
-                var reg = this.chapterTitle.replace(/[()\[\]{}|+.,^$?\\*]/g, "\\$&")
-                        .replace(/\s+/g, '\\s*');
+                var reg = toReStr(this.chapterTitle).replace(/\s+/g, '\\s*');
                 reg = new RegExp(reg, 'ig');
                 text = text.replace(reg, "");
                 C.log('去除内容中的标题', reg);
             } catch(e) {
                 console.error(e);
             }
+        }
+
+        if (this.bookTitle) {
+            var regStr = '（' + toReStr(this.bookTitle) + '\\d*章）'
+            text = text.replace(new RegExp(regStr, 'ig'), "");
         }
 
         text = text.replace(Rule.contentReplace, '');
@@ -480,7 +485,7 @@ Parser.prototype = {
 
         if (!replaceRule) {
             // 移除文字广告等
-            text = this.replaceText(text, Rule.replaceNew);
+            text = this.replaceText(text, Rule.replaceAll);
             replaceRule = Rule.replace;
         }
 
