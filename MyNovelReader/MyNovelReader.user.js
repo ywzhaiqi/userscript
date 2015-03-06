@@ -2,7 +2,7 @@
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
-// @version        5.0.0
+// @version        5.0.1
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe
@@ -100,6 +100,7 @@
 // @include        http://www.qiuwu.net/html/*/*/*.html
 // @include        http://www.xs84.com/*_*/*
 // @include        http://www.geiliwx.com/GeiLi/*/*/*.shtml*
+// @include        http://www.123yq.com/read/*/*/*.shtml
 
 // www.sodu.so
 // @include        http://www.jiaodu8.com/*/*/*/*.html
@@ -1102,6 +1103,12 @@ Rule.specialSite = [
                 .appendTo('body')
                 .remove();
         }
+    },
+    {siteName: "123言情",
+        url: 'http://www\\.123yq\\.com/read/\\d+/\\d+/\\d+\\.shtml',
+        bookTitleSelector: '.con_top > a:last',
+        contentSelector: "#TXT",
+        contentRemove: '.bottem, .red',
     },
 
     // === 内容补丁

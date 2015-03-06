@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader For Opera Mobile
-// @version        2015.2.10
+// @version        2015.3.6
 // @namespace
 // @author         ywzhaiqi@gmail.com
 // @description    小说阅读脚本，实现清爽阅读。2种模式：自定义站点配置和自动站点配置。
@@ -64,6 +64,8 @@
 // @include        http://www.cfwx.net/files/article/html/*/*/*.html
 // @include        http://www.qiuwu.net/html/*/*/*.html
 // @include        http://www.xs84.com/*_*/*
+// @include        http://www.123yq.com/read/*/*/*.shtml
+
 
 // @exclude        */List.html
 // @exclude        */List.shtml
@@ -859,6 +861,12 @@
                 "看小说“杂书网zashu.net”",
                 "手机站：m.zashu.net 电脑站：www.zashu.net",
             ]
+        },
+        {siteName: "123言情",
+            url: 'http://www\\.123yq\\.com/read/\\d+/\\d+/\\d+\\.shtml',
+            bookTitleSelector: '.con_top > a:last',
+            contentSelector: "#TXT",
+            contentRemove: '.bottem, .red',
         },
 
         // === 内容补丁

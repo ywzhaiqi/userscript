@@ -100,6 +100,7 @@
 // @include        http://www.qiuwu.net/html/*/*/*.html
 // @include        http://www.xs84.com/*_*/*
 // @include        http://www.geiliwx.com/GeiLi/*/*/*.shtml*
+// @include        http://www.123yq.com/read/*/*/*.shtml
 
 // www.sodu.so
 // @include        http://www.jiaodu8.com/*/*/*/*.html

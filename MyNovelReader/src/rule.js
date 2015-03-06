@@ -822,6 +822,12 @@ Rule.specialSite = [
                 .remove();
         }
     },
+    {siteName: "123言情",
+        url: 'http://www\\.123yq\\.com/read/\\d+/\\d+/\\d+\\.shtml',
+        bookTitleSelector: '.con_top > a:last',
+        contentSelector: "#TXT",
+        contentRemove: '.bottem, .red',
+    },
 
     // === 内容补丁
     {siteName: "给力文学小说阅读网",
