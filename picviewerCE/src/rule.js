@@ -149,9 +149,10 @@ var siteInfo=[
 		siteExample: "http://www.deviantart.com",
 		enabled:true,
 		url:/^https?:\/\/[^.]*\.deviantart\.com/i,
-		getImage:function(){
+		getImage:function(img, a){
 			var oldsrc=this.src;
-			var newsrc=oldsrc.replace(/(http:\/\/[^\/]+\/fs\d+\/)200H\/(.*)/i,'$1$2');
+			var newsrc = a.getAttribute('data-super-img') || a.getAttribute('data-super-full-img')
+					|| oldsrc.replace(/(http:\/\/[^\/]+\/fs\d+\/)200H\/(.*)/i,'$1$2');
 			return newsrc==oldsrc? '' : newsrc;
 		},
 	},

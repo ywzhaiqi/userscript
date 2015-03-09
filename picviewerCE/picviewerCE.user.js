@@ -2,7 +2,7 @@
 // @name           picviewer CE
 // @author         NLF && ywzhaiqi
 // @description    NLF 的围观图修改版
-// @version        2015.01.21.0
+// @version        2015.3.9.0
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
@@ -276,9 +276,10 @@ var siteInfo=[
 		siteExample: "http://www.deviantart.com",
 		enabled:true,
 		url:/^https?:\/\/[^.]*\.deviantart\.com/i,
-		getImage:function(){
+		getImage:function(img, a){
 			var oldsrc=this.src;
-			var newsrc=oldsrc.replace(/(http:\/\/[^\/]+\/fs\d+\/)200H\/(.*)/i,'$1$2');
+			var newsrc = a.getAttribute('data-super-img') || a.getAttribute('data-super-full-img')
+					|| oldsrc.replace(/(http:\/\/[^\/]+\/fs\d+\/)200H\/(.*)/i,'$1$2');
 			return newsrc==oldsrc? '' : newsrc;
 		},
 	},
