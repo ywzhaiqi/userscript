@@ -262,8 +262,9 @@ function handleMessage(e){ // contentscript里面的message监听，监听来自
 //页面脚本用来转发消息
 //原因chrome的contentscript无法访问非自己外的别的窗口。都会返回undefined，自然也无法向其他的窗口发送信息,这里用pagescript做个中间代理
 //通讯逻辑..A页面的contentscript发送到A页面的pagescript，pagescript转交给B页面的contentscript
+var messageID='pv-0.5106795670312598';
+
 function addPageScript() {
-	var messageID='pv-0.5106795670312598';
 
 	var pageScript=document.createElement('script');
 	pageScript.id = 'picviewer-page-script';

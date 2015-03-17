@@ -2,7 +2,7 @@
 // @name           picviewer CE
 // @author         NLF && ywzhaiqi
 // @description    NLF 的围观图修改版
-// @version        2015.3.9.0
+// @version        2015.3.17.0
 // version        4.2.6.1
 // @created        2011-6-15
 // @lastUpdated    2013-5-29
@@ -353,6 +353,10 @@ var siteInfo=[
 		ext: 'previous',  // 扩展模式，检查前面一个是否为 img
 		getImage: function() {
 			var oldsrc = this.src;
+			var newsrc = this.data('src');
+			if (oldsrc != newsrc) {
+				return newsrc;
+			}
 			if (oldsrc.match(/(.*)\?param=\d+y\d+$/)) {
 				return RegExp.$1;
 			}
@@ -515,6 +519,17 @@ Rule.MPIV = [
 	{name: "淘宝",
 		r: /((?:img\d\d\.taobaocdn|g(?:[^.]*\.?){1,2}?\.alicdn)\.com\/)(?:img\/|tps\/http:\/\/img\d\d+\.taobaocdn\.com\/)?((?:imgextra|bao\/uploaded)\/.+\.(?:jpe?g|png|gif|bmp))_.+\.jpg$/,
 		s: "http://$1$2"
+	},
+	// 电子书
+	{name: "当当",
+		d: "dangdang.com",
+		r: /(.*ddimg.cn\/.*?)_[bw]_(\d+\.jpg$)/,
+		s: "$1_e_$2"
+	},
+	{name: "多看阅读",
+		d: "duokan.com",
+		r: /(cover.read.duokan.com.*?.jpg)!\w$/,
+		s: "$1"
 	},
 
 	// 视频、新闻
@@ -7425,8 +7440,9 @@ function handleMessage(e){ // contentscript里面的message监听，监听来自
 //页面脚本用来转发消息
 //原因chrome的contentscript无法访问非自己外的别的窗口。都会返回undefined，自然也无法向其他的窗口发送信息,这里用pagescript做个中间代理
 //通讯逻辑..A页面的contentscript发送到A页面的pagescript，pagescript转交给B页面的contentscript
+var messageID='pv-0.5106795670312598';
+
 function addPageScript() {
-	var messageID='pv-0.5106795670312598';
 
 	var pageScript=document.createElement('script');
 	pageScript.id = 'picviewer-page-script';

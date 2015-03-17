@@ -226,6 +226,10 @@ var siteInfo=[
 		ext: 'previous',  // 扩展模式，检查前面一个是否为 img
 		getImage: function() {
 			var oldsrc = this.src;
+			var newsrc = this.data('src');
+			if (oldsrc != newsrc) {
+				return newsrc;
+			}
 			if (oldsrc.match(/(.*)\?param=\d+y\d+$/)) {
 				return RegExp.$1;
 			}
@@ -388,6 +392,17 @@ Rule.MPIV = [
 	{name: "淘宝",
 		r: /((?:img\d\d\.taobaocdn|g(?:[^.]*\.?){1,2}?\.alicdn)\.com\/)(?:img\/|tps\/http:\/\/img\d\d+\.taobaocdn\.com\/)?((?:imgextra|bao\/uploaded)\/.+\.(?:jpe?g|png|gif|bmp))_.+\.jpg$/,
 		s: "http://$1$2"
+	},
+	// 电子书
+	{name: "当当",
+		d: "dangdang.com",
+		r: /(.*ddimg.cn\/.*?)_[bw]_(\d+\.jpg$)/,
+		s: "$1_e_$2"
+	},
+	{name: "多看阅读",
+		d: "duokan.com",
+		r: /(cover.read.duokan.com.*?.jpg)!\w$/,
+		s: "$1"
 	},
 
 	// 视频、新闻
