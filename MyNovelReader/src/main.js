@@ -637,6 +637,7 @@ var App = {
             url: nextUrl,
             method: "GET",
             overrideMimeType: "text/html;charset=" + document.characterSet,
+            timeout: 10 * 1000,
             onload: function(res) {
                 var doc = parseHTML(res.responseText);
                 if (_.isFunction(callback)) {
@@ -644,6 +645,9 @@ var App = {
                 } else {
                     App.beforeLoad(doc);
                 }
+            },
+            ontimeout: function() {
+                callback();
             }
         });
     },
@@ -789,6 +793,10 @@ var App = {
             var html = $.nano('{chapterTitle}\n\n{contentTxt}', parser);
             chapters.push(html);
         };
+        var finish = function() {
+            saveAs(chapters.join('\n\n'), fileName);
+            App.isSaveing = false;
+        };
 
         var getOnePage = function (parser, nextUrl) {
             if (parser) {
@@ -798,8 +806,7 @@ var App = {
 
             if (!nextUrl) {
                 console.log('全部获取完毕');
-                saveAs(chapters.join('\n\n'), fileName);
-                App.isSaveing = false;
+                finish();
                 return;
             }
 
@@ -808,8 +815,13 @@ var App = {
             } else {
                 console.log('[存为txt]正在获取：', nextUrl)
                 App.httpRequest(nextUrl, function(doc) {
-                    var par = new Parser(App.site, doc, nextUrl);
-                    par.getAll(getOnePage)
+                    if (doc) {
+                        var par = new Parser(App.site, doc, nextUrl);
+                        par.getAll(getOnePage)
+                    } else {
+                        console.error('超时或连接出错');
+                        finish();
+                    }
                 });
             }
         };
@@ -845,7 +857,7 @@ var BookLinkMe = {
             links.forEach(function(link){
                 // 忽略没有盗版的
                 var chapterLink = link.parentNode.nextSibling.nextSibling.querySelector('a');
-                if (chapterLink.querySelector('font[color="800000"]')) {
+                if (chapterLink.querySelector('font[color*="800000"]')) {
                     return;
                 }
 

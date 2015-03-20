@@ -814,6 +814,7 @@ Rule.specialSite = [
             "。。 w.2.obr",
             "\\[w w w.x s.*?.c o m 小说.*?\\]",
             "╂上.*?╂",
+            "\\*\\*顶\\*\\*点.{0,3}小说",
         ],
         contentPatch: function() {
             $('<script>')
@@ -1203,6 +1204,10 @@ Rule.specialSite = [
             '手机同步阅读请访问',
             '\\(云来阁小说文学网www.yunlaige.com\\)',
             '【本书作者推荐：(?:百度搜索)?云来閣，免费观看本书最快的VIP章节】',
+            '[\\u2000-\\u2FFF\\u3004-\\u303F\\uFE00-\\uFF60]{1,2}[顶頂].{1,3}[点小].*?o?[mw]',
+            '±顶±点±小±说，ww',
+            '■dingddian小说，ww∨23w→■m',
+            'w∨23w',
         ]
     },
     {siteName: "乐文小说网",
@@ -1280,6 +1285,16 @@ Rule.specialSite = [
         contentSelector: "#content",
         // contentReplace: []
     },
+    {siteName: "舞若小说网",
+        url: "http://www\\.wuruo\\.com/files/article/html/\\d+/\\d+/\\d+\\.html",
+        bookTitleSelector: ".text a:eq(1)",
+        contentSelector: "#zhengwen",
+        contentReplace: [
+            '【更多精彩小说请访问www.wuruo.com】',
+            '（www.wuruo.com舞若小说网首发）',
+            '【舞若小说网首发】',
+        ]
+    },
 
     // ===== 特殊的获取下一页链接
     {siteName: "看书啦",
@@ -1353,6 +1368,8 @@ Rule.specialSite = [
 	},
 
 ];
+
+// Unicode/2000-2FFF：http://zh.wikibooks.org/wiki/Unicode/2000-2FFF
 
 // ===== 全局移除 =====
 Rule.replaceAll = [

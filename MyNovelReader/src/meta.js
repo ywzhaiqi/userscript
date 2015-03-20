@@ -250,6 +250,7 @@
 // @include        http://www.365essay.com/*/*.htm
 // @include        http://www.gengxin8.com/read/*/*.html
 // @include        http://www.365xs.org/books/*/*/*.html
+// @include        http://www.wuruo.com/files/article/html/*/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html
