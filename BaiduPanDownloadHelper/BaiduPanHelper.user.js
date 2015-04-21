@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           BaiduPanHelper
-// @version        0.0.3
+// @version        0.0.4
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @description
@@ -14,26 +14,6 @@
      1、仓库用度盘投稿助手 https://greasyfork.org/zh-CN/scripts/3285/code
  */
 
-function createNewFile(fileInfo, callback) {
-    // from function sendCreateNewFileMessage
-
-    // var fileInfo = {
-    //     name: '仓库用度盘投稿助手.user.js',
-    //     size: 10909,
-    //     md5: '8dcfb3a2faab530c2a52ed02ca4b31a1'
-    // };
-
-    var data = {
-        path: '/1/' + fileInfo.name,
-        isdir: 0,
-        size: fileInfo.size,
-        block_list: fileInfo.md5 ? '["' + fileInfo.md5 + '"]' : "[]",
-        method: "post"
-    };
-
-    var RestAPI_CREATE = "/api/create?a=commit";
-    $.post(RestAPI_CREATE, data, callback)
-}
 
 // 测试网址  Books(Verycd Share): http://yun.baidu.com/share/home?uk=2214641459&view=share#category/type=0
 // 2014年11月12日
@@ -95,7 +75,7 @@ var shareHome = {  // 他人分享主页
 };
 
 // 运行在他人分享主页
-// 获取一页并转存。使用方法：ns.run(21)
+// 获取一页并转存。使用方法：
 var ns = {
     stop: false,
 
@@ -103,7 +83,6 @@ var ns = {
         return path.substring(path.indexOf(":/") + 1);
     },
     getOnePageData: function(currentPage, callback) {
-        // var deferred = $.Deferred();
         var url = "/pcloud/feed/getsharelist",
             pageSize = 60;
 
@@ -120,22 +99,24 @@ var ns = {
 
         $.getJSON(url, data, function(ret) {
             if (ret && ret.errno == 0) {
-                // deferred.resolve(ret.records, ret.total_count);
                 console.log(ret)
                 callback && callback(ret.records, ret.total_count);
             } else {
                 console.error('获取第 %s 页错误，错误信息：', currentPage, ret);
-                // deferred.reject();
                 callback();
             }
         });
-
-        // return deferred;
     },
     doTransfer: function(records, callback) {
         var record = records.shift();
         if (!record) {
             callback();
+            return;
+        }
+
+        // 跳过专辑条目
+        if (!record.filelist) {
+            ns.doTransfer(records, callback);
             return;
         }
 
@@ -189,11 +170,9 @@ var ns = {
         });
     }
 
-    // // 转存当前页所有条目
-    // var arr = $('a.file-handler').map(function() { return $(this).attr('href') }).toArray();
-    // doTransferVideo(arr);
+    // 转存当前页所有条目
 };
-
+// ns.run(21)
 
 var diskHome = {  // 个人网盘主页
     SAVE_TIMEOUT: 3 * 1000,
@@ -288,7 +267,7 @@ var moveDialog = (function() {
         // 刷新自动补全的路径
         $('.list > div[data-extname="dir"]').map(function() {
             var $this = $(this),
-                dirName = $this.find('.name-text').text();
+                dirName = $this.find('.name-text').data('name');
 
             var value = isSearchPage ?
                     $this.find('.search-feild').data('path') + '/' + dirName :
@@ -403,6 +382,42 @@ var moveDialog = (function() {
     }
 })()
 
+
+function test() {
+    /**
+     * 无效？尽在自己目录有效？
+     */
+    function createNewFile(fileInfo, callback) {
+        // 来自 sendCreateNewFileMessage 函数
+
+        var data = {
+            path: '//' + fileInfo.server_filename,
+            isdir: 0,
+            size: fileInfo.size,
+            block_list: fileInfo.md5 ? '["' + fileInfo.md5 + '"]' : "[]",
+            method: "post"
+        };
+
+        var CREATE = "/api/create?a=commit";
+        $.post(CREATE, data, function(data) {
+            console.log(data);
+            if (typeof callback == 'function')
+                callback();
+        })
+    }
+
+    createNewFile({
+        server_filename: '宇宙：时空之旅（第一季共13集）.2014.txt',
+        size: 123,
+        md5: '896ba76de4ea4fdc44c3451cc0ffcaa7'
+    })
+
+    createNewFile({
+        server_filename: '[宇宙：时空之旅].Cosmos.A.Spacetime.Odyssey.S01E01.2014.BluRay.720p.x264.AC3-CMCT.mkv',
+        size: 1504623104,
+        md5: '48f3968f21ec449dccfbec16e0d82547'
+    })
+}
 
 
 function getParam(name, url) {
