@@ -96,8 +96,9 @@ Rule.specialSite = [
 
             '([\\u4e00-\\u9fa5])[%￥]+([\\u4e00-\\u9fa5])': '$1$2',  // 屏蔽词修正，例如：风%%骚
         },
-        contentRemove: "span[id^='ad_']",
+        contentRemove: "span[id^='ad_'], .read_ma",
         contentPatch: function(fakeStub){
+            // if (fakeStub.find('#content > p').size() > 0) return;
             fakeStub.find('#maincontent script[src$=".txt"]').addClass('reader-ajax');
         },
     },
@@ -1208,6 +1209,9 @@ Rule.specialSite = [
             '±顶±点±小±说，ww',
             '■dingddian小说，ww∨23w→■m',
             'w∨23w',
+            'ｗwｗ23ｗｘｃｏｍ',
+            '￥℉頂￥℉点￥℉小￥℉',
+            '￡∝頂￡∝点￡∝小￡∝'
         ]
     },
     {siteName: "乐文小说网",
@@ -1222,6 +1226,7 @@ Rule.specialSite = [
             /\(未完待续.+/g,
             /乐文小说网值得.+/g,
             '\\(\\)',
+            'www.LＷＸＳ５２０.com',
         ]
     },
     {siteName: '我爱小说',
@@ -1375,10 +1380,13 @@ Rule.specialSite = [
 Rule.replaceAll = [
     /[;\(]顶.{0,2}点.小说/ig,
     /www.23＋?[Ｗw][Ｘx].[Ｃc]om/ig,
-    /乐文移动网/g,
-    /》长>风》/g,
+    /乐文移动网|頂点小说/g,
     /热门推荐:、+/g,
     /h2&gt;/g,
+    "[:《〈｜~∨∟∑]{1,2}长.{1,2}风.*?et",
+     /》长>风》/g,
+     '女凤免费小说抢先看',
+     'ps[：:]想听到更多你们的声音，想收到更多你们的建议，现在就搜索微信公众号“qdread”并加关注，给.*?更多支持！'
 ];
 
 // ===== 小说拼音字、屏蔽字修复 =====
@@ -1429,7 +1437,6 @@ Rule.replace = {
     "水印广告测试": "",
     "\\(平南文学网\\)":"",  "讀蕶蕶尐說網":"",
     "比奇提示：如何快速搜自己要找的书籍":"",  "《百度书名\\+比奇》即可快速直达":"",
-    "[:《〈｜~]长.风.文~?学.*?net": "",
     "~无~错~小~说": "",
 
     "\\(一秒记住小说界\\）|\\*一秒记住\\*":"",

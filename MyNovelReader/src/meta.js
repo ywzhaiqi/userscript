@@ -143,7 +143,7 @@
 // @include        http://www.wtcxs.com/files/article/html/*/*/*.html
 // @include        http://www.5du5.com/book/*/*/*.html
 // @include        http://book.kanunu.org/*/*/*.html
-// @include        http://www.kanunu8.com/book4/*/*.html
+// @include        http://www.kanunu8.com/book*/*.html
 // @include        http://paitxt.com/*/*/*.html
 // @include        http://www.shunong.com/yuedu/*/*/*.html
 // @include        http://book.yayacms.com/*/book_*_*.html

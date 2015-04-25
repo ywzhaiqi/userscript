@@ -416,8 +416,12 @@ Parser.prototype = {
 
         // 删除无效的 p，排除对大块文本的判断
         $div.find('p').filter(function() {
+            var $this = $(this);
+            if ($this.find('img').size())  // 排除有图片的
+                return false;
+
             // 有效文本（排除注释、换行符、空白）个数为 0
-            return $(this).contents().filter(function() {
+            return $this.contents().filter(function() {
                 return this.nodeType != 8 &&
                         !this.textContent.match(/^\s*$/);
             }).size() == 0;
