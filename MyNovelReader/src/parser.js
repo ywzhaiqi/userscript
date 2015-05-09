@@ -6,8 +6,13 @@ function Parser(){
 Parser.prototype = {
     constructor: Parser,
     get contentTxt() {  // callback 才有用
-        // textContent 第二段不对劲会被合并到第一段？
-        return $('<div>').html(this.content).text().trim();
+        var text = $('<div>').html(this.content).text().trim();
+
+        // 解决第二个段落和第一个锻炼合在一起的问题
+        text = '　　' + text;
+        // text = text.replace(/　　(.*)　　/, '　　$1\n　　');
+
+        return text;
     },
 
     init: function (info, doc, curPageUrl) {
@@ -555,7 +560,7 @@ Parser.prototype = {
         }
         return text;
     },
-    splitContent: function (text) {  // 有些章节整个都集中在一起，没有分段，整个函数用于简易分段
+    splitContent: function (text) {  // 有些章节整个都集中在一起，没有分段，这个函数用于简易分段
         if (text.indexOf('。') == -1) {
             return [text];
         }

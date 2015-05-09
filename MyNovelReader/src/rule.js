@@ -346,7 +346,7 @@ Rule.specialSite = [
                 '<img src="/keywd/V7.gif">':'肉', '<img src="/keywd/O22.gif">':'吮', '<img src="/keywd/H9.gif">':'春',
                 '<img src="/keywd/K36.gif">':'日', '<img src="/keywd/O15.gif">':'胸', '<img src="/keywd/S31.gif">':'欲',
                 '<img src="/keywd/F20.gif">':'射', '<img src="/keywd/N12.gif">':'禁', '<img src="/keywd/R26.gif">':'殿',
-                '<img src="/keywd/N12.gif">':'禁', '<img src="/keywd/X6.gif">':'诱', '<img src="/keywd/U46.gif">': '娇',
+                '<img src="/keywd/X6.gif">':'诱', '<img src="/keywd/U46.gif">': '娇',
                 '<img src="/keywd/M24.gif">': '操', '<img src="/keywd/B4.gif">':'骚', '<img src="/keywd/O3.gif">':'阴',
             }
         ]
@@ -674,6 +674,7 @@ Rule.specialSite = [
         contentSelector: "#contents",
         contentReplace: [
             "\\(看小说到顶点小说网.*\\)|\\(\\)|【记住本站只需一秒钟.*】",
+            '一秒记住【.*读及下载。',
         ],
         contentPatch: function(fakeStub){
             var temp=fakeStub.find('title').text();
@@ -1300,6 +1301,14 @@ Rule.specialSite = [
             '【舞若小说网首发】',
         ]
     },
+    {siteName: "大书包小说网",
+        url: "http://www\\.dashubao\\.com/book/\\d+/\\d+/\\d+\\.html",
+        bookTitleSelector: ".read_t > .lf > a:nth-child(3)",
+        contentSelector: ".yd_text2",
+        contentReplace: [
+        ]
+    },
+    //
 
     // ===== 特殊的获取下一页链接
     {siteName: "看书啦",
@@ -1460,6 +1469,7 @@ Rule.replace = {
     "十有(\\*{2})":"十有八九","十有bā'九":"十有八九",  "\\*{2}不离十":"八九不离十",
     "G(\\*{2})":"GSM", "感(\\*{2})彩":"感情色彩",
     "强(\\*{2})u5B9D":"强大法宝",
+    "(\\*{2})凡胎": "肉体凡胎",
 
     // === 多字替换 ===
     "cao之过急":"操之过急", "chunguang大泄":"春光大泄",
