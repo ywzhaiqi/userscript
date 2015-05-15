@@ -101,6 +101,9 @@
 // @include        http://www.xs84.com/*_*/*
 // @include        http://www.geiliwx.com/GeiLi/*/*/*.shtml*
 // @include        http://www.123yq.com/read/*/*/*.shtml
+// @include        http://www.dhzw.com/book/*/*/*.html
+// @include        http://www.du00.cc/read/*/*/*.html
+// @include        http://www.aszw.com/book/*/*/*.html
 
 // www.sodu.so
 // @include        http://www.jiaodu8.com/*/*/*/*.html
@@ -251,6 +254,7 @@
 // @include        http://www.gengxin8.com/read/*/*.html
 // @include        http://www.365xs.org/books/*/*/*.html
 // @include        http://www.wuruo.com/files/article/html/*/*/*.html
+// @include        http://www.remenxs.com/du_*/*/
 
 // @exclude        */List.htm
 // @exclude        */List.html

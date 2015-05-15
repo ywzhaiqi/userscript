@@ -2,7 +2,7 @@
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
-// @version        5.0.5
+// @version        5.0.6
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe
@@ -101,6 +101,9 @@
 // @include        http://www.xs84.com/*_*/*
 // @include        http://www.geiliwx.com/GeiLi/*/*/*.shtml*
 // @include        http://www.123yq.com/read/*/*/*.shtml
+// @include        http://www.dhzw.com/book/*/*/*.html
+// @include        http://www.du00.cc/read/*/*/*.html
+// @include        http://www.aszw.com/book/*/*/*.html
 
 // www.sodu.so
 // @include        http://www.jiaodu8.com/*/*/*/*.html
@@ -251,6 +254,7 @@
 // @include        http://www.gengxin8.com/read/*/*.html
 // @include        http://www.365xs.org/books/*/*/*.html
 // @include        http://www.wuruo.com/files/article/html/*/*/*.html
+// @include        http://www.remenxs.com/du_*/*/
 
 // @exclude        */List.htm
 // @exclude        */List.html
@@ -1114,6 +1118,16 @@ Rule.specialSite = [
         contentSelector: "#TXT",
         contentRemove: '.bottem, .red',
     },
+    {siteName: "热门小说网",
+        url: 'http://www.remenxs.com/du_\\d+/\\d+/',
+        bookTitleSelector: 'section.readhead > div.read_t > div.lf > a:nth-child(2)',
+        contentSelector: ".yd_text2",
+        contentRemove: '.adrs, .con_w, a',
+        contentReplace: [
+            '您可以在百度里搜索“.*',
+            '为了方便下次阅读，你可以点击下方的.*'
+        ]
+    },
 
     // === 内容补丁
     {siteName: "给力文学小说阅读网",
@@ -1489,7 +1503,6 @@ Rule.specialSite = [
             '手机同步阅读请访问',
             '\\(云来阁小说文学网www.yunlaige.com\\)',
             '【本书作者推荐：(?:百度搜索)?云来閣，免费观看本书最快的VIP章节】',
-            '[\\u2000-\\u2FFF\\u3004-\\u303F\\uFE00-\\uFF60]{1,2}[顶頂].{1,3}[点小].*?o?[mw]',
             '±顶±点±小±说，ww',
             '■dingddian小说，ww∨23w→■m',
             'w∨23w',
@@ -1680,14 +1693,17 @@ Rule.replaceAll = [
     "[:《〈｜~∨∟∑]{1,2}长.{1,2}风.*?et",
      /》长>风》/g,
 
-     '女凤免费小说抢先看',
-     '\\(?未完待续请搜索飄天文學，小说更好更新更快!',
+    '女凤免费小说抢先看', '纯文字在线阅读本站域名手机同步阅读请访问',
+    '\\(?未完待续请搜索飄天文學，小说更好更新更快!',
+    '↗百度搜：.*?直达网址.*?↖',
 
      'ps[：:]想听到更多你们的声音，想收到更多你们的建议，现在就搜索微信公众号“qdread”并加关注，给.*?更多支持！',
      '(?:ps[:：])?看《.*?》背后的独家故事.*?告诉我吧！',
      '（?天上掉馅饼的好活动.*?微信公众号！）?',
      // '（天上掉馅饼.*中文网公众号',
-     '（微信添加.*qdread微信公众号！）'
+     '（微信添加.*qdread微信公众号！）',
+
+     '[\\u2000-\\u2FFF\\u3004-\\u303F\\uFE00-\\uFF60]{1,2}[顶頂].{1,3}[点小].*?o?[mw，]',
 ];
 
 // ===== 小说拼音字、屏蔽字修复 =====
