@@ -2,7 +2,7 @@
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
-// @version        5.0.6
+// @version        5.0.7
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe
@@ -31,8 +31,8 @@
 // @include        http://free.qidian.com/Free/ReadChapter.aspx?*
 // @include        http://www.qdmm.com/BookReader/*,*.aspx
 // @include        http://www.qdwenxue.com/BookReader/*,*.aspx
-// @include        http://chuangshi.qq.com/read/bookreader/*.html
-// @include        http://chuangshi.qq.com/*bk/*/*.html
+// @include        http://chuangshi.qq.com/read/bookreader/*.html*
+// @include        http://chuangshi.qq.com/*bk/*/*.html*
 // @include        http://yunqi.qq.com/*bk/*/*.html
 // @include        http://dushu.qq.com/read.html?bid=*
 // @include        http://www.jjwxc.net/onebook.php?novelid=*
@@ -1104,6 +1104,7 @@ Rule.specialSite = [
             "\\[w w w.x s.*?.c o m 小说.*?\\]",
             "╂上.*?╂",
             "\\*\\*顶\\*\\*点.{0,3}小说",
+            "___小.说.巴.士 www.xS84.com___",
         ],
         contentPatch: function() {
             $('<script>')
@@ -1687,13 +1688,14 @@ Rule.replaceAll = [
 
     /[;\(]顶.{0,2}点.小说/ig,
     /www.23＋?[Ｗw][Ｘx].[Ｃc]om/ig,
-    /乐文移动网|頂点小说/g,
     /热门推荐:、+/g,
     /h2&gt;/g,
     "[:《〈｜~∨∟∑]{1,2}长.{1,2}风.*?et",
      /》长>风》/g,
 
-    '女凤免费小说抢先看', '纯文字在线阅读本站域名手机同步阅读请访问',
+    '女凤免费小说抢先看', '女凤小说网全文字 无广告',
+    '乐文小说', '《乐〈文《小说', '乐文移动网', '頂点小说',
+    '纯文字在线阅读本站域名手机同步阅读请访问',
     '\\(?未完待续请搜索飄天文學，小说更好更新更快!',
     '↗百度搜：.*?直达网址.*?↖',
 
@@ -1704,6 +1706,9 @@ Rule.replaceAll = [
      '（微信添加.*qdread微信公众号！）',
 
      '[\\u2000-\\u2FFF\\u3004-\\u303F\\uFE00-\\uFF60]{1,2}[顶頂].{1,3}[点小].*?o?[mw，]',
+
+     '\\+无\\+错\\+', '｜无｜错｜',
+     '\\|优\\|优\\|小\\|说\\|更\\|新\\|最\\|快Ｘ',
 ];
 
 // ===== 小说拼音字、屏蔽字修复 =====
@@ -2871,8 +2876,7 @@ Parser.prototype = {
         var text = $('<div>').html(this.content).text().trim();
 
         // 解决第二个段落和第一个锻炼合在一起的问题
-        text = '　　' + text;
-        // text = text.replace(/　　(.*)　　/, '　　$1\n　　');
+        text = text.replace(/([^\n])　　/, '$1\n　　');
 
         return text;
     },
@@ -3726,12 +3730,18 @@ var App = {
     },
     addMutationObserve: function(doc, callback) {
         var shouldAdd = false;
-        var selector = App.site.mutationSelector;
-        var target = $(doc).find(selector)[0];
-        if (target) {
-            var childCount = App.site.mutationChildCount;
-            if (childCount === undefined || target.children.length <= childCount) {
-                shouldAdd = true;
+        var $doc = $(doc);
+
+        if ($doc.find(App.site.contentSelector).size()) {
+            shouldAdd = false;
+        } else {
+            var mutationSelector = App.site.mutationSelector;
+            var target = $doc.find(mutationSelector)[0];
+            if (target) {
+                var childCount = App.site.mutationChildCount;
+                if (childCount === undefined || target.children.length <= childCount) {
+                    shouldAdd = true;
+                }
             }
         }
 
@@ -3751,7 +3761,7 @@ var App = {
                 childList: true
             });
 
-            C.log("添加 MutationObserve 成功：", selector);
+            C.log("添加 MutationObserve 成功：", mutationSelector);
         } else {
             callback();
         }

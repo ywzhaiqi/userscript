@@ -9,8 +9,7 @@ Parser.prototype = {
         var text = $('<div>').html(this.content).text().trim();
 
         // 解决第二个段落和第一个锻炼合在一起的问题
-        text = '　　' + text;
-        // text = text.replace(/　　(.*)　　/, '　　$1\n　　');
+        text = text.replace(/([^\n])　　/, '$1\n　　');
 
         return text;
     },

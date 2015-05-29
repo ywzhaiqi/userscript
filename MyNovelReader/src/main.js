@@ -103,12 +103,18 @@ var App = {
     },
     addMutationObserve: function(doc, callback) {
         var shouldAdd = false;
-        var selector = App.site.mutationSelector;
-        var target = $(doc).find(selector)[0];
-        if (target) {
-            var childCount = App.site.mutationChildCount;
-            if (childCount === undefined || target.children.length <= childCount) {
-                shouldAdd = true;
+        var $doc = $(doc);
+
+        if ($doc.find(App.site.contentSelector).size()) {
+            shouldAdd = false;
+        } else {
+            var mutationSelector = App.site.mutationSelector;
+            var target = $doc.find(mutationSelector)[0];
+            if (target) {
+                var childCount = App.site.mutationChildCount;
+                if (childCount === undefined || target.children.length <= childCount) {
+                    shouldAdd = true;
+                }
             }
         }
 
@@ -128,7 +134,7 @@ var App = {
                 childList: true
             });
 
-            C.log("添加 MutationObserve 成功：", selector);
+            C.log("添加 MutationObserve 成功：", mutationSelector);
         } else {
             callback();
         }

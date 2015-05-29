@@ -31,8 +31,8 @@
 // @include        http://free.qidian.com/Free/ReadChapter.aspx?*
 // @include        http://www.qdmm.com/BookReader/*,*.aspx
 // @include        http://www.qdwenxue.com/BookReader/*,*.aspx
-// @include        http://chuangshi.qq.com/read/bookreader/*.html
-// @include        http://chuangshi.qq.com/*bk/*/*.html
+// @include        http://chuangshi.qq.com/read/bookreader/*.html*
+// @include        http://chuangshi.qq.com/*bk/*/*.html*
 // @include        http://yunqi.qq.com/*bk/*/*.html
 // @include        http://dushu.qq.com/read.html?bid=*
 // @include        http://www.jjwxc.net/onebook.php?novelid=*
