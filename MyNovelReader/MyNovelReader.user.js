@@ -2,7 +2,7 @@
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
-// @version        5.0.7
+// @version        5.0.8
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe
@@ -104,6 +104,7 @@
 // @include        http://www.dhzw.com/book/*/*/*.html
 // @include        http://www.du00.cc/read/*/*/*.html
 // @include        http://www.aszw.com/book/*/*/*.html
+// @include        http://www.xsbashi.com/*_*/
 
 // www.sodu.so
 // @include        http://www.jiaodu8.com/*/*/*/*.html
@@ -255,6 +256,9 @@
 // @include        http://www.365xs.org/books/*/*/*.html
 // @include        http://www.wuruo.com/files/article/html/*/*/*.html
 // @include        http://www.remenxs.com/du_*/*/
+// @include        http://www.8shuw.net/book/*/*.html
+// @include        http://www.pashuw.com/BookReader/*/*.html
+// @include        http://read.shanwen.com/html/*/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html
@@ -1605,7 +1609,22 @@ Rule.specialSite = [
         contentReplace: [
         ]
     },
-    //
+    {siteName: "爬书网",
+        url: "http://www\\.pashuw\\.com/BookReader/\\d+-\\d+/\\d+\\.html",
+        bookTitleSelector: "#paihangbang_select > a:last()",
+        nextSelector: "#next2 a",
+        prevSelector: "#prev2 a",
+        indexSelector: "#fhml2 a",
+        contentRemove: '.novel_bot',
+    },
+    {siteName: "闪文书库",
+        url: "http://read\\.shanwen\\.com/html/\\d+/\\d+/\\d+\\.html",
+        titleSelector: '.newstitle',
+        contentRemove: '#titlebottom',
+        contentReplace: [
+            '闪文网址中的.*?注册会员</a>'
+        ]
+    },
 
     // ===== 特殊的获取下一页链接
     {siteName: "看书啦",
@@ -1694,7 +1713,7 @@ Rule.replaceAll = [
      /》长>风》/g,
 
     '女凤免费小说抢先看', '女凤小说网全文字 无广告',
-    '乐文小说', '《乐〈文《小说', '乐文移动网', '頂点小说',
+    '乐文小说', '《乐〈文《小说', '乐文移动网', '頂点小说', '頂點小說',
     '纯文字在线阅读本站域名手机同步阅读请访问',
     '\\(?未完待续请搜索飄天文學，小说更好更新更快!',
     '↗百度搜：.*?直达网址.*?↖',

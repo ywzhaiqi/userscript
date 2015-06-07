@@ -104,6 +104,7 @@
 // @include        http://www.dhzw.com/book/*/*/*.html
 // @include        http://www.du00.cc/read/*/*/*.html
 // @include        http://www.aszw.com/book/*/*/*.html
+// @include        http://www.xsbashi.com/*_*/
 
 // www.sodu.so
 // @include        http://www.jiaodu8.com/*/*/*/*.html
@@ -255,6 +256,9 @@
 // @include        http://www.365xs.org/books/*/*/*.html
 // @include        http://www.wuruo.com/files/article/html/*/*/*.html
 // @include        http://www.remenxs.com/du_*/*/
+// @include        http://www.8shuw.net/book/*/*.html
+// @include        http://www.pashuw.com/BookReader/*/*.html
+// @include        http://read.shanwen.com/html/*/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html
