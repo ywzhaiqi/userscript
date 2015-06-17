@@ -2,7 +2,7 @@
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
-// @version        5.0.8
+// @version        5.0.9
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe
@@ -105,6 +105,7 @@
 // @include        http://www.du00.cc/read/*/*/*.html
 // @include        http://www.aszw.com/book/*/*/*.html
 // @include        http://www.xsbashi.com/*_*/
+// @include        http://www.vodtw.com/Html/Book/*/*/*.html
 
 // www.sodu.so
 // @include        http://www.jiaodu8.com/*/*/*/*.html
@@ -289,6 +290,8 @@ var config = {
 
 var READER_AJAX = "reader-ajax";   // 内容需要 ajax 的 className
 
+// Unicode/2000-2FFF：http://zh.wikibooks.org/wiki/Unicode/2000-2FFF
+
 
 // ===== 自动尝试的规则 =====
 var Rule = {
@@ -443,7 +446,7 @@ Rule.specialSite = [
             mutationSelector: "#chaptercontainer",  // 内容生成监视器
             mutationChildCount: 1,
             timeout: 500,
-        contentRemove: '> p:last',
+        // contentRemove: '',
         // contentPatch: function(fakeStub){
         //     var $body = fakeStub.find('body');
         //         html = $body.html(),
@@ -1339,7 +1342,8 @@ Rule.specialSite = [
         contentReplace: [
             /[{〖]请在百度搜索.*[}〗]|.(?:百度搜索飄天|无弹窗小说网).*\.Net.|\[飄天.*无弹窗小说网\]/ig,
             '\\{飘天文学www.piaotian.net感谢各位书友的支持，您的支持就是我们最大的动力\\}',
-            '章节更新最快'
+            '章节更新最快',
+            '支持网站发展，逛淘宝买东西.*'
         ],
     },
     {siteName: "天使小说网",
@@ -1625,6 +1629,14 @@ Rule.specialSite = [
             '闪文网址中的.*?注册会员</a>'
         ]
     },
+    {siteName: "品书网",
+        url: "http://www\\.vodtw\\.com/Html/Book/\\d+/\\d+/\\d+\\.html",
+        bookTitleSelector: '.srcbox > a:last()',
+        contentRemove: 'a',
+        contentReplace: [
+            '品书网 www.voDtw.com◇↓',
+        ]
+    },
 
     // ===== 特殊的获取下一页链接
     {siteName: "看书啦",
@@ -1699,38 +1711,8 @@ Rule.specialSite = [
 
 ];
 
-// Unicode/2000-2FFF：http://zh.wikibooks.org/wiki/Unicode/2000-2FFF
-
-// ===== 全局移除 =====
-Rule.replaceAll = [
-    '▲∴', '8，ww←', '2长2风2文2学，w￠＄',
-
-    /[;\(]顶.{0,2}点.小说/ig,
-    /www.23＋?[Ｗw][Ｘx].[Ｃc]om/ig,
-    /热门推荐:、+/g,
-    /h2&gt;/g,
-    "[:《〈｜~∨∟∑]{1,2}长.{1,2}风.*?et",
-     /》长>风》/g,
-
-    '女凤免费小说抢先看', '女凤小说网全文字 无广告',
-    '乐文小说', '《乐〈文《小说', '乐文移动网', '頂点小说', '頂點小說',
-    '纯文字在线阅读本站域名手机同步阅读请访问',
-    '\\(?未完待续请搜索飄天文學，小说更好更新更快!',
-    '↗百度搜：.*?直达网址.*?↖',
-
-     'ps[：:]想听到更多你们的声音，想收到更多你们的建议，现在就搜索微信公众号“qdread”并加关注，给.*?更多支持！',
-     '(?:ps[:：])?看《.*?》背后的独家故事.*?告诉我吧！',
-     '（?天上掉馅饼的好活动.*?微信公众号！）?',
-     // '（天上掉馅饼.*中文网公众号',
-     '（微信添加.*qdread微信公众号！）',
-
-     '[\\u2000-\\u2FFF\\u3004-\\u303F\\uFE00-\\uFF60]{1,2}[顶頂].{1,3}[点小].*?o?[mw，]',
-
-     '\\+无\\+错\\+', '｜无｜错｜',
-     '\\|优\\|优\\|小\\|说\\|更\\|新\\|最\\|快Ｘ',
-];
-
 // ===== 小说拼音字、屏蔽字修复 =====
+// 运行在未替换 <br> 之前，.* 可能会造成全部替换
 Rule.replace = {
     // ===格式整理===
     // "\\(|\\[|\\{|（|【|｛":"（",
@@ -1875,6 +1857,38 @@ Rule.replace = {
 
     _.extend(Rule.replace, replaceOthers);
 })();
+
+// ===== 全局移除，在替换 <br> 分段后 =====
+Rule.replaceAll = [
+    '\\[限时抢购\\].*',
+    '支持网站发展.逛淘宝买东西就从这里进.*',
+
+    '▲∴', '8，ww←', '2长2风2文2学，w￠＄',
+
+    /[;\(]顶.{0,2}点.小说/ig,
+    /www.23＋?[Ｗw][Ｘx].[Ｃc]om/ig,
+    /热门推荐:、+/g,
+    /h2&gt;/g,
+    "[:《〈｜~∨∟∑]{1,2}长.{1,2}风.*?et",
+     /》长>风》/g,
+
+    '女凤免费小说抢先看', '女凤小说网全文字 无广告',
+    '乐文小说', '《乐〈文《小说', '乐文移动网', '頂点小说', '頂點小說',
+    '纯文字在线阅读本站域名手机同步阅读请访问',
+    '\\(?未完待续请搜索飄天文學，小说更好更新更快!',
+    '↗百度搜：.*?直达网址.*?↖',
+
+     'ps[：:]想听到更多你们的声音，想收到更多你们的建议，现在就搜索微信公众号“qdread”并加关注，给.*?更多支持！',
+     '(?:ps[:：])?看《.*?》背后的独家故事.*?告诉我吧！',
+     '（?天上掉馅饼的好活动.*?微信公众号！）?',
+     // '（天上掉馅饼.*中文网公众号',
+     '（微信添加.*qdread微信公众号！）',
+
+     '[\\u2000-\\u2FFF\\u3004-\\u303F\\uFE00-\\uFF60]{1,2}[顶頂].{1,3}[点小].*?o?[mw，]',
+
+     '\\+无\\+错\\+', '｜无｜错｜',
+     '\\|优\\|优\\|小\\|说\\|更\\|新\\|最\\|快Ｘ',
+];
 
 
 // 自定义的
@@ -3254,6 +3268,9 @@ Parser.prototype = {
 
         // GM_setClipboard(text);
 
+        // 移除文字广告等
+        text = this.replaceText(text, Rule.replaceAll);
+
         if (info.contentReplace) {
             text = this.replaceText(text, info.contentReplace);
         }
@@ -3369,6 +3386,10 @@ Parser.prototype = {
         return text;
     },
     replaceHtml: function(text, replaceRule) {  // replaceRule 给“自定义替换规则直接生效”用
+        if (!replaceRule) {
+            replaceRule = Rule.replace;
+        }
+
         // 先提取出 img
         var imgs = {};
         var i = 0;
@@ -3376,12 +3397,6 @@ Parser.prototype = {
             imgs[i] = img;
             return "{" + (i++) + "}";
         });
-
-        if (!replaceRule) {
-            // 移除文字广告等
-            text = this.replaceText(text, Rule.replaceAll);
-            replaceRule = Rule.replace;
-        }
 
         // 修正拼音字等
         text = this.contentReplacements(text, replaceRule);

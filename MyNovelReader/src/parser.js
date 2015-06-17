@@ -368,6 +368,9 @@ Parser.prototype = {
 
         // GM_setClipboard(text);
 
+        // 移除文字广告等
+        text = this.replaceText(text, Rule.replaceAll);
+
         if (info.contentReplace) {
             text = this.replaceText(text, info.contentReplace);
         }
@@ -483,6 +486,10 @@ Parser.prototype = {
         return text;
     },
     replaceHtml: function(text, replaceRule) {  // replaceRule 给“自定义替换规则直接生效”用
+        if (!replaceRule) {
+            replaceRule = Rule.replace;
+        }
+
         // 先提取出 img
         var imgs = {};
         var i = 0;
@@ -490,12 +497,6 @@ Parser.prototype = {
             imgs[i] = img;
             return "{" + (i++) + "}";
         });
-
-        if (!replaceRule) {
-            // 移除文字广告等
-            text = this.replaceText(text, Rule.replaceAll);
-            replaceRule = Rule.replace;
-        }
 
         // 修正拼音字等
         text = this.contentReplacements(text, replaceRule);

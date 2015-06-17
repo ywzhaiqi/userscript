@@ -105,6 +105,7 @@
 // @include        http://www.du00.cc/read/*/*/*.html
 // @include        http://www.aszw.com/book/*/*/*.html
 // @include        http://www.xsbashi.com/*_*/
+// @include        http://www.vodtw.com/Html/Book/*/*/*.html
 
 // www.sodu.so
 // @include        http://www.jiaodu8.com/*/*/*/*.html
