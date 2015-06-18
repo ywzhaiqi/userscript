@@ -11,11 +11,16 @@ var Rule = {
     prevSelector: "a[rel='prev'], a:contains('上一页'), a:contains('上一章'), a:contains('上一节'), a:contains('上页')",
     // 忽略的下一页链接，匹配 href
     nextUrlIgnore: [
-        /(?:(?:index|list|last|LastPage|end)\.)|BuyChapterUnLogin|BookReader\/vip,|^javascript:/i,
+        /(?:(?:index|list|last|LastPage|end)\.)|BuyChapterUnLogin|^javascript:/i,
+
+        /BookReader\/vip,/i,
+        /BookReader\/LastPageNew\.aspx/i,
+        /read\.qidian\.com\/BookReader\/\d+,0\.aspx$/i,
+        /read\.qidian\.com\/$/i,
         /free\.qidian\.com\/Free\/ShowBook\.aspx\?bookid=/i,
+
         /book\.zongheng\.com\/readmore/i,
         /www\.shumilou\.com\/to-n-[a-z]+-\d+\.html/i,
-        /read\.qidian\.com\/BookReader\/\d+,0\.aspx$/i,
         /\/0\.html$/i,
     ],
     nextUrlCompare: /\/\d+(_\d+)?\.html?$|\/wcxs-\d+-\d+\/$|chapter-\d+\.html$/i,  // 忽略的下一页链接（特殊），跟上一页比较
@@ -104,6 +109,28 @@ Rule.specialSite = [
             fakeStub.find('#maincontent script[src$=".txt"]').addClass('reader-ajax');
         },
     },
+    {siteName: '起点新版',
+        url: 'http://read\\.qidian\\.com/BookReaderNew/\\d+,\\d+\\.aspx',
+        bookTitleSelector: '.story_title .textinfo a:nth-child(1)',
+        titleSelector: '.story_title h1',
+
+        prevSelector: '#pagePrevRightBtn',
+        nextSelector: '#pageNextRightBtn',
+        indexSelector: function() {
+            return location.href.replace(/,\d+\.aspx$/, '.aspx').replace('BookReaderNew', 'BookReader');
+        },
+
+        mutationSelector: "#chaptercontainer",  // 内容生成监视器
+            mutationChildCount: 1,
+        contentSelector: '#content, .bookreadercontent',
+        contentRemove: 'a[href="http://www.qidian.com"]',
+        contentReplace: [
+            '手机用户请到m.qidian.com阅读。'
+        ],
+        contentPatch: function(fakeStub){
+            fakeStub.find('script[src^="http://files.qidian.com/"]').addClass('reader-ajax');
+        },
+    },
     {siteName: "起点中文网免费频道",
         url: "^http://free\\.qidian\\.com/Free/ReadChapter\\.aspx",
         titleSelector: ".title > h3",
@@ -120,6 +147,52 @@ Rule.specialSite = [
         contentPatch: function(fakeStub) {
             fakeStub.find('#chapter_cont, #content > script:first').addClass('reader-ajax');
         }
+    },
+    {siteName: "创世中文网",
+        url: "^http://(?:chuangshi|yunqi)\\.qq\\.com/|^http://dushu\\.qq\\.com/read.html\\?bid=",
+        bookTitleSelector: '.bookNav > a:last()',
+        titleSelector: '.story_title > h1',
+
+        nextSelector: '#rightFloatBar_nextChapterBtn',
+        prevSelector: '#rightFloatBar_preChapterBtn',
+        indexSelector: function() {
+            return 'http://chuangshi.qq.com/bk/ds/' + unsafeWindow.bid + '-l.html';
+        },
+
+        contentSelector: ".bookreadercontent",
+        contentHandle: false,
+        mutationSelector: "#chaptercontainer",  // 内容生成监视器，第一次运行用到，以后用下面的 getContent 函数
+            mutationChildCount: 1,
+        startFilter: function() {
+            // 下一页需要提前加 1
+            unsafeWindow.uuid = parseInt(unsafeWindow.uuid) + 1 + '';
+        },
+        getContent: function(fakeStub, callback) {  // this 指 parser
+            unsafeWindow.CS.page.read.main.getChapterContent(unsafeWindow.bid, unsafeWindow.uuid, function(data) {
+                // 给下一页用
+                unsafeWindow.uuid = data.nextuuid;
+
+                callback({
+                    html: getPageUrlHtml(data.preuuid, data.nextuuid) + data.Content
+                });
+            });
+
+            function getPageUrlHtml(preChapterUUID, nextChapterUUID) {
+                var preReadUrl = _getReadPageUrl(preChapterUUID),
+                    nextReadUrl = _getReadPageUrl(nextChapterUUID);
+
+                return '<a id="rightFloatBar_preChapterBtn" href="' + preReadUrl + '">上一页</a>' +
+                        '<a id="rightFloatBar_nextChapterBtn" href="' + nextReadUrl + '">下一页</a>' + '\n';
+            }
+
+            function _getReadPageUrl(uuid) {
+                if (!uuid) {
+                    return 'javascript:void(0);';
+                }
+                var url = location.href.replace(/[?|#].*/gi, '');
+                return url.replace(/(\d)+\.html/, uuid + '.html');
+            }
+        },
     },
     {siteName: "纵横中文网",
         url: "^http://book\\.zongheng\\.com/\\S+\\/\\d+\\.html$",
@@ -138,59 +211,6 @@ Rule.specialSite = [
             fakeStub.find("title").text(
                 fakeStub.find(".tc > h1").text() + "-" + chapterTitle);
         }
-    },
-    {siteName: "创世中文网",
-        url: "^http://(?:chuangshi|yunqi)\\.qq\\.com/|^http://dushu\\.qq\\.com/read.html\\?bid=",
-        titleReg: "(.*?)_(.*)_创世中文",
-
-        nextSelector: '#rightFloatBar_nextChapterBtn',
-        prevSelector: '#rightFloatBar_preChapterBtn',
-        indexSelector: '',
-
-        contentSelector: ".bookreadercontent",
-        // contentSelector: "#chaptercontainer",
-        contentHandle: false,
-        useiframe: true,
-            mutationSelector: "#chaptercontainer",  // 内容生成监视器
-            mutationChildCount: 1,
-            timeout: 500,
-        // contentRemove: '',
-        // contentPatch: function(fakeStub){
-        //     var $body = fakeStub.find('body');
-        //         html = $body.html(),
-        //         novel_showid = unsafeWindow.novel_showid,
-        //         _main = unsafeWindow.CS.page.bookReader.main;
-
-        //     var m = html.match(/uuid\s*=\s*["'](\d+)["']/i);
-        //     if (!m) {
-        //         console.error('无法找到 uuid', html);
-        //         return;
-        //     }
-        //     var uuid = m[1];
-
-        //     var preChapterInfo = _main.getPreChapterInfo(uuid),
-        //         nextChapterInfo = _main.getNextChapterInfo(uuid);
-        //         _pre_uuid = preChapterInfo ? preChapterInfo['uuid'] : 0;
-        //         _next_uuid = nextChapterInfo ? nextChapterInfo['uuid'] : 0;
-
-        //     上下页
-        //     $('<a rel="prev">').attr('href', _getReadPageUrl(_pre_uuid)).prependTo($body);
-        //     $('<a rel="next">').attr('href', _getReadPageUrl(_next_uuid)).prependTo($body);
-
-        //     // 内容
-        //     var durl = 'http://chuangshi.qq.com/index.php/Bookreader/' + novel_showid +'/' + uuid;
-        //     fakeStub.find('body').append('<div id="content"></div>');
-        //     fakeStub.find('div#content').attr({
-        //         class: 'reader-ajax',
-        //         src: durl,
-        //         charset: 'GB2312'
-        //     });
-
-        //     function _getReadPageUrl(uuid) {
-        //         if (!uuid) return 'javascript:;';
-        //         return window.location.href.replace(/(\d)+\.html/, uuid + '.html');
-        //     }
-        // },
     },
     {siteName: "晋江文学网",
         url: /^http:\/\/www\.jjwxc\.net\/onebook\.php\S*/,
@@ -1345,6 +1365,13 @@ Rule.specialSite = [
             '品书网 www.voDtw.com◇↓',
         ]
     },
+    {siteName: "凤凰小说网",
+        url: "http://www\\.fhxs\\.com/read/\\d+/\\d+/\\d+\\.shtml",
+        bookTitleSelector: '.con_top > a:last()',
+        contentRemove: '.bottem',
+        contentReplace: [
+        ]
+    },
 
     // ===== 特殊的获取下一页链接
     {siteName: "看书啦",
@@ -1578,7 +1605,6 @@ Rule.replaceAll = [
     /热门推荐:、+/g,
     /h2&gt;/g,
     "[:《〈｜~∨∟∑]{1,2}长.{1,2}风.*?et",
-     /》长>风》/g,
 
     '女凤免费小说抢先看', '女凤小说网全文字 无广告',
     '乐文小说', '《乐〈文《小说', '乐文移动网', '頂点小说', '頂點小說',
@@ -1591,9 +1617,12 @@ Rule.replaceAll = [
      '（?天上掉馅饼的好活动.*?微信公众号！）?',
      // '（天上掉馅饼.*中文网公众号',
      '（微信添加.*qdread微信公众号！）',
+     '`无`错`小说`www.``com',
 
      '[\\u2000-\\u2FFF\\u3004-\\u303F\\uFE00-\\uFF60]{1,2}[顶頂].{1,3}[点小].*?o?[mw，]',
 
+     '》长>风》',
+     '《无〈错《',
      '\\+无\\+错\\+', '｜无｜错｜',
      '\\|优\\|优\\|小\\|说\\|更\\|新\\|最\\|快Ｘ',
 ];

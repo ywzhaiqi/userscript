@@ -24,22 +24,102 @@ Parser.prototype = {
         // 设置初始值
         this.isTheEnd = false;
         this.isSection = false;
-
-        C.debug('开始解析页面');
-
-        this.applyPatch();
     },
     applyPatch: function(){
         var contentPatch = this.info.contentPatch;
         if(contentPatch){
             try {
-                contentPatch(this.$doc);
+                contentPatch.call(this, this.$doc);
                 C.log("Apply Content Patch Success.");
             } catch (e) {
                 C.log("Error: Content Patch Error!", e);
             }
         }
     },
+    getAll: function(callback){
+        var self = this;
+
+        C.debug('开始解析页面');
+
+        this.applyPatch();
+
+        var endFn = function(data) {
+            if (data) {
+                var div;
+                if (data.content) {
+                    div = $('<div id="content"></div>').html(data.content);
+                } else if (data.html) {
+                    div = $('<div></div>').html(data.html);
+                }
+
+                self.$doc.find('body').prepend(div);
+            }
+
+            self.parse();
+            callback(self);
+        };
+
+        if (!this.hasContent() && this.info.getContent) {
+            C.log('开始 info.getContent')
+            this.info.getContent.call(this, this.$doc, endFn);
+        } else {
+            // 特殊处理，例如起点
+            var ajaxScript = this.$doc.find('.' + READER_AJAX);
+            if (ajaxScript.length > 0) {
+                var url = ajaxScript.attr('src');
+                if(!url) return;
+                var charset = ajaxScript.attr('charset') || 'utf-8';
+
+                C.log('Ajax 获取内容: ', url, ". charset=" + charset);
+
+                var reqObj = {
+                    url: url,
+                    method: "GET",
+                    overrideMimeType: "text/html;charset=" + charset,
+                    headers: {},
+                    onload: function(res){
+                        var text = res.responseText;
+                        text = text.replace(/document.write(ln)?\('/, "")
+                                .replace("');", "")
+                                .replace(/[\n\r]+/g, '</p><p>');
+
+                        endFn({
+                            content: text
+                        });
+                    }
+                };
+
+                // Jixun: Allow post data
+                var postData = ajaxScript.data('post');
+
+                if (postData) {
+                    reqObj.method = 'POST';
+                    reqObj.data = $.param(postData);
+                    reqObj.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+                }
+
+                GM_xmlhttpRequest(reqObj);
+            } else {
+                endFn();
+            }
+        }
+
+        return this;
+    },
+    parse: function() {
+        C.group('开始获取链接');
+        this.getPrevUrl();
+        this.getIndexUrl();
+        this.getNextUrl();
+        C.groupEnd();
+
+        C.group('开始获取标题');
+        this.getTitles();
+        C.groupEnd();
+
+        this.getContent();
+    },
+
     hasContent: function() {
         var $content;
 
@@ -65,27 +145,10 @@ Parser.prototype = {
         }
 
         this.$content = $content;
-        C.debug($content);
+        // C.debug($content);
 
         return $content.size() > 0;
     },
-    getAll: function(callback){
-
-        C.group('开始获取链接');
-        this.getPrevUrl();
-        this.getIndexUrl();
-        this.getNextUrl();
-        C.groupEnd();
-
-        C.group('开始获取标题');
-        this.getTitles();
-        C.groupEnd();
-
-        this.getContent(callback);
-
-        return this;
-    },
-
     // 获取书名和章节标题
     getTitles: function(){
         var info = this.info,
@@ -288,65 +351,18 @@ Parser.prototype = {
     },
 
     // 获取和处理内容
-    getContent: function(callback){
-        if(_.isUndefined(callback)){
-            callback = function() {};
-        }
+    getContent: function(){
+        var self = this;
 
-        if (!this.$content) {
-            this.hasContent();
-        }
+        this.hasContent();
 
         if (this.$content.size() <= 0) {
-            callback(this);
+            // callback(this);
+            console.error('没有找到内容', this.$doc);
             return;
         }
 
-        // 特殊处理，例如起点
-        var self = this;
-        var ajaxScript = this.$doc.find('.' + READER_AJAX);
-        if(ajaxScript.length > 0){
-            var url = ajaxScript.attr('src');
-            if(!url) return;
-            var charset = ajaxScript.attr('charset') || 'utf-8';
-
-            C.log('Ajax 获取内容: ', url, ". charset=" + charset);
-
-            var reqObj = {
-                url: url,
-                method: "GET",
-                overrideMimeType: "text/html;charset=" + charset,
-                headers: {},
-                onload: function(res){
-                    var text = res.responseText;
-                    if (text.indexOf('{"CID":') === 0) {  // 创世中文
-                        text = JSON.parse(text).Content;
-                        text = $('<div>').html(text).find('.bookreadercontent').html();
-                    } else {
-                        text = text.replace(/document.write(ln)?\('/, "")
-                                .replace("');", "")
-                                .replace(/[\n\r]+/g, '</p><p>');
-                    }
-
-                    self.content = self.handleContentText(text, self.info);
-                    callback(self);
-                }
-            };
-
-            // Jixun: Allow post data
-            var postData = ajaxScript.data('post');
-
-            if (postData) {
-                reqObj.method = 'POST';
-                reqObj.data = $.param(postData);
-                reqObj.headers['Content-Type'] = 'application/x-www-form-urlencoded';
-            }
-
-            GM_xmlhttpRequest(reqObj);
-        }else{
-            this.content = this.handleContentText(this.$content.html(), this.info);
-            callback(this);
-        }
+        this.content = this.handleContentText(this.$content.html(), this.info);
     },
     handleContentText: function(text, info){
         if(!text) return null;
@@ -624,6 +640,10 @@ Parser.prototype = {
         if (this.info.indexSelector === false) {
             this.indexUrl = url;
             return url;
+        }
+
+        if (this.info.indexSelector && _.isFunction(this.info.indexSelector)) {
+            url = this.info.indexSelector(this.$doc);
         }
 
         if(this.info.indexSelector){

@@ -27,6 +27,7 @@
 
 // @include        http://read.qidian.com/*,*.aspx
 // @include        http://readbook.qidian.com/bookreader/*,*.html
+// @include        http://read.qidian.com/BookReaderNew/*,*.aspx
 // @include        http://wwwploy.qidian.com/BookReader/*,*.aspx
 // @include        http://free.qidian.com/Free/ReadChapter.aspx?*
 // @include        http://www.qdmm.com/BookReader/*,*.aspx
@@ -106,6 +107,7 @@
 // @include        http://www.aszw.com/book/*/*/*.html
 // @include        http://www.xsbashi.com/*_*/
 // @include        http://www.vodtw.com/Html/Book/*/*/*.html
+// @include        http://www.fhxs.com/read/*/*/*.shtml
 
 // www.sodu.so
 // @include        http://www.jiaodu8.com/*/*/*/*.html
