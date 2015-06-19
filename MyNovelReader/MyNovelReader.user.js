@@ -2,7 +2,7 @@
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
-// @version        5.1.0
+// @version        5.1.1
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe
@@ -462,14 +462,16 @@ Rule.specialSite = [
             unsafeWindow.uuid = parseInt(unsafeWindow.uuid) + 1 + '';
         },
         getContent: function(fakeStub, callback) {  // this 指 parser
-            unsafeWindow.CS.page.read.main.getChapterContent(unsafeWindow.bid, unsafeWindow.uuid, function(data) {
-                // 给下一页用
-                unsafeWindow.uuid = data.nextuuid;
+            var done = function (data) {
+                unsafeWindow.uuid = data.nextuuid;  // 给下一页用
 
                 callback({
                     html: getPageUrlHtml(data.preuuid, data.nextuuid) + data.Content
                 });
-            });
+            };
+            exportFunction(done, unsafeWindow, { defineAs: "gm_mnr_cs_callback" })
+
+            unsafeWindow.CS.page.read.main.getChapterContent(unsafeWindow.bid, unsafeWindow.uuid, unsafeWindow.gm_mnr_cs_callback);
 
             function getPageUrlHtml(preChapterUUID, nextChapterUUID) {
                 var preReadUrl = _getReadPageUrl(preChapterUUID),
@@ -1657,6 +1659,7 @@ Rule.specialSite = [
         contentRemove: 'a',
         contentReplace: [
             '品书网 www.voDtw.com◇↓',
+            '品书网 www.vodtW.com',
         ]
     },
     {siteName: "凤凰小说网",
