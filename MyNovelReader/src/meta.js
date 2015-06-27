@@ -146,7 +146,7 @@
 // @include        http://www.xshuotxt.com/*/*/*/*.html
 // @include        http://www.doulaidu.com/*/*/*.html
 // @include        http://www.d586.com/*/*/
-// @include        http://www.kanshu.la/book/*/*.shtml
+// @include        http://www.kanshu.la/book/*/*html
 // @include        http://www.wtcxs.com/files/article/html/*/*/*.html
 // @include        http://www.5du5.com/book/*/*/*.html
 // @include        http://book.kanunu.org/*/*/*.html
@@ -262,6 +262,7 @@
 // @include        http://www.8shuw.net/book/*/*.html
 // @include        http://www.pashuw.com/BookReader/*/*.html
 // @include        http://read.shanwen.com/html/*/*/*.html
+// @include        http://www.qqxs.cc/xs/*/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html
