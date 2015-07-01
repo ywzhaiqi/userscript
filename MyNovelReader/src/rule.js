@@ -1,5 +1,9 @@
 // Unicode/2000-2FFF：http://zh.wikibooks.org/wiki/Unicode/2000-2FFF
 
+// replace 中的简写
+var CHAR_ALIAS = {
+    '\\P': '[\\u2000-\\u2FFF\\u3004-\\u303F\\uFE00-\\uFF60]',  // 小说中添加的特殊符号
+}
 
 // ===== 自动尝试的规则 =====
 var Rule = {
@@ -105,8 +109,7 @@ Rule.specialSite = [
         },
         contentRemove: "span[id^='ad_'], .read_ma",
         contentPatch: function(fakeStub){
-            // if (fakeStub.find('#content > p').size() > 0) return;
-            fakeStub.find('#maincontent script[src$=".txt"]').addClass('reader-ajax');
+            fakeStub.find('script[src$=".txt"]').addClass('reader-ajax');
         },
     },
     {siteName: '起点新版',
@@ -128,7 +131,7 @@ Rule.specialSite = [
             '手机用户请到m.qidian.com阅读。'
         ],
         contentPatch: function(fakeStub){
-            fakeStub.find('#chaptercontent script[src$=".txt').addClass('reader-ajax');
+            fakeStub.find('script[src$=".txt"]').addClass('reader-ajax');
         },
     },
     {siteName: "起点中文网免费频道",
@@ -645,6 +648,7 @@ Rule.specialSite = [
             '\\(.*?平南文学网\\)',
             '｛首发｝|【首发】',
             '=长=风',
+            '-优－优－小－说－更－新－最－快-\\.',
             { "。\\.": "。" },
         ]
     },
@@ -921,7 +925,7 @@ Rule.specialSite = [
         mutationChildCount: 0,
     },
     {siteName: "读零零",
-        url: "http://www\\.du00\\.com/read/\\d+/\\d+/[\\d_]+\\.html",
+        url: "http://www\\.du00\\.(?:com|cc)/read/\\d+/\\d+/[\\d_]+\\.html",
         titleReg: "(.*?)(?:第\\d+段)?,(.*) - 读零零小说网",
         titlePos: 1,
         prevSelector: "#footlink a:first",
@@ -939,7 +943,6 @@ Rule.specialSite = [
             "\\*文學馆\\*",
             "\\(未完待续请搜索，小说更好更新更快!",
             "www\\.DU00\\.com",
-            '记住我们的网址.*',
         ],
         checkSection: true
     },
@@ -1224,8 +1227,7 @@ Rule.specialSite = [
         titleSelector: '.title',
         bookTitleSelector: '.linkleft > a:last',
         contentReplace: [
-            '[《（\\+［]长.{1,2}风.{1,2}文学 www.*?net',
-            '[…～≡△∧√]长.风.文.学.*?t',
+            '\\P{1,2}长.{1,2}风.{1,2}文.{1,2}学.*?t',
         ]
     },
     {siteName: "云来阁",
@@ -1238,6 +1240,7 @@ Rule.specialSite = [
             '[☆★◆〓『【◎◇].*?(?:yunlaige|云 来 阁|ｙｕｎｌａｉｇｅ).*?[☆◆★〓』】◎◇]',
             '《更新最快小说网站：雲来阁http://WWW.YunLaiGe.COM》',
             '◢百度搜索雲来阁，最新最快的小说更新◣',
+            '【當你閱讀到此章節，請您移步到雲來閣閱讀最新章節，或者，雲來閣】',
             '【最新更新】',
             '值得您收藏。。',
             '小说“小说章节',
@@ -1382,9 +1385,11 @@ Rule.specialSite = [
     {siteName: "小说巴士",
         url: "http://www\\.xsbashi\\.com/\\d+_\\d+/",
         contentReplace: [
-            '==如您已閱讀到此章节，请移步到“/”阅读最新章节，也可在百度直接搜索“ ”或者“”，敬请记住我们新的网址 。/',
+            '==如您已閱讀到此章节.*?敬请记住我们新的网址 。/',
+            '看小说首发推荐去眼快看书',
             '最快更新，阅读请。___小/说/巴/士 Www.XSBASHI.coM___',
             '___小/说/巴/士 www.XSBASHI.com___',
+            'lala如您已阅读到此章節，請移步到.*?速记方法：，\\]',
         ]
     },
 
@@ -1632,11 +1637,13 @@ Rule.replaceAll = [
      '（?天上掉馅饼的好活动.*?微信公众号！）?',
      // '（天上掉馅饼.*中文网公众号',
      '（微信添加.*qdread微信公众号！）',
+     'jiemei如您已阅读到此章节，请移步到.*?\\[ads:本站换新网址啦，速记方法：，.\\]',
 
-     '[\\u2000-\\u2FFF\\u3004-\\u303F\\uFE00-\\uFF60]{1,2}[顶頂].{1,3}[点小].*?o?[mw，]',
+     '\\P{1,2}[顶頂].{1,3}[点小].*?o?[mw，]',
 
      '》长>风》',
-     '《无〈错《', '》无>错》', '\\+无\\+错\\+', '｜无｜错｜', '～无～错～', '`无`错`小说`www.``com',
+     '《无〈错《', '》无>错》', '\\+无\\+错\\+', '｜无｜错｜', '～无～错～',
+     '`无`错`小说`www.``com', '＋无＋错＋小说＋3w＋＋',
      '\\|优\\|优\\|小\\|说\\|更\\|新\\|最\\|快Ｘ',
 ];
 

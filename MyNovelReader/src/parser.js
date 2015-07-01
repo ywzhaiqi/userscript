@@ -387,10 +387,6 @@ Parser.prototype = {
         // 移除文字广告等
         text = this.replaceText(text, Rule.replaceAll);
 
-        if (info.contentReplace) {
-            text = this.replaceText(text, info.contentReplace);
-        }
-
         // 去除内容中的标题
         if(this.chapterTitle && Rule.titleRegExp.test(this.chapterTitle)){
             try {
@@ -409,6 +405,10 @@ Parser.prototype = {
         }
 
         text = text.replace(Rule.contentReplace, '');
+
+        if (info.contentReplace) {
+            text = this.replaceText(text, info.contentReplace);
+        }
 
         if (Config.cn2tw) {
             text = this.convert2tw(text);
@@ -537,6 +537,10 @@ Parser.prototype = {
                 text = text.replace(rule, '');
                 break;
             case _.isString(rule):
+                // 还原简写
+                _.each(CHAR_ALIAS, function(value, key) {
+                    rule = rule.replace(key, value);
+                });
                 var regexp = new RegExp(rule, 'ig');
                 text = text.replace(regexp, '');
                 break;
@@ -644,11 +648,9 @@ Parser.prototype = {
 
         if (this.info.indexSelector && _.isFunction(this.info.indexSelector)) {
             url = this.info.indexSelector(this.$doc);
-        }
-
-        if(this.info.indexSelector){
+        } else if(this.info.indexSelector){
             link = this.$doc.find(this.info.indexSelector);
-        }else{
+        } else {
             var selectors = Rule.indexSelectors;
             var _indexLink;
             // 按照顺序选取目录链接
@@ -664,7 +666,9 @@ Parser.prototype = {
         if(link && link.length){
             url = this.checkLinks(link);
             C.log("找到目录链接: " + url);
-        }else{
+        }
+
+        if (!url) {
             C.log("无法找到目录链接.");
         }
 
