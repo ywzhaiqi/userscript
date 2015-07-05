@@ -2,7 +2,7 @@
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
-// @version        5.1.3
+// @version        5.1.4
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe
@@ -294,10 +294,11 @@ var config = {
 var READER_AJAX = "reader-ajax";   // 内容需要 ajax 的 className
 
 // Unicode/2000-2FFF：http://zh.wikibooks.org/wiki/Unicode/2000-2FFF
+// Unicode/F000-FFFF：https://zh.wikibooks.org/wiki/Unicode/F000-FFFF
 
 // replace 中的简写
 var CHAR_ALIAS = {
-    '\\P': '[\\u2000-\\u2FFF\\u3004-\\u303F\\uFE00-\\uFF60]',  // 小说中添加的特殊符号
+    '\\P': '[\\u2000-\\u2FFF\\u3004-\\u303F\\uFE00-\\uFF60\\uFFC0-\\uFFFF]',  // 小说中添加的特殊符号
 }
 
 // ===== 自动尝试的规则 =====
@@ -376,7 +377,8 @@ Rule.specialSite = [
     },
     // 特殊站点，需再次获取且跨域。添加 class="reader-ajax"，同时需要 src, charset
     {siteName: "起点中文、起点女生、起点文学",
-        url: "^http://(www|read|readbook|wwwploy)\\.(qidian|qdmm|qdwenxue)\\.com/BookReader/.*",
+        url: "^http://(www|read|readbook|wwwploy|cga|big5ploy)\\.(qidian|qdmm|qdwenxue)\\.com/(BookReader|BookReaderOld)/.*",
+
         // titleReg: "小说:(.*?)(?:独家首发)/(.*?)/.*",
         titleSelector: "#lbChapterName",
         bookTitleSelector: ".page_site > a:last",
@@ -1016,6 +1018,7 @@ Rule.specialSite = [
             '看最新最全',
             '看.*?最新章节到长风文学',
             'R1152',
+            '手机看小说哪家强\\?手机阅读网',
         ]
     },
     {siteName: '笔下阁',
@@ -1522,7 +1525,7 @@ Rule.specialSite = [
         titleSelector: '.title',
         bookTitleSelector: '.linkleft > a:last',
         contentReplace: [
-            '\\P{1,2}长.{1,2}风.{1,2}文.{1,2}学.*?t',
+
         ]
     },
     {siteName: "云来阁",
@@ -1680,11 +1683,12 @@ Rule.specialSite = [
     {siteName: "小说巴士",
         url: "http://www\\.xsbashi\\.com/\\d+_\\d+/",
         contentReplace: [
-            '==如您已閱讀到此章节.*?敬请记住我们新的网址 。/',
+            '全文阅读如您已阅读到此章[節节].*?，，，，',
             '看小说首发推荐去眼快看书',
             '最快更新，阅读请。___小/说/巴/士 Www.XSBASHI.coM___',
             '___小/说/巴/士 www.XSBASHI.com___',
             'lala如您已阅读到此章節，請移步到.*?速记方法：，\\]',
+            'lala如您已阅读到此章節.*?敬請記住我們新的網址筆-趣-閣',
         ]
     },
 
@@ -1910,36 +1914,39 @@ Rule.replace = {
 
 // ===== 全局移除，在替换 <br> 分段后 =====
 Rule.replaceAll = [
+    // 长文字替换
+    '纯文字在线阅读本站域名手机同步阅读请访问',
+    '\\(?未完待续请搜索飄天文學，小说更好更新更快!',
+
+    // 包含 \P 的替换
+    '\\P{1,2}[顶頂].{1,3}[点小].*?o?[mw，]',
+    '\\P.?长.{1,2}风.{1,2}文.{1,2}学.*?t',
+    '[;\\(]顶.{0,2}点.小说',
+
+    // 包含 .* 的，可能有多余的替换
+    '如您已(?:閱讀|阅读)到此章节.*?敬请记住我们新的网址\s*。',
+    '↗百度搜：.*?直达网址.*?↖',
+    "[:《〈｜~∨∟∑]{1,2}长.{1,2}风.*?et",
     '\\[限时抢购\\].*',
     '支持网站发展.逛淘宝买东西就从这里进.*',
+    'ps[：:]想听到更多你们的声音，想收到更多你们的建议，现在就搜索微信公众号“qdread”并加关注，给.*?更多支持！',
+    '(?:ps[:：])?看《.*?》背后的独家故事.*?告诉我吧！',
+    '（?天上掉馅饼的好活动.*?微信公众号！）?',
+    '（微信添加.*qdread微信公众号！）',
+    'jiemei如您已阅读到此章节，请移步到.*?\\[ads:本站换新网址啦，速记方法：，.\\]',
 
+    // 短文字替换
+    '[》《｜～]无(?:.|&gt;)错(?:.|&gt;)小说',
+    '《无〈错《', '》无>错》', '\\+无\\+错\\+', '｜无｜错｜', '～无～错～',
+    '`无`错`小说`www.``com', '＋无＋错＋小说＋3w＋＋',
+    '\\|优\\|优\\|小\\|说\\|更\\|新\\|最\\|快Ｘ',
     '▲∴', '8，ww←', '2长2风2文2学，w￠＄',
-
-    /[;\(]顶.{0,2}点.小说/ig,
     /www.23＋?[Ｗw][Ｘx].[Ｃc]om/ig,
     /热门推荐:、+/g,
     /h2&gt;/g,
-    "[:《〈｜~∨∟∑]{1,2}长.{1,2}风.*?et",
-
+    '》长>风》',
     '女凤免费小说抢先看', '女凤小说网全文字 无广告',
     '乐文小说', '《乐〈文《小说', '乐文移动网', '頂点小说', '頂點小說',
-    '纯文字在线阅读本站域名手机同步阅读请访问',
-    '\\(?未完待续请搜索飄天文學，小说更好更新更快!',
-    '↗百度搜：.*?直达网址.*?↖',
-
-     'ps[：:]想听到更多你们的声音，想收到更多你们的建议，现在就搜索微信公众号“qdread”并加关注，给.*?更多支持！',
-     '(?:ps[:：])?看《.*?》背后的独家故事.*?告诉我吧！',
-     '（?天上掉馅饼的好活动.*?微信公众号！）?',
-     // '（天上掉馅饼.*中文网公众号',
-     '（微信添加.*qdread微信公众号！）',
-     'jiemei如您已阅读到此章节，请移步到.*?\\[ads:本站换新网址啦，速记方法：，.\\]',
-
-     '\\P{1,2}[顶頂].{1,3}[点小].*?o?[mw，]',
-
-     '》长>风》',
-     '《无〈错《', '》无>错》', '\\+无\\+错\\+', '｜无｜错｜', '～无～错～',
-     '`无`错`小说`www.``com', '＋无＋错＋小说＋3w＋＋',
-     '\\|优\\|优\\|小\\|说\\|更\\|新\\|最\\|快Ｘ',
 ];
 
 
