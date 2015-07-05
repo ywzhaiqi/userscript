@@ -267,7 +267,8 @@ var moveDialog = (function() {
         // 刷新自动补全的路径
         $('.list > div[data-extname="dir"]').map(function() {
             var $this = $(this),
-                dirName = $this.find('.name-text').data('name');
+                n = $this.find('.name-text'),
+                dirName = n.data('name') || n.text().trim();
 
             var value = isSearchPage ?
                     $this.find('.search-feild').data('path') + '/' + dirName :
