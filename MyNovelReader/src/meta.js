@@ -2,12 +2,14 @@
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
+// @name:zh-TW     小說閱讀腳本
 // @version        <%= pkg.version %>
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
-// @contributor    Roger Au, shyangs, JixunMoe
+// @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
 // @description    小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
 // @description:zh-CN  小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
+// @description:zh-TW  小說閱讀腳本，統一閱讀樣式，內容去廣告、修正拼音字、段落整理，自動下一頁
 // @license        GPL version 3
 // @grant          GM_xmlhttpRequest
 // @grant          GM_addStyle
@@ -27,13 +29,14 @@
 
 // @include        http://read.qidian.com/*,*.aspx
 // @include        http://readbook.qidian.com/bookreader/*,*.html
-// @include        http://read.qidian.com/BookReaderNew/*,*.aspx
+// @include        http://read.qidian.com/BookReaderOld/*,*.aspx
+// @include        http://read.qidian.com/BookReader/*,*.aspx
 // @include        http://wwwploy.qidian.com/BookReader/*,*.aspx
 // @include        http://free.qidian.com/Free/ReadChapter.aspx?*
 // @include        http://www.qdmm.com/BookReader/*,*.aspx
 // @include        http://www.qdwenxue.com/BookReader/*,*.aspx
 // @include        http://chuangshi.qq.com/read/bookreader/*.html*
-// @include        http://chuangshi.qq.com/*bk/*/*.html*
+// @include        http://chuangshi.qq.com/*bk/*/*-r-*.html*
 // @include        http://yunqi.qq.com/*bk/*/*.html
 // @include        http://dushu.qq.com/read.html?bid=*
 // @include        http://www.jjwxc.net/onebook.php?novelid=*
@@ -161,7 +164,7 @@
 // @include        http://www.wenchangshuyuan.com/html/*/*/*.html
 // @include        http://www.pofeng.net/xiaoshuo/*/*.html
 // @include        http://www.epzww.com/book/*/*
-// @include        http://tw.xiaoshuokan.com/haokan/*/*.html
+// @include        http://*.xiaoshuokan.com/haokan/*/*.html
 // @include        http://www.wobudu.com/*/*.html
 // @include        http://www.qb5.com/xiaoshuo/*/*/*.html
 // @include        http://www.23us.com/html/*/*/*.html
@@ -259,10 +262,19 @@
 // @include        http://www.365xs.org/books/*/*/*.html
 // @include        http://www.wuruo.com/files/article/html/*/*/*.html
 // @include        http://www.remenxs.com/du_*/*/
-// @include        http://www.8shuw.net/book/*/*.html
+// @include        http://*.8shuw.net/book/*/*.html
 // @include        http://www.pashuw.com/BookReader/*/*.html
 // @include        http://read.shanwen.com/html/*/*/*.html
 // @include        http://www.qqxs.cc/xs/*/*/*.html
+// @include        http://www.69shu.com/txt/*/*
+// @include        http://www.e8zw.com/book/*/*/*.html
+// @include        http://www.biquge.tw/*_*/*.html
+// @include        http://www.8535.org/*/*/*.html*
+// @include        http://www.yfzww.com/books/*/*/*.htm
+// @include        http://www.lewen8.com/lw*/*.html
+// @include        http://www.pinwenba.com/read/*/*.html
+// @include        http://down1.qidian.com/bookall/*.htm*
+// @include        http://www.77nt.com/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html

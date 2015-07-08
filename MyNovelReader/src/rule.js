@@ -1,10 +1,11 @@
+
 // Unicode/2000-2FFF：http://zh.wikibooks.org/wiki/Unicode/2000-2FFF
 // Unicode/F000-FFFF：https://zh.wikibooks.org/wiki/Unicode/F000-FFFF
 
 // replace 中的简写
 var CHAR_ALIAS = {
     '\\P': '[\\u2000-\\u2FFF\\u3004-\\u303F\\uFE00-\\uFF60\\uFFC0-\\uFFFF]',  // 小说中添加的特殊符号
-}
+};
 
 // ===== 自动尝试的规则 =====
 var Rule = {
@@ -44,7 +45,6 @@ var Rule = {
     bookTitleSelector: ".h1title > .shuming > a[title], .chapter_nav > div:first > a:last",
 
     contentRemove: "script, iframe",          // 内容移除选择器
-    contentReplace: /'ads_wz_txt;',|最新.?章节|百度搜索|无弹窗小说网|更新快无弹窗纯文字|高品质更新|小说章节更新最快|\(百度搜.\)|全文字手打|“”&nbsp;看|无.弹.窗.小.说.网|追书网|〖∷∷无弹窗∷纯文字∷ 〗/g,
     removeLineRegExp: /<p>[　\s。;，！\.∷〖]*<\/p>/g,  // 移除只有一个字符的行
 
     // 以下不常改
@@ -82,7 +82,7 @@ Rule.specialSite = [
     },
     // 特殊站点，需再次获取且跨域。添加 class="reader-ajax"，同时需要 src, charset
     {siteName: "起点中文、起点女生、起点文学",
-        url: "^http://(www|read|readbook|wwwploy|cga|big5ploy)\\.(qidian|qdmm|qdwenxue)\\.com/(BookReader|BookReaderOld)/.*",
+        url: "^http://(www|read|readbook|wwwploy|cga|big5ploy)\\.(qidian|qdmm|qdwenxue)\\.com/BookReaderOld/.*",
 
         // titleReg: "小说:(.*?)(?:独家首发)/(.*?)/.*",
         titleSelector: "#lbChapterName",
@@ -115,7 +115,7 @@ Rule.specialSite = [
         },
     },
     {siteName: '起点新版',
-        url: 'http://read\\.qidian\\.com/BookReaderNew/\\d+,\\d+\\.aspx',
+        url: 'http://read\\.qidian\\.com/BookReader/\\d+,\\d+\\.aspx',
         bookTitleSelector: '.story_title .textinfo a:nth-child(1)',
         titleSelector: '.story_title h1',
 
@@ -180,7 +180,7 @@ Rule.specialSite = [
                     html: getPageUrlHtml(data.preuuid, data.nextuuid) + data.Content
                 });
             };
-            exportFunction(done, unsafeWindow, { defineAs: "gm_mnr_cs_callback" })
+            exportFunction(done, unsafeWindow, { defineAs: "gm_mnr_cs_callback" });
 
             unsafeWindow.CS.page.read.main.getChapterContent(unsafeWindow.bid, unsafeWindow.uuid, unsafeWindow.gm_mnr_cs_callback);
 
@@ -216,7 +216,8 @@ Rule.specialSite = [
                 chapterTitle = chapterTitle.replace(chapterTitle1, " ") + chapterTitle1;
             }
             fakeStub.find("title").text(
-                fakeStub.find(".tc > h1").text() + "-" + chapterTitle);
+                fakeStub.find(".tc > h1").text() + "-" + chapterTitle
+            );
         }
     },
     {siteName: "晋江文学网",
@@ -901,7 +902,7 @@ Rule.specialSite = [
 
                 content = $('<div id="content">').html(content);
                 if (content.find('#adright').size()) {
-                    content = content.find('#adright')
+                    content = content.find('#adright');
                 }
                 content.appendTo(d.find('body'));
             }
@@ -1394,6 +1395,8 @@ Rule.specialSite = [
             '___小/说/巴/士 www.XSBASHI.com___',
             'lala如您已阅读到此章節，請移步到.*?速记方法：，\\]',
             'lala如您已阅读到此章節.*?敬請記住我們新的網址筆-趣-閣',
+            '起舞电子书访问:. 。',
+            '≧哈，m\\.',
         ]
     },
 
@@ -1617,11 +1620,13 @@ Rule.replace = {
     _.extend(Rule.replace, replaceOthers);
 })();
 
-// ===== 全局移除，在替换 <br> 分段后 =====
+// ===== 全局移除，在替换 <br> 为 \n 之后 =====
 Rule.replaceAll = [
     // 长文字替换
     '纯文字在线阅读本站域名手机同步阅读请访问',
     '\\(?未完待续请搜索飄天文學，小说更好更新更快!',
+    '-优－优－小－说－更－新－最－快-www.ＵＵＸＳ.ＣＣ-',
+    '【阅读本书最新章节，请搜索800】',
 
     // 包含 \P 的替换
     '\\P{1,2}[顶頂].{1,3}[点小].*?o?[mw，]',
@@ -1629,7 +1634,7 @@ Rule.replaceAll = [
     '[;\\(]顶.{0,2}点.小说',
 
     // 包含 .* 的，可能有多余的替换
-    '如您已(?:閱讀|阅读)到此章节.*?敬请记住我们新的网址\s*。',
+    '如您已(?:閱讀|阅读)到此章节.*?敬请记住我们新的网址\\s*。',
     '↗百度搜：.*?直达网址.*?↖',
     "[:《〈｜~∨∟∑]{1,2}长.{1,2}风.*?et",
     '\\[限时抢购\\].*',
@@ -1641,6 +1646,8 @@ Rule.replaceAll = [
     'jiemei如您已阅读到此章节，请移步到.*?\\[ads:本站换新网址啦，速记方法：，.\\]',
 
     // 短文字替换
+    '\\[txt全集下载\\]',
+    '\\[\\s*超多好看小说\\]',
     '[》《｜～]无(?:.|&gt;)错(?:.|&gt;)小说',
     '《无〈错《', '》无>错》', '\\+无\\+错\\+', '｜无｜错｜', '～无～错～',
     '`无`错`小说`www.``com', '＋无＋错＋小说＋3w＋＋',
@@ -1652,6 +1659,10 @@ Rule.replaceAll = [
     '》长>风》',
     '女凤免费小说抢先看', '女凤小说网全文字 无广告',
     '乐文小说', '《乐〈文《小说', '乐文移动网', '頂点小说', '頂點小說',
+    '追小说哪里快去眼快',
+    '\\[书库\\].\\[774\\]\\[buy\\].kuai',
+
+    /'ads_wz_txt;',|百度搜索|无弹窗小说网|更新快无弹窗纯文字|高品质更新|小说章节更新最快|\(百度搜.\)|全文字手打|“”&nbsp;看|无.弹.窗.小.说.网|追书网|〖∷∷无弹窗∷纯文字∷ 〗/g,
 ];
 
 

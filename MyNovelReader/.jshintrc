@@ -1,0 +1,12 @@
+{
+    "strict": false,
+    "scripturl": false,
+    "quotmark": false,
+    "globals": {
+        "$": false,
+        "_": false,
+        "unsafeWindow": false,
+        "exportFunction": false,
+        "unescape": false
+    }
+}

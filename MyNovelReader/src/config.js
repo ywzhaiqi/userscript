@@ -109,7 +109,7 @@ var Config = {
     },
 
     get text_line_height(){
-        return GM_getValue("text_line_height") || "2.25em";
+        return GM_getValue("text_line_height") || "2em";
     },
     set text_line_height(val){
         GM_setValue("text_line_height", val);

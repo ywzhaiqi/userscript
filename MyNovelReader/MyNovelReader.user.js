@@ -2,12 +2,14 @@
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
-// @version        5.1.4
+// @name:zh-TW     小說閱讀腳本
+// @version        5.1.5
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
-// @contributor    Roger Au, shyangs, JixunMoe
+// @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
 // @description    小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
 // @description:zh-CN  小说阅读脚本，统一阅读样式，内容去广告、修正拼音字、段落整理，自动下一页
+// @description:zh-TW  小說閱讀腳本，統一閱讀樣式，內容去廣告、修正拼音字、段落整理，自動下一頁
 // @license        GPL version 3
 // @grant          GM_xmlhttpRequest
 // @grant          GM_addStyle
@@ -27,13 +29,14 @@
 
 // @include        http://read.qidian.com/*,*.aspx
 // @include        http://readbook.qidian.com/bookreader/*,*.html
-// @include        http://read.qidian.com/BookReaderNew/*,*.aspx
+// @include        http://read.qidian.com/BookReaderOld/*,*.aspx
+// @include        http://read.qidian.com/BookReader/*,*.aspx
 // @include        http://wwwploy.qidian.com/BookReader/*,*.aspx
 // @include        http://free.qidian.com/Free/ReadChapter.aspx?*
 // @include        http://www.qdmm.com/BookReader/*,*.aspx
 // @include        http://www.qdwenxue.com/BookReader/*,*.aspx
 // @include        http://chuangshi.qq.com/read/bookreader/*.html*
-// @include        http://chuangshi.qq.com/*bk/*/*.html*
+// @include        http://chuangshi.qq.com/*bk/*/*-r-*.html*
 // @include        http://yunqi.qq.com/*bk/*/*.html
 // @include        http://dushu.qq.com/read.html?bid=*
 // @include        http://www.jjwxc.net/onebook.php?novelid=*
@@ -161,7 +164,7 @@
 // @include        http://www.wenchangshuyuan.com/html/*/*/*.html
 // @include        http://www.pofeng.net/xiaoshuo/*/*.html
 // @include        http://www.epzww.com/book/*/*
-// @include        http://tw.xiaoshuokan.com/haokan/*/*.html
+// @include        http://*.xiaoshuokan.com/haokan/*/*.html
 // @include        http://www.wobudu.com/*/*.html
 // @include        http://www.qb5.com/xiaoshuo/*/*/*.html
 // @include        http://www.23us.com/html/*/*/*.html
@@ -259,10 +262,19 @@
 // @include        http://www.365xs.org/books/*/*/*.html
 // @include        http://www.wuruo.com/files/article/html/*/*/*.html
 // @include        http://www.remenxs.com/du_*/*/
-// @include        http://www.8shuw.net/book/*/*.html
+// @include        http://*.8shuw.net/book/*/*.html
 // @include        http://www.pashuw.com/BookReader/*/*.html
 // @include        http://read.shanwen.com/html/*/*/*.html
 // @include        http://www.qqxs.cc/xs/*/*/*.html
+// @include        http://www.69shu.com/txt/*/*
+// @include        http://www.e8zw.com/book/*/*/*.html
+// @include        http://www.biquge.tw/*_*/*.html
+// @include        http://www.8535.org/*/*/*.html*
+// @include        http://www.yfzww.com/books/*/*/*.htm
+// @include        http://www.lewen8.com/lw*/*.html
+// @include        http://www.pinwenba.com/read/*/*.html
+// @include        http://down1.qidian.com/bookall/*.htm*
+// @include        http://www.77nt.com/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html
@@ -293,13 +305,14 @@ var config = {
 
 var READER_AJAX = "reader-ajax";   // 内容需要 ajax 的 className
 
+
 // Unicode/2000-2FFF：http://zh.wikibooks.org/wiki/Unicode/2000-2FFF
 // Unicode/F000-FFFF：https://zh.wikibooks.org/wiki/Unicode/F000-FFFF
 
 // replace 中的简写
 var CHAR_ALIAS = {
     '\\P': '[\\u2000-\\u2FFF\\u3004-\\u303F\\uFE00-\\uFF60\\uFFC0-\\uFFFF]',  // 小说中添加的特殊符号
-}
+};
 
 // ===== 自动尝试的规则 =====
 var Rule = {
@@ -339,7 +352,6 @@ var Rule = {
     bookTitleSelector: ".h1title > .shuming > a[title], .chapter_nav > div:first > a:last",
 
     contentRemove: "script, iframe",          // 内容移除选择器
-    contentReplace: /'ads_wz_txt;',|最新.?章节|百度搜索|无弹窗小说网|更新快无弹窗纯文字|高品质更新|小说章节更新最快|\(百度搜.\)|全文字手打|“”&nbsp;看|无.弹.窗.小.说.网|追书网|〖∷∷无弹窗∷纯文字∷ 〗/g,
     removeLineRegExp: /<p>[　\s。;，！\.∷〖]*<\/p>/g,  // 移除只有一个字符的行
 
     // 以下不常改
@@ -377,7 +389,7 @@ Rule.specialSite = [
     },
     // 特殊站点，需再次获取且跨域。添加 class="reader-ajax"，同时需要 src, charset
     {siteName: "起点中文、起点女生、起点文学",
-        url: "^http://(www|read|readbook|wwwploy|cga|big5ploy)\\.(qidian|qdmm|qdwenxue)\\.com/(BookReader|BookReaderOld)/.*",
+        url: "^http://(www|read|readbook|wwwploy|cga|big5ploy)\\.(qidian|qdmm|qdwenxue)\\.com/BookReaderOld/.*",
 
         // titleReg: "小说:(.*?)(?:独家首发)/(.*?)/.*",
         titleSelector: "#lbChapterName",
@@ -410,7 +422,7 @@ Rule.specialSite = [
         },
     },
     {siteName: '起点新版',
-        url: 'http://read\\.qidian\\.com/BookReaderNew/\\d+,\\d+\\.aspx',
+        url: 'http://read\\.qidian\\.com/BookReader/\\d+,\\d+\\.aspx',
         bookTitleSelector: '.story_title .textinfo a:nth-child(1)',
         titleSelector: '.story_title h1',
 
@@ -475,7 +487,7 @@ Rule.specialSite = [
                     html: getPageUrlHtml(data.preuuid, data.nextuuid) + data.Content
                 });
             };
-            exportFunction(done, unsafeWindow, { defineAs: "gm_mnr_cs_callback" })
+            exportFunction(done, unsafeWindow, { defineAs: "gm_mnr_cs_callback" });
 
             unsafeWindow.CS.page.read.main.getChapterContent(unsafeWindow.bid, unsafeWindow.uuid, unsafeWindow.gm_mnr_cs_callback);
 
@@ -511,7 +523,8 @@ Rule.specialSite = [
                 chapterTitle = chapterTitle.replace(chapterTitle1, " ") + chapterTitle1;
             }
             fakeStub.find("title").text(
-                fakeStub.find(".tc > h1").text() + "-" + chapterTitle);
+                fakeStub.find(".tc > h1").text() + "-" + chapterTitle
+            );
         }
     },
     {siteName: "晋江文学网",
@@ -1196,7 +1209,7 @@ Rule.specialSite = [
 
                 content = $('<div id="content">').html(content);
                 if (content.find('#adright').size()) {
-                    content = content.find('#adright')
+                    content = content.find('#adright');
                 }
                 content.appendTo(d.find('body'));
             }
@@ -1689,6 +1702,8 @@ Rule.specialSite = [
             '___小/说/巴/士 www.XSBASHI.com___',
             'lala如您已阅读到此章節，請移步到.*?速记方法：，\\]',
             'lala如您已阅读到此章節.*?敬請記住我們新的網址筆-趣-閣',
+            '起舞电子书访问:. 。',
+            '≧哈，m\\.',
         ]
     },
 
@@ -1912,11 +1927,13 @@ Rule.replace = {
     _.extend(Rule.replace, replaceOthers);
 })();
 
-// ===== 全局移除，在替换 <br> 分段后 =====
+// ===== 全局移除，在替换 <br> 为 \n 之后 =====
 Rule.replaceAll = [
     // 长文字替换
     '纯文字在线阅读本站域名手机同步阅读请访问',
     '\\(?未完待续请搜索飄天文學，小说更好更新更快!',
+    '-优－优－小－说－更－新－最－快-www.ＵＵＸＳ.ＣＣ-',
+    '【阅读本书最新章节，请搜索800】',
 
     // 包含 \P 的替换
     '\\P{1,2}[顶頂].{1,3}[点小].*?o?[mw，]',
@@ -1924,7 +1941,7 @@ Rule.replaceAll = [
     '[;\\(]顶.{0,2}点.小说',
 
     // 包含 .* 的，可能有多余的替换
-    '如您已(?:閱讀|阅读)到此章节.*?敬请记住我们新的网址\s*。',
+    '如您已(?:閱讀|阅读)到此章节.*?敬请记住我们新的网址\\s*。',
     '↗百度搜：.*?直达网址.*?↖',
     "[:《〈｜~∨∟∑]{1,2}长.{1,2}风.*?et",
     '\\[限时抢购\\].*',
@@ -1936,6 +1953,8 @@ Rule.replaceAll = [
     'jiemei如您已阅读到此章节，请移步到.*?\\[ads:本站换新网址啦，速记方法：，.\\]',
 
     // 短文字替换
+    '\\[txt全集下载\\]',
+    '\\[\\s*超多好看小说\\]',
     '[》《｜～]无(?:.|&gt;)错(?:.|&gt;)小说',
     '《无〈错《', '》无>错》', '\\+无\\+错\\+', '｜无｜错｜', '～无～错～',
     '`无`错`小说`www.``com', '＋无＋错＋小说＋3w＋＋',
@@ -1947,6 +1966,10 @@ Rule.replaceAll = [
     '》长>风》',
     '女凤免费小说抢先看', '女凤小说网全文字 无广告',
     '乐文小说', '《乐〈文《小说', '乐文移动网', '頂点小说', '頂點小說',
+    '追小说哪里快去眼快',
+    '\\[书库\\].\\[774\\]\\[buy\\].kuai',
+
+    /'ads_wz_txt;',|百度搜索|无弹窗小说网|更新快无弹窗纯文字|高品质更新|小说章节更新最快|\(百度搜.\)|全文字手打|“”&nbsp;看|无.弹.窗.小.说.网|追书网|〖∷∷无弹窗∷纯文字∷ 〗/g,
 ];
 
 
@@ -2079,7 +2102,7 @@ var Config = {
     },
 
     get text_line_height(){
-        return GM_getValue("text_line_height") || "2.25em";
+        return GM_getValue("text_line_height") || "2em";
     },
     set text_line_height(val){
         GM_setValue("text_line_height", val);
@@ -2656,7 +2679,7 @@ var UI = {
         if(m) {
             var size = m[1],
                 type = m[2];
-            return parseInt(size, 10) * 1.88 + type;
+            return parseInt(size, 10) * 1.8 + type;
         }
 
         return "";
@@ -2923,21 +2946,22 @@ var UI = {
 };
 
 UI.skins["缺省皮肤".uiTrans()] = "";
-UI.skins["暗色皮肤".uiTrans()] = "body { color: #666; background: rgba(0;0;0;.1); }\
+UI.skins["暗色皮肤".uiTrans()] = "body { color: #666; background-color: rgba(0;0;0;.1); }\
                 .title { color: #222; }";
-UI.skins["白底黑字".uiTrans()] = "body { color: black; background: white;}\
+UI.skins["白底黑字".uiTrans()] = "body { color: black; background-color: white;}\
                 .title { font-weight: bold; border-bottom: 0.1em solid; margin-bottom: 1.857em; padding-bottom: 0.857em;}";
 UI.skins["夜间模式".uiTrans()] = "body { color: #939392; background: #2d2d2d; } #preferencesBtn { background: white; } #mynovelreader-content img { background-color: #c0c0c0; } .chapter.active div{color: #939392;}";
-UI.skins["夜间模式1".uiTrans()] = "body { color: #679; background: black; } #preferencesBtn { background: white; }";
-UI.skins["夜间模式2".uiTrans()] = "body { color: #e3e3e3; background: #2d2d2d; } #preferencesBtn { background: white; }";
+UI.skins["夜间模式1".uiTrans()] = "body { color: #679; background-color: black; } #preferencesBtn img { background-color: white !important; } .title { color: #3399FF; background-color: #121212; }";
+UI.skins["夜间模式2".uiTrans()] = "body { color: #AAAAAA; background-color: #121212; } #preferencesBtn img { background-color: white; } #mynovelreader-content img { background-color: #c0c0c0; } .title { color: #3399FF; background-color: #121212; }   body a { color: #E0BC2D; } body a:link { color: #E0BC2D; } body a:visited { color:#AAAAAA; } body a:hover { color: #3399FF; } body a:active { color: #423F3F; }";
 // UI.skins["夜间模式（多看）".uiTrans()] = "body { color: #3A5056; background: #101819; } #preferencesBtn { background: white; } #mynovelreader-content img { background-color: #c0c0c0; }";
 UI.skins["夜间模式（多看）".uiTrans()] = "body { color: #4A4A4A; background: #101819; } #preferencesBtn { background: white; } #mynovelreader-content img { background-color: #c0c0c0; }";
-UI.skins["橙色背景".uiTrans()] = "body { color: #24272c; background: #FEF0E1; }";
-UI.skins["绿色背景".uiTrans()] = "body { color: black; background: #d8e2c8; }";
-UI.skins["绿色背景2".uiTrans()] = "body { color: black; background: #CCE8CF; }";
-UI.skins["蓝色背景".uiTrans()] = "body { color: black; background: #E7F4FE; }";
-UI.skins["棕黄背景".uiTrans()] = "body { color: black; background: #C2A886; }";
-UI.skins["经典皮肤".uiTrans()] = "body { color: black; background-color: #EAEAEE; } .title { background: #f0f0f0; }";
+
+UI.skins["橙色背景".uiTrans()] = "body { color: #24272c; background-color: #FEF0E1; }";
+UI.skins["绿色背景".uiTrans()] = "body { color: black; background-color: #d8e2c8; }";
+UI.skins["绿色背景2".uiTrans()] = "body { color: black; background-color: #CCE8CF; }";
+UI.skins["蓝色背景".uiTrans()] = "body { color: black; background-color: #E7F4FE; }";
+UI.skins["棕黄背景".uiTrans()] = "body { color: black; background-color: #C2A886; }";
+UI.skins["经典皮肤".uiTrans()] = "body { color: black; background-color: #EAEAEE; } .title { background-color: #f0f0f0; }";
 
 
 var fontawesomeWoff = GM_getResourceURL('fontawesomeWoff');
@@ -3362,8 +3386,6 @@ Parser.prototype = {
             var regStr = '（' + toReStr(this.bookTitle) + '\\d*章）'
             text = text.replace(new RegExp(regStr, 'ig'), "");
         }
-
-        text = text.replace(Rule.contentReplace, '');
 
         if (info.contentReplace) {
             text = this.replaceText(text, info.contentReplace);

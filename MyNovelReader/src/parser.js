@@ -404,8 +404,6 @@ Parser.prototype = {
             text = text.replace(new RegExp(regStr, 'ig'), "");
         }
 
-        text = text.replace(Rule.contentReplace, '');
-
         if (info.contentReplace) {
             text = this.replaceText(text, info.contentReplace);
         }

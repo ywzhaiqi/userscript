@@ -177,7 +177,7 @@ var UI = {
         if(m) {
             var size = m[1],
                 type = m[2];
-            return parseInt(size, 10) * 1.88 + type;
+            return parseInt(size, 10) * 1.8 + type;
         }
 
         return "";
@@ -444,21 +444,22 @@ var UI = {
 };
 
 UI.skins["缺省皮肤".uiTrans()] = "";
-UI.skins["暗色皮肤".uiTrans()] = "body { color: #666; background: rgba(0;0;0;.1); }\
+UI.skins["暗色皮肤".uiTrans()] = "body { color: #666; background-color: rgba(0;0;0;.1); }\
                 .title { color: #222; }";
-UI.skins["白底黑字".uiTrans()] = "body { color: black; background: white;}\
+UI.skins["白底黑字".uiTrans()] = "body { color: black; background-color: white;}\
                 .title { font-weight: bold; border-bottom: 0.1em solid; margin-bottom: 1.857em; padding-bottom: 0.857em;}";
 UI.skins["夜间模式".uiTrans()] = "body { color: #939392; background: #2d2d2d; } #preferencesBtn { background: white; } #mynovelreader-content img { background-color: #c0c0c0; } .chapter.active div{color: #939392;}";
-UI.skins["夜间模式1".uiTrans()] = "body { color: #679; background: black; } #preferencesBtn { background: white; }";
-UI.skins["夜间模式2".uiTrans()] = "body { color: #e3e3e3; background: #2d2d2d; } #preferencesBtn { background: white; }";
+UI.skins["夜间模式1".uiTrans()] = "body { color: #679; background-color: black; } #preferencesBtn img { background-color: white !important; } .title { color: #3399FF; background-color: #121212; }";
+UI.skins["夜间模式2".uiTrans()] = "body { color: #AAAAAA; background-color: #121212; } #preferencesBtn img { background-color: white; } #mynovelreader-content img { background-color: #c0c0c0; } .title { color: #3399FF; background-color: #121212; }   body a { color: #E0BC2D; } body a:link { color: #E0BC2D; } body a:visited { color:#AAAAAA; } body a:hover { color: #3399FF; } body a:active { color: #423F3F; }";
 // UI.skins["夜间模式（多看）".uiTrans()] = "body { color: #3A5056; background: #101819; } #preferencesBtn { background: white; } #mynovelreader-content img { background-color: #c0c0c0; }";
 UI.skins["夜间模式（多看）".uiTrans()] = "body { color: #4A4A4A; background: #101819; } #preferencesBtn { background: white; } #mynovelreader-content img { background-color: #c0c0c0; }";
-UI.skins["橙色背景".uiTrans()] = "body { color: #24272c; background: #FEF0E1; }";
-UI.skins["绿色背景".uiTrans()] = "body { color: black; background: #d8e2c8; }";
-UI.skins["绿色背景2".uiTrans()] = "body { color: black; background: #CCE8CF; }";
-UI.skins["蓝色背景".uiTrans()] = "body { color: black; background: #E7F4FE; }";
-UI.skins["棕黄背景".uiTrans()] = "body { color: black; background: #C2A886; }";
-UI.skins["经典皮肤".uiTrans()] = "body { color: black; background-color: #EAEAEE; } .title { background: #f0f0f0; }";
+
+UI.skins["橙色背景".uiTrans()] = "body { color: #24272c; background-color: #FEF0E1; }";
+UI.skins["绿色背景".uiTrans()] = "body { color: black; background-color: #d8e2c8; }";
+UI.skins["绿色背景2".uiTrans()] = "body { color: black; background-color: #CCE8CF; }";
+UI.skins["蓝色背景".uiTrans()] = "body { color: black; background-color: #E7F4FE; }";
+UI.skins["棕黄背景".uiTrans()] = "body { color: black; background-color: #C2A886; }";
+UI.skins["经典皮肤".uiTrans()] = "body { color: black; background-color: #EAEAEE; } .title { background-color: #f0f0f0; }";
 
 
 var fontawesomeWoff = GM_getResourceURL('fontawesomeWoff');
