@@ -401,7 +401,7 @@ Rule.MPIV = [
 	},
 	{name: "多看阅读",
 		d: "duokan.com",
-		r: /(cover.read.duokan.com.*?.jpg)!\w$/,
+		r: /(cover.read.duokan.com.*?\.jpg)!\w+$/,
 		s: "$1"
 	},
 

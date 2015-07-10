@@ -88,7 +88,7 @@ FloatBarC.prototype={
 			#pv-float-bar-container:hover {\
 				opacity: 1;\
 			}\
-			.pv-float-bar-button {\
+			#pv-float-bar-container .pv-float-bar-button {\
 				vertical-align:middle;\
 				cursor: pointer;\
 				width: 18px;\
@@ -105,19 +105,19 @@ FloatBarC.prototype={
 				-webkit-transition: margin-right 0.15s ease-in-out ,  width 0.15s ease-in-out ,  height 0.15s ease-in-out ;\
 				transition: margin-right 0.15s ease-in-out ,  width 0.15s ease-in-out ,  height 0.15s ease-in-out ;\
 			}\
-			.pv-float-bar-button:not(:last-child){\
+			#pv-float-bar-container .pv-float-bar-button:not(:last-child){\
 				margin-right: -14px;\
 			}\
-			.pv-float-bar-button:first-child {\
+			#pv-float-bar-container .pv-float-bar-button:first-child {\
 				z-index: 4;\
 			}\
-			.pv-float-bar-button:nth-child(2) {\
+			#pv-float-bar-container .pv-float-bar-button:nth-child(2) {\
 				z-index: 3;\
 			}\
-			.pv-float-bar-button:nth-child(3) {\
+			#pv-float-bar-container .pv-float-bar-button:nth-child(3) {\
 				z-index: 2;\
 			}\
-			.pv-float-bar-button:last-child {\
+			#pv-float-bar-container .pv-float-bar-button:last-child {\
 				z-index: 1;\
 			}\
 			#pv-float-bar-container:hover > .pv-float-bar-button {\
@@ -127,16 +127,16 @@ FloatBarC.prototype={
 			#pv-float-bar-container:hover > .pv-float-bar-button:not(:last-child) {\
 				margin-right: 4px;\
 			}\
-			.pv-float-bar-button-actual {\
+			#pv-float-bar-container .pv-float-bar-button-actual {\
 				background-image:url("'+ prefs.icons.actual +'");\
 			}\
-			.pv-float-bar-button-gallery {\
+			#pv-float-bar-container .pv-float-bar-button-gallery {\
 				background-image:url("'+ prefs.icons.gallery +'");\
 			}\
-			.pv-float-bar-button-current {\
+			#pv-float-bar-container .pv-float-bar-button-current {\
 				background-image:url("'+ prefs.icons.current +'");\
 			}\
-			.pv-float-bar-button-magnifier {\
+			#pv-float-bar-container .pv-float-bar-button-magnifier {\
 				background-image:url("'+ prefs.icons.magnifier +'");\
 			}\
 		';
