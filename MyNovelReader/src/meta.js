@@ -183,6 +183,7 @@
 // @include        http://www.uutxt.org/book/*/*/*.html
 // @include        http://www.5800.cc/*/*/*/*.html
 // @include        http://www.biquge.com/*/*.html
+// @include        http://www.biquge.la/book/*/*.html
 // @include        http://www.qududu.com/book/*/*/*.html
 // @include        http://www.free97.cn/book/*/*/*.html
 // @include        http://www.122s.com/book/*/*.html

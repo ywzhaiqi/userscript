@@ -21,7 +21,12 @@ var App = {
                 App.launch();
             }, 0);
         };
-        exportFunction(readx, unsafeWindow, {defineAs: "readx"});
+        try {
+            exportFunction(readx, unsafeWindow, {defineAs: "readx"});
+        } catch(ex) {
+            console.error('无法定义 readx 函数');
+        }
+
 
         App.loadCustomSetting();
         App.site = App.getCurSiteInfo();
@@ -643,7 +648,7 @@ var App = {
             url: nextUrl,
             method: "GET",
             overrideMimeType: "text/html;charset=" + document.characterSet,
-            timeout: 10 * 1000,
+            timeout: 30 * 1000,
             onload: function(res) {
                 var doc = parseHTML(res.responseText);
                 if (_.isFunction(callback)) {

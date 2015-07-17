@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.1.5
+// @version        5.1.6
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -183,6 +183,7 @@
 // @include        http://www.uutxt.org/book/*/*/*.html
 // @include        http://www.5800.cc/*/*/*/*.html
 // @include        http://www.biquge.com/*/*.html
+// @include        http://www.biquge.la/book/*/*.html
 // @include        http://www.qududu.com/book/*/*/*.html
 // @include        http://www.free97.cn/book/*/*/*.html
 // @include        http://www.122s.com/book/*/*.html
@@ -1875,7 +1876,7 @@ Rule.replace = {
     "w[ēe]ixi[ée]":"威胁", "wèizh[ìi]":"位置", "wei员":"委员", "w[èe]nti":"问题", "wèi\\s*dào\\s*":"味道", "wú\\s*nài":"无奈", "weilai":"未来",
     "xiu长": "修长", "亵du": "亵渎", "xing福": "幸福", "小bo":"小波", "小niū":"小妞", "xiong([^a-z])":"胸$1", "小tui":"小腿", "xiang港":"香港", "xiàohuà":"笑话", "xiàn\\'zhì":"限制", "xiōng\\s*dì":"兄弟",
     "yì\\s*wài\\s*":"意外", "yin(冷|暗|谋|险|沉|沟|癸派|后)":"阴$1", "y[iī]y[àa]ng":"一样", "y[īi]di[ǎa]n":"一点", "yī\\s*zhèn":"一阵", "y[ǐi]j[īi]ng":"已经", "疑huo":"疑惑", "yí\\s*huò":"疑惑", "影mi":"影迷", "yin荡":"淫荡", "yin贼":"淫贼", "阳w[ěe]i": "阳痿", "yao头": "摇头", "yaotou": "摇头", "摇tou": "摇头", "yezhan": "野战", "you饵": "诱饵", "(?:you|诱)(?:惑|huo)": "诱惑", "you导": "诱导", "引you": "引诱", "you人": "诱人", "youshi":"有事", "you\\s*xiu":"优秀", "御yòng":"御用", "旖ni":"旖旎", "yu念":"欲念", "you敌深入":"诱敌深入", "影she":"影射", "牙qian":"牙签", "一yè情":"一夜情",
-    "z[iì]j[iǐ]": "自己","z[ìi](?:\\s|<br/?>|&nbsp;)*y[oó]u": "自由","zh[iī]d?[àa]u?o":"知道", "zixin":"自信", "zhì'fú":"制服", "zha药": "炸药", "zhan有": "占有", "zhè\\s*gè":"这个", "政f[ǔu]|zheng府": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zong理":"总理", "zh[ōo]ngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]\\s*y[oò]u":"左右", "zhǔ\\s*dòng":"主动", "zh[oō]uw[ée]i":"周围", "中nan海":"中南海", "中j委":"中纪委", "中zu部":"中组部", "政zhi局":"政治局", "(昨|一|时|余)(?:<br/?>|&nbsp;|\\s)*ì":"$1日", "照she":"照射", "zhǔn\\s*bèi\\s*":"准备",
+    "z[iì]j[iǐ]": "自己","z[ìi](?:\\s|<br/?>|&nbsp;)*y[oó]u": "自由","zh[iī]d?[àa]u?o":"知道", "zixin":"自信", "zhì'fú":"制服", "zha药": "炸药", "zhan有": "占有", "zhè\\s*gè":"这个", "政f[ǔu]|zheng府": "政府", "zh[èe]ng\\s{0,2}f[uǔ]": "政府", "zong理":"总理", "zh[ōo]ngy[āa]ng": "中央", "中yang":"中央", "zu[oǒ]\\s*y[oò]u":"左右", "zhǔ\\s*dòng":"主动", "zh[oō]uw[ée]i":"周围", "中nan海":"中南海", "中j委":"中纪委", "中zu部":"中组部", "政zhi局":"政治局", "(昨|一|时|余)(?:<br/?>|&nbsp;|\\s)*ì":"$1日", "照she":"照射", "zhǔn\\s*bèi\\s*":"准备", "zhu义":"主义",
 
     "</p>\\n<p>\\s*ì":"日",
 };
@@ -1934,11 +1935,22 @@ Rule.replaceAll = [
     '\\(?未完待续请搜索飄天文學，小说更好更新更快!',
     '-优－优－小－说－更－新－最－快-www.ＵＵＸＳ.ＣＣ-',
     '【阅读本书最新章节，请搜索800】',
+    '亲，百度搜索眼&amp;快，大量小说免费看。',
+    '\\|每两个看言情的人当中，就有一个注册过可°乐°小°说°网的账号。',
+    '最新章节全文阅读看书神器\\.yankuai\\.',
+    '（800小说网 www.800Book.net 提供Txt免费下载）最新章节全文阅读-..-',
+    'txt电子书下载/',
+    '\\[看本书最新章节请到求书 .\\]',
+    '最新章节全文阅读',
+    '\\[800\\]\\[站页面清爽，广告少，',
+    '最新章节全文阅读（..首发）',
 
     // 包含 \P 的替换
     '\\P{1,2}[顶頂].{1,3}[点小].*?o?[mw，]',
-    '\\P.?长.{1,2}风.{1,2}文.{1,2}学.*?t',
+    '\\P.?长.{1,2}风.{1,2}文.{1,2}学.*?[tx]',
     '[;\\(]顶.{0,2}点.小说',
+    '2长2风2文2学，w￠＄',
+    '》长>风》',
 
     // 包含 .* 的，可能有多余的替换
     '如您已(?:閱讀|阅读)到此章节.*?敬请记住我们新的网址\\s*。',
@@ -1955,15 +1967,17 @@ Rule.replaceAll = [
     // 短文字替换
     '\\[txt全集下载\\]',
     '\\[\\s*超多好看小说\\]',
+    '⊙四⊙五⊙中⊙文☆→',
+    '\\[ads:本站换新网址啦，速记方法：.*?\\]',
     '[》《｜～]无(?:.|&gt;)错(?:.|&gt;)小说',
     '《无〈错《', '》无>错》', '\\+无\\+错\\+', '｜无｜错｜', '～无～错～',
     '`无`错`小说`www.``com', '＋无＋错＋小说＋3w＋＋',
     '\\|优\\|优\\|小\\|说\\|更\\|新\\|最\\|快Ｘ',
-    '▲∴', '8，ww←', '2长2风2文2学，w￠＄',
+    '▲∴', '8，ww←',
     /www.23＋?[Ｗw][Ｘx].[Ｃc]om/ig,
     /热门推荐:、+/g,
     /h2&gt;/g,
-    '》长>风》',
+
     '女凤免费小说抢先看', '女凤小说网全文字 无广告',
     '乐文小说', '《乐〈文《小说', '乐文移动网', '頂点小说', '頂點小說',
     '追小说哪里快去眼快',
@@ -3787,7 +3801,12 @@ var App = {
                 App.launch();
             }, 0);
         };
-        exportFunction(readx, unsafeWindow, {defineAs: "readx"});
+        try {
+            exportFunction(readx, unsafeWindow, {defineAs: "readx"});
+        } catch(ex) {
+            console.error('无法定义 readx 函数');
+        }
+
 
         App.loadCustomSetting();
         App.site = App.getCurSiteInfo();
@@ -4409,7 +4428,7 @@ var App = {
             url: nextUrl,
             method: "GET",
             overrideMimeType: "text/html;charset=" + document.characterSet,
-            timeout: 10 * 1000,
+            timeout: 30 * 1000,
             onload: function(res) {
                 var doc = parseHTML(res.responseText);
                 if (_.isFunction(callback)) {
