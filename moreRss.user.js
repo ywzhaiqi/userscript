@@ -2,7 +2,7 @@
 // @name         More RSS
 // @namespace    https://github.com/ywzhaiqi/
 // @version      0.1
-// @description  给优酷专辑新增 RSS 让其可订阅
+// @description  给优酷专辑新增 RSS 让其可订阅。chrome 用户需要安装 rss 检测扩展：RSS Subscription Extension。
 // @include      http://i.youku.com/u/*
 // @grant        none
 // @noframes
