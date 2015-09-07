@@ -299,6 +299,10 @@ var App = {
     clean: function() {
         $('body > *:not("#container, .readerbtn, #reader_preferences, #uil_blocker,iframe[name=\'mynovelreader-iframe\']")').remove();
         $('link[rel="stylesheet"]').remove();
+
+        if (location.host.indexOf('qidian') > 0) {
+            unsafeWindow.jQuery(document).off("selectstart").off("contextmenu");
+        }
     },
     cleanAgain: function() {
         var host = location.host;

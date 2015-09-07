@@ -78,7 +78,7 @@
 // @include        http://www.aishoucang.com/*/*.html
 // @include        http://www.wanshuba.com/Html/*/*/*.html
 // @include        http://www.zhuishu.net/files/article/html/*/*/*.html
-// @include        http://www.sqsxs.com/*/*/*.html
+// @include        http://www.sqsxs.com/*/*/*.html*
 // @include        http://www.caiwei.tw/html/*/*.html
 // @include        http://www.hotsk.com/Html/Book/*/*/*.shtml
 // @include        http://www.92to.com/*/*/*.html
@@ -102,6 +102,7 @@
 // @include        http://www.yunlaige.com/html/*/*/*.html
 // @include        http://www.cfwx.net/files/article/html/*/*/*.html
 // @include        http://www.qiuwu.net/html/*/*/*.html
+// @include        http://www.fengwu.org/html/*/*/*.html
 // @include        http://www.xs84.com/*_*/*
 // @include        http://www.geiliwx.com/GeiLi/*/*/*.shtml*
 // @include        http://www.123yq.com/read/*/*/*.shtml
@@ -111,6 +112,7 @@
 // @include        http://www.xsbashi.com/*_*/
 // @include        http://www.vodtw.com/Html/Book/*/*/*.html
 // @include        http://www.fhxs.com/read/*/*/*.shtml
+// @include        http://www.snwx.com/book/*/*/*.html
 
 // www.sodu.so
 // @include        http://www.jiaodu8.com/*/*/*/*.html
@@ -276,6 +278,7 @@
 // @include        http://www.pinwenba.com/read/*/*.html
 // @include        http://down1.qidian.com/bookall/*.htm*
 // @include        http://www.77nt.com/*/*.html
+// @include        http://www.quanbenba.com/yuedu/*/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html

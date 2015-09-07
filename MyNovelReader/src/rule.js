@@ -29,7 +29,7 @@ var Rule = {
         /www\.shumilou\.com\/to-n-[a-z]+-\d+\.html/i,
         /\/0\.html$/i,
     ],
-    nextUrlCompare: /\/\d+(_\d+)?\.html?$|\/wcxs-\d+-\d+\/$|chapter-\d+\.html$/i,  // 忽略的下一页链接（特殊），跟上一页比较
+    nextUrlCompare: /\/\d+(_\d+)?\.html?$|\/wcxs-\d+-\d+\/$|chapter-\d+\.html$|\/\d+_\d+\/$/i,  // 忽略的下一页链接（特殊），跟上一页比较
 
     // 按顺序匹配，匹配到则停止。econtains 完全相等
     indexSelectors: ["a[href='index.html']", "a:contains('返回书目')", "a:contains('章节目录')", "a:contains('章节列表')",
@@ -366,7 +366,7 @@ Rule.specialSite = [
         }
     },
     {siteName: '凤舞文学网',
-        url: '^http://www\\.qiuwu\\.net/html/\\d+/\\d+/\\d+\\.html',
+        url: '^http://www\\.(?:qiuwu\\.net|fengwu\\.org)/html/\\d+/\\d+/\\d+\\.html',
         contentReplace: [
             {
                 '<img src="/keywd/R43.gif">':'爱', '<img src="/keywd/A13.gif">': '情', '<img src="/keywd/D10.gif">': '床',
@@ -932,14 +932,14 @@ Rule.specialSite = [
         url: "http://www\\.du00\\.(?:com|cc)/read/\\d+/\\d+/[\\d_]+\\.html",
         titleReg: "(.*?)(?:第\\d+段)?,(.*) - 读零零小说网",
         titlePos: 1,
-        prevSelector: "#footlink a:first",
-        indexSelector: "#footlink a:contains('目录')",
-        nextSelector: "#footlink a:last",
+        // prevSelector: "#footlink a:first",
+        // indexSelector: "#footlink a:contains('目录')",
+        // nextSelector: "#footlink a:last",
         // 内容
         contentSelector: "#pagecontent, .divimage",
-        useiframe: true,
-        mutationSelector: "#pagecontent",
-        mutationChildCount: 2,
+        // useiframe: true,
+        // mutationSelector: "#pagecontent",
+        // mutationChildCount: 2,
         contentRemove: "font",
         contentReplace: [
             "读零零小说网欢迎您的光临.*?txt格式下载服务",
@@ -1377,6 +1377,7 @@ Rule.specialSite = [
             '品书网 www.voDtw.com◇↓',
             '品书网 www.vodtW.com',
             '品 书 网 （w W W  . V o Dtw . c o M）',
+            '复制网址访问\\s*http://[%\\d\\w]+'
         ]
     },
     {siteName: "凤凰小说网",
@@ -1397,6 +1398,8 @@ Rule.specialSite = [
             'lala如您已阅读到此章節.*?敬請記住我們新的網址筆-趣-閣',
             '起舞电子书访问:. 。',
             '≧哈，m\\.',
+            '\\[\\s*超多好看\\]',
+            '热门【首发】',
         ]
     },
 
@@ -1551,7 +1554,7 @@ Rule.replace = {
     "暧m[eè][iì]":"暧昧",
     "bàn\\s*fǎ":"办法", "bucuo":"不错", "不liáng":"不良", "b[ěe]i(\\s|&nbsp;)*j[īi]ng":"北京","半shen": "半身", "b[ìi]j[ìi]ng":"毕竟", "报(了?)jing":"报$1警", "bèi'pò":"被迫", "包yǎng":"包养", "(?:biǎo|婊\\\\?)子":"婊子", "biǎo\\s*xiàn\\s*":"表现",
     "chifan":"吃饭", "ch[oō]ngd[oò]ng":"冲动", "chong物":"宠物", "cao(练|作)":"操$1", "出gui":"出轨", "chu\\s*xian":"出现", "缠mian": "缠绵", "成shu": "成熟", "(?:赤|chi)\\s*lu[oǒ]": "赤裸", "春guang": "春光", "chun风":"春风", "chuang伴":"床伴", "沉mi":"沉迷", "沉lun":"沉沦", "刺ji":"刺激", "chao红":"潮红", "初chun":"初春", "＂ｃｈｉ　ｌｕｏ＂":"赤裸",
-    "dān\\s*xīn":"当心", "dang校": "党校", "da子": "鞑子", "大tui":"大腿", "dǎ\\s*suàn":"打算", "dengdai":"等待", "diao丝": "屌丝", "d[úu](?:\\s|&nbsp;|<br/>)*l[ìi]": "独立", "d[uú]\\s{0,2}c[áa]i":"独裁",  "d?[iì]f[āa]ng":"地方", "d[ìi]\\s*d[ūu]":"帝都", "di国|帝guo":"帝国", "du[oò]落":"堕落", "坠luò":"坠落",
+    "dān\\s*xīn":"当心", "dang校": "党校", "da子": "鞑子", "大tui":"大腿", "dǎ\\s*suàn":"打算", "dengdai":"等待", "电huà":"电话", "diao丝": "屌丝", "d[úu](?:\\s|&nbsp;|<br/>)*l[ìi]": "独立", "d[uú]\\s{0,2}c[áa]i":"独裁",  "d?[iì]f[āa]ng":"地方", "d[ìi]\\s*d[ūu]":"帝都", "di国|帝guo":"帝国", "du[oò]落":"堕落", "坠luò":"坠落",
     "f[ǎa]ngf[óo]":"仿佛", "fei踢": "飞踢", "feng流": "风流", "风liu": "风流", "f[èe]nn[ùu]":"愤怒", "fǎn\\s*yīng":"反应",
     "gao潮": "高潮", "高氵朝":"高潮", "gāo\\s*xìng\\s*":"高兴", "干chai": "干柴", "勾yin":"勾引", "gu[oò]ch[ée]ng":"过程", "gu[āa]n\\s*x[iì]":"关系", "g[ǎa]nji[àa]o":"感觉", "国wu院":"国务院", "gù\\s*yì\\s*":"故意", "guofen":"过分",
     "hā\\s*hā\\s*":"哈哈", "h[aǎ]ode":"好的", "hù士":"护士", "火qiang":"火枪", "há'guó":"韩国", "han住": "含住", "hai洛因": "海洛因", "红fen": "红粉", "火yao": "火药", "h[ǎa]oxi[àa]ng":"好像", "hu[áa]ngs[èe]":"黄色", "皇d[ìi]":"皇帝", "昏昏yu睡":"昏昏欲睡", "回dang":"回荡", "huí\\s*qù\\s*":"回去", "hé\\s*shì\\s*":"合适",
@@ -1563,7 +1566,7 @@ Rule.replace = {
     "pi[áa]o客":"嫖客", "p[áa]ngbi[āa]n":"旁边",
     "q[íi]gu[àa]i":"奇怪", "qing\\s*(ren|人)":"情人", "qin兽":"禽兽", "q[iī]ngch[uǔ]":"清楚", "què\\s*dìng":"确定", "球mi":"球迷", "青chun":"青春", "青lou":"青楼", "qingkuang":"情况", "qiang[　\\s]*jian":"强奸",
     "re\\s*nao":"热闹", "r[úu]gu[oǒ]":"如果", "r[oó]ngy[ìi]":"容易", "ru(房|白色)": "乳$1", "rén员":"人员", "rén形":"人形", "人chao":"人潮",  "renmen":"人名",
-    "she(门|术|手|程|击)":"射$1", "sudu":"速度", "shuijue":"睡觉", "shide":"是的", "sh[iì]ji[eè]":"世界", "sh[ií]ji[aā]n":"时间", "sh[ií]h[oò]u": "时候", "sh[ií]me":"什么", "si人":"私人", "shi女":"侍女", "shi身": "失身", "sh[ūu]j[ìi]":"书记", "shu女": "熟女", "shu[　\\s]?xiong":"酥胸", "(?:上|shang)chuang": "上床", "呻y[íi]n": "呻吟", "sh[ēe]ngzh[íi]": "生殖", "深gu": "深谷", "双xiu": "双修", "生r[ìi]": "生日", "si盐":"私盐", "shi卫":"侍卫", "si下":"私下", "sao扰":"骚扰", "ｓｈｕａｎｇ　ｆｅｎｇ":"双峰",
+    "上jiang":"上将", "she(门|术|手|程|击)":"射$1", "sudu":"速度", "shuijue":"睡觉", "shide":"是的", "sh[iì]ji[eè]":"世界", "sh[ií]ji[aā]n":"时间", "sh[ií]h[oò]u": "时候", "sh[ií]me":"什么", "si人":"私人", "shi女":"侍女", "shi身": "失身", "sh[ūu]j[ìi]":"书记", "shu女": "熟女", "shu[　\\s]?xiong":"酥胸", "(?:上|shang)chuang": "上床", "呻y[íi]n": "呻吟", "sh[ēe]ngzh[íi]": "生殖", "深gu": "深谷", "双xiu": "双修", "生r[ìi]": "生日", "si盐":"私盐", "shi卫":"侍卫", "si下":"私下", "sao扰":"骚扰", "ｓｈｕａｎｇ　ｆｅｎｇ":"双峰",
     "t[uū]r[áa]n":"突然", "tiaojiao": "调教", "偷qing":"偷情", "推dao": "推倒", "脱guang": "脱光", "t[èe]bi[ée]":"特别", "t[ōo]nggu[òo]":"通过", "同ju":"同居", "tian来tian去":"舔来舔去",
     "w[ēe]ixi[ée]":"威胁", "wèizh[ìi]":"位置", "wei员":"委员", "w[èe]nti":"问题", "wèi\\s*dào\\s*":"味道", "wú\\s*nài":"无奈", "weilai":"未来",
     "xiu长": "修长", "亵du": "亵渎", "xing福": "幸福", "小bo":"小波", "小niū":"小妞", "xiong([^a-z])":"胸$1", "小tui":"小腿", "xiang港":"香港", "xiàohuà":"笑话", "xiàn\\'zhì":"限制", "xiōng\\s*dì":"兄弟",
@@ -1578,7 +1581,7 @@ Rule.replace = {
     var oneWordReplace = {
         "b[āà]ng":"棒","bào":"爆","bà":"吧","bī":"逼","bō":"波",
         "cāo": "操", "cǎo": "草", "cào": "操", "chāng": "娼", "chang": "娼", "cháo": "潮", "chā": "插", "chéng": "成", "chōu": "抽", "chuáng": "床", "chún": "唇", "chūn": "春", "cuō": "搓", "cū": "粗",
-        "dǎng": "党", "dàng": "荡", "dāo": "刀", "dòng": "洞", "diao": "屌",
+        "dǎng": "党", "dàng": "荡", "dāo": "刀", "dòng": "洞", "diao": "屌", "diǎn": "点",
         "fǎ": "法", "féi": "肥", "fù": "妇",
         "guān": "官",
         "hán": "含", "hóu": "喉", "hòu": "厚", "h(u)?ā": "花", "huá": "华", "huò": "惑", "hùn": "混", "hún": "魂",
@@ -1631,11 +1634,26 @@ Rule.replaceAll = [
     '\\|每两个看言情的人当中，就有一个注册过可°乐°小°说°网的账号。',
     '最新章节全文阅读看书神器\\.yankuai\\.',
     '（800小说网 www.800Book.net 提供Txt免费下载）最新章节全文阅读-..-',
-    'txt电子书下载/',
     '\\[看本书最新章节请到求书 .\\]',
-    '最新章节全文阅读',
     '\\[800\\]\\[站页面清爽，广告少，',
+    '\\|优\\|优\\|小\\|说\\|更\\|新\\|最\\|快\\|www.uuxs.cc\\|',
+    '看本书最新章节请到800小说网（www.800book.net）',
+    '（800小说网 www.800Book.net 提供Txt免费下载）',
+    '热门小说最新章节全文阅读.。 更新好快。',
+    '-优－优－小－说－更－新－最－快x',
+    '亲，眼&快，大量小说免费看。',
+    '手机看小说哪家强手机阅',
+    '思ˊ路ˋ客，更新最快的！',
+    '（本章未完，请翻页）',
     '最新章节全文阅读（..首发）',
+    '最新章节全文阅读【首发】',
+    '最新章节全文阅读',
+    '来可乐网看小说',
+    'txt电子书下载/',
+    'txt全集下载',
+    'txt小说下载',
+    '（\\s*君子聚义堂）',
+    'readx;',
 
     // 包含 \P 的替换
     '\\P{1,2}[顶頂].{1,3}[点小].*?o?[mw，]',
