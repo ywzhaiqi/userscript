@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.1.7
+// @version        5.1.8
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -426,7 +426,7 @@ Rule.specialSite = [
         },
     },
     {siteName: '起点新版',
-        url: 'http://read\\.qidian\\.com/BookReader/\\d+,\\d+\\.aspx',
+        url: 'http://read\\.qidian\\.com/BookReader/.*\\.aspx',
         bookTitleSelector: '.story_title .textinfo a:nth-child(1)',
         titleSelector: '.story_title h1',
 

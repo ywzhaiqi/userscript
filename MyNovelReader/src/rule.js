@@ -115,7 +115,7 @@ Rule.specialSite = [
         },
     },
     {siteName: '起点新版',
-        url: 'http://read\\.qidian\\.com/BookReader/\\d+,\\d+\\.aspx',
+        url: 'http://read\\.qidian\\.com/BookReader/.*\\.aspx',
         bookTitleSelector: '.story_title .textinfo a:nth-child(1)',
         titleSelector: '.story_title h1',
 
