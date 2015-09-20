@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.1.8
+// @version        5.1.9
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -349,7 +349,7 @@ var Rule = {
     contentSelectors: ["#pagecontent", "#contentbox", "#bmsy_content", "#bookpartinfo", "#htmlContent",
         "#text_area", "#chapter_content", "#chapterContent", "#partbody",
         "#article_content", "#BookTextRead", "#booktext", "#BookText", "#readtext", "#text_c", "#txt_td", "#TXT", "#txt", "#zjneirong",
-        ".novel_content", ".readmain_inner", ".noveltext", ".booktext",
+        ".novel_content", ".readmain_inner", ".noveltext", ".booktext", ".yd_text2",
         "#contentTxt", "#oldtext", "#a_content", "#contents", "#content2", "#contentts", "#content", ".content"],
 
     // (测试)尝试查找书名。顶部章节导航的最后一个链接可能是书名。
@@ -1542,7 +1542,7 @@ Rule.specialSite = [
         titleSelector: '.title',
         bookTitleSelector: '.linkleft > a:last',
         contentReplace: [
-
+            '([^\\u4E00-\\u9FFF]+)长\\1风\\1文\\1学[^\\n]+t',
         ]
     },
     {siteName: "云来阁",
@@ -1556,6 +1556,7 @@ Rule.specialSite = [
             '《更新最快小说网站：雲来阁http://WWW.YunLaiGe.COM》',
             '◢百度搜索雲来阁，最新最快的小说更新◣',
             '【當你閱讀到此章節，請您移步到雲來閣閱讀最新章節，或者，雲來閣】',
+            '===百!度搜索**看书~阁小说名称**阅~读本书最~新章节===',
             '【最新更新】',
             '值得您收藏。。',
             '小说“小说章节',
@@ -1991,13 +1992,13 @@ Rule.replaceAll = [
     '⊙四⊙五⊙中⊙文☆→',
     '\\[ads:本站换新网址啦，速记方法：.*?\\]',
     '[》《｜～]无(?:.|&gt;)错(?:.|&gt;)小说',
-    '《无〈错《', '》无>错》', '\\+无\\+错\\+', '｜无｜错｜', '～无～错～',
     '`无`错`小说`www.``com', '＋无＋错＋小说＋3w＋＋',
     '\\|优\\|优\\|小\\|说\\|更\\|新\\|最\\|快Ｘ',
     '▲∴', '8，ww←',
     /www.23＋?[Ｗw][Ｘx].[Ｃc]om/ig,
     /热门推荐:、+/g,
     /h2&gt;/g,
+    '[《〈》>\\+｜～［\\]]无\\1错\\1', '》无>错》',
 
     '女凤免费小说抢先看', '女凤小说网全文字 无广告',
     '乐文小说', '《乐〈文《小说', '乐文移动网', '頂点小说', '頂點小說',
