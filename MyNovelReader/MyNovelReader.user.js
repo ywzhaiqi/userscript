@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.1.9
+// @version        5.2.0
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -1556,7 +1556,7 @@ Rule.specialSite = [
             '《更新最快小说网站：雲来阁http://WWW.YunLaiGe.COM》',
             '◢百度搜索雲来阁，最新最快的小说更新◣',
             '【當你閱讀到此章節，請您移步到雲來閣閱讀最新章節，或者，雲來閣】',
-            '===百!度搜索**看书~阁小说名称**阅~读本书最~新章节===',
+            '===百!?度搜索.*?新章节===',
             '【最新更新】',
             '值得您收藏。。',
             '小说“小说章节',
