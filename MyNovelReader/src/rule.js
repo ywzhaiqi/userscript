@@ -122,7 +122,7 @@ Rule.specialSite = [
         prevSelector: '#pagePrevRightBtn',
         nextSelector: '#pageNextRightBtn',
         indexSelector: function() {
-            return location.href.replace(/,\d+\.aspx$/, '.aspx').replace('BookReaderNew', 'BookReader');
+            return location.href.replace(/,\w+\.aspx$/, '.aspx').replace('BookReaderNew', 'BookReader');
         },
 
         mutationSelector: "#chaptercontainer",  // 内容生成监视器
@@ -352,6 +352,7 @@ Rule.specialSite = [
             "<无-错>",
             "—无—错—小说",
             "\\+无\\+错\\+",
+            "&amp;无&amp;错&amp;小说",
             "＋无＋错＋小说＋3Ｗ.＋＋com",
             "无错小说 www.quled[Ｕu].com",
         ],

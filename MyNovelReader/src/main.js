@@ -538,10 +538,14 @@ var App = {
     },
     openUrl: function(url, errorMsg) {
         if (url) {
-            // ff30 Greasemonkey 会报错：Greasemonkey 访问违规：unsafeWindow 无法调用 GM_openInTab。新建脚本采用按键调用也这样。
-            setTimeout(function() {
-                GM_openInTab(url, false);
-            }, 0);
+            if (location.host.indexOf('qidian.com') != -1) {  // 起点做了防盗链处理？
+                $('#header a')[0].click();
+            } else {
+                // ff30 Greasemonkey 会报错：Greasemonkey 访问违规：unsafeWindow 无法调用 GM_openInTab。新建脚本采用按键调用也这样。
+                setTimeout(function() {
+                    GM_openInTab(url, false);
+                }, 0);
+            }
         } else if (errorMsg) {
             UI.notice(errorMsg);
         }

@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.2.0
+// @version        5.2.1
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -433,7 +433,7 @@ Rule.specialSite = [
         prevSelector: '#pagePrevRightBtn',
         nextSelector: '#pageNextRightBtn',
         indexSelector: function() {
-            return location.href.replace(/,\d+\.aspx$/, '.aspx').replace('BookReaderNew', 'BookReader');
+            return location.href.replace(/,\w+\.aspx$/, '.aspx').replace('BookReaderNew', 'BookReader');
         },
 
         mutationSelector: "#chaptercontainer",  // 内容生成监视器
@@ -663,6 +663,7 @@ Rule.specialSite = [
             "<无-错>",
             "—无—错—小说",
             "\\+无\\+错\\+",
+            "&amp;无&amp;错&amp;小说",
             "＋无＋错＋小说＋3Ｗ.＋＋com",
             "无错小说 www.quled[Ｕu].com",
         ],
@@ -4340,10 +4341,14 @@ var App = {
     },
     openUrl: function(url, errorMsg) {
         if (url) {
-            // ff30 Greasemonkey 会报错：Greasemonkey 访问违规：unsafeWindow 无法调用 GM_openInTab。新建脚本采用按键调用也这样。
-            setTimeout(function() {
-                GM_openInTab(url, false);
-            }, 0);
+            if (location.host.indexOf('qidian.com') != -1) {  // 起点做了防盗链处理？
+                $('#header a')[0].click();
+            } else {
+                // ff30 Greasemonkey 会报错：Greasemonkey 访问违规：unsafeWindow 无法调用 GM_openInTab。新建脚本采用按键调用也这样。
+                setTimeout(function() {
+                    GM_openInTab(url, false);
+                }, 0);
+            }
         } else if (errorMsg) {
             UI.notice(errorMsg);
         }
