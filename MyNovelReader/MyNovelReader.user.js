@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.2.1
+// @version        5.2.2
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -1180,6 +1180,8 @@ Rule.specialSite = [
     {siteName: "热门小说网",
         url: 'http://www.remenxs.com/du_\\d+/\\d+/',
         bookTitleSelector: 'section.readhead > div.read_t > div.lf > a:nth-child(2)',
+        nextSelector: '.pagego > font:contains("下一章") + a',
+        prevSelector: '.pagego > font:contains("上一章") + a',
         contentSelector: ".yd_text2",
         contentRemove: '.adrs, .con_w, a',
         contentReplace: [
@@ -1713,6 +1715,7 @@ Rule.specialSite = [
             '≧哈，m\\.',
             '\\[\\s*超多好看\\]',
             '热门【首发】',
+            "===百度搜索.*?==="
         ]
     },
 

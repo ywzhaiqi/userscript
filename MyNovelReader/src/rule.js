@@ -869,6 +869,8 @@ Rule.specialSite = [
     {siteName: "热门小说网",
         url: 'http://www.remenxs.com/du_\\d+/\\d+/',
         bookTitleSelector: 'section.readhead > div.read_t > div.lf > a:nth-child(2)',
+        nextSelector: '.pagego > font:contains("下一章") + a',
+        prevSelector: '.pagego > font:contains("上一章") + a',
         contentSelector: ".yd_text2",
         contentRemove: '.adrs, .con_w, a',
         contentReplace: [
@@ -1402,6 +1404,7 @@ Rule.specialSite = [
             '≧哈，m\\.',
             '\\[\\s*超多好看\\]',
             '热门【首发】',
+            "===百度搜索.*?==="
         ]
     },
 
