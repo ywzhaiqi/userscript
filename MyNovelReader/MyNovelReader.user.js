@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.2.2
+// @version        5.2.3
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -392,9 +392,30 @@ Rule.specialSite = [
         }
     },
     // 特殊站点，需再次获取且跨域。添加 class="reader-ajax"，同时需要 src, charset
-    {siteName: "起点中文、起点女生、起点文学",
-        url: "^http://(www|read|readbook|wwwploy|cga|big5ploy)\\.(qidian|qdmm|qdwenxue)\\.com/BookReaderOld/.*",
+    {siteName: '起点新版',
+        url: 'http://read\\.qidian\\.com/BookReader/.*\\.aspx',
+        bookTitleSelector: '.story_title .textinfo a:nth-child(1)',
+        titleSelector: '.story_title h1',
 
+        prevSelector: '#pagePrevRightBtn',
+        nextSelector: '#pageNextRightBtn',
+        indexSelector: function() {
+            return location.href.replace(/,\w+\.aspx$/, '.aspx').replace('BookReaderNew', 'BookReader');
+        },
+
+        mutationSelector: "#chaptercontainer",  // 内容生成监视器
+            mutationChildCount: 1,
+        contentSelector: '#content, .bookreadercontent',
+        contentRemove: 'a[href="http://www.qidian.com"]',
+        contentReplace: [
+            '手机用户请到m.qidian.com阅读。'
+        ],
+        contentPatch: function(fakeStub){
+            fakeStub.find('script[src$=".txt"]').addClass('reader-ajax');
+        },
+    },
+    {siteName: "起点中文、起点女生、起点文学",
+        url: "^http://(www|read|readbook|wwwploy|cga|big5ploy)\\.(qidian|qdmm|qdwenxue)\\.com/BookReader/.*",
         // titleReg: "小说:(.*?)(?:独家首发)/(.*?)/.*",
         titleSelector: "#lbChapterName",
         bookTitleSelector: ".page_site > a:last",
@@ -421,28 +442,6 @@ Rule.specialSite = [
             '([\\u4e00-\\u9fa5])[%￥]+([\\u4e00-\\u9fa5])': '$1$2',  // 屏蔽词修正，例如：风%%骚
         },
         contentRemove: "span[id^='ad_'], .read_ma",
-        contentPatch: function(fakeStub){
-            fakeStub.find('script[src$=".txt"]').addClass('reader-ajax');
-        },
-    },
-    {siteName: '起点新版',
-        url: 'http://read\\.qidian\\.com/BookReader/.*\\.aspx',
-        bookTitleSelector: '.story_title .textinfo a:nth-child(1)',
-        titleSelector: '.story_title h1',
-
-        prevSelector: '#pagePrevRightBtn',
-        nextSelector: '#pageNextRightBtn',
-        indexSelector: function() {
-            return location.href.replace(/,\w+\.aspx$/, '.aspx').replace('BookReaderNew', 'BookReader');
-        },
-
-        mutationSelector: "#chaptercontainer",  // 内容生成监视器
-            mutationChildCount: 1,
-        contentSelector: '#content, .bookreadercontent',
-        contentRemove: 'a[href="http://www.qidian.com"]',
-        contentReplace: [
-            '手机用户请到m.qidian.com阅读。'
-        ],
         contentPatch: function(fakeStub){
             fakeStub.find('script[src$=".txt"]').addClass('reader-ajax');
         },
@@ -1124,7 +1123,8 @@ Rule.specialSite = [
         contentReplace: [
             '更新最快【】',
             '&lt;/dd&gt;',
-            '&lt;center&gt; &lt;fon color=red&gt;'
+            '&lt;center&gt; &lt;fon color=red&gt;',
+            '一秒记住【武林中文网.*',
         ]
     },
     {siteName: "乡村小说网",
