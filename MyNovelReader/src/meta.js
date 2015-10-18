@@ -57,7 +57,7 @@
 // @include        http://booklink.me/*
 
 // booklink.me
-// @include        http://www.shumilou.com/*/*.html
+// @include        http://www.shumilou.co/*/*.html
 // @include        http://www.wcxiaoshuo.com/wcxs-*-*/
 // @include        http://www.xiaoshuoz.com/wcxs-*-*/
 // @include        http://www.quledu.com/wcxs-*-*/
