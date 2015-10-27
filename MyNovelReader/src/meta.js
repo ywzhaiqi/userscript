@@ -279,6 +279,7 @@
 // @include        http://down1.qidian.com/bookall/*.htm*
 // @include        http://www.77nt.com/*/*.html
 // @include        http://www.quanbenba.com/yuedu/*/*/*.html
+// @include        http://*.sto.cc/*-*/
 
 // @exclude        */List.htm
 // @exclude        */List.html

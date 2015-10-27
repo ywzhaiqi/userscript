@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.2.4
+// @version        5.2.5
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -279,6 +279,7 @@
 // @include        http://down1.qidian.com/bookall/*.htm*
 // @include        http://www.77nt.com/*/*.html
 // @include        http://www.quanbenba.com/yuedu/*/*/*.html
+// @include        http://*.sto.cc/*-*/
 
 // @exclude        */List.htm
 // @exclude        */List.html
@@ -1552,7 +1553,7 @@ Rule.specialSite = [
         titleSelector: '.ctitle',
         bookTitleSelector: '#hlBookName',
         contentSelector: '#content',
-        contentRemove: '.bottomlink, a',
+        contentRemove: '.bottomlink, a, .cad, .footer, .adbottom',
         contentReplace: [
             '[☆★◆〓『【◎◇].*?(?:yunlaige|云 来 阁|ｙｕｎｌａｉｇｅ).*?[☆◆★〓』】◎◇]',
             '《更新最快小说网站：雲来阁http://WWW.YunLaiGe.COM》',
@@ -1721,6 +1722,17 @@ Rule.specialSite = [
             '===\\*\\*小说巴士.*?===',
         ]
     },
+    {siteName: "思兔阅读",
+        url: "http://\\w+\\.sto\\.cc/\\d+-\\d+/",
+        titleReg: "(.*?)_(.*?)_全文在線閱讀_思兔",
+        titlePos: 0,
+        //bookTitleSelector: "h1",
+        prevSelector: "a:contains('上壹頁')",
+        nextSelector: "a:contains('下壹頁')",
+        contentSelector: "div#BookContent",
+        contentRemove: 'span',
+    },
+
 
     // ===== 特殊的获取下一页链接
     {siteName: "看书啦",

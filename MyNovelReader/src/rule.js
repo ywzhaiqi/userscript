@@ -1241,7 +1241,7 @@ Rule.specialSite = [
         titleSelector: '.ctitle',
         bookTitleSelector: '#hlBookName',
         contentSelector: '#content',
-        contentRemove: '.bottomlink, a',
+        contentRemove: '.bottomlink, a, .cad, .footer, .adbottom',
         contentReplace: [
             '[☆★◆〓『【◎◇].*?(?:yunlaige|云 来 阁|ｙｕｎｌａｉｇｅ).*?[☆◆★〓』】◎◇]',
             '《更新最快小说网站：雲来阁http://WWW.YunLaiGe.COM》',
@@ -1410,6 +1410,17 @@ Rule.specialSite = [
             '===\\*\\*小说巴士.*?===',
         ]
     },
+    {siteName: "思兔阅读",
+        url: "http://\\w+\\.sto\\.cc/\\d+-\\d+/",
+        titleReg: "(.*?)_(.*?)_全文在線閱讀_思兔",
+        titlePos: 0,
+        //bookTitleSelector: "h1",
+        prevSelector: "a:contains('上壹頁')",
+        nextSelector: "a:contains('下壹頁')",
+        contentSelector: "div#BookContent",
+        contentRemove: 'span',
+    },
+
 
     // ===== 特殊的获取下一页链接
     {siteName: "看书啦",
