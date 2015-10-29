@@ -721,6 +721,11 @@ Parser.prototype = {
             }
         }
 
+        // 跟 include 比较
+        var includeUrl = this.info.includeUrl || this.getIncludeUrl();
+        if (!toRE(includeUrl).test(url))
+            return false;
+
         switch(true){
             case url === '':
             case Rule.nextUrlIgnore.some(function(re) { return toRE(re).test(url) }):
@@ -732,6 +737,23 @@ Parser.prototype = {
             default:
                 return true;
         }
+    },
+    getIncludeUrl: function() {
+        var includeUrl = this.info.url;
+
+        if (!includeUrl && typeof GM_info !== 'undefined') {
+            var locationHref = location.href;
+            GM_info.script.includes.some(function(includeStr) {
+                var iUrl = wildcardToRegExpStr(includeStr);
+                if (toRE(iUrl).test(locationHref)) {
+                    includeUrl = iUrl;
+                    return true;
+                }
+            });
+        }
+
+        this.info.includeUrl = includeUrl;
+        return includeUrl;
     },
     checkLinks: function(links){
         var self = this;

@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.2.5
+// @version        5.2.6
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -19,6 +19,7 @@
 // @grant          GM_openInTab
 // @grant          GM_setClipboard
 // @grant          GM_registerMenuCommand
+// @grant          GM_info
 // @grant          unsafeWindow
 // @homepageURL    https://greasyfork.org/scripts/292/
 // @require        http://cdn.staticfile.org/jquery/2.1.1/jquery.min.js
@@ -280,6 +281,7 @@
 // @include        http://www.77nt.com/*/*.html
 // @include        http://www.quanbenba.com/yuedu/*/*/*.html
 // @include        http://*.sto.cc/*-*/
+// @include        http://www.151xs.com/wuxiazuoxiong/*/chapter/*/
 
 // @exclude        */List.htm
 // @exclude        */List.html
@@ -2021,7 +2023,7 @@ Rule.replaceAll = [
     '[《〈》>\\+｜～［\\]]无\\1错\\1', '》无>错》',
 
     '女凤免费小说抢先看', '女凤小说网全文字 无广告',
-    '乐文小说', '《乐〈文《小说', '乐文移动网', '頂点小说', '頂點小說',
+    '乐文小说网?', '《乐〈文《小说', '乐文移动网', '頂点小说', '頂點小說',
     '追小说哪里快去眼快',
     '\\[书库\\].\\[774\\]\\[buy\\].kuai',
 
@@ -3760,6 +3762,11 @@ Parser.prototype = {
             }
         }
 
+        // 跟 include 比较
+        var includeUrl = this.info.includeUrl || this.getIncludeUrl();
+        if (!toRE(includeUrl).test(url))
+            return false;
+
         switch(true){
             case url === '':
             case Rule.nextUrlIgnore.some(function(re) { return toRE(re).test(url) }):
@@ -3771,6 +3778,23 @@ Parser.prototype = {
             default:
                 return true;
         }
+    },
+    getIncludeUrl: function() {
+        var includeUrl = this.info.url;
+
+        if (!includeUrl && typeof GM_info !== 'undefined') {
+            var locationHref = location.href;
+            GM_info.script.includes.some(function(includeStr) {
+                var iUrl = wildcardToRegExpStr(includeStr);
+                if (toRE(iUrl).test(locationHref)) {
+                    includeUrl = iUrl;
+                    return true;
+                }
+            });
+        }
+
+        this.info.includeUrl = includeUrl;
+        return includeUrl;
     },
     checkLinks: function(links){
         var self = this;

@@ -19,6 +19,7 @@
 // @grant          GM_openInTab
 // @grant          GM_setClipboard
 // @grant          GM_registerMenuCommand
+// @grant          GM_info
 // @grant          unsafeWindow
 // @homepageURL    https://greasyfork.org/scripts/292/
 // @require        http://cdn.staticfile.org/jquery/2.1.1/jquery.min.js
@@ -280,6 +281,7 @@
 // @include        http://www.77nt.com/*/*.html
 // @include        http://www.quanbenba.com/yuedu/*/*/*.html
 // @include        http://*.sto.cc/*-*/
+// @include        http://www.151xs.com/wuxiazuoxiong/*/chapter/*/
 
 // @exclude        */List.htm
 // @exclude        */List.html
