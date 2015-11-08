@@ -32,6 +32,7 @@
 // @include        http://readbook.qidian.com/bookreader/*,*.html
 // @include        http://read.qidian.com/BookReaderOld/*,*.aspx
 // @include        http://read.qidian.com/BookReader/*,*.aspx
+// @exclude        http://read.qidian.com/BookReader/vol,*,*.aspx
 // @include        http://wwwploy.qidian.com/BookReader/*,*.aspx
 // @include        http://free.qidian.com/Free/ReadChapter.aspx?*
 // @include        http://www.qdmm.com/BookReader/*,*.aspx
@@ -59,6 +60,8 @@
 
 // booklink.me
 // @include        http://www.shumilou.co/*/*.html
+// @include        http://www.shumilou.us/*/*.html
+// @include        http://www.shumilou.net/*/*/*.html
 // @include        http://www.wcxiaoshuo.com/wcxs-*-*/
 // @include        http://www.xiaoshuoz.com/wcxs-*-*/
 // @include        http://www.quledu.com/wcxs-*-*/

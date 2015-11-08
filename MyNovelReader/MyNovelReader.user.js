@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.2.6
+// @version        5.2.7
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -32,6 +32,7 @@
 // @include        http://readbook.qidian.com/bookreader/*,*.html
 // @include        http://read.qidian.com/BookReaderOld/*,*.aspx
 // @include        http://read.qidian.com/BookReader/*,*.aspx
+// @exclude        http://read.qidian.com/BookReader/vol,*,*.aspx
 // @include        http://wwwploy.qidian.com/BookReader/*,*.aspx
 // @include        http://free.qidian.com/Free/ReadChapter.aspx?*
 // @include        http://www.qdmm.com/BookReader/*,*.aspx
@@ -59,6 +60,8 @@
 
 // booklink.me
 // @include        http://www.shumilou.co/*/*.html
+// @include        http://www.shumilou.us/*/*.html
+// @include        http://www.shumilou.net/*/*/*.html
 // @include        http://www.wcxiaoshuo.com/wcxs-*-*/
 // @include        http://www.xiaoshuoz.com/wcxs-*-*/
 // @include        http://www.quledu.com/wcxs-*-*/
@@ -695,7 +698,7 @@ Rule.specialSite = [
         ]
     },
     {siteName: "书迷楼",
-        url: /^http:\/\/www\.shumilou\.com?\/.*html$/,
+        url: /^http:\/\/www\.shumilou\.(?:co|us)\/.*html$/,
         titleReg: /(.*) (.*?) 书迷楼/,
         titlePos: 1,
         contentSelector: "#content",
@@ -713,6 +716,7 @@ Rule.specialSite = [
             '《乐》《读》小说.乐读.Com',
             '纯文字在线阅读本站域名手机同步阅读请访问',
             '-优－优－小－说－更－新－最－快-www.uuxs.cc-',
+            '\\(本章免费\\)',
         ],
         fixImage: true,
         contentPatch: function(fakeStub){

@@ -381,7 +381,7 @@ Rule.specialSite = [
         ]
     },
     {siteName: "书迷楼",
-        url: /^http:\/\/www\.shumilou\.com?\/.*html$/,
+        url: /^http:\/\/www\.shumilou\.(?:co|us)\/.*html$/,
         titleReg: /(.*) (.*?) 书迷楼/,
         titlePos: 1,
         contentSelector: "#content",
@@ -399,6 +399,7 @@ Rule.specialSite = [
             '《乐》《读》小说.乐读.Com',
             '纯文字在线阅读本站域名手机同步阅读请访问',
             '-优－优－小－说－更－新－最－快-www.uuxs.cc-',
+            '\\(本章免费\\)',
         ],
         fixImage: true,
         contentPatch: function(fakeStub){
