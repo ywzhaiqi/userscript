@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.2.8
+// @version        5.2.9
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -1586,6 +1586,7 @@ Rule.specialSite = [
             '￥℉頂￥℉点￥℉小￥℉',
             '￡∝頂￡∝点￡∝小￡∝',
             '篮。色。书。巴,',
+            '<!--\\?\\(',   // 提取内容后出现的注释标志，造成后面的内容没了
         ]
     },
     {siteName: "乐文小说网",
