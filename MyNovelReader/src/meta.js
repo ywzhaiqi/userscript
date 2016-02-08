@@ -57,6 +57,7 @@
 
 // @include        http://tieba.baidu.com/p/*
 // @include        http://booklink.me/*
+// @include        https://booklink.me/*
 
 // booklink.me
 // @include        http://www.shumilou.co/*/*.html
