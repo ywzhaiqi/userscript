@@ -160,7 +160,12 @@ Rule.specialSite = [
         nextSelector: '#rightFloatBar_nextChapterBtn',
         prevSelector: '#rightFloatBar_preChapterBtn',
         indexSelector: function() {
-            return 'http://chuangshi.qq.com/bk/ds/' + unsafeWindow.bid + '-l.html';
+            var m = location.href.match(/\/bk\/\w+\/(.*?)-r-\d+.html/);
+            if (m) {
+                return 'http://chuangshi.qq.com/bk/ls/' + m[1] + '-l.html';
+            } else {
+                return 'http://chuangshi.qq.com/bk/ls/' + unsafeWindow.bid + '-l.html';
+            }
         },
 
         contentSelector: ".bookreadercontent",

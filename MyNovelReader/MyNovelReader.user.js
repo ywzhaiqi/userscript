@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.3.0
+// @version        5.3.1
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -481,7 +481,12 @@ Rule.specialSite = [
         nextSelector: '#rightFloatBar_nextChapterBtn',
         prevSelector: '#rightFloatBar_preChapterBtn',
         indexSelector: function() {
-            return 'http://chuangshi.qq.com/bk/ds/' + unsafeWindow.bid + '-l.html';
+            var m = location.href.match(/\/bk\/\w+\/(.*?)-r-\d+.html/);
+            if (m) {
+                return 'http://chuangshi.qq.com/bk/ls/' + m[1] + '-l.html';
+            } else {
+                return 'http://chuangshi.qq.com/bk/ls/' + unsafeWindow.bid + '-l.html';
+            }
         },
 
         contentSelector: ".bookreadercontent",
