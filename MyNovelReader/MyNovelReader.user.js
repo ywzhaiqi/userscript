@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.3.1
+// @version        5.3.2
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -271,7 +271,6 @@
 // @include        http://www.gengxin8.com/read/*/*.html
 // @include        http://www.365xs.org/books/*/*/*.html
 // @include        http://www.wuruo.com/files/article/html/*/*/*.html
-// @include        http://www.remenxs.com/du_*/*/
 // @include        http://*.8shuw.net/book/*/*.html
 // @include        http://www.pashuw.com/BookReader/*/*.html
 // @include        http://read.shanwen.com/html/*/*/*.html
@@ -289,6 +288,16 @@
 // @include        http://*.sto.cc/*-*/
 // @include        http://www.151xs.com/wuxiazuoxiong/*/chapter/*/
 // @include        http://www.qududu.net/book/*/*/*.html
+// @include        http://www.shumilou.co/*
+// @include        http://wanshu.com/*
+// @include        http://www.fenghuaju.com/*/*
+// @include        http://www.dashubao.cc/*/*
+// @include        http://www.yunlaige.com/*
+// @include        http://www.aiquxs.com/*
+// @include        http://www.qingdou.cc/chapter*
+// @include        http://www.shuyuewu.com/kan*
+// @include        http://www.1553.net/*/*
+// @include        http://www.269s.com/*/*/*
 
 // @exclude        */List.htm
 // @exclude        */List.html
@@ -799,6 +808,9 @@ Rule.specialSite = [
         // useiframe: true,
         // mutationSelector: "#content",
         // mutationChildCount: 1,
+        nextSelector: 'a:contains(下章)',
+        prevSelector: 'a:contains(上章)',
+        indexSelector: 'a:contains(目录)',
         contentRemove: ".vote",
         contentReplace: {
             "<a[^>]*>(.*?)</a>": "$1",
@@ -978,6 +990,7 @@ Rule.specialSite = [
             '｛首发｝|【首发】',
             '=长=风',
             '-优－优－小－说－更－新－最－快-\\.',
+            '发现一家非常好吃的手工曲奇店铺，可搜索淘宝.*',
             { "。\\.": "。" },
         ]
     },
@@ -1051,6 +1064,7 @@ Rule.specialSite = [
             '看.*?最新章节到长风文学',
             'R1152',
             '手机看小说哪家强\\?手机阅读网',
+            '\\.n√et',
         ]
     },
     {siteName: '笔下阁',

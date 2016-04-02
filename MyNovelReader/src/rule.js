@@ -478,6 +478,9 @@ Rule.specialSite = [
         // useiframe: true,
         // mutationSelector: "#content",
         // mutationChildCount: 1,
+        nextSelector: 'a:contains(下章)',
+        prevSelector: 'a:contains(上章)',
+        indexSelector: 'a:contains(目录)',
         contentRemove: ".vote",
         contentReplace: {
             "<a[^>]*>(.*?)</a>": "$1",
@@ -657,6 +660,7 @@ Rule.specialSite = [
             '｛首发｝|【首发】',
             '=长=风',
             '-优－优－小－说－更－新－最－快-\\.',
+            '发现一家非常好吃的手工曲奇店铺，可搜索淘宝.*',
             { "。\\.": "。" },
         ]
     },
@@ -730,6 +734,7 @@ Rule.specialSite = [
             '看.*?最新章节到长风文学',
             'R1152',
             '手机看小说哪家强\\?手机阅读网',
+            '\\.n√et',
         ]
     },
     {siteName: '笔下阁',

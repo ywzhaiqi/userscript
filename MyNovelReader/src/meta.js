@@ -271,7 +271,6 @@
 // @include        http://www.gengxin8.com/read/*/*.html
 // @include        http://www.365xs.org/books/*/*/*.html
 // @include        http://www.wuruo.com/files/article/html/*/*/*.html
-// @include        http://www.remenxs.com/du_*/*/
 // @include        http://*.8shuw.net/book/*/*.html
 // @include        http://www.pashuw.com/BookReader/*/*.html
 // @include        http://read.shanwen.com/html/*/*/*.html
@@ -289,6 +288,16 @@
 // @include        http://*.sto.cc/*-*/
 // @include        http://www.151xs.com/wuxiazuoxiong/*/chapter/*/
 // @include        http://www.qududu.net/book/*/*/*.html
+// @include        http://www.shumilou.co/*
+// @include        http://wanshu.com/*
+// @include        http://www.fenghuaju.com/*/*
+// @include        http://www.dashubao.cc/*/*
+// @include        http://www.yunlaige.com/*
+// @include        http://www.aiquxs.com/*
+// @include        http://www.qingdou.cc/chapter*
+// @include        http://www.shuyuewu.com/kan*
+// @include        http://www.1553.net/*/*
+// @include        http://www.269s.com/*/*/*
 
 // @exclude        */List.htm
 // @exclude        */List.html
