@@ -289,6 +289,8 @@
 // @include        http://*.sto.cc/*-*/
 // @include        http://www.151xs.com/wuxiazuoxiong/*/chapter/*/
 // @include        http://www.qududu.net/book/*/*/*.html
+// @include        http://www.qibookw.com/book/*/*/*.html
+// @include        http://www.foxy123.com/foxy123/book/*/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html
