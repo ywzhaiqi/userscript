@@ -21,12 +21,12 @@
 // @grant          GM_registerMenuCommand
 // @grant          GM_info
 // @grant          unsafeWindow
+// @connect        *
 // @homepageURL    https://greasyfork.org/scripts/292/
 // @require        http://cdn.staticfile.org/jquery/2.1.1/jquery.min.js
 // @require        http://cdn.staticfile.org/underscore.js/1.7.0/underscore-min.js
 // @require        http://cdn.staticfile.org/keymaster/1.6.1/keymaster.min.js
 // @require        https://greasyfork.org/scripts/2672-meihua-cn2tw/code/Meihua_cn2tw.js?version=7375
-// @resource fontawesomeWoff http://libs.baidu.com/fontawesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3
 
 // @include        http://read.qidian.com/*,*.aspx
 // @include        http://readbook.qidian.com/bookreader/*,*.html
@@ -119,6 +119,7 @@
 // @include        http://www.vodtw.com/Html/Book/*/*/*.html
 // @include        http://www.fhxs.com/read/*/*/*.shtml
 // @include        http://www.snwx.com/book/*/*/*.html
+// @include        http://www.33yq.com/read/*/*/*.shtml
 
 // www.sodu.so
 // @include        http://www.jiaodu8.com/*/*/*/*.html
@@ -257,7 +258,6 @@
 // @include        http://www.caihongwenxue.com/Html/Book/*/*/*.html
 // @include        http://www.shushuw.cn/shu/*/*.html
 // @include        http://www.78xs.com/article/*/*/*.shtml
-// @include        http://www.miaobige.com/*/*/*.html
 // @include        http://www.woaixiaoshuo.com/xiaoshuo/*/*/*.html
 // @include        http://www.ty2016.com/book/*/*.html
 // @include        http://wx.ty2016.com/*/*/*.html
@@ -298,6 +298,15 @@
 // @include        http://www.shuyuewu.com/kan*
 // @include        http://www.1553.net/*/*
 // @include        http://www.269s.com/*/*/*
+// @include        http://www.33yq.com/read/*/*/*.shtml
+// @include        http://www.50zw.co/book_*/*.html
+// @include        http://www.bqg5200.com/xiaoshuo/*/*/*.html
+// @include        http://www.50zw.la/book_*/*.html
+// @include        http://www.qu.la/book/*/*.html
+// @include        http://www.luoqiu.com/read/*/*.html
+// @include        http://www.biqugezw.com/*/*.html
+// @include        http://www.54tushu.com/book_library/chaptershow/theId/*.html
+// @include        http://www.snwx8.com/book/*/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html

@@ -351,6 +351,7 @@ Rule.specialSite = [
                 "/sss/da.jpg": "打", "/sss/maws.jpg": "吗？", "/sss/baw.jpg": "吧？", "/sss/wuc.jpg": "无", "/sss/maosu.jpg": "：“", "/sss/cuow.jpg": "错", "/sss/ziji.jpg": "自己", "/sss/shenme.jpg": "什么", "/sss/huiqub.jpg": "回去", "/sss/sjian.jpg": "时间", "/sss/zome.jpg": "怎么", "/sss/zhido.jpg": "知道", "/sss/xiaxin.jpg": "相信", "/sss/faxian.jpg": "发现", "/sss/shhua.jpg": "说话", "/sss/dajiex.jpg": "大姐", "/sss/dongxi.jpg": "东西", "/sss/erzib.jpg": "儿子", "/sss/guolair.jpg": "过来", "/sss/xiabang.jpg": "下班", "/sss/zangfl.jpg": "丈夫", "/sss/dianhua.jpg": "电话", "/sss/huilaim.jpg": "回来", "/sss/xiawu.jpg": "下午", "/sss/guoquu.jpg": "过去", "/sss/shangba.jpg": "上班", "/sss/mingtn.jpg": "明天", "/sss/nvrenjj.jpg": "女人", "/sss/shangwo.jpg": "上午", "/sss/shji.jpg": "手机", "/sss/xiaoxinyy.jpg": "小心", "/sss/furene.jpg": "夫人", "/sss/gongzih.jpg": "公子", "/sss/xiansg.jpg": "先生", "/sss/penyouxi.jpg": "朋友", "/sss/xiaoje.jpg": "小姐", "/sss/xifup.jpg": "媳妇", "/sss/nvxudjj.jpg": "女婿", "/sss/xondi.jpg": "兄弟", "/sss/lagong.jpg": "老公", "/sss/lapo.jpg": "老婆", "/sss/meimeid.jpg": "妹妹", "/sss/jiejiev.jpg": "姐姐", "/sss/jiemeiv.jpg": "姐妹", "/sss/xianggx.jpg": "相公", "/sss/6shenumev.jpg": "什么", "/sss/cuoaw.jpg": "错", "/sss/fpefnyoturxi.jpg": "朋友", "/sss/vfsjgigarn.jpg": "时间", "/sss/zzhiedo3.jpg": "知道", "/sss/zibjib.jpg": "自己", "/sss/qdonglxi.jpg": "东西", "/sss/hxiapxint.jpg": "相信", "/sss/fezrormre.jpg": "怎么", "/sss/nvdrfenfjfj.jpg": "女人", "/sss/jhiheejeieev.jpg": "姐姐", "/sss/xdifagojge.jpg": "小姐", "/sss/gggugolgair.jpg": "过来", "/sss/maoashu.jpg": "：“", "/sss/gnxnifawhu.jpg": "下午", "/sss/rgtugoqgugu.jpg": "过去", "/sss/khjukilkaim.jpg": "回来", "/sss/gxhigfadnoxihnyy.jpg": "小心", "/sss/bkbskhhuka.jpg": "说话", "/sss/xeieavnfsg.jpg": "先生", "/sss/yuhhfuiuqub.jpg": "回去", "/sss/pdianphua.jpg": "电话", "/sss/fabxianr.jpg": "发现", "/sss/feilrpto.jpg": "老婆", "/sss/gxronfdri.jpg": "兄弟", "/sss/flfaggofng.jpg": "老公", "/sss/tymyigngtyn.jpg": "明天", "/sss/dfshfhhfjfi.jpg": "手机", "/sss/gstjhranjgwjo.jpg": "上午", "/sss/fmgeyimehid.jpg": "妹妹", "/sss/gxgihftutp.jpg": "媳妇", "/sss/cerztifb.jpg": "儿子", "/sss/gfxgigagbfadng.jpg":"下班", "/sss/gstjhranjg.jpg":"下午", "/sss/hjeirerm6eihv.jpg": "姐妹", "/sss/edajihexr.jpg": "大姐", "/sss/wesfhranrrgba.jpg": "上班", "/sss/gfognggzigh.jpg": "公子", "/sss/frurtefne.jpg": "夫人", "/sss/fzagnggfbl.jpg": "丈夫", "/sss/nvdxfudfjfj.jpg": "女婿", "/sss/xdidafnggx.jpg": "相公", "/sss/zenme.jpg": "怎么", "/sss/gongzi.jpg": "公子", "/sss/ddefr.jpg": "",
             },
             ".*ddefr\\.jpg.*|无(?:错|.*cuoa?w\\.jpg.*)小说网不[少跳]字|w[a-z\\.]*om?|.*由[【无*错】].*会员手打[\\s\\S]*",
+            "是 由",
             "无错不跳字|无广告看着就是爽!|一秒记住.*|全文免费阅读.*|8 9 阅阅 读 网|看小说最快更新|“小#说看本书无广告更新最快”",
             "[\\x20-\\x7e》]?无(?:.|&gt;)错.小说.{1,2}[Ｗw]+.*?[cＣ][oＯ][mＭ]",
             "<无-错>",
@@ -661,6 +662,7 @@ Rule.specialSite = [
             '=长=风',
             '-优－优－小－说－更－新－最－快-\\.',
             '发现一家非常好吃的手工曲奇店铺，可搜索淘宝.*',
+            '强烈推荐一家手工曲奇店，在淘宝搜索.*',
             { "。\\.": "。" },
         ]
     },
@@ -735,6 +737,7 @@ Rule.specialSite = [
             'R1152',
             '手机看小说哪家强\\?手机阅读网',
             '\\.n√et',
+            '中文网',
         ]
     },
     {siteName: '笔下阁',
@@ -1279,6 +1282,9 @@ Rule.specialSite = [
             '<!--\\?[\\(<]',   // 提取内容后出现的注释标志，造成后面的内容没了
             '看书&nbsp;&nbsp; 要?',
             '喜欢网就上。',
+            '无弹窗小说，.*',
+            '本书最快更新网站请：.*',
+            '看无防盗章节的小说，请用搜索引擎搜索关键词.*',
         ]
     },
     {siteName: "乐文小说网",
@@ -1443,7 +1449,25 @@ Rule.specialSite = [
         url: "http://www\\.qududu\\.net/book/\\d+/\\d+/\\d+\\.html",
         contentSelector: "#kui-page-read-txt",
     },
-
+    {siteName: "33言情",
+        url: "http://www\\.33yq\\.com/read/\\d+/\\d+/\\d+\\.shtml",
+        contentRemove: 'a, .bottem, .red',
+    },
+    {siteName: "巫师图书馆.",
+        url: "http://www\\.54tushu\\.com/book_library/chaptershow/theId/\\d+\\.html",
+        bookTitleSelector: "#m-book-title",
+        titleSelector: "div.title",
+        prevSelector: "div.pageInfo a:first",
+        nextSelector: "div.pageInfo a:last",
+        indexSelector: "a[title='返回书页']",
+        useiframe: true,
+        timeout: 1000,
+        contentSelector: "div#ChapterContent",
+        contentPatch: function(fakeStub){
+          var bookTitle = fakeStub.find('meta[name="keywords"]').attr('content');
+          fakeStub.find('body').append('<div id="m-book-title">' + bookTitle + '</div>');
+        }
+    },
 
     // ===== 特殊的获取下一页链接
     {siteName: "看书啦",
@@ -1667,6 +1691,9 @@ Rule.replace = {
 
 // ===== 全局移除，在替换 <br> 为 \n 之后 =====
 Rule.replaceAll = [
+    '.*关注微信公众号.*',
+    '一秒记住.*',
+
     // 长文字替换
     '纯文字在线阅读本站域名手机同步阅读请访问',
     '\\(?未完待续请搜索飄天文學，小说更好更新更快!',

@@ -462,12 +462,8 @@ UI.skins["棕黄背景".uiTrans()] = "body { color: black; background-color: #C2
 UI.skins["经典皮肤".uiTrans()] = "body { color: black; background-color: #EAEAEE; } .title { background-color: #f0f0f0; }";
 
 
-var fontawesomeWoff = GM_getResourceURL('fontawesomeWoff');
-if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
-    fontawesomeWoff = "http://libs.baidu.com/fontawesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3";
-} else if (isChrome) {
-    fontawesomeWoff = "data:font/woff;charset=utf-8;base64," + fontawesomeWoff;
-}
+var fontawesomeWoff = "http://libs.baidu.com/fontawesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3";
+
 
 var Res = {
     CSS_MAIN: <%= res.mainCss %>

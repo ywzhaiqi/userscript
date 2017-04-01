@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.3.2
+// @version        5.3.4
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -21,12 +21,12 @@
 // @grant          GM_registerMenuCommand
 // @grant          GM_info
 // @grant          unsafeWindow
+// @connect        *
 // @homepageURL    https://greasyfork.org/scripts/292/
 // @require        http://cdn.staticfile.org/jquery/2.1.1/jquery.min.js
 // @require        http://cdn.staticfile.org/underscore.js/1.7.0/underscore-min.js
 // @require        http://cdn.staticfile.org/keymaster/1.6.1/keymaster.min.js
 // @require        https://greasyfork.org/scripts/2672-meihua-cn2tw/code/Meihua_cn2tw.js?version=7375
-// @resource fontawesomeWoff http://libs.baidu.com/fontawesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3
 
 // @include        http://read.qidian.com/*,*.aspx
 // @include        http://readbook.qidian.com/bookreader/*,*.html
@@ -119,6 +119,7 @@
 // @include        http://www.vodtw.com/Html/Book/*/*/*.html
 // @include        http://www.fhxs.com/read/*/*/*.shtml
 // @include        http://www.snwx.com/book/*/*/*.html
+// @include        http://www.33yq.com/read/*/*/*.shtml
 
 // www.sodu.so
 // @include        http://www.jiaodu8.com/*/*/*/*.html
@@ -257,7 +258,6 @@
 // @include        http://www.caihongwenxue.com/Html/Book/*/*/*.html
 // @include        http://www.shushuw.cn/shu/*/*.html
 // @include        http://www.78xs.com/article/*/*/*.shtml
-// @include        http://www.miaobige.com/*/*/*.html
 // @include        http://www.woaixiaoshuo.com/xiaoshuo/*/*/*.html
 // @include        http://www.ty2016.com/book/*/*.html
 // @include        http://wx.ty2016.com/*/*/*.html
@@ -298,6 +298,15 @@
 // @include        http://www.shuyuewu.com/kan*
 // @include        http://www.1553.net/*/*
 // @include        http://www.269s.com/*/*/*
+// @include        http://www.33yq.com/read/*/*/*.shtml
+// @include        http://www.50zw.co/book_*/*.html
+// @include        http://www.bqg5200.com/xiaoshuo/*/*/*.html
+// @include        http://www.50zw.la/book_*/*.html
+// @include        http://www.qu.la/book/*/*.html
+// @include        http://www.luoqiu.com/read/*/*.html
+// @include        http://www.biqugezw.com/*/*.html
+// @include        http://www.54tushu.com/book_library/chaptershow/theId/*.html
+// @include        http://www.snwx8.com/book/*/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html
@@ -681,6 +690,7 @@ Rule.specialSite = [
                 "/sss/da.jpg": "打", "/sss/maws.jpg": "吗？", "/sss/baw.jpg": "吧？", "/sss/wuc.jpg": "无", "/sss/maosu.jpg": "：“", "/sss/cuow.jpg": "错", "/sss/ziji.jpg": "自己", "/sss/shenme.jpg": "什么", "/sss/huiqub.jpg": "回去", "/sss/sjian.jpg": "时间", "/sss/zome.jpg": "怎么", "/sss/zhido.jpg": "知道", "/sss/xiaxin.jpg": "相信", "/sss/faxian.jpg": "发现", "/sss/shhua.jpg": "说话", "/sss/dajiex.jpg": "大姐", "/sss/dongxi.jpg": "东西", "/sss/erzib.jpg": "儿子", "/sss/guolair.jpg": "过来", "/sss/xiabang.jpg": "下班", "/sss/zangfl.jpg": "丈夫", "/sss/dianhua.jpg": "电话", "/sss/huilaim.jpg": "回来", "/sss/xiawu.jpg": "下午", "/sss/guoquu.jpg": "过去", "/sss/shangba.jpg": "上班", "/sss/mingtn.jpg": "明天", "/sss/nvrenjj.jpg": "女人", "/sss/shangwo.jpg": "上午", "/sss/shji.jpg": "手机", "/sss/xiaoxinyy.jpg": "小心", "/sss/furene.jpg": "夫人", "/sss/gongzih.jpg": "公子", "/sss/xiansg.jpg": "先生", "/sss/penyouxi.jpg": "朋友", "/sss/xiaoje.jpg": "小姐", "/sss/xifup.jpg": "媳妇", "/sss/nvxudjj.jpg": "女婿", "/sss/xondi.jpg": "兄弟", "/sss/lagong.jpg": "老公", "/sss/lapo.jpg": "老婆", "/sss/meimeid.jpg": "妹妹", "/sss/jiejiev.jpg": "姐姐", "/sss/jiemeiv.jpg": "姐妹", "/sss/xianggx.jpg": "相公", "/sss/6shenumev.jpg": "什么", "/sss/cuoaw.jpg": "错", "/sss/fpefnyoturxi.jpg": "朋友", "/sss/vfsjgigarn.jpg": "时间", "/sss/zzhiedo3.jpg": "知道", "/sss/zibjib.jpg": "自己", "/sss/qdonglxi.jpg": "东西", "/sss/hxiapxint.jpg": "相信", "/sss/fezrormre.jpg": "怎么", "/sss/nvdrfenfjfj.jpg": "女人", "/sss/jhiheejeieev.jpg": "姐姐", "/sss/xdifagojge.jpg": "小姐", "/sss/gggugolgair.jpg": "过来", "/sss/maoashu.jpg": "：“", "/sss/gnxnifawhu.jpg": "下午", "/sss/rgtugoqgugu.jpg": "过去", "/sss/khjukilkaim.jpg": "回来", "/sss/gxhigfadnoxihnyy.jpg": "小心", "/sss/bkbskhhuka.jpg": "说话", "/sss/xeieavnfsg.jpg": "先生", "/sss/yuhhfuiuqub.jpg": "回去", "/sss/pdianphua.jpg": "电话", "/sss/fabxianr.jpg": "发现", "/sss/feilrpto.jpg": "老婆", "/sss/gxronfdri.jpg": "兄弟", "/sss/flfaggofng.jpg": "老公", "/sss/tymyigngtyn.jpg": "明天", "/sss/dfshfhhfjfi.jpg": "手机", "/sss/gstjhranjgwjo.jpg": "上午", "/sss/fmgeyimehid.jpg": "妹妹", "/sss/gxgihftutp.jpg": "媳妇", "/sss/cerztifb.jpg": "儿子", "/sss/gfxgigagbfadng.jpg":"下班", "/sss/gstjhranjg.jpg":"下午", "/sss/hjeirerm6eihv.jpg": "姐妹", "/sss/edajihexr.jpg": "大姐", "/sss/wesfhranrrgba.jpg": "上班", "/sss/gfognggzigh.jpg": "公子", "/sss/frurtefne.jpg": "夫人", "/sss/fzagnggfbl.jpg": "丈夫", "/sss/nvdxfudfjfj.jpg": "女婿", "/sss/xdidafnggx.jpg": "相公", "/sss/zenme.jpg": "怎么", "/sss/gongzi.jpg": "公子", "/sss/ddefr.jpg": "",
             },
             ".*ddefr\\.jpg.*|无(?:错|.*cuoa?w\\.jpg.*)小说网不[少跳]字|w[a-z\\.]*om?|.*由[【无*错】].*会员手打[\\s\\S]*",
+            "是 由",
             "无错不跳字|无广告看着就是爽!|一秒记住.*|全文免费阅读.*|8 9 阅阅 读 网|看小说最快更新|“小#说看本书无广告更新最快”",
             "[\\x20-\\x7e》]?无(?:.|&gt;)错.小说.{1,2}[Ｗw]+.*?[cＣ][oＯ][mＭ]",
             "<无-错>",
@@ -991,6 +1001,7 @@ Rule.specialSite = [
             '=长=风',
             '-优－优－小－说－更－新－最－快-\\.',
             '发现一家非常好吃的手工曲奇店铺，可搜索淘宝.*',
+            '强烈推荐一家手工曲奇店，在淘宝搜索.*',
             { "。\\.": "。" },
         ]
     },
@@ -1065,6 +1076,7 @@ Rule.specialSite = [
             'R1152',
             '手机看小说哪家强\\?手机阅读网',
             '\\.n√et',
+            '中文网',
         ]
     },
     {siteName: '笔下阁',
@@ -1609,6 +1621,9 @@ Rule.specialSite = [
             '<!--\\?[\\(<]',   // 提取内容后出现的注释标志，造成后面的内容没了
             '看书&nbsp;&nbsp; 要?',
             '喜欢网就上。',
+            '无弹窗小说，.*',
+            '本书最快更新网站请：.*',
+            '看无防盗章节的小说，请用搜索引擎搜索关键词.*',
         ]
     },
     {siteName: "乐文小说网",
@@ -1773,7 +1788,25 @@ Rule.specialSite = [
         url: "http://www\\.qududu\\.net/book/\\d+/\\d+/\\d+\\.html",
         contentSelector: "#kui-page-read-txt",
     },
-
+    {siteName: "33言情",
+        url: "http://www\\.33yq\\.com/read/\\d+/\\d+/\\d+\\.shtml",
+        contentRemove: 'a, .bottem, .red',
+    },
+    {siteName: "巫师图书馆.",
+        url: "http://www\\.54tushu\\.com/book_library/chaptershow/theId/\\d+\\.html",
+        bookTitleSelector: "#m-book-title",
+        titleSelector: "div.title",
+        prevSelector: "div.pageInfo a:first",
+        nextSelector: "div.pageInfo a:last",
+        indexSelector: "a[title='返回书页']",
+        useiframe: true,
+        timeout: 1000,
+        contentSelector: "div#ChapterContent",
+        contentPatch: function(fakeStub){
+          var bookTitle = fakeStub.find('meta[name="keywords"]').attr('content');
+          fakeStub.find('body').append('<div id="m-book-title">' + bookTitle + '</div>');
+        }
+    },
 
     // ===== 特殊的获取下一页链接
     {siteName: "看书啦",
@@ -1997,6 +2030,9 @@ Rule.replace = {
 
 // ===== 全局移除，在替换 <br> 为 \n 之后 =====
 Rule.replaceAll = [
+    '.*关注微信公众号.*',
+    '一秒记住.*',
+
     // 长文字替换
     '纯文字在线阅读本站域名手机同步阅读请访问',
     '\\(?未完待续请搜索飄天文學，小说更好更新更快!',
@@ -2522,7 +2558,9 @@ $.nano = function(template, data) {
     return template.replace(/\{([\w\.]*)\}/g, function(str, key) {
         var keys = key.split("."),
             v = data[keys.shift()];
-        for (var i = 0, l = keys.length; i < l; i++) v = v[keys[i]];
+        try {
+            for (var i = 0, l = keys.length; i < l; i++) v = v[keys[i]];
+        } catch (e) {}
         return (typeof v !== "undefined" && v !== null) ? v : "";
     });
 };
@@ -3063,12 +3101,8 @@ UI.skins["棕黄背景".uiTrans()] = "body { color: black; background-color: #C2
 UI.skins["经典皮肤".uiTrans()] = "body { color: black; background-color: #EAEAEE; } .title { background-color: #f0f0f0; }";
 
 
-var fontawesomeWoff = GM_getResourceURL('fontawesomeWoff');
-if (!fontawesomeWoff || fontawesomeWoff.length < 10) {
-    fontawesomeWoff = "http://libs.baidu.com/fontawesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3";
-} else if (isChrome) {
-    fontawesomeWoff = "data:font/woff;charset=utf-8;base64," + fontawesomeWoff;
-}
+var fontawesomeWoff = "http://libs.baidu.com/fontawesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3";
+
 
 var Res = {
     CSS_MAIN: '@font-face {\n    font-family: "FontAwesome";\n    src: url({fontawesomeWoff});\n    font-weight: normal;\n    font-style: normal;\n}\nbody > a { display:none !important; }\n.hidden {\n    display: none;\n}\n.quiet-mode {\n    display: none;\n}\nbody {\n    background: #F3F2EE;\n    color: #1F0909;\n    padding: 0px;\n    margin: 0px;\n    font-family: "Microsoft YaHei UI", 微软雅黑, 新宋体, 宋体, arial;\n}\na { color: #065488; }\na:link { text-decoration: none; }\n#mynovelreader-content {\n    width: {content_width};\n    font-size: {font_size};\n    font-family: {font_family};\n    line-height: {text_line_height};\n    margin-left:auto;\n    margin-right:auto;\n    padding-bottom: 15px;\n}\narticle {\n    margin-top: 55px;\n    word-wrap: break-word;\n}\narticle h1 {\n    clear: both;\n    line-height: 50px;\n    font-size: {title_font_size};\n    font-weight: normal;\n    margin: 25px -20px;\n    padding: 0 20px 10px;\n    border-bottom: 1px solid rgba(0,0,0,.25);\n    font-weight: normal;\n    text-transform: none;\n}\n.chapter-footer-nav {\n    text-align:center;\n    font-size:0.9em;\n    margin:-10px 0px 30px 0px;\n}\n#loading {\n    color: white;\n    text-align: center;\n    font: 12px "微软雅黑", "宋体", "Times New Roman", "Verdana";\n    margin-top: 20px;\n    margin-left: auto;\n    margin-right: auto;\n    width: 376px;\n    height: 32px;\n    line-height: 32px;\n    border-radius: 20px;\n    border: 1px solid #666;\n    background-color: #333;\n}\n#loading img {\n    vertical-align: middle;\n}\n#loading a {\n    color: white;\n}\n#preferencesBtn{\n    position: fixed;\n    top: 10px;\n    right: 10px;\n    z-index: 1597;\n}\n#alert {\n    position: fixed;\n    z-index: 100;\n    float: auto;\n    width: auto;\n    height: auto;\n    top: 10px;\n    left: 500px;\n    background: rgba(215, 240, 253, 0.65);\n    color: #2d7091;\n    border: 1px solid rgba(45,112,145,0.3);\n    border-radius: 4px;\n    text-shadow: 0 1px 0 #fff;\n}\n#alert p {\n    font-size: 13px;\n    margin: 6px;\n}\nimg.blockImage {clear: both;float: none;display: block;margin-left: auto;margin-right: auto;}\n#menu-bar {\n    border: solid rgba(0, 100, 255, .9);\n    border-width: 3px 2px 3px 0px;\n    position: fixed;\n    left: 0px;\n    top: 40%;\n    height: 100px;\n    width: 2px;\n    z-index: 199;\n    {menu-bar-hidden}\n}\n#menu-bar { \n    top: 0px;\n    height: 100%;\n    width: 1px;\n    background: transparent;\n    border: none;\n}\n#menu {\n    position: fixed;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    z-index: 100;\n    width: 270px;\n    max-width: 100%;\n    background: #333;\n    overflow-y: auto;\n}\n#menu:after {\n    content: "";\n    display: block;\n    position: absolute;\n    top: 46px;\n    bottom: 0;\n    right: 0;\n    width: 1px;\n    background: rgba(0,0,0,0.6);\n    box-shadow: 0 0 5px 2px rgba(0,0,0,0.6);\n}\n#header{\n    color: #777;\n    margin-top: 0;\n    border-top: 1px solid rgba(0,0,0,0.3);\n    background: #404040;\n    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);\n    text-shadow: 0 1px 0 rgba(0,0,0,0.5);\n    padding: 10px 12px;\n    text-transform: uppercase;\n    font-weight: bold;\n    font-size: 20px;\n}\n#header a {\n    color: #777777;\n}\n#divider {\n    position: relative;\n    z-index: 300;\n    border-top: 1px solid rgba(255,255,255,0.01);\n    border-bottom: 1px solid rgba(0,0,0,0.3);\n    margin: 0;\n    height: 4px;\n    background: rgba(0,0,0,0.2);\n    box-shadow: 0 1px 0 rgba(255,255,255,0.05), inset 0 1px 3px rgba(0,0,0,0.3);\n}\n#chapter-list {\n    position: relative;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    z-index: 200;\n    margin: 0;\n    padding: 0;\n    cursor: pointer;\n    list-style: none;\n    overflow-y: auto;\n}\n.chapter {\n    list-style: none;\n}\n.chapter:last-child {\n    border-bottom: 1px solid rgba(0,0,0,0.3);\n    box-shadow: 0 1px 0 rgba(255,255,255,0.05);\n}\n.chapter div {\n    color: #ccc;\n    font-size: 15px;\n    padding: 8px 20px;\n    border-top: 1px solid rgba(0,0,0,0.3);\n    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);\n    text-shadow: 0 1px 0 rgba(0,0,0,0.5);\n    display: block;\n    text-decoration: none;\n    text-overflow: ellipsis;\n    overflow: hidden;\n    white-space: nowrap;\n    cursor: pointer;\n}\n.chapter div:before {\n    content: "\\f105";\n    width: 20px;\n    margin-left: -10px;\n    float: left;\n    font-family: "FontAwesome" !important;\n    text-align: center;\n}\n.chapter div:hover {\n    background: #404040;\n    color: #fff;\n    outline: 0;\n}\n.chapter.active div {\n    background: #1a1a1a;\n    color: #fff;\n    font-size: 16px;\n    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);\n}\n::-webkit-scrollbar {\n    height: 9px !important;\n    width: 9px !important;\n}\n::-webkit-scrollbar-thumb {\n    background-color: #7D7D7D !important;\n    border-radius: 3px !important;\n}\n::-webkit-scrollbar-track-piece {\n    background-color: rgba(0,0,0,.25) !important;\n}'
@@ -4186,17 +4220,17 @@ var App = {
     clean: function() {
         $('body > *:not("#container, .readerbtn, #reader_preferences, #uil_blocker,iframe[name=\'mynovelreader-iframe\']")').remove();
         $('link[rel="stylesheet"]').remove();
-        $('body').removeAttr('style');
+        $('body, #container').removeAttr('style');
 
         if (location.host.indexOf('qidian') > 0) {
             unsafeWindow.jQuery(document).off("selectstart").off("contextmenu");
         }
     },
     cleanAgain: function() {
-        var host = location.host;
-        if (!host.match(/qidian\.com|zongheng\.com/)) {  // 只在起点、纵横等网站运行
-            return;
-        }
+        // var host = location.host;
+        // if (!host.match(/qidian\.com|zongheng\.com/)) {  // 只在起点、纵横等网站运行
+        //     return;
+        // }
 
         // 再次移除其它不相关的，起点，纵横中文有时候有问题
         setTimeout(App.clean, 2000);

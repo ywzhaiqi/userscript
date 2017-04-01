@@ -299,17 +299,17 @@ var App = {
     clean: function() {
         $('body > *:not("#container, .readerbtn, #reader_preferences, #uil_blocker,iframe[name=\'mynovelreader-iframe\']")').remove();
         $('link[rel="stylesheet"]').remove();
-        $('body').removeAttr('style');
+        $('body, #container').removeAttr('style');
 
         if (location.host.indexOf('qidian') > 0) {
             unsafeWindow.jQuery(document).off("selectstart").off("contextmenu");
         }
     },
     cleanAgain: function() {
-        var host = location.host;
-        if (!host.match(/qidian\.com|zongheng\.com/)) {  // 只在起点、纵横等网站运行
-            return;
-        }
+        // var host = location.host;
+        // if (!host.match(/qidian\.com|zongheng\.com/)) {  // 只在起点、纵横等网站运行
+        //     return;
+        // }
 
         // 再次移除其它不相关的，起点，纵横中文有时候有问题
         setTimeout(App.clean, 2000);
