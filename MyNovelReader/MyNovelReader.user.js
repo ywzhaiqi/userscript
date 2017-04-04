@@ -1,4 +1,4 @@
-// ==UserScript==
+﻿// ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
@@ -307,6 +307,21 @@
 // @include        http://www.biqugezw.com/*/*.html
 // @include        http://www.54tushu.com/book_library/chaptershow/theId/*.html
 // @include        http://www.snwx8.com/book/*/*/*.html
+// @include        http://read.qidian.com/chapter/*
+// @include        http://www.23zw.me/olread/*/*/*.html
+// @include        http://www.piaotian.com/html/*/*/*.html
+// @include        http://www.dhzw.org/book/*/*/*.html
+// @include        http://www.biqiuge.com/book/*/*.html
+// @include        http://www.baquge.com/files/article/html/*/*/*.html
+// @include        http://www.qu.la/book/*/*.html
+// @include        http://www.bxwx9.org/b/*/*/*.html
+// @include        http://www.miaobige.com/*/*/*.html
+// @include        http://www.remenxs.com/du_*/*/
+// @include        http://www.shuhai.com/read/*/*.html
+// @include        http://www.hbooker.com/chapter/book_chapter_detail/*
+// @include        http://www.mianhuatang.la/*/*/*.html
+// @include        http://www.paomov.com/*/*/*.html
+// @include        http://www.moyuanwenxue.com/xiaoshuo/*/*/*.htm
 
 // @exclude        */List.htm
 // @exclude        */List.html
@@ -1065,7 +1080,7 @@ Rule.specialSite = [
         }
     },
     {siteName: '23中文',
-        url: '^http://www\\.23zw\\.com/.*\\.html',
+        url: '^http://www\\.23zw\\.(com|me)/.*\\.html',
         contentReplace: [
             '本文由首发',
             '章节更新最快',
@@ -1159,7 +1174,7 @@ Rule.specialSite = [
         contentSelector: '#ChapterBody',
     },
     {siteName: "武林中文网",
-        url: '^http://www\\.50zw\\.com/book_\\d+/\\d+\\.html',
+        url: '^http://www\\.50zw\\.(com|co|la)/book_\\d+/\\d+\\.html',
         bookTitleSelector: '.srcbox > a:last',
         contentReplace: [
             '更新最快【】',
@@ -1428,7 +1443,7 @@ Rule.specialSite = [
         contentSelector: "#showcontent",
     },
     {siteName: "飘天文学",
-        url: "http://www\\.piaotian\\.net/html/\\d+/\\d+/\\d+\\.html",
+        url: "http://www\\.piaotian\\.(net|com)/html/\\d+/\\d+/\\d+\\.html",
         // titleReg: "(.*)最新章节,(.*),飘天文学",
         bookTitleSelector: '#content > h1 > a',
         contentSelector: "#content",
@@ -1438,7 +1453,8 @@ Rule.specialSite = [
             /[{〖]请在百度搜索.*[}〗]|.(?:百度搜索飄天|无弹窗小说网).*\.Net.|\[飄天.*无弹窗小说网\]/ig,
             '\\{飘天文学www.piaotian.net感谢各位书友的支持，您的支持就是我们最大的动力\\}',
             '章节更新最快',
-            '支持网站发展，逛淘宝买东西.*'
+            '支持网站发展，逛淘宝买东西.*',
+            '天才壹秒記住，為您提供精彩閱讀。.*'
         ],
     },
     {siteName: "天使小说网",
@@ -1878,7 +1894,85 @@ Rule.specialSite = [
             }
         }
 	},
+	{siteName: '起点新版-阅文',
+        url: 'http://read\\.qidian\\.com/chapter/.*',
+        bookTitleSelector: '#bookImg',
+        titleSelector: '.j_chapterName h1',
 
+        prevSelector: '#j_chapterPrev',
+        nextSelector: '#j_chapterNext',
+        indexSelector: function(obj) {
+            var url = obj.find(".chapter-control a:contains('目录')").attr('href');
+            return url;
+        },
+
+        //mutationSelector: "#chaptercontainer",  // 内容生成监视器
+        //mutationChildCount: 1,
+        contentSelector: '.read-content.j_readContent',
+        contentReplace: [
+            '手机用户请到m.qidian.com阅读。'
+        ],
+    },
+	{siteName: '书海小说',
+	    url: '^http://www\\.shuhai\\.com/read/\\d+/\\d+\\.html',
+	    bookTitleSelector: '.path2 a:nth-of-type(3)',
+	    titleSelector: '.read_top h1',
+	    prevSelector: '.read .read_dwn p a:nth-of-type(1)',
+	    indexSelector: '.read .read_dwn p a:nth-of-type(2)',
+	    nextSelector: '.read .read_dwn p a:nth-of-type(3)',
+	    contentSelector: '.read .txt',
+	    contentRemove: '',
+	    contentReplace: [
+	        '',
+	        {"":""},
+	    ],
+	},
+	{siteName: "欢乐书客",
+        url: "^http://www\\.hbooker\\.com/chapter/book_chapter_detail/\\d+",
+        bookTitleSelector: ".breakcrumb > a:last",
+        titleSelector: ".book-read-box .read-hd h3",
+        useiframe: true,
+        timeout: 500,
+        contentSelector: ".book-read-box .read-bd",
+        contentRemove: ".book-read-box .barrage, #J_BtnGuide, .book-read-box .read-bd i.num, .chapter i, .J_Num, .num, .book-read-box .read-hd p:nth-of-type(1) span",
+
+        indexSelector: ".book-read-page a.btn-list",
+        nextUrl: function ($doc){
+        return $doc.find('#J_BtnPageNext').attr('data-href');
+        },
+        prevUrl: function ($doc){
+        return $doc.find('#J_BtnPagePrev').attr('data-href');
+        },
+	},
+    {siteName: '棉花糖小说网',
+        url: '^http://www\\.mianhuatang\\.la/\\d+/\\d+/\\d+\\.html',
+        bookTitleSelector: '.nav > a:nth-of-type(3)',
+        titleSelector: '.read_title h1',
+        prevSelector: '.pagego a:nth-of-type(1)',
+        indexSelector: '.pagego a:nth-of-type(2)',
+        nextSelector: '.pagego a:nth-of-type(3)',
+        contentSelector: '.content',
+        contentRemove: 'a, .contads',
+        contentReplace: [
+            '下载本书最新的txt电子书请点击：',
+            '本书手机阅读：',
+            '发表书评：',
+            '为了方便下次阅读，你可以在点击下方的.*谢谢您的支持！！',
+            '',
+            { '': '' },
+        ],
+    },
+    {siteName: '墨缘文学网',
+        url: '^http://www\\.moyuanwenxue\\.com/xiaoshuo/\\d+/\\d+/\\d+\\.htm',
+        contentSelector: '#chapterContent',
+	    contentReplace: [
+	        '',
+	        {"ＺＨＡＮ":"战"},
+	        {"LU":"路"},
+	        {"ＳＨＯＵ　　ＱＩＡＮＧ":"手枪"},
+	        {"ｓｉ　ｗａｎｇ":"死亡"},
+	    ],
+    },
 ];
 
 // ===== 小说拼音字、屏蔽字修复 =====
@@ -1907,6 +2001,9 @@ Rule.replace = {
     // "？(,|，)": "？",
     //"”(,|，|。)": "”",
     "@{3,}": "",
+
+    // === 段末的多余的r ===
+    "r<br>":"<br>",
 
     // === 一些特殊的替换 ===
     "\\[+CP.*(http://file.*\\.jpg)\\]+": "<img src='$1'>",
@@ -2018,7 +2115,8 @@ Rule.replace = {
         // ===其他修正===
         "弥俩": "你俩",
         "妳": "你",
-        "圞|垩|卝|龘":""
+        "圞|垩|卝|龘":"",
+        "大6":"大陆",
     };
 
     _.each(oneWordReplace, function(value, key) {
