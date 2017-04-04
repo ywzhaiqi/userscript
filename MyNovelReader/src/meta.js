@@ -307,6 +307,21 @@
 // @include        http://www.biqugezw.com/*/*.html
 // @include        http://www.54tushu.com/book_library/chaptershow/theId/*.html
 // @include        http://www.snwx8.com/book/*/*/*.html
+// @include        http://read.qidian.com/chapter/*
+// @include        http://www.23zw.me/olread/*/*/*.html
+// @include        http://www.piaotian.com/html/*/*/*.html
+// @include        http://www.dhzw.org/book/*/*/*.html
+// @include        http://www.biqiuge.com/book/*/*.html
+// @include        http://www.baquge.com/files/article/html/*/*/*.html
+// @include        http://www.qu.la/book/*/*.html
+// @include        http://www.bxwx9.org/b/*/*/*.html
+// @include        http://www.miaobige.com/*/*/*.html
+// @include        http://www.remenxs.com/du_*/*/
+// @include        http://www.shuhai.com/read/*/*.html
+// @include        http://www.hbooker.com/chapter/book_chapter_detail/*
+// @include        http://www.mianhuatang.la/*/*/*.html
+// @include        http://www.paomov.com/*/*/*.html
+// @include        http://www.moyuanwenxue.com/xiaoshuo/*/*/*.htm
 
 // @exclude        */List.htm
 // @exclude        */List.html

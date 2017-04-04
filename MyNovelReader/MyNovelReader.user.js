@@ -1,9 +1,9 @@
-﻿// ==UserScript==
+// ==UserScript==
 // @id             mynovelreader@ywzhaiqi@gmail.com
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.3.4
+// @version        5.3.5
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -1894,85 +1894,79 @@ Rule.specialSite = [
             }
         }
 	},
-	{siteName: '起点新版-阅文',
-        url: 'http://read\\.qidian\\.com/chapter/.*',
-        bookTitleSelector: '#bookImg',
-        titleSelector: '.j_chapterName h1',
 
-        prevSelector: '#j_chapterPrev',
-        nextSelector: '#j_chapterNext',
-        indexSelector: function(obj) {
-            var url = obj.find(".chapter-control a:contains('目录')").attr('href');
-            return url;
-        },
+    {siteName: '起点新版-阅文',
+         url: 'http://read\\.qidian\\.com/chapter/.*',
+         bookTitleSelector: '#bookImg',
+         titleSelector: '.j_chapterName h1',
 
-        //mutationSelector: "#chaptercontainer",  // 内容生成监视器
-        //mutationChildCount: 1,
-        contentSelector: '.read-content.j_readContent',
-        contentReplace: [
-            '手机用户请到m.qidian.com阅读。'
-        ],
+         prevSelector: '#j_chapterPrev',
+         nextSelector: '#j_chapterNext',
+         indexSelector: function(obj) {
+             var url = obj.find(".chapter-control a:contains('目录')").attr('href');
+             return url;
+         },
+
+         //mutationSelector: "#chaptercontainer",  // 内容生成监视器
+         //mutationChildCount: 1,
+         contentSelector: '.read-content.j_readContent',
+         contentReplace: [
+             '手机用户请到m.qidian.com阅读。'
+         ],
     },
-	{siteName: '书海小说',
-	    url: '^http://www\\.shuhai\\.com/read/\\d+/\\d+\\.html',
-	    bookTitleSelector: '.path2 a:nth-of-type(3)',
-	    titleSelector: '.read_top h1',
-	    prevSelector: '.read .read_dwn p a:nth-of-type(1)',
-	    indexSelector: '.read .read_dwn p a:nth-of-type(2)',
-	    nextSelector: '.read .read_dwn p a:nth-of-type(3)',
-	    contentSelector: '.read .txt',
-	    contentRemove: '',
-	    contentReplace: [
-	        '',
-	        {"":""},
-	    ],
-	},
-	{siteName: "欢乐书客",
-        url: "^http://www\\.hbooker\\.com/chapter/book_chapter_detail/\\d+",
-        bookTitleSelector: ".breakcrumb > a:last",
-        titleSelector: ".book-read-box .read-hd h3",
-        useiframe: true,
-        timeout: 500,
-        contentSelector: ".book-read-box .read-bd",
-        contentRemove: ".book-read-box .barrage, #J_BtnGuide, .book-read-box .read-bd i.num, .chapter i, .J_Num, .num, .book-read-box .read-hd p:nth-of-type(1) span",
+    {siteName: '书海小说',
+       url: '^http://www\\.shuhai\\.com/read/\\d+/\\d+\\.html',
+       bookTitleSelector: '.path2 a:nth-of-type(3)',
+       titleSelector: '.read_top h1',
+       prevSelector: '.read .read_dwn p a:nth-of-type(1)',
+       indexSelector: '.read .read_dwn p a:nth-of-type(2)',
+       nextSelector: '.read .read_dwn p a:nth-of-type(3)',
+       contentSelector: '.read .txt',
+    },
+    {siteName: "欢乐书客",
+         url: "^http://www\\.hbooker\\.com/chapter/book_chapter_detail/\\d+",
+         bookTitleSelector: ".breakcrumb > a:last",
+         titleSelector: ".book-read-box .read-hd h3",
+         useiframe: true,
+         timeout: 500,
+         contentSelector: ".book-read-box .read-bd",
+         contentRemove: ".book-read-box .barrage, #J_BtnGuide, .book-read-box .read-bd i.num, .chapter i, .J_Num, .num, .book-read-box .read-hd p:nth-of-type(1) span",
 
-        indexSelector: ".book-read-page a.btn-list",
-        nextUrl: function ($doc){
-        return $doc.find('#J_BtnPageNext').attr('data-href');
-        },
-        prevUrl: function ($doc){
-        return $doc.find('#J_BtnPagePrev').attr('data-href');
-        },
-	},
+         indexSelector: ".book-read-page a.btn-list",
+         nextUrl: function ($doc){
+            return $doc.find('#J_BtnPageNext').attr('data-href');
+         },
+         prevUrl: function ($doc){
+            return $doc.find('#J_BtnPagePrev').attr('data-href');
+         },
+    },
     {siteName: '棉花糖小说网',
-        url: '^http://www\\.mianhuatang\\.la/\\d+/\\d+/\\d+\\.html',
-        bookTitleSelector: '.nav > a:nth-of-type(3)',
-        titleSelector: '.read_title h1',
-        prevSelector: '.pagego a:nth-of-type(1)',
-        indexSelector: '.pagego a:nth-of-type(2)',
-        nextSelector: '.pagego a:nth-of-type(3)',
-        contentSelector: '.content',
-        contentRemove: 'a, .contads',
-        contentReplace: [
-            '下载本书最新的txt电子书请点击：',
-            '本书手机阅读：',
-            '发表书评：',
-            '为了方便下次阅读，你可以在点击下方的.*谢谢您的支持！！',
-            '',
-            { '': '' },
-        ],
+         url: '^http://www\\.mianhuatang\\.la/\\d+/\\d+/\\d+\\.html',
+         bookTitleSelector: '.nav > a:nth-of-type(3)',
+         titleSelector: '.read_title h1',
+         prevSelector: '.pagego a:nth-of-type(1)',
+         indexSelector: '.pagego a:nth-of-type(2)',
+         nextSelector: '.pagego a:nth-of-type(3)',
+         contentSelector: '.content',
+         contentRemove: 'a, .contads',
+         contentReplace: [
+             '下载本书最新的txt电子书请点击：',
+             '本书手机阅读：',
+             '发表书评：',
+             '为了方便下次阅读，你可以在点击下方的.*谢谢您的支持！！'
+         ],
     },
     {siteName: '墨缘文学网',
         url: '^http://www\\.moyuanwenxue\\.com/xiaoshuo/\\d+/\\d+/\\d+\\.htm',
         contentSelector: '#chapterContent',
-	    contentReplace: [
-	        '',
-	        {"ＺＨＡＮ":"战"},
-	        {"LU":"路"},
-	        {"ＳＨＯＵ　　ＱＩＡＮＧ":"手枪"},
-	        {"ｓｉ　ｗａｎｇ":"死亡"},
-	    ],
-    },
+        contentReplace: [
+           {"ＺＨＡＮ":"战"},
+           {"LU":"路"},
+           {"ＳＨＯＵ　　ＱＩＡＮＧ":"手枪"},
+           {"ｓｉ　ｗａｎｇ":"死亡"},
+       ],
+     },
+
 ];
 
 // ===== 小说拼音字、屏蔽字修复 =====
@@ -2116,7 +2110,7 @@ Rule.replace = {
         "弥俩": "你俩",
         "妳": "你",
         "圞|垩|卝|龘":"",
-        "大6":"大陆",
+        "大6": "大陆",
     };
 
     _.each(oneWordReplace, function(value, key) {
