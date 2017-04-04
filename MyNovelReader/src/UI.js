@@ -462,7 +462,7 @@ UI.skins["棕黄背景".uiTrans()] = "body { color: black; background-color: #C2
 UI.skins["经典皮肤".uiTrans()] = "body { color: black; background-color: #EAEAEE; } .title { background-color: #f0f0f0; }";
 
 
-var fontawesomeWoff = "http://libs.baidu.com/fontawesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3";
+var fontawesomeWoff = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.woff";
 
 
 var Res = {

@@ -371,7 +371,7 @@ Rule.specialSite = [
         }
     },
     {siteName: '凤舞文学网',
-        url: '^http://www\\.(?:qiuwu\\.net|fengwu\\.org)/html/\\d+/\\d+/\\d+\\.html',
+        url: '^http://www\\.wenxue8\\.org/html/\\d+/\\d+/\\d+\\.html',
         contentReplace: [
             {
                 '<img src="/keywd/R43.gif">':'爱', '<img src="/keywd/A13.gif">': '情', '<img src="/keywd/D10.gif">': '床',
@@ -406,6 +406,7 @@ Rule.specialSite = [
             '纯文字在线阅读本站域名手机同步阅读请访问',
             '-优－优－小－说－更－新－最－快-www.uuxs.cc-',
             '\\(本章免费\\)',
+            '书迷楼www.shumilou.co',
         ],
         fixImage: true,
         contentPatch: function(fakeStub){
@@ -946,7 +947,7 @@ Rule.specialSite = [
         mutationChildCount: 0,
     },
     {siteName: "读零零",
-        url: "http://www\\.du00\\.(?:com|cc)/read/\\d+/\\d+/[\\d_]+\\.html",
+        url: "https?://www\\.du00\\.(?:com|cc)/read/\\d+/\\d+/[\\d_]+\\.html",
         titleReg: "(.*?)(?:第\\d+段)?,(.*) - 读零零小说网",
         titlePos: 1,
         // prevSelector: "#footlink a:first",
@@ -1643,7 +1644,7 @@ Rule.replace = {
     "@{3,}": "",
 
     // === 段末的多余的r ===
-    "r<br>":"<br>",
+    "\\\\r<br>":"<br>",
 
     // === 一些特殊的替换 ===
     "\\[+CP.*(http://file.*\\.jpg)\\]+": "<img src='$1'>",
