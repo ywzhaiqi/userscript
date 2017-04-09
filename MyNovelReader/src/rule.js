@@ -946,7 +946,7 @@ Rule.specialSite = [
         mutationSelector: "#main",
         mutationChildCount: 0,
     },
-    {siteName: "读零零",
+    {siteName: "读零零（有问题，只显示一半内容）",
         url: "https?://www\\.du00\\.(?:com|cc)/read/\\d+/\\d+/[\\d_]+\\.html",
         titleReg: "(.*?)(?:第\\d+段)?,(.*) - 读零零小说网",
         titlePos: 1,

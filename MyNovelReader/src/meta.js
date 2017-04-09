@@ -115,7 +115,7 @@
 // @include        *://www.123yq.com/read/*/*/*.shtml
 // @include        *://www.123yq.org/read/*/*/*.shtml
 // @include        *://www.dhzw.com/book/*/*/*.html
-// @include        *://www.du00.cc/read/*/*/*.html
+//         *://www.du00.cc/read/*/*/*.html
 // @include        *://www.aszw.com/book/*/*/*.html
 // @include        *://www.xsbashi.com/*_*/
 // @include        *://www.vodtw.com/Html/Book/*/*/*.html

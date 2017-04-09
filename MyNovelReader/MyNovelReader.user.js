@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.3.6
+// @version        5.3.7
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -115,7 +115,7 @@
 // @include        *://www.123yq.com/read/*/*/*.shtml
 // @include        *://www.123yq.org/read/*/*/*.shtml
 // @include        *://www.dhzw.com/book/*/*/*.html
-// @include        *://www.du00.cc/read/*/*/*.html
+//         *://www.du00.cc/read/*/*/*.html
 // @include        *://www.aszw.com/book/*/*/*.html
 // @include        *://www.xsbashi.com/*_*/
 // @include        *://www.vodtw.com/Html/Book/*/*/*.html
@@ -1302,7 +1302,7 @@ Rule.specialSite = [
         mutationSelector: "#main",
         mutationChildCount: 0,
     },
-    {siteName: "读零零",
+    {siteName: "读零零（有问题，只显示一半内容）",
         url: "https?://www\\.du00\\.(?:com|cc)/read/\\d+/\\d+/[\\d_]+\\.html",
         titleReg: "(.*?)(?:第\\d+段)?,(.*) - 读零零小说网",
         titlePos: 1,
