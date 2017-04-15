@@ -858,7 +858,6 @@ var BookLinkMe = {
     clickedColor: "666666",
 
     init: function() {
-        if (location.host != 'booklink.me') return;
 
         this.addUnreadButton();
 
@@ -972,7 +971,7 @@ var BookLinkMe = {
     }
 };
 
-if (location.host === 'booklink.me') {
+if (location.host.indexOf('booklink.me') > -1) {
     BookLinkMe.init();
 } else {
     App.init();
