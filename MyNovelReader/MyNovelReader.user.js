@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.3.8
+// @version        5.3.9
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -1656,6 +1656,7 @@ Rule.specialSite = [
             'Ｍ.LＷxＳ520.com&nbsp;乐文移动网',
             /\(未完待续.+/g,
             /乐文小说网值得.+/g,
+            '乐\\+文\\+小说&nbsp;Ｗww.しwＸs520.Ｃom',
             '\\(\\)',
             'www.LＷＸＳ５２０.com',
             'www.lwxs520.com 首发哦亲',
@@ -1927,7 +1928,7 @@ Rule.specialSite = [
        contentSelector: '.read .txt',
     },
     {siteName: "欢乐书客",
-         url: "^http://www\\.hbooker\\.com/chapter/book_chapter_detail/\\d+",
+         url: "^https?://www\\.hbooker\\.com/chapter/book_chapter_detail/\\d+",
          bookTitleSelector: ".breakcrumb > a:last",
          titleSelector: ".book-read-box .read-hd h3",
          useiframe: true,
