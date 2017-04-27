@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.4.0
+// @version        5.4.1
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -290,7 +290,6 @@
 // @include        *://*.sto.cc/*-*/
 // @include        *://www.151xs.com/wuxiazuoxiong/*/chapter/*/
 // @include        *://www.qududu.net/book/*/*/*.html
-// @include        *://www.shumilou.co/*
 // @include        *://wanshu.com/*
 // @include        *://www.fenghuaju.com/*/*
 // @include        *://www.dashubao.cc/*/*
@@ -1085,6 +1084,7 @@ Rule.specialSite = [
     {siteName: '23中文',
         url: '^https?://www\\.23zw\\.(com|me)/.*\\.html',
         contentReplace: [
+            '的朋友，你可以即可第一时间找到本站哦。',
             '本文由首发',
             '章节更新最快',
             '顶点小说.23us.。',
@@ -1095,6 +1095,7 @@ Rule.specialSite = [
             '手机看小说哪家强\\?手机阅读网',
             '\\.n√et',
             '中文网',
+            '更新最快',
         ]
     },
     {siteName: '笔下阁',
@@ -1643,6 +1644,7 @@ Rule.specialSite = [
             '无弹窗小说，.*',
             '本书最快更新网站请：.*',
             '看无防盗章节的小说，请用搜索引擎搜索关键词.*',
+            '完美破防盗章节，请用搜索引擎搜索关键词.*',
         ]
     },
     {siteName: "乐文小说网",
@@ -2130,6 +2132,7 @@ Rule.replaceAll = [
     '一秒记住.*',
 
     // 长文字替换
+    '完美破防盗章节，请用搜索引擎各种小说任你观看',
     '纯文字在线阅读本站域名手机同步阅读请访问',
     '\\(?未完待续请搜索飄天文學，小说更好更新更快!',
     '-优－优－小－说－更－新－最－快-www.ＵＵＸＳ.ＣＣ-',

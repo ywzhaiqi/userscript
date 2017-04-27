@@ -290,7 +290,6 @@
 // @include        *://*.sto.cc/*-*/
 // @include        *://www.151xs.com/wuxiazuoxiong/*/chapter/*/
 // @include        *://www.qududu.net/book/*/*/*.html
-// @include        *://www.shumilou.co/*
 // @include        *://wanshu.com/*
 // @include        *://www.fenghuaju.com/*/*
 // @include        *://www.dashubao.cc/*/*
