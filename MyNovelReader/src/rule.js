@@ -539,7 +539,64 @@ Rule.specialSite = [
         url: /^https?:\/\/\S+\.17k\.com\/chapter\/\S+\/\d+\.html$/,
         titleReg: /(.*?)-(.*?)-.*/,
         contentSelector: "#chapterContent",
-        contentRemove: "#authorSpenk, .like_box, #hotRecommend, .ct0416, .recent_read, div[style], #miniVoteBox"
+        contentRemove: ".qrcode, #authorSpenk, .like_box, #hotRecommend, .ct0416, .recent_read, div[style], #miniVoteBox",
+        contentReplace: [
+            '本书首发来自17K小说网，第一时间看正版内容！'
+        ],
+        nextUrl: function($doc) {
+            var bookId = unsafeWindow.bookId,
+                next_chapter = unsafeWindow.next_chapter;
+
+            if (next_chapter > 0) {
+                return '/chapter/' + bookId + '/' + next_chapter + '.html';
+            }
+        },
+        prevUrl: function() {
+            var bookId = unsafeWindow.bookId,
+                last_chapter = unsafeWindow.last_chapter;
+
+            if (last_chapter > 0) {
+                return '/chapter/' + bookId + '/' + last_chapter + '.html';
+            }
+        },
+        contentPatch: function() {
+            // 计算上一章节下一章节
+            function calPages() {
+                // 跳过第一页
+                if (!window.mStarted) {
+                    window.mStarted = true;
+                    return;
+                }
+
+                var ChapterData = unsafeWindow.ChapterData,
+                    chapterId = unsafeWindow.next_chapter;
+                var last_chapter_tag = 0;
+                var next_chapter_tag = 0;
+
+                $.each(ChapterData['volumes'], function(k,v) {
+                    $.each(v['chapters'], function(k1,v1){
+                        //下一章记录
+                        if (next_chapter_tag == 1) {
+                            next_chapter_tag = 0;
+                            unsafeWindow.next_chapter = v1['id'];
+                        }
+
+                        //当前章
+                        if (v1['id'] == chapterId) {
+                            last_chapter_tag = 1;
+                            next_chapter_tag = 1;
+                        }
+
+                        //上一章记录
+                        if (last_chapter_tag == 0) {
+                            unsafeWindow.last_chapter = v1['id'];
+                        }
+                    });
+                });
+            }
+
+            calPages();
+        }
     },
     {siteName: "看下文学",
         url: "^https?://www\\.kanxia\\.net/k/\\d*/\\d+/\\d+\\.html$",
@@ -1288,8 +1345,6 @@ Rule.specialSite = [
             '喜欢网就上。',
             '无弹窗小说，.*',
             '本书最快更新网站请：.*',
-            '看无防盗章节的小说，请用搜索引擎搜索关键词.*',
-            '完美破防盗章节，请用搜索引擎搜索关键词.*',
         ]
     },
     {siteName: "乐文小说网",
@@ -1818,6 +1873,9 @@ Rule.replaceAll = [
     '》长>风》',
 
     // 包含 .* 的，可能有多余的替换
+    '看无防盗章节的小说，请用搜索引擎搜索关键词.*',
+    '完美破防盗章节，请用搜索引擎搜索关键词.*',
+    '破防盗完美章节，请用搜索引擎各种小说任你观看',
     '如您已(?:閱讀|阅读)到此章节.*?敬请记住我们新的网址\\s*。',
     '↗百度搜：.*?直达网址.*?↖',
     "[:《〈｜~∨∟∑]{1,2}长.{1,2}风.*?et",

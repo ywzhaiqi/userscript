@@ -603,49 +603,18 @@ Parser.prototype = {
         return lines;
     },
 
-    // 获取上下页及目录页链接
-    getPrevUrl: function(){
-        var url = '',
-            link, selector;
-
-        if (this.info.prevSelector === false) {
-            this.prevUrl = url;
-            return url;
-        }
-
-        if (this.info.prevUrl && _.isFunction(this.info.prevUrl)) {
-            url = this.info.prevUrl(this.$doc);
-            url = this.checkLinks(url);
-        }
-
-        if (!url) {
-            selector = this.info.prevSelector || Rule.prevSelector;
-            link = this.$doc.find(selector);
-            if(link.length){
-                url = this.checkLinks(link);
-            }
-        }
-
-        if (url) {
-            C.log("找到上一页链接: " + url);
-        } else {
-            C.log("无法找到上一页链接");
-        }
-
-        this.prevUrl = url || '';
-        return url;
-    },
     getIndexUrl: function(){
         var url = '',
-            link;
+            link,
+            selector = this.info.indexSelector || this.info.indexUrl;
 
-        if (this.info.indexSelector === false) {
+        if (selector === false) {
             this.indexUrl = url;
             return url;
         }
 
-        if (this.info.indexSelector && _.isFunction(this.info.indexSelector)) {
-            url = this.info.indexSelector(this.$doc);
+        if (selector && _.isFunction(selector)) {
+            url = selector(this.$doc);
         } else if(this.info.indexSelector){
             link = this.$doc.find(this.info.indexSelector);
         } else {
@@ -676,15 +645,17 @@ Parser.prototype = {
     getNextUrl: function(){
         var url = '',
             link,
-            selector = this.info.nextSelector || Rule.nextSelector;
+            selector = this.info.nextSelector || this.info.nextUrl;
 
-        if (this.info.nextSelector === false) {
+        if (selector === false) {
             this.nextUrl = url;
             return url;
         }
 
-        if (this.info.nextUrl && _.isFunction(this.info.nextUrl)) {
-            url = this.info.nextUrl(this.$doc);
+        selector = selector || Rule.nextSelector;
+
+        if (selector && _.isFunction(selector)) {
+            url = selector(this.$doc);
             url = this.checkLinks(url);
         }
 
@@ -707,6 +678,40 @@ Parser.prototype = {
             this.theEndColor = config.end_color;
         }
 
+        return url;
+    },
+    // 获取上下页及目录页链接
+    getPrevUrl: function(){
+        var url = '',
+            link,
+            selector = this.info.prevSelector || this.info.prevUrl;
+
+        if (selector === false) {
+            this.prevUrl = url;
+            return url;
+        }
+
+        selector = selector || Rule.prevSelector;
+
+        if (selector && _.isFunction(selector)) {
+            url = selector(this.$doc);
+            url = this.checkLinks(url);
+        }
+
+        if (!url) {
+            link = this.$doc.find(selector);
+            if(link.length){
+                url = this.checkLinks(link);
+            }
+        }
+
+        if (url) {
+            C.log("找到上一页链接: " + url);
+        } else {
+            C.log("无法找到上一页链接");
+        }
+
+        this.prevUrl = url || '';
         return url;
     },
     checkNextUrl: function(url){
