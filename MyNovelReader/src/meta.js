@@ -323,6 +323,9 @@
 // @include        *://www.mianhuatang.la/*/*/*.html
 // @include        *://www.paomov.com/*/*/*.html
 // @include        *://www.moyuanwenxue.com/xiaoshuo/*/*/*.htm
+// @include        *://www.ggdown.com/modules/article/reader.php?aid=*
+// @include        *://233yq.com/xiaoshuo/*.html
+// @include        *://www.biquge.com.tw/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html

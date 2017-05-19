@@ -1671,8 +1671,30 @@ Rule.specialSite = [
            {"ＳＨＯＵ　　ＱＩＡＮＧ":"手枪"},
            {"ｓｉ　ｗａｎｇ":"死亡"},
        ],
-     },
-
+    },
+    // 必须先用键盘箭头翻页后变成 article\reader 的url后才不会有断章现象
+    {siteName: "格格党",
+        url: 'http://www\\.ggdown\\.com/modules/article/reader\\.php\\?aid=.*',
+        siteExample: 'http://www.ggdown.com/modules/article/reader.php?aid=41490&cid=13833393',
+        indexSelector: '.link.xb a:contains("返回列表")',
+        contentSelector: "#BookText",
+        contentReplace: [
+            '记住我们的网址噢。百度搜;格！！格！！党.或者直接输域名/g/g/d/o/w/n/./c/o/m',
+        ]
+    },
+    {siteName: "233言情",
+        url: 'http://233yq\\.com/xiaoshuo/.*/.*\\.html',
+        siteExample: 'http://233yq.com/xiaoshuo/UsRA_mfLLcU/cwsM8t2ibWE.html',
+        titleSelector: '.bname h1',
+        bookTitleSelector: '.b21 h3:first()',
+        contentSelector: ".cn",
+        contentRemove: '.bottem',
+    },
+    {siteName: "笔趣阁",
+        url: /^https?:\/\/www\.biquge\.com\.tw\/\d+_\d+\/\d+.html/,
+        siteExample: 'http://www.biquge.com.tw/17_17768/8280656.html',
+        contentSelector: "#content"
+    },
 ];
 
 // ===== 小说拼音字、屏蔽字修复 =====
