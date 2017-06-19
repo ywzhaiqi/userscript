@@ -314,6 +314,7 @@
 // @include        *://www.dhzw.org/book/*/*/*.html
 // @include        *://www.biqiuge.com/book/*/*.html
 // @include        *://www.baquge.com/files/article/html/*/*/*.html
+// @include        *://www.baquge.tw/files/article/html/*/*/*.html
 // @include        *://www.qu.la/book/*/*.html
 // @include        *://www.bxwx9.org/b/*/*/*.html
 // @include        *://www.miaobige.com/*/*/*.html
@@ -326,6 +327,8 @@
 // @include        *://www.ggdown.com/modules/article/reader.php?aid=*
 // @include        *://233yq.com/xiaoshuo/*.html
 // @include        *://www.biquge.com.tw/*/*.html
+// @include        *://www.daizhuzai.com/*/*.html
+// @include        *://www.mywenxue.com/xiaoshuo/*/*/*.htm
 
 // @exclude        */List.htm
 // @exclude        */List.html

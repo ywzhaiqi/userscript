@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.4.3
+// @version        5.4.4
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -314,6 +314,7 @@
 // @include        *://www.dhzw.org/book/*/*/*.html
 // @include        *://www.biqiuge.com/book/*/*.html
 // @include        *://www.baquge.com/files/article/html/*/*/*.html
+// @include        *://www.baquge.tw/files/article/html/*/*/*.html
 // @include        *://www.qu.la/book/*/*.html
 // @include        *://www.bxwx9.org/b/*/*/*.html
 // @include        *://www.miaobige.com/*/*/*.html
@@ -326,6 +327,8 @@
 // @include        *://www.ggdown.com/modules/article/reader.php?aid=*
 // @include        *://233yq.com/xiaoshuo/*.html
 // @include        *://www.biquge.com.tw/*/*.html
+// @include        *://www.daizhuzai.com/*/*.html
+// @include        *://www.mywenxue.com/xiaoshuo/*/*/*.htm
 
 // @exclude        */List.htm
 // @exclude        */List.html
@@ -1101,10 +1104,11 @@ Rule.specialSite = [
             "www，|&nbsp;\\\\|“梦”(&nbsp;| )*“小”(&nbsp;| )*(“说” )?“网”|“岛”(&nbsp;| )+“说”",
             /(百度搜索 )?本书名 \+ 盗梦人 看最快更新/ig,
             "520xs.com ”520小说“小说章节更新最快",
-            "本文由　……　首发",
             "看最新最全小说|最快更新，(?:无弹窗)?阅读请。",
-            "（首发）|【首发】",
             "纯文字在线阅读本站域名  手机同步阅读请访问",
+            "m.手机最省流量的站点。",
+            "本文由　……　首发",
+            "（首发）|【首发】",
             "&amp;nbsp",
         ]
     },
@@ -1145,14 +1149,15 @@ Rule.specialSite = [
         url: '^https?://www\\.23zw\\.(com|me)/.*\\.html',
         contentReplace: [
             '的朋友，你可以即可第一时间找到本站哦。',
+            '手机看小说哪家强\\?手机阅读网',
+            '，最快更新.*?最新章节！',
+            '看.*?最新章节到长风文学',
             '本文由首发',
             '章节更新最快',
             '顶点小说.23us.。',
             '\\(顶点小说\\)',
             '看最新最全',
-            '看.*?最新章节到长风文学',
             'R1152',
-            '手机看小说哪家强\\?手机阅读网',
             '\\.n√et',
             '中文网',
             '更新最快',
@@ -1710,6 +1715,7 @@ Rule.specialSite = [
         siteExample: 'http://www.lwxs520.com/books/2/2329/473426.html',
         contentRemove: '#content>:not(p)',
         contentReplace: [
+            '看小说到乐文小说网www.lwxs520.com',
             '喜欢乐文小说网就上www.*(?:ＣＯＭ|com)',
             '爱玩爱看就来乐文小说网.*',
             '\\(LＷXＳ５２０。\\)',
@@ -2053,6 +2059,55 @@ Rule.specialSite = [
         siteExample: 'http://www.biquge.com.tw/17_17768/8280656.html',
         contentSelector: "#content"
     },
+    {siteName: '大主宰小说网',
+        url: 'www\\.daizhuzai\\.com/\\d+/\\d+\\.html',
+        bookTitleSelector: '.readbox article .info span:nth-of-type(1) a',
+        titleSelector: '.readbox article .title h1 a',
+        prevSelector: '.readbox .operate li:nth-of-type(1) a',
+        indexSelector: '.readbox .operate li:nth-of-type(2) a',
+        nextSelector: '.readbox .operate li:nth-of-type(3) a',
+        useiframe: true,
+        mutationSelector: "#chaptercontent",
+        mutationChildCount: 2,
+        timeout: 500,
+        contentSelector: '.readbox article .content',
+        contentRemove: '',
+        contentReplace: [
+            { '。&': '。' },
+            '△番茄小說○網☆',
+            '☆ 番茄○△小說網',
+            '番茄小說網☆',
+        ],
+    },
+    {siteName: "墨缘文学网",
+        url: "^http://www\\.mywenxue\\.com/xiaoshuo/\\d+/\\d+/\\d+\\.htm",
+        bookTitleSelector: '#htmltimu h1 a',
+        titleSelector: "#htmltimu h2 span",
+        prevSelector: ".papgbutton a:nth-of-type(1)",
+        indexSelector: ".papgbutton a:nth-of-type(2)",
+        nextSelector: ".papgbutton a:nth-of-type(3)",
+        useiframe: true,
+        contentSelector: '.contentbox > .contentbox',
+        contentRemove: "strong, a",
+        contentReplace: [
+            { 'ＺＨＡＮ': '战' },
+            { 'SI议': '思议' },
+            { '意SI': '意思' },
+            { 'ｓｉ　ｗａｎｇ': '死亡' },
+            { 'ＤＩＮＧ好': '定好' },
+            { '夺舍ＳＨＩ': '夺舍式' },
+            { '招ＳＨＩ': '招式' },
+            { '制ＳＨＩ': '制式' },
+            { '正ＳＨＩ': '正式' },
+            { '菜ＳＨＩ': '菜式' },
+            { 'LU上': '路上' },
+            { '条LU': '条路' },
+            { '马LU': '马路' },
+            '更多请登录墨缘文学网.*欢迎您的来访 &gt;&gt;&gt;',
+            '更多请登录墨缘文学网.*欢迎您的来访\\[ .* \\]',
+            '\\( http.*墨缘文学网 \\)',
+        ],
+    },
 ];
 
 // ===== 小说拼音字、屏蔽字修复 =====
@@ -2213,6 +2268,8 @@ Rule.replaceAll = [
 
     // 长文字替换
     '完美破防盗章节，请用搜索引擎各种小说任你观看',
+    '破防盗章节，请用搜索引擎各种小说任你观看',
+    '请用搜索引擎(?:搜索关键词)?.*?完美破防盗章节，各种小说任你观看',
     '纯文字在线阅读本站域名手机同步阅读请访问',
     '\\(?未完待续请搜索飄天文學，小说更好更新更快!',
     '-优－优－小－说－更－新－最－快-www.ＵＵＸＳ.ＣＣ-',
@@ -2227,6 +2284,7 @@ Rule.replaceAll = [
     '看本书最新章节请到800小说网（www.800book.net）',
     '（800小说网 www.800Book.net 提供Txt免费下载）',
     '热门小说最新章节全文阅读.。 更新好快。',
+    '恋上你看书网 630bookla ，最快更新民国之文豪崛起最新章节！',
     '-优－优－小－说－更－新－最－快x',
     '亲，眼&快，大量小说免费看。',
     '手机看小说哪家强手机阅',
@@ -2235,6 +2293,7 @@ Rule.replaceAll = [
     '最新章节全文阅读（..首发）',
     '最新章节全文阅读【首发】',
     '最新章节全文阅读',
+    '看清爽的小说就到',
     '来可乐网看小说',
     'txt电子书下载/',
     'txt全集下载',
@@ -2254,8 +2313,8 @@ Rule.replaceAll = [
 
     // 包含 .* 的，可能有多余的替换
     '看无防盗章节的小说，请用搜索引擎搜索关键词.*',
-    '完美破防盗章节，请用搜索引擎搜索关键词.*',
-    '破防盗完美章节，请用搜索引擎各种小说任你观看',
+    '(?:完美)?破防盗章节，请用搜索引擎搜索关键词.*',
+    '破防盗完美章节，请用搜索引擎.*各种小说任你观看',
     '如您已(?:閱讀|阅读)到此章节.*?敬请记住我们新的网址\\s*。',
     '↗百度搜：.*?直达网址.*?↖',
     "[:《〈｜~∨∟∑]{1,2}长.{1,2}风.*?et",
@@ -3681,6 +3740,11 @@ Parser.prototype = {
         text = text.replace(/<\/p><p>/g, "</p>\n<p>");
 
         // GM_setClipboard(text);
+        
+        // 规则替换
+        if (info.contentReplace) {
+            text = this.replaceText(text, info.contentReplace);
+        }
 
         // 移除文字广告等
         text = this.replaceText(text, Rule.replaceAll);
@@ -3700,10 +3764,6 @@ Parser.prototype = {
         if (this.bookTitle) {
             var regStr = '（' + toReStr(this.bookTitle) + '\\d*章）'
             text = text.replace(new RegExp(regStr, 'ig'), "");
-        }
-
-        if (info.contentReplace) {
-            text = this.replaceText(text, info.contentReplace);
         }
 
         if (Config.cn2tw) {

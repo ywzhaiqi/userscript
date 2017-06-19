@@ -383,6 +383,11 @@ Parser.prototype = {
         text = text.replace(/<\/p><p>/g, "</p>\n<p>");
 
         // GM_setClipboard(text);
+        
+        // 规则替换
+        if (info.contentReplace) {
+            text = this.replaceText(text, info.contentReplace);
+        }
 
         // 移除文字广告等
         text = this.replaceText(text, Rule.replaceAll);
@@ -402,10 +407,6 @@ Parser.prototype = {
         if (this.bookTitle) {
             var regStr = '（' + toReStr(this.bookTitle) + '\\d*章）'
             text = text.replace(new RegExp(regStr, 'ig'), "");
-        }
-
-        if (info.contentReplace) {
-            text = this.replaceText(text, info.contentReplace);
         }
 
         if (Config.cn2tw) {
