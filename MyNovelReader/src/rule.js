@@ -80,6 +80,25 @@ Rule.specialSite = [
                 '<a href=\'List.shtm\'>回目录</a>');
         }
     },
+    {siteName: '起点新版-阅文',
+         url: '^https?://read\\.qidian\\.com/chapter/.*',
+         bookTitleSelector: '#bookImg',
+         titleSelector: '.j_chapterName h1',
+
+         prevSelector: '#j_chapterPrev',
+         nextSelector: '#j_chapterNext',
+         indexSelector: function(obj) {
+             var url = obj.find(".chapter-control a:contains('目录')").attr('href');
+             return url;
+         },
+
+         contentSelector: '.read-content.j_readContent',
+         contentRemove: '',
+         contentReplace: [
+             '手机用户请到m.qidian.com阅读。',
+             '起点中文网www.qidian.com欢迎广大书友光临阅读，最新、最快、最火的连载作品尽在起点原创！.*'
+         ],
+    },
     // 特殊站点，需再次获取且跨域。添加 class="reader-ajax"，同时需要 src, charset
     {siteName: '起点新版',
         url: '^https?://read\\.qidian\\.com/BookReader/.*\\.aspx',
@@ -889,6 +908,7 @@ Rule.specialSite = [
             '&lt;/dd&gt;',
             '&lt;center&gt; &lt;fon color=red&gt;',
             '一秒记住【武林中文网.*',
+            '武林中文网 www.*',
         ]
     },
     {siteName: "乡村小说网",
@@ -1604,25 +1624,6 @@ Rule.specialSite = [
         }
 	},
 
-    {siteName: '起点新版-阅文',
-         url: '^https?://read\\.qidian\\.com/chapter/.*',
-         bookTitleSelector: '#bookImg',
-         titleSelector: '.j_chapterName h1',
-
-         prevSelector: '#j_chapterPrev',
-         nextSelector: '#j_chapterNext',
-         indexSelector: function(obj) {
-             var url = obj.find(".chapter-control a:contains('目录')").attr('href');
-             return url;
-         },
-
-         //mutationSelector: "#chaptercontainer",  // 内容生成监视器
-         //mutationChildCount: 1,
-         contentSelector: '.read-content.j_readContent',
-         contentReplace: [
-             '手机用户请到m.qidian.com阅读。'
-         ],
-    },
     {siteName: '书海小说',
        url: '^https?://www\\.shuhai\\.com/read/\\d+/\\d+\\.html',
        bookTitleSelector: '.path2 a:nth-of-type(3)',
@@ -1746,6 +1747,20 @@ Rule.specialSite = [
             '更多请登录墨缘文学网.*欢迎您的来访\\[ .* \\]',
             '\\( http.*墨缘文学网 \\)',
         ],
+    },
+    {siteName: '大海中文',
+        url: 'http://www\\.dhzw\\.org/book/\\d+/\\d+/\\d+\\.html',
+        contentReplace: [
+            '恋上你看书网 630bookla.*',
+        ]
+    },
+
+    {siteName: "掌阅手机网",
+        url: "https?://wap\\.yc\\.ireader\\.com\\.cn/book/\\d+/\\d+/",
+        titleReg: "(.*?),.*?作品 - 掌阅小说网",
+        titlePos: 0,
+        titleSelector: "h4",
+        contentSelector: "div.text",
     },
 ];
 

@@ -329,6 +329,7 @@
 // @include        *://www.biquge.com.tw/*/*.html
 // @include        *://www.daizhuzai.com/*/*.html
 // @include        *://www.mywenxue.com/xiaoshuo/*/*/*.htm
+// @include        *://wap.yc.ireader.com.cn/book/*/*/
 
 // @exclude        */List.htm
 // @exclude        */List.html

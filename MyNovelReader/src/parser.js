@@ -159,24 +159,28 @@ Parser.prototype = {
         // 获取章节标题
         if (info.titleReg){
             var matches = docTitle.match(toRE(info.titleReg, 'i'));
-            if(matches && matches.length == 3){
-                var titlePos = ( info.titlePos || 0 ) + 1,
-                    chapterPos = (titlePos == 1) ? 2 : 1;
-                bookTitle = matches[titlePos].trim();
-                chapterTitle = matches[chapterPos].trim();
+            if(matches && matches.length >= 2){
+                var titlePos = ( info.titlePos || 0 ) + 1;
+                var chapterPos = (titlePos == 1) ? 2 : 1;
+
+                bookTitle = matches[titlePos];
+                chapterTitle = matches[chapterPos];
             }
 
             C.log("TitleReg:", info.titleReg, matches);
-        } else {
-           chapterTitle = this.getTitleFromInfo(info.titleSelector);
-
-           bookTitle = this.getTitleFromInfo(info.bookTitleSelector);
         }
 
+        // 再次尝试获取章节标题
+        if (!chapterTitle) {
+            chapterTitle = this.getTitleFromInfo(info.titleSelector);
+        }
         if(!chapterTitle){
             chapterTitle = this.autoGetChapterTitle(this.doc);
         }
 
+        if (!bookTitle) {
+            bookTitle = this.getTitleFromInfo(info.bookTitleSelector);
+        }
         if (!bookTitle) {
             bookTitle = this.$doc.find(Rule.bookTitleSelector).text();
         }
@@ -203,7 +207,7 @@ Parser.prototype = {
             docTitle = this.convert2tw(docTitle);
         }
 
-        this.bookTitle = bookTitle || '目录';
+        this.bookTitle = (bookTitle || '目录').trim();
         this.chapterTitle = chapterTitle;
         this.docTitle = docTitle;
 
