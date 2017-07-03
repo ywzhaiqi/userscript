@@ -148,6 +148,7 @@
 // @include        *://www.biqi.me/files/article/html/*/*/*.html
 // @include        *://www.ttzw.com/book/*/*.html
 // @include        *://www.uukanshu.com/*/*/*.html
+// @include        *://www.uukanshu.net/*/*/*.html
 // @include        *://www.173ed.com/read/*/*.html
 // @include        *://www.a240.com/read/*/*.html
 // @include        *://www.zhuishu.com/*/*.html
@@ -330,6 +331,8 @@
 // @include        *://www.daizhuzai.com/*/*.html
 // @include        *://www.mywenxue.com/xiaoshuo/*/*/*.htm
 // @include        *://wap.yc.ireader.com.cn/book/*/*/
+// @include        *://www.yueduyue.com/*/*.html
+// @include        *://www.67shu.com/*/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html

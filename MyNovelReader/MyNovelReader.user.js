@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.4.5
+// @version        5.4.6
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -148,6 +148,7 @@
 // @include        *://www.biqi.me/files/article/html/*/*/*.html
 // @include        *://www.ttzw.com/book/*/*.html
 // @include        *://www.uukanshu.com/*/*/*.html
+// @include        *://www.uukanshu.net/*/*/*.html
 // @include        *://www.173ed.com/read/*/*.html
 // @include        *://www.a240.com/read/*/*.html
 // @include        *://www.zhuishu.com/*/*.html
@@ -330,6 +331,8 @@
 // @include        *://www.daizhuzai.com/*/*.html
 // @include        *://www.mywenxue.com/xiaoshuo/*/*/*.htm
 // @include        *://wap.yc.ireader.com.cn/book/*/*/
+// @include        *://www.yueduyue.com/*/*.html
+// @include        *://www.67shu.com/*/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html
@@ -399,7 +402,7 @@ var Rule = {
 
     contentSelectors: ["#pagecontent", "#contentbox", "#bmsy_content", "#bookpartinfo", "#htmlContent",
         "#text_area", "#chapter_content", "#chapterContent", "#partbody",
-        "#article_content", "#BookTextRead", "#booktext", "#BookText", "#readtext", "#text_c", "#txt_td", "#TXT", "#txt", "#zjneirong",
+        "#article_content", "#BookTextRead", "#booktext", "#BookText", "#readtext", "#readcon", "#text_c", "#txt_td", "#TXT", "#txt", "#zjneirong",
         ".novel_content", ".readmain_inner", ".noveltext", ".booktext", ".yd_text2",
         "#contentTxt", "#oldtext", "#a_content", "#contents", "#content2", "#contentts", "#content", ".content"],
 
@@ -591,7 +594,8 @@ Rule.specialSite = [
         contentHandle: false,
         // titleReg: "(.*?)-(.*)",
         titleSelector: "em[itemprop='headline']",
-        bookTitleSelector: ".nav>a:last",
+        bookTitleSelector: ".tc h2",
+        contentSelector: '#readerFt',
         contentPatch: function(fakeStub){
             fakeStub.find('.watermark').remove();
             // 给第几章添加空格
@@ -1685,7 +1689,7 @@ Rule.specialSite = [
         contentReplace: '\\(吾读小说网 <a.*无弹窗全文阅读\\)'
     },
     {siteName: "UU看书",
-        url: "^https?://www\\.uukanshu\\.com/.*/\\d+/\\d+.html",
+        url: "^https?://www\\.uukanshu\\.(?:com|net)/.*/\\d+/\\d+.html",
         contentReplace: "[UＵ]*看书[（\\(].*?[）\\)]文字首发。"
     },
     {siteName: "长风文学网",
