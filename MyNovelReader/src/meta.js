@@ -333,6 +333,8 @@
 // @include        *://wap.yc.ireader.com.cn/book/*/*/
 // @include        *://www.yueduyue.com/*/*.html
 // @include        *://www.67shu.com/*/*/*.html
+// @include        *://www.wangshuge.com/books/*/*/*.html
+// @include        *://www.23sw.net/*/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html

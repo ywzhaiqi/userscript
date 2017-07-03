@@ -1755,6 +1755,13 @@ Rule.specialSite = [
             '恋上你看书网 630bookla.*',
         ]
     },
+    {siteName: '爱上书屋',
+        url: 'https?://www.23sw.net/\\d+/\\d+/\\d+.html',
+        titleReg: /(.*?) (.*?),/,
+        contentReplace: [
+            '\\[www.23sw.net\\]',
+        ]
+    },
 
     {siteName: "掌阅手机网",
         url: "https?://wap\\.yc\\.ireader\\.com\\.cn/book/\\d+/\\d+/",
@@ -1763,6 +1770,7 @@ Rule.specialSite = [
         titleSelector: "h4",
         contentSelector: "div.text",
     },
+
 ];
 
 // ===== 小说拼音字、屏蔽字修复 =====
