@@ -83,7 +83,7 @@ Rule.specialSite = [
     {siteName: '起点新版-阅文',
          url: '^https?://read\\.qidian\\.com/chapter/.*',
          bookTitleSelector: '#bookImg',
-         titleSelector: '.j_chapterName h1',
+         titleSelector: 'h3.j_chapterName',
 
          prevSelector: '#j_chapterPrev',
          nextSelector: '#j_chapterNext',
@@ -1947,7 +1947,7 @@ Rule.replaceAll = [
     '看本书最新章节请到800小说网（www.800book.net）',
     '（800小说网 www.800Book.net 提供Txt免费下载）',
     '热门小说最新章节全文阅读.。 更新好快。',
-    '恋上你看书网 630bookla ，最快更新民国之文豪崛起最新章节！',
+    '恋上你看书网 630bookla ，最快更新.*',
     '-优－优－小－说－更－新－最－快x',
     '亲，眼&快，大量小说免费看。',
     '手机看小说哪家强手机阅',
