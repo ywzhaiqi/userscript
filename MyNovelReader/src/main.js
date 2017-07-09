@@ -539,14 +539,10 @@ var App = {
     },
     openUrl: function(url, errorMsg) {
         if (url) {
-            if (location.host.indexOf('qidian.com') != -1) {  // 起点做了防盗链处理？
-                $('#header a')[0].click();
-            } else {
-                // ff30 Greasemonkey 会报错：Greasemonkey 访问违规：unsafeWindow 无法调用 GM_openInTab。新建脚本采用按键调用也这样。
-                setTimeout(function() {
-                    GM_openInTab(url, false);
-                }, 0);
-            }
+            // ff30 Greasemonkey 会报错：Greasemonkey 访问违规：unsafeWindow 无法调用 GM_openInTab。新建脚本采用按键调用也这样。
+            setTimeout(function() {
+                GM_openInTab(url, false);
+            }, 0);
         } else if (errorMsg) {
             UI.notice(errorMsg);
         }
@@ -793,15 +789,15 @@ var App = {
     isSaveing: false,
     saveAsTxt: function() {
         if (App.site.useiframe) {
-            alert('暂不支持');
+            UI.notice('暂不支持', 4000);
             return;
         }
 
         if (App.isSaveing) {
-            alert('正在保存，请稍后');
+            UI.notice('正在保存，请稍后', 4000);
             return;
         } else {
-            alert('开始一章章获取内容，请耐心等待');
+            UI.notice('开始一章章获取内容，请耐心等待', 4000);
         }
 
         App.isSaveing = true;
@@ -819,12 +815,14 @@ var App = {
         };
 
         var getOnePage = function (parser, nextUrl) {
+            var isEnd = false;
             if (parser) {
                 toTxt(parser);
                 nextUrl = parser.nextUrl;
+                isEnd = parser.isTheEnd;
             }
 
-            if (!nextUrl) {
+            if (!nextUrl || isEnd) {
                 console.log('全部获取完毕');
                 finish();
                 return;

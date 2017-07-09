@@ -51,7 +51,8 @@ module.exports = function(grunt) {
                     process: true
                 },
                 src: ['src/meta.js', 'src/header.js', 'src/rule.js', 'src/config.js', 'src/lang.js',
-                    'src/lib.js', 'src/UI.js', 'src/parser.js', 'src/main.js'],
+                    'src/lib.js', 
+                    'src/UI.js', 'src/parser.js', 'src/main.js'],
                 dest: '<%= pkg.name %>.user.js'
             }
         },

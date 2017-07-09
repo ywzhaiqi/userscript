@@ -180,6 +180,7 @@
 // @include        *://www.wobudu.com/*/*.html
 // @include        *://www.qb5.com/xiaoshuo/*/*/*.html
 // @include        *://www.23us.com/html/*/*/*.html
+// @include        *://www.23us.cc/html/*/*/*.html
 // @include        *://www.23wx.com/html/*/*/*.html
 // @include        *://www.xs222.com/html/*/*/*.html
 // @include        *://www.bixiage.com/*/*/*/*.html
@@ -335,6 +336,8 @@
 // @include        *://www.67shu.com/*/*/*.html
 // @include        *://www.wangshuge.com/books/*/*/*.html
 // @include        *://www.23sw.net/*/*/*.html
+// @include        *://www.ybdu.com/xiaoshuo/*/*/*.html
+// @include        *://www.shudaizi.org/book/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html

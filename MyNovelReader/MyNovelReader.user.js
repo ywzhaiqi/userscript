@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.4.7
+// @version        5.4.8
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -180,6 +180,7 @@
 // @include        *://www.wobudu.com/*/*.html
 // @include        *://www.qb5.com/xiaoshuo/*/*/*.html
 // @include        *://www.23us.com/html/*/*/*.html
+// @include        *://www.23us.cc/html/*/*/*.html
 // @include        *://www.23wx.com/html/*/*/*.html
 // @include        *://www.xs222.com/html/*/*/*.html
 // @include        *://www.bixiage.com/*/*/*/*.html
@@ -335,6 +336,8 @@
 // @include        *://www.67shu.com/*/*/*.html
 // @include        *://www.wangshuge.com/books/*/*/*.html
 // @include        *://www.23sw.net/*/*/*.html
+// @include        *://www.ybdu.com/xiaoshuo/*/*/*.html
+// @include        *://www.shudaizi.org/book/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html
@@ -1154,9 +1157,10 @@ Rule.specialSite = [
         }
     },
     {siteName: "顶点小说",
-        url: "^https?://www\\.(?:23us|23wx|xs222)\\.com/html/\\d+/\\d+/\\d+\\.html$",
+        url: "^https?://www\\.(?:23us|23wx|xs222)\\.(?:com|cc)/html/\\d+/\\d+/\\d+\\.html$",
         titleReg: "(.*?)-\\S*\\s(.*?)-顶点小说",
         titlePos: 0,
+        bookTitleSelector: '.crumbs > div > a:last',
         indexSelector: "#footlink a:contains('返回目录')",
         prevSelector: "#footlink a:contains('上一页')",
         nextSelector: "#footlink a:contains('下一页')",
@@ -1164,6 +1168,9 @@ Rule.specialSite = [
         contentReplace: [
             "\\(看小说到顶点小说网.*\\)|\\(\\)|【记住本站只需一秒钟.*】",
             '一秒记住【.*读及下载。',
+            'www.xstxt.org',
+            'wenxuemi.com',
+            '23us．com',
         ],
         contentPatch: function(fakeStub){
             var temp=fakeStub.find('title').text();
@@ -2312,14 +2319,17 @@ Rule.replaceAll = [
     '\\[800\\]\\[站页面清爽，广告少，',
     '\\|优\\|优\\|小\\|说\\|更\\|新\\|最\\|快\\|www.uuxs.cc\\|',
     '看本书最新章节请到800小说网（www.800book.net）',
+    '16977小游戏每天更新好玩的小游戏，等你来发现！',
     '（800小说网 www.800Book.net 提供Txt免费下载）',
     '热门小说最新章节全文阅读.。 更新好快。',
+    '手机用户请浏览阅读，更优质的阅读体验。',
     '恋上你看书网 630bookla ，最快更新.*',
     '-优－优－小－说－更－新－最－快x',
     '亲，眼&快，大量小说免费看。',
     '手机看小说哪家强手机阅',
     '思ˊ路ˋ客，更新最快的！',
     '（本章未完，请翻页）',
+    '\\(看小说到网\\)',
     '最新章节全文阅读（..首发）',
     '最新章节全文阅读【首发】',
     '最新章节全文阅读',
@@ -3338,8 +3348,11 @@ var UI = {
     openHelp: function() {
 
     },
-    notice: function (htmlText){
+    notice: function (htmlText, ms){
         var $noticeDiv = $("#alert");
+        if (!ms) {
+            ms = 1666;
+        }
 
         clearTimeout(UI.noticeDivto);
         $noticeDiv.find("p").html(htmlText);
@@ -3347,7 +3360,7 @@ var UI = {
 
         UI.noticeDivto = setTimeout(function(){
             $noticeDiv.fadeOut(500);
-        }, 1666);
+        }, ms);
 
         return $noticeDiv;
     }
@@ -3582,7 +3595,7 @@ Parser.prototype = {
         //     chapterTitle = chapterTitle.replace(bookTitle, '').trim();
         // }
 
-        bookTitle = bookTitle.replace(/最新章节$/, '');
+        bookTitle = bookTitle.replace(/(?:最新章节|章节目录)$/, '');
 
         docTitle = bookTitle ?
                 bookTitle + ' - ' + chapterTitle :
@@ -3997,7 +4010,6 @@ Parser.prototype = {
 
     getIndexUrl: function(){
         var url = '',
-            link,
             selector = this.info.indexSelector || this.info.indexUrl;
 
         if (selector === false) {
@@ -4005,25 +4017,29 @@ Parser.prototype = {
             return url;
         }
 
+        // 先尝试站点规则
         if (selector && _.isFunction(selector)) {
             url = selector(this.$doc);
         } else if(this.info.indexSelector){
-            link = this.$doc.find(this.info.indexSelector);
-        } else {
+            url = this.$doc.find(this.info.indexSelector);
+        }
+
+        // 再尝试通用规则
+        if (!url || !url.length) {
             var selectors = Rule.indexSelectors;
             var _indexLink;
             // 按照顺序选取目录链接
             for(var i = 0, l = selectors.length; i < l; i++){
                 _indexLink = this.$doc.find(selectors[i]);
                 if(_indexLink.length > 0){
-                    link = _indexLink;
+                    url = _indexLink;
                     break;
                 }
             }
         }
 
-        if(link && link.length){
-            url = this.checkLinks(link);
+        if(url){
+            url = this.checkLinks(url);
             C.log("找到目录链接: " + url);
         }
 
@@ -4036,7 +4052,6 @@ Parser.prototype = {
     },
     getNextUrl: function(){
         var url = '',
-            link,
             selector = this.info.nextSelector || this.info.nextUrl;
 
         if (selector === false) {
@@ -4044,18 +4059,21 @@ Parser.prototype = {
             return url;
         }
 
-        selector = selector || Rule.nextSelector;
+        // 先尝试站点规则
+        if (selector) {
+            if (_.isFunction(selector)) {
+                url = selector(this.$doc);
+            } else {
+                url = this.$doc.find(selector);
+            }
 
-        if (selector && _.isFunction(selector)) {
-            url = selector(this.$doc);
             url = this.checkLinks(url);
         }
 
+        // 再尝试通用规则
         if (!url) {
-            link = this.$doc.find(selector);
-            if(link.length){
-                url = this.checkLinks(link);
-            }
+            url = this.$doc.find(Rule.nextSelector);
+            url = this.checkLinks(url);
         }
 
         if (url) {
@@ -4075,7 +4093,6 @@ Parser.prototype = {
     // 获取上下页及目录页链接
     getPrevUrl: function(){
         var url = '',
-            link,
             selector = this.info.prevSelector || this.info.prevUrl;
 
         if (selector === false) {
@@ -4083,18 +4100,21 @@ Parser.prototype = {
             return url;
         }
 
-        selector = selector || Rule.prevSelector;
+        // 先尝试站点规则
+        if (selector) {
+            if (_.isFunction(selector)) {
+                url = selector(this.$doc);
+            } else {
+                url = this.$doc.find(selector);
+            }
 
-        if (selector && _.isFunction(selector)) {
-            url = selector(this.$doc);
             url = this.checkLinks(url);
         }
 
+        // 再尝试通用规则
         if (!url) {
-            link = this.$doc.find(selector);
-            if(link.length){
-                url = this.checkLinks(link);
-            }
+            url = this.$doc.find(Rule.prevSelector);
+            url = this.checkLinks(url);
         }
 
         if (url) {
@@ -4154,11 +4174,14 @@ Parser.prototype = {
     },
     checkLinks: function(links){
         var self = this;
+        var url = '';
+
+        if (!links) return ''
+
         if (_.isString(links)) {
             return this.getFullHref(links);
         }
 
-        var url = "";
         links && links.each(function(){
             url = $(this).attr("href");
             if(!url || url.indexOf("#") === 0 || url.indexOf("javascript:") === 0)
@@ -4191,10 +4214,10 @@ Parser.prototype = {
         }
         a.href = href;
 
-        // 检测 host 是否和 当前页的一致
-        if (a.host != this._curPageHost) {
-            a.host = this._curPageHost;
-        }
+        // // 检测 host 是否和 当前页的一致
+        // if (a.host != this._curPageHost) {
+        //     a.host = this._curPageHost;
+        // }
 
         return a.href;
     },
@@ -4741,14 +4764,10 @@ var App = {
     },
     openUrl: function(url, errorMsg) {
         if (url) {
-            if (location.host.indexOf('qidian.com') != -1) {  // 起点做了防盗链处理？
-                $('#header a')[0].click();
-            } else {
-                // ff30 Greasemonkey 会报错：Greasemonkey 访问违规：unsafeWindow 无法调用 GM_openInTab。新建脚本采用按键调用也这样。
-                setTimeout(function() {
-                    GM_openInTab(url, false);
-                }, 0);
-            }
+            // ff30 Greasemonkey 会报错：Greasemonkey 访问违规：unsafeWindow 无法调用 GM_openInTab。新建脚本采用按键调用也这样。
+            setTimeout(function() {
+                GM_openInTab(url, false);
+            }, 0);
         } else if (errorMsg) {
             UI.notice(errorMsg);
         }
@@ -4995,15 +5014,15 @@ var App = {
     isSaveing: false,
     saveAsTxt: function() {
         if (App.site.useiframe) {
-            alert('暂不支持');
+            UI.notice('暂不支持', 4000);
             return;
         }
 
         if (App.isSaveing) {
-            alert('正在保存，请稍后');
+            UI.notice('正在保存，请稍后', 4000);
             return;
         } else {
-            alert('开始一章章获取内容，请耐心等待');
+            UI.notice('开始一章章获取内容，请耐心等待', 4000);
         }
 
         App.isSaveing = true;
@@ -5021,12 +5040,14 @@ var App = {
         };
 
         var getOnePage = function (parser, nextUrl) {
+            var isEnd = false;
             if (parser) {
                 toTxt(parser);
                 nextUrl = parser.nextUrl;
+                isEnd = parser.isTheEnd;
             }
 
-            if (!nextUrl) {
+            if (!nextUrl || isEnd) {
                 console.log('全部获取完毕');
                 finish();
                 return;

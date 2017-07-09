@@ -428,8 +428,11 @@ var UI = {
     openHelp: function() {
 
     },
-    notice: function (htmlText){
+    notice: function (htmlText, ms){
         var $noticeDiv = $("#alert");
+        if (!ms) {
+            ms = 1666;
+        }
 
         clearTimeout(UI.noticeDivto);
         $noticeDiv.find("p").html(htmlText);
@@ -437,7 +440,7 @@ var UI = {
 
         UI.noticeDivto = setTimeout(function(){
             $noticeDiv.fadeOut(500);
-        }, 1666);
+        }, ms);
 
         return $noticeDiv;
     }

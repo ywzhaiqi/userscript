@@ -195,7 +195,7 @@ Parser.prototype = {
         //     chapterTitle = chapterTitle.replace(bookTitle, '').trim();
         // }
 
-        bookTitle = bookTitle.replace(/最新章节$/, '');
+        bookTitle = bookTitle.replace(/(?:最新章节|章节目录)$/, '');
 
         docTitle = bookTitle ?
                 bookTitle + ' - ' + chapterTitle :
@@ -610,7 +610,6 @@ Parser.prototype = {
 
     getIndexUrl: function(){
         var url = '',
-            link,
             selector = this.info.indexSelector || this.info.indexUrl;
 
         if (selector === false) {
@@ -618,25 +617,29 @@ Parser.prototype = {
             return url;
         }
 
+        // 先尝试站点规则
         if (selector && _.isFunction(selector)) {
             url = selector(this.$doc);
         } else if(this.info.indexSelector){
-            link = this.$doc.find(this.info.indexSelector);
-        } else {
+            url = this.$doc.find(this.info.indexSelector);
+        }
+
+        // 再尝试通用规则
+        if (!url || !url.length) {
             var selectors = Rule.indexSelectors;
             var _indexLink;
             // 按照顺序选取目录链接
             for(var i = 0, l = selectors.length; i < l; i++){
                 _indexLink = this.$doc.find(selectors[i]);
                 if(_indexLink.length > 0){
-                    link = _indexLink;
+                    url = _indexLink;
                     break;
                 }
             }
         }
 
-        if(link && link.length){
-            url = this.checkLinks(link);
+        if(url){
+            url = this.checkLinks(url);
             C.log("找到目录链接: " + url);
         }
 
@@ -649,7 +652,6 @@ Parser.prototype = {
     },
     getNextUrl: function(){
         var url = '',
-            link,
             selector = this.info.nextSelector || this.info.nextUrl;
 
         if (selector === false) {
@@ -657,18 +659,21 @@ Parser.prototype = {
             return url;
         }
 
-        selector = selector || Rule.nextSelector;
+        // 先尝试站点规则
+        if (selector) {
+            if (_.isFunction(selector)) {
+                url = selector(this.$doc);
+            } else {
+                url = this.$doc.find(selector);
+            }
 
-        if (selector && _.isFunction(selector)) {
-            url = selector(this.$doc);
             url = this.checkLinks(url);
         }
 
+        // 再尝试通用规则
         if (!url) {
-            link = this.$doc.find(selector);
-            if(link.length){
-                url = this.checkLinks(link);
-            }
+            url = this.$doc.find(Rule.nextSelector);
+            url = this.checkLinks(url);
         }
 
         if (url) {
@@ -688,7 +693,6 @@ Parser.prototype = {
     // 获取上下页及目录页链接
     getPrevUrl: function(){
         var url = '',
-            link,
             selector = this.info.prevSelector || this.info.prevUrl;
 
         if (selector === false) {
@@ -696,18 +700,21 @@ Parser.prototype = {
             return url;
         }
 
-        selector = selector || Rule.prevSelector;
+        // 先尝试站点规则
+        if (selector) {
+            if (_.isFunction(selector)) {
+                url = selector(this.$doc);
+            } else {
+                url = this.$doc.find(selector);
+            }
 
-        if (selector && _.isFunction(selector)) {
-            url = selector(this.$doc);
             url = this.checkLinks(url);
         }
 
+        // 再尝试通用规则
         if (!url) {
-            link = this.$doc.find(selector);
-            if(link.length){
-                url = this.checkLinks(link);
-            }
+            url = this.$doc.find(Rule.prevSelector);
+            url = this.checkLinks(url);
         }
 
         if (url) {
@@ -767,11 +774,14 @@ Parser.prototype = {
     },
     checkLinks: function(links){
         var self = this;
+        var url = '';
+
+        if (!links) return ''
+
         if (_.isString(links)) {
             return this.getFullHref(links);
         }
 
-        var url = "";
         links && links.each(function(){
             url = $(this).attr("href");
             if(!url || url.indexOf("#") === 0 || url.indexOf("javascript:") === 0)
@@ -804,10 +814,10 @@ Parser.prototype = {
         }
         a.href = href;
 
-        // 检测 host 是否和 当前页的一致
-        if (a.host != this._curPageHost) {
-            a.host = this._curPageHost;
-        }
+        // // 检测 host 是否和 当前页的一致
+        // if (a.host != this._curPageHost) {
+        //     a.host = this._curPageHost;
+        // }
 
         return a.href;
     },
