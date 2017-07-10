@@ -53,6 +53,7 @@ var App = {
         } catch (e) {
             console.error('载入自定义站点配置错误', e);
         }
+
         if (_.isArray(customRules)) {
             Rule.customRules = customRules;
             C.log('载入自定义站点规则成功', customRules);
@@ -70,6 +71,7 @@ var App = {
         var info = _.find(rules, function(x) {
             return toRE(x.url).test(locationHref);
         });
+
         if (!info) {
             info = {};
             C.log("没有找到规则，尝试自动模式。");
@@ -82,6 +84,7 @@ var App = {
         var locationHref = window.location.href,
             locationHost = location.host,
             referrer = document.referrer;
+
         switch (true) {
             case L_getValue("mynoverlreader_disable_once") == 'true':
                 L_removeValue("mynoverlreader_disable_once");
@@ -299,7 +302,7 @@ var App = {
     clean: function() {
         $('body > *:not("#container, .readerbtn, #reader_preferences, #uil_blocker,iframe[name=\'mynovelreader-iframe\']")').remove();
         $('link[rel="stylesheet"]').remove();
-        $('body, #container').removeAttr('style');
+        $('body, #container').removeAttr('style').removeAttr('class');
 
         if (location.host.indexOf('qidian') > 0) {
             unsafeWindow.jQuery(document).off("selectstart").off("contextmenu");

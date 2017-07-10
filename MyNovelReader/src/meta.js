@@ -338,6 +338,7 @@
 // @include        *://www.23sw.net/*/*/*.html
 // @include        *://www.ybdu.com/xiaoshuo/*/*/*.html
 // @include        *://www.shudaizi.org/book/*/*.html
+// @include        *://www.ymoxuan.com/book/*/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html

@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.4.8
+// @version        5.4.9
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -338,6 +338,7 @@
 // @include        *://www.23sw.net/*/*/*.html
 // @include        *://www.ybdu.com/xiaoshuo/*/*/*.html
 // @include        *://www.shudaizi.org/book/*/*.html
+// @include        *://www.ymoxuan.com/book/*/*/*.html
 
 // @exclude        */List.htm
 // @exclude        */List.html
@@ -1754,12 +1755,19 @@ Rule.specialSite = [
             '爱玩爱看就来乐文小说网.*',
             '\\(LＷXＳ５２０。\\)',
             'Ｍ.LＷxＳ520.com&nbsp;乐文移动网',
-            /\(未完待续.+/g,
             /乐文小说网值得.+/g,
             '乐\\+文\\+小说&nbsp;Ｗww.しwＸs520.Ｃom',
-            '\\(\\)',
+            '乐文\s*小说 www.lwxs520.com',
+            '&乐&文&小说 \\{www\\}.\\{lw\\}\\{xs520\\}.\\{com\\}',
+            '<乐-文>小说www.しＷＸS520.com',
+            '-乐-文-小-说-www-lwxs520-com',
+            '？乐？文？小说 wwＷ.lＷＸs520. ＣＯＭ',
+            ';乐;文;小说 www.lw＋xs520.com',
             'www.LＷＸＳ５２０.com',
             'www.lwxs520.com 首发哦亲',
+            'www.lwxs520.com',
+            /\(未完待续.+/g,
+            '\\(\\)',
         ]
     },
     {siteName: '我爱小说',
@@ -4278,6 +4286,7 @@ var App = {
         } catch (e) {
             console.error('载入自定义站点配置错误', e);
         }
+
         if (_.isArray(customRules)) {
             Rule.customRules = customRules;
             C.log('载入自定义站点规则成功', customRules);
@@ -4295,6 +4304,7 @@ var App = {
         var info = _.find(rules, function(x) {
             return toRE(x.url).test(locationHref);
         });
+
         if (!info) {
             info = {};
             C.log("没有找到规则，尝试自动模式。");
@@ -4307,6 +4317,7 @@ var App = {
         var locationHref = window.location.href,
             locationHost = location.host,
             referrer = document.referrer;
+
         switch (true) {
             case L_getValue("mynoverlreader_disable_once") == 'true':
                 L_removeValue("mynoverlreader_disable_once");
@@ -4524,7 +4535,7 @@ var App = {
     clean: function() {
         $('body > *:not("#container, .readerbtn, #reader_preferences, #uil_blocker,iframe[name=\'mynovelreader-iframe\']")').remove();
         $('link[rel="stylesheet"]').remove();
-        $('body, #container').removeAttr('style');
+        $('body, #container').removeAttr('style').removeAttr('class');
 
         if (location.host.indexOf('qidian') > 0) {
             unsafeWindow.jQuery(document).off("selectstart").off("contextmenu");
