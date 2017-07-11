@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.4.9
+// @version        5.5.0
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -292,11 +292,6 @@
 // @include        *://*.sto.cc/*-*/
 // @include        *://www.151xs.com/wuxiazuoxiong/*/chapter/*/
 // @include        *://www.qududu.net/book/*/*/*.html
-// @include        *://wanshu.com/*
-// @include        *://www.fenghuaju.com/*/*
-// @include        *://www.dashubao.cc/*/*
-// @include        *://www.yunlaige.com/*
-// @include        *://www.aiquxs.com/*
 // @include        *://www.qingdou.cc/chapter*
 // @include        *://www.shuyuewu.com/kan*
 // @include        *://www.1553.net/*/*
@@ -1181,6 +1176,8 @@ Rule.specialSite = [
     },
     {siteName: '23中文',
         url: '^https?://www\\.23zw\\.(com|me)/.*\\.html',
+        contentSelector: '#chapter_content',
+        contentRemove: 'h1',
         contentReplace: [
             '的朋友，你可以即可第一时间找到本站哦。',
             '手机看小说哪家强\\?手机阅读网',

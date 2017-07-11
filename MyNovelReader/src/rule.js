@@ -810,6 +810,8 @@ Rule.specialSite = [
     },
     {siteName: '23中文',
         url: '^https?://www\\.23zw\\.(com|me)/.*\\.html',
+        contentSelector: '#chapter_content',
+        contentRemove: 'h1',
         contentReplace: [
             '的朋友，你可以即可第一时间找到本站哦。',
             '手机看小说哪家强\\?手机阅读网',
