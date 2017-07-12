@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.5.0
+// @version        5.5.1
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -360,6 +360,8 @@ var config = {
     paragraphBlank: true,           // 统一段落开头的空格为 2个全角空格
     end_color: "#666666",           // 最后一页的链接颜色
     PRELOADER: true,                // 提前预读下一页
+
+    xhr_time: 20 * 1000,
 };
 
 var READER_AJAX = "reader-ajax";   // 内容需要 ajax 的 className
@@ -4859,7 +4861,7 @@ var App = {
         App.lastRequestUrl = App.requestUrl;
 
         if (nextUrl && !App.isTheEnd && !(nextUrl in App.parsedPages)) {
-            App.parsedPages[nextUrl] = true;
+            App.parsedPages[nextUrl] = 0;
             App.curPageUrl = App.requestUrl;
             App.requestUrl = null;
 
@@ -4874,31 +4876,49 @@ var App = {
             if (useiframe) {
                 App.iframeRequest(nextUrl);
             } else {
-                App.httpRequest(nextUrl);
+                App.httpRequest(nextUrl, App.httpRequestDone);
             }
         } else {
             // App.$loading.html("<a href='" + App.curPageUrl  + "'>无法使用阅读模式，请手动点击下一页</a>").show();
         }
     },
     httpRequest: function(nextUrl, callback) {
+        if (!_.isFunction(callback)) {
+            callback = function() {}
+        }
+
         C.log("获取下一页: " + nextUrl);
+        App.parsedPages[nextUrl] += 1;
+
         GM_xmlhttpRequest({
             url: nextUrl,
             method: "GET",
             overrideMimeType: "text/html;charset=" + document.characterSet,
-            timeout: 30 * 1000,
+            timeout: config.xhr_time,
             onload: function(res) {
                 var doc = parseHTML(res.responseText);
-                if (_.isFunction(callback)) {
-                    callback(doc);
-                } else {
-                    App.beforeLoad(doc);
-                }
+                callback(doc, nextUrl);
             },
             ontimeout: function() {
-                callback();
+                callback(null, nextUrl);
             }
         });
+    },
+    httpRequestDone: function(doc, nextUrl) {
+        if (doc) {
+            App.beforeLoad(doc);
+            return;
+        }
+
+        if (App.parsedPages[nextUrl] >= 3) {
+            console.error('同一个链接已获取3次', nextUrl)
+            App.$loading.html("<a href='" + nextUrl  + "'>无法获取下一页，请手动点击</a>").show();
+            return;
+        }
+
+        // 无内容再次尝试获取
+        console.error('连接超时, 再次获取');
+        App.httpRequest(nextUrl, App.httpRequestDone);
     },
     iframeRequest: function(nextUrl) {
         C.log("iframeRequest: " + nextUrl);
