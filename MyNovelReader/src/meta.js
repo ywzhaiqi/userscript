@@ -326,7 +326,6 @@
 // @include        *://www.biquge.com.tw/*/*.html
 // @include        *://www.daizhuzai.com/*/*.html
 // @include        *://www.mywenxue.com/xiaoshuo/*/*/*.htm
-// @include        *://wap.yc.ireader.com.cn/book/*/*/
 // @include        *://www.yueduyue.com/*/*.html
 // @include        *://www.67shu.com/*/*/*.html
 // @include        *://www.wangshuge.com/books/*/*/*.html
@@ -334,6 +333,11 @@
 // @include        *://www.ybdu.com/xiaoshuo/*/*/*.html
 // @include        *://www.shudaizi.org/book/*/*.html
 // @include        *://www.ymoxuan.com/book/*/*/*.html
+// @include        *://www.67shu.com/*/*/*.html
+
+// 移动版
+// @include        *://wap.yc.ireader.com.cn/book/*/*/
+// @include        *://m.jjwxc.net/book2/*/*
 
 // @exclude        */List.htm
 // @exclude        */List.html

@@ -317,6 +317,7 @@ var App = {
         // 再次移除其它不相关的，起点，纵横中文有时候有问题
         setTimeout(App.clean, 2000);
         setTimeout(App.clean, 5000);
+        setTimeout(App.clean, 8000);
         // TM 用 addEventListener('load') 有问题
         window.onload = function() {
             App.clean();

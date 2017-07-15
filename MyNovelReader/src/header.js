@@ -11,7 +11,7 @@ var config = {
     end_color: "#666666",           // 最后一页的链接颜色
     PRELOADER: true,                // 提前预读下一页
 
-    xhr_time: 20 * 1000,
+    xhr_time: 15 * 1000,
 };
 
 var READER_AJAX = "reader-ajax";   // 内容需要 ajax 的 className
