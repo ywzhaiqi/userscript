@@ -177,12 +177,18 @@ Parser.prototype = {
         if(!chapterTitle){
             chapterTitle = this.autoGetChapterTitle(this.doc);
         }
+        if (info.chapterTitleReplace) {
+            chapterTitle = chapterTitle.replace(toRE(info.chapterTitleReplace), '')
+        }
 
         if (!bookTitle) {
             bookTitle = this.getTitleFromInfo(info.bookTitleSelector);
         }
         if (!bookTitle) {
             bookTitle = this.$doc.find(Rule.bookTitleSelector).text();
+        }
+        if (info.bookTitleReplace) {
+            bookTitle = bookTitle.replace(toRE(info.bookTitleReplace), '')
         }
 
         // 标题间增加一个空格，不准确，已注释
@@ -191,9 +197,9 @@ Parser.prototype = {
                 .trim();
                 // .replace(/(第?\S+?[章节卷回])(.*)/, "$1 $2");
 
-        // if (info.trimBookTitle !== false) {
-        //     chapterTitle = chapterTitle.replace(bookTitle, '').trim();
-        // }
+        if (chapterTitle.startsWith(bookTitle)) {
+            chapterTitle = chapterTitle.replace(bookTitle, '').trim();
+        }
 
         bookTitle = bookTitle.replace(/(?:最新章节|章节目录)$/, '');
 

@@ -289,7 +289,7 @@
 // @include        *://down1.qidian.com/bookall/*.htm*
 // @include        *://www.77nt.com/*/*.html
 // @include        *://www.quanbenba.com/yuedu/*/*/*.html
-// @include        *://*.sto.cc/*-*/
+// @include        *://www.sto.cc/book-*-*.html
 // @include        *://www.151xs.com/wuxiazuoxiong/*/chapter/*/
 // @include        *://www.qududu.net/book/*/*/*.html
 // @include        *://www.qingdou.cc/chapter*
@@ -334,6 +334,7 @@
 // @include        *://www.shudaizi.org/book/*/*.html
 // @include        *://www.ymoxuan.com/book/*/*/*.html
 // @include        *://www.67shu.com/*/*/*.html
+// @include        *://www.bookxuan.com/*/*.html
 
 // 移动版
 // @include        *://wap.yc.ireader.com.cn/book/*/*/

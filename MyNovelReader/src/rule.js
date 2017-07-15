@@ -36,7 +36,7 @@ var Rule = {
         "a:econtains('最新章节')", "a:contains('回目录')","a:contains('回书目')", "a:contains('目 录')", "a:contains('目录')"],
 
     contentSelectors: ["#pagecontent", "#contentbox", "#bmsy_content", "#bookpartinfo", "#htmlContent",
-        "#text_area", "#chapter_content", "#chapterContent", "#partbody",
+        "#text_area", "#chapter_content", "#chapterContent", "#partbody", "#BookContent",
         "#article_content", "#BookTextRead", "#booktext", "#BookText", "#readtext", "#readcon", "#text_c", "#txt_td", "#TXT", "#txt", "#zjneirong",
         ".novel_content", ".readmain_inner", ".noveltext", ".booktext", ".yd_text2",
         "#contentTxt", "#oldtext", "#a_content", "#contents", "#content2", "#contentts", "#content", ".content"],
@@ -784,9 +784,12 @@ Rule.specialSite = [
         url: "^https?://b\\.faloo\\.com/p/\\d+/\\d+\\.html",
         titleSelector: "#title h1",
         bookTitleSelector: "div.nav > a:last",
+        bookTitleReplace: '小说$',
+
         nextSelector: "a#next_page",
         prevSelector: "a#pre_page",
         indexSelector: "a#huimulu",
+
         contentSelector: "#main > .main0",
         contentRemove: "> *:not(#con_imginfo, #content), .p_content_bottom",
         contentReplace: [
@@ -1391,6 +1394,8 @@ Rule.specialSite = [
         url: /^https?:\/\/www\.lwxs520\.com\/books\/\d+\/\d+\/\d+.html/,
         siteExample: 'http://www.lwxs520.com/books/2/2329/473426.html',
         bookTitleSelector: 'h2',
+        chapterTitleReplace: 'WwW.lwxs520.Com|乐文小说网',
+
         contentRemove: '#content>:not(p)',
         contentReplace: [
             '看小说到乐文小说网www.lwxs520.com',
@@ -1560,12 +1565,12 @@ Rule.specialSite = [
         ]
     },
     {siteName: "思兔阅读",
-        url: "^https?://\\w+\\.sto\\.cc/\\d+-\\d+/",
+        url: "^https?://\\w+\\.sto\\.cc/book-\\d+-\\d+.html",
         titleReg: "(.*?)_(.*?)_全文在線閱讀_思兔",
         titlePos: 0,
         //bookTitleSelector: "h1",
-        prevSelector: "a:contains('上壹頁')",
-        nextSelector: "a:contains('下壹頁')",
+        prevSelector: "a:contains('上壹頁'), a:contains('上壹页')",
+        nextSelector: "a:contains('下壹頁'), a:contains('下壹页')",
         contentSelector: "div#BookContent",
         contentRemove: 'span',
     },
@@ -1800,6 +1805,19 @@ Rule.specialSite = [
         contentReplace: [
             '\\[www.23sw.net\\]',
         ]
+    },
+    {siteName: '书轩网',
+        url: '^https?://www.bookxuan.com/\\d+_\\d+/\\d+.html',
+        bookTitleSelector: '.con_top a:last',
+        contentReplace: [
+            { '&amp;quot;': '"', },
+            'getreadset;',
+            // '&lt;div class=&quot;divimage&quot;&gt;&lt;img src=&quot;',
+            '&lt;div class="divimage"&gt;&lt;img src="',
+        ],
+        contentPatch: function($doc) {
+            $doc.find('#content[title="书，轩，网"]').remove();
+        }
     },
 
     // 移动版

@@ -30,6 +30,9 @@ a:link { text-decoration: none; }
     margin-right:auto;
     padding-bottom: 15px;
 }
+#mynovelreader-content img{
+    width: 100%;
+}
 
 article {
     margin-top: 55px;
