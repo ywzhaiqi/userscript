@@ -39,7 +39,8 @@ var Rule = {
         "#text_area", "#chapter_content", "#chapterContent", "#partbody", "#BookContent",
         "#article_content", "#BookTextRead", "#booktext", "#BookText", "#readtext", "#readcon", "#text_c", "#txt_td", "#TXT", "#txt", "#zjneirong",
         ".novel_content", ".readmain_inner", ".noveltext", ".booktext", ".yd_text2",
-        "#contentTxt", "#oldtext", "#a_content", "#contents", "#content2", "#contentts", "#content", ".content"],
+        "#contentTxt", "#oldtext", "#a_content", "#contents", "#content2", "#contentts", "#content1", "#content", ".content"
+    ],
 
     // (测试)尝试查找书名。顶部章节导航的最后一个链接可能是书名。
     bookTitleSelector: ".h1title > .shuming > a[title], .chapter_nav > div:first > a:last",
@@ -341,7 +342,7 @@ Rule.specialSite = [
     //     contentSelector: 'table[width="900px"][align="CENTER"]'
     // },
     {siteName: "燃文",
-        url: /^https?:\/\/www\.(?:ranwen\.cc|64mi\.com)\/.*\.html$/,
+        url: /^https?:\/\/www\.(?:ranwena?\.(cc|net|com)|64mi\.com)\/.*\.html$/,
         titleReg: /(.*?)-(.*?)-燃文/,
         contentSelector: "#oldtext, #contents",
         contentRemove: "div[style], script",
@@ -1818,6 +1819,11 @@ Rule.specialSite = [
         contentPatch: function($doc) {
             $doc.find('#content[title="书，轩，网"]').remove();
         }
+    },
+    {siteName: '大家读书院',
+        url: '^https?://www.dajiadu.net/files/article/html/\\d+/\\d+/\\d+.html',
+        contentSelector: '#content, #content1',
+        contentRemove: '.copy',
     },
 
     // 移动版

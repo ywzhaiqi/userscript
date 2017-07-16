@@ -68,6 +68,7 @@
 // @include        *://www.quledu.com/wcxs-*-*/
 // @include        *://www.ranwen.cc/*/*/*/*.html
 // @include        *://www.ranwen.net/files/article/*/*/*.html
+// @include        *://www.ranwena.com/files/article/*/*/*.html
 // @include        *://www.64mi.com/*/*/*/*.html
 // @include        *://www.bxs.cc/*/*.html*
 // @include        *://www.laishuwu.com/html/*/*/*.html

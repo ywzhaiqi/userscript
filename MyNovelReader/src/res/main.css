@@ -31,7 +31,7 @@ a:link { text-decoration: none; }
     padding-bottom: 15px;
 }
 #mynovelreader-content img{
-    width: 100%;
+    max-width: 100%;
 }
 
 article {
