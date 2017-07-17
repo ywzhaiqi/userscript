@@ -89,6 +89,7 @@ function getUrlHost(url) {
     return a.host;
 }
 
+// 模板
 $.nano = function(template, data) {
     return template.replace(/\{([\w\.]*)\}/g, function(str, key) {
         var keys = key.split("."),

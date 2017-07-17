@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.5.4
+// @version        5.5.5
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -2947,6 +2947,7 @@ function getUrlHost(url) {
     return a.host;
 }
 
+// 模板
 $.nano = function(template, data) {
     return template.replace(/\{([\w\.]*)\}/g, function(str, key) {
         var keys = key.split("."),
@@ -3066,19 +3067,22 @@ var UI = {
         UI.hidePreferencesButton(Config.hide_preferences_button);  // 初始化设置按钮是否隐藏
     },
     refreshMainStyle: function(){
-        if(UI.mainStyle){
-            $(UI.mainStyle).remove();
-        }
-
-        UI.mainStyle = GM_addStyle(
-            Res.CSS_MAIN
+        var mainCss = Res.CSS_MAIN
                 .replace("{font_family}", Config.font_family)
-                .replace("{font_size}", Config.font_size)
+                .replace("{font_size}", UI.calcContentFontSize(Config.font_size))
                 .replace("{title_font_size}", UI.calcTitleFontSize(Config.font_size))
                 .replace("{content_width}", Config.content_width)
                 .replace("{text_line_height}", Config.text_line_height)
-                .replace("{menu-bar-hidden}", Config.menu_bar_hidden ? "display:none;" : "")
-        );
+                .replace("{menu-bar-hidden}", Config.menu_bar_hidden ? "display:none;" : "");
+
+        if(UI.$mainStyle){
+            UI.$mainStyle.text(mainCss);
+            return;
+        }
+
+        UI.$mainStyle = $('<style id="main">')
+            .text(mainCss)
+            .appendTo('head');
     },
     hideFooterNavStyle: function(hidden){
         var navStyle = $("#footer_nav_css");
@@ -3118,9 +3122,9 @@ var UI = {
         UI.$menuBar.toggle(!hidden);
     },
     refreshSkinStyle: function(skin_name, isFirst){
-        var style = $("#skin_style");
-        if(style.length === 0){
-            style = $('<style id="skin_style">').appendTo('head');
+        var $style = $("#skin_style");
+        if($style.length === 0){
+            $style = $('<style id="skin_style">').appendTo('head');
         }
 
         // 图片章节夜间模式会变的无法看
@@ -3129,13 +3133,13 @@ var UI = {
                 var img = $('#mynovelreader-content img')[0];
                 // console.log(img.width, img.height)
                 if (img && img.width > 500 && img.height > 1000) {
-                    style.text(UI.skins['缺省皮肤'.uiTrans()]);
+                    $style.text(UI.skins['缺省皮肤'.uiTrans()]);
                     return;
                 }
             }, 200);
         }
 
-        style.text(UI.skins[skin_name]);
+        $style.text(UI.skins[skin_name]);
     },
     refreshExtraStyle: function(css){
         var style = $("#extra_style");
@@ -3204,12 +3208,32 @@ var UI = {
             })
             .appendTo('body');
     },
-    calcTitleFontSize: function(contentFontSizeStr){
-        var m = contentFontSizeStr.match(/([\d\.]+)(px|em|pt)/);
+    calcContentFontSize: function(fontSizeStr) {
+        var m = fontSizeStr.match(/([\d\.]+)(px|r?em|pt)/);
         if(m) {
             var size = m[1],
                 type = m[2];
-            return parseInt(size, 10) * 1.8 + type;
+            return parseFloat(size, 10) + type;
+        }
+
+        m = fontSizeStr.match(/([\d\.]+)/);
+        if (m) {
+            return parseFloat(m[1], 10) + 'px';
+        }
+
+        return "";
+    },
+    calcTitleFontSize: function(fontSizeStr){
+        var m = fontSizeStr.match(/([\d\.]+)(px|r?em|pt)/);
+        if(m) {
+            var size = m[1],
+                type = m[2];
+            return parseFloat(size, 10) * 1.8 + type;
+        }
+
+        m = fontSizeStr.match(/([\d\.]+)/);
+        if (m) {
+            return parseFloat(m[1], 10) * 1.8 + 'px';
         }
 
         return "";
@@ -3303,9 +3327,10 @@ var UI = {
         var preview = _.debounce(function(){
             switch(this.id){
                 case "font-size":
+                    var contentFontSize = UI.calcContentFontSize(this.value);
                     var titleFontSize = UI.calcTitleFontSize(this.value);
                     if(titleFontSize) {
-                        UI.$content.css("font-size", this.value);
+                        UI.$content.css("font-size", contentFontSize);
                         UI.$content.find("h1").css("font-size", titleFontSize);
                     }
                     break;
@@ -3333,6 +3358,11 @@ var UI = {
         $form.on('click', 'input:checkbox, input:button', function(event){
             UI.preferencesClickHandler(event.target);
         });
+    },
+    cleanPreview: function() {
+        // 恢复初始设置
+        UI.$content.removeAttr('style');
+        UI.$content.find("h1").css("font-size", "");
     },
     preferencesClickHandler: function(target){
         var key;
@@ -3390,8 +3420,7 @@ var UI = {
         }
     },
     preferencesCloseHandler: function(){
-        // UI.$content.removeAttr("style");
-        UI.$content.find("h1").css("font-size", "");
+        UI.cleanPreview();
 
         UI.hide();
     },
@@ -3455,6 +3484,10 @@ var UI = {
             UI._rules = rules;
         }
 
+        // 重新载入样式
+        UI.cleanPreview();
+        UI.refreshMainStyle();
+
         UI.hide();
     },
     openHelp: function() {
@@ -3486,7 +3519,6 @@ UI.skins["白底黑字".uiTrans()] = "body { color: black; background-color: whi
 UI.skins["夜间模式".uiTrans()] = "body { color: #939392; background: #2d2d2d; } #preferencesBtn { background: white; } #mynovelreader-content img { background-color: #c0c0c0; } .chapter.active div{color: #939392;}";
 UI.skins["夜间模式1".uiTrans()] = "body { color: #679; background-color: black; } #preferencesBtn img { background-color: white !important; } .title { color: #3399FF; background-color: #121212; }";
 UI.skins["夜间模式2".uiTrans()] = "body { color: #AAAAAA; background-color: #121212; } #preferencesBtn img { background-color: white; } #mynovelreader-content img { background-color: #c0c0c0; } .title { color: #3399FF; background-color: #121212; }   body a { color: #E0BC2D; } body a:link { color: #E0BC2D; } body a:visited { color:#AAAAAA; } body a:hover { color: #3399FF; } body a:active { color: #423F3F; }";
-// UI.skins["夜间模式（多看）".uiTrans()] = "body { color: #3A5056; background: #101819; } #preferencesBtn { background: white; } #mynovelreader-content img { background-color: #c0c0c0; }";
 UI.skins["夜间模式（多看）".uiTrans()] = "body { color: #4A4A4A; background: #101819; } #preferencesBtn { background: white; } #mynovelreader-content img { background-color: #c0c0c0; }";
 
 UI.skins["橙色背景".uiTrans()] = "body { color: #24272c; background-color: #FEF0E1; }";
