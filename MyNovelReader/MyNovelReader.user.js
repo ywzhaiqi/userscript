@@ -358,7 +358,7 @@
 
 var isChrome = !!window.chrome;
 var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
-var isWindows = navigator.userAgent.indexOf("Windows") != -1;
+var isWindows = (navigator.platform == "Win32") || (navigator.platform == "Windows");
 
 // 其它设置
 var config = {
@@ -3122,6 +3122,10 @@ var UI = {
     skins: {},
 
     init: function(){
+        $('<link rel="stylesheet" class="noRemove">')
+            .attr('src', Res.CSS_FONT_AWESOME)
+            .appendTo('head');
+
         UI.refreshMainStyle();
 
         UI.refreshSkinStyle(Config.skin_name, true);
@@ -3492,6 +3496,7 @@ var UI = {
                 }
                 break;
             case 'saveAsTxt':
+                UI.preferencesCloseHandler();
                 App.saveAsTxt();
                 break;
             default:
@@ -3590,6 +3595,51 @@ var UI = {
     }
 };
 
+UI.message = (function() {
+
+    function notice(html, duration, noticeType, onClose) {
+        if (typeof duration === 'undefined')
+            duration = 2000;
+
+        var closeMessage = function() {
+            UI.$messageDiv.remove();
+            UI.$messageDiv = null;
+
+            if (typeof onClose === 'function') {
+                onClose();
+            }
+        };
+
+        if (!UI.$messageDiv) {
+            var iconHtml = ''
+            if (noticeType === 'loading') {
+                iconHtml = '<i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>'
+            }
+
+            UI.$messageDiv = $('<div id="message" class="noRemove">' + iconHtml + '<span id="content"></span></div>')
+                .appendTo('body');
+            UI.$messageDivContent = UI.$messageDiv.find('#content');
+
+            if (duration == 0) {
+                UI.$messageDiv.on('click', closeMessage);
+            }
+        }
+
+        UI.$messageDivContent.html(html)
+
+        if (duration > 0) {
+            clearTimeout(UI._messageTimeId);
+            UI._messageTimeId = setTimeout(closeMessage, duration)
+        }
+    }
+
+    return {
+        loading: function(html, duration, onClose) {
+            notice(html, duration, 'loading', onClose)
+        }
+    }
+})()
+
 UI.skins["缺省皮肤".uiTrans()] = "";
 UI.skins["暗色皮肤".uiTrans()] = "body { color: #666; background-color: rgba(0;0;0;.1); }\
                 .title { color: #222; }";
@@ -3610,10 +3660,10 @@ UI.skins["经典皮肤".uiTrans()] = "body { color: black; background-color: #EA
 
 var fontawesomeWoff = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.woff";
 
-
 var Res = {
-    CSS_MAIN: '@font-face {\n    font-family: "FontAwesome";\n    src: url({fontawesomeWoff});\n    font-weight: normal;\n    font-style: normal;\n}\nbody > a { display:none !important; }\n.hidden {\n    display: none;\n}\n.quiet-mode {\n    display: none;\n}\nbody {\n    background: #F3F2EE;\n    color: #1F0909;\n    padding: 0px;\n    margin: 0px;\n    font-family: "Microsoft YaHei UI", 微软雅黑, 新宋体, 宋体, arial;\n}\na { color: #065488; }\na:link { text-decoration: none; }\n#mynovelreader-content {\n    width: {content_width};\n    font-size: {font_size};\n    font-family: {font_family};\n    line-height: {text_line_height};\n    margin-left:auto;\n    margin-right:auto;\n    padding-bottom: 15px;\n}\n#mynovelreader-content img{\n    max-width: 100%;\n}\narticle {\n    margin-top: 55px;\n    word-wrap: break-word;\n}\narticle h1 {\n    clear: both;\n    line-height: 50px;\n    font-size: {title_font_size};\n    font-weight: normal;\n    margin: 25px -20px;\n    padding: 0 20px 10px;\n    border-bottom: 1px solid rgba(0,0,0,.25);\n    font-weight: normal;\n    text-transform: none;\n}\narticle li {\n    list-style: none;\n}\n.chapter-footer-nav {\n    text-align:center;\n    font-size:0.9em;\n    margin:-10px 0px 30px 0px;\n}\n#loading {\n    color: white;\n    text-align: center;\n    font: 12px "微软雅黑", "宋体", "Times New Roman", "Verdana";\n    margin-top: 20px;\n    margin-left: auto;\n    margin-right: auto;\n    width: 376px;\n    height: 32px;\n    line-height: 32px;\n    border-radius: 20px;\n    border: 1px solid #666;\n    background-color: #333;\n}\n#loading img {\n    vertical-align: middle;\n}\n#loading a {\n    color: white;\n}\n#preferencesBtn{\n    position: fixed;\n    top: 10px;\n    right: 10px;\n    z-index: 1597;\n}\n#alert {\n    position: fixed;\n    z-index: 100;\n    float: auto;\n    width: auto;\n    height: auto;\n    top: 10px;\n    left: 500px;\n    background: rgba(215, 240, 253, 0.65);\n    color: #2d7091;\n    border: 1px solid rgba(45,112,145,0.3);\n    border-radius: 4px;\n    text-shadow: 0 1px 0 #fff;\n}\n#alert p {\n    font-size: 13px;\n    margin: 6px;\n}\nimg.blockImage {clear: both;float: none;display: block;margin-left: auto;margin-right: auto;}\n#menu-bar {\n    border: solid rgba(0, 100, 255, .9);\n    border-width: 3px 2px 3px 0px;\n    position: fixed;\n    left: 0px;\n    top: 40%;\n    height: 100px;\n    width: 2px;\n    z-index: 199;\n    {menu-bar-hidden}\n}\n#menu-bar { \n    top: 0px;\n    height: 100%;\n    width: 1px;\n    background: transparent;\n    border: none;\n}\n#menu {\n    position: fixed;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    z-index: 100;\n    width: 270px;\n    max-width: 100%;\n    background: #333;\n    overflow-y: auto;\n}\n#menu:after {\n    content: "";\n    display: block;\n    position: absolute;\n    top: 46px;\n    bottom: 0;\n    right: 0;\n    width: 1px;\n    background: rgba(0,0,0,0.6);\n    box-shadow: 0 0 5px 2px rgba(0,0,0,0.6);\n}\n#header{\n    color: #777;\n    margin-top: 0;\n    border-top: 1px solid rgba(0,0,0,0.3);\n    background: #404040;\n    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);\n    text-shadow: 0 1px 0 rgba(0,0,0,0.5);\n    padding: 10px 12px;\n    text-transform: uppercase;\n    font-weight: bold;\n    font-size: 20px;\n}\n#header a {\n    color: #777777;\n}\n#divider {\n    position: relative;\n    z-index: 300;\n    border-top: 1px solid rgba(255,255,255,0.01);\n    border-bottom: 1px solid rgba(0,0,0,0.3);\n    margin: 0;\n    height: 4px;\n    background: rgba(0,0,0,0.2);\n    box-shadow: 0 1px 0 rgba(255,255,255,0.05), inset 0 1px 3px rgba(0,0,0,0.3);\n}\n#chapter-list {\n    position: relative;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    z-index: 200;\n    margin: 0;\n    padding: 0;\n    cursor: pointer;\n    list-style: none;\n    overflow-y: auto;\n}\n.chapter {\n    list-style: none;\n}\n.chapter:last-child {\n    border-bottom: 1px solid rgba(0,0,0,0.3);\n    box-shadow: 0 1px 0 rgba(255,255,255,0.05);\n}\n.chapter div {\n    color: #ccc;\n    font-size: 15px;\n    padding: 8px 20px;\n    border-top: 1px solid rgba(0,0,0,0.3);\n    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);\n    text-shadow: 0 1px 0 rgba(0,0,0,0.5);\n    display: block;\n    text-decoration: none;\n    text-overflow: ellipsis;\n    overflow: hidden;\n    white-space: nowrap;\n    cursor: pointer;\n}\n.chapter div:before {\n    content: "\\f105";\n    width: 20px;\n    margin-left: -10px;\n    float: left;\n    font-family: "FontAwesome" !important;\n    text-align: center;\n}\n.chapter div:hover {\n    background: #404040;\n    color: #fff;\n    outline: 0;\n}\n.chapter.active div {\n    background: #1a1a1a;\n    color: #fff;\n    font-size: 16px;\n    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);\n}\n::-webkit-scrollbar {\n    height: 9px !important;\n    width: 9px !important;\n}\n::-webkit-scrollbar-thumb {\n    background-color: #7D7D7D !important;\n    border-radius: 3px !important;\n}\n::-webkit-scrollbar-track-piece {\n    background-color: rgba(0,0,0,.25) !important;\n}\n'
+    CSS_MAIN: '@font-face {\n    font-family: "FontAwesome";\n    src: url({fontawesomeWoff});\n    font-weight: normal;\n    font-style: normal;\n}\nbody > a { display:none !important; }\n.hidden {\n    display: none;\n}\n.quiet-mode {\n    display: none;\n}\nbody {\n    background: #F3F2EE;\n    color: #1F0909;\n    padding: 0px;\n    margin: 0px;\n    font-family: "Microsoft YaHei UI", 微软雅黑, 新宋体, 宋体, arial;\n}\na { color: #065488; }\na:link { text-decoration: none; }\n#mynovelreader-content {\n    width: {content_width};\n    font-size: {font_size};\n    font-family: {font_family};\n    line-height: {text_line_height};\n    margin-left:auto;\n    margin-right:auto;\n    padding-bottom: 15px;\n}\n#mynovelreader-content img{\n    max-width: 100%;\n}\narticle {\n    margin-top: 55px;\n    word-wrap: break-word;\n}\narticle h1 {\n    clear: both;\n    line-height: 50px;\n    font-size: {title_font_size};\n    font-weight: normal;\n    margin: 25px -20px;\n    padding: 0 20px 10px;\n    border-bottom: 1px solid rgba(0,0,0,.25);\n    font-weight: normal;\n    text-transform: none;\n}\narticle li {\n    list-style: none;\n}\n.chapter-footer-nav {\n    text-align:center;\n    font-size:0.9em;\n    margin:-10px 0px 30px 0px;\n}\n#loading {\n    color: white;\n    text-align: center;\n    font: 12px "微软雅黑", "宋体", "Times New Roman", "Verdana";\n    margin-top: 20px;\n    margin-left: auto;\n    margin-right: auto;\n    width: 376px;\n    height: 32px;\n    line-height: 32px;\n    border-radius: 20px;\n    border: 1px solid #666;\n    background-color: #333;\n}\n#loading img {\n    vertical-align: middle;\n}\n#loading a {\n    color: white;\n}\n#preferencesBtn{\n    position: fixed;\n    top: 10px;\n    right: 10px;\n    z-index: 1597;\n}\n#alert {\n    position: fixed;\n    z-index: 100;\n    float: auto;\n    width: auto;\n    height: auto;\n    top: 10px;\n    left: 500px;\n    background: rgba(215, 240, 253, 0.65);\n    color: #2d7091;\n    border: 1px solid rgba(45,112,145,0.3);\n    border-radius: 4px;\n    text-shadow: 0 1px 0 #fff;\n}\n#alert p {\n    font-size: 13px;\n    margin: 6px;\n}\n#message {\n    position: fixed;\n    z-index: 1010;\n    width: auto;\n    height: auto;\n    top: 10px;\n    left: 500px;\n    padding: 8px 16px;\n    border-radius: 4px;\n    box-shadow: 0 2px 8px rgba(0,0,0,.2);\n    background: #fff;\n    display: inline-block;\n    pointer-events: all;\n    font-size: 12px;\n}\n#message .fa-spinner {\n    font-size: 13px;\n    margin-right: 4px;\n}\n#message p {\n    margin: 0;\n}\nimg.blockImage {clear: both;float: none;display: block;margin-left: auto;margin-right: auto;}\n#menu-bar {\n    border: solid rgba(0, 100, 255, .9);\n    border-width: 3px 2px 3px 0px;\n    position: fixed;\n    left: 0px;\n    top: 40%;\n    height: 100px;\n    width: 2px;\n    z-index: 199;\n    {menu-bar-hidden}\n}\n#menu-bar { \n    top: 0px;\n    height: 100%;\n    width: 1px;\n    background: transparent;\n    border: none;\n}\n#menu {\n    position: fixed;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    z-index: 100;\n    width: 270px;\n    max-width: 100%;\n    background: #333;\n    overflow-y: auto;\n}\n#menu:after {\n    content: "";\n    display: block;\n    position: absolute;\n    top: 46px;\n    bottom: 0;\n    right: 0;\n    width: 1px;\n    background: rgba(0,0,0,0.6);\n    box-shadow: 0 0 5px 2px rgba(0,0,0,0.6);\n}\n#header{\n    color: #777;\n    margin-top: 0;\n    border-top: 1px solid rgba(0,0,0,0.3);\n    background: #404040;\n    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);\n    text-shadow: 0 1px 0 rgba(0,0,0,0.5);\n    padding: 10px 12px;\n    text-transform: uppercase;\n    font-weight: bold;\n    font-size: 20px;\n}\n#header a {\n    color: #777777;\n}\n#divider {\n    position: relative;\n    z-index: 300;\n    border-top: 1px solid rgba(255,255,255,0.01);\n    border-bottom: 1px solid rgba(0,0,0,0.3);\n    margin: 0;\n    height: 4px;\n    background: rgba(0,0,0,0.2);\n    box-shadow: 0 1px 0 rgba(255,255,255,0.05), inset 0 1px 3px rgba(0,0,0,0.3);\n}\n#chapter-list {\n    position: relative;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    z-index: 200;\n    margin: 0;\n    padding: 0;\n    cursor: pointer;\n    list-style: none;\n    overflow-y: auto;\n}\n.chapter {\n    list-style: none;\n}\n.chapter:last-child {\n    border-bottom: 1px solid rgba(0,0,0,0.3);\n    box-shadow: 0 1px 0 rgba(255,255,255,0.05);\n}\n.chapter div {\n    color: #ccc;\n    font-size: 15px;\n    padding: 8px 20px;\n    border-top: 1px solid rgba(0,0,0,0.3);\n    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);\n    text-shadow: 0 1px 0 rgba(0,0,0,0.5);\n    display: block;\n    text-decoration: none;\n    text-overflow: ellipsis;\n    overflow: hidden;\n    white-space: nowrap;\n    cursor: pointer;\n}\n.chapter div:before {\n    content: "\\f105";\n    width: 20px;\n    margin-left: -10px;\n    float: left;\n    font-family: "FontAwesome" !important;\n    text-align: center;\n}\n.chapter div:hover {\n    background: #404040;\n    color: #fff;\n    outline: 0;\n}\n.chapter.active div {\n    background: #1a1a1a;\n    color: #fff;\n    font-size: 16px;\n    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);\n}\n::-webkit-scrollbar {\n    height: 9px !important;\n    width: 9px !important;\n}\n::-webkit-scrollbar-thumb {\n    background-color: #7D7D7D !important;\n    border-radius: 3px !important;\n}\n::-webkit-scrollbar-track-piece {\n    background-color: rgba(0,0,0,.25) !important;\n}\n'
         .replace('{fontawesomeWoff}', fontawesomeWoff),
+    CSS_FONT_AWESOME: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css',
 
     preferencesHTML: '<form id="preferences" name="preferences">\n    <div id="setting_table1">\n        <span id="top-buttons">\n            <input title="部分选项需要刷新页面才能生效" id="save_button" value="√ 确认" type="button">\n            <input title="取消本次设定，所有选项还原" id="close_button" value="X 取消" type="button">\n        </span>\n        <div class="form-row">\n            <label>\n                界面语言<select id="lang">\n                </select>\n            </label>\n            <label title="将小说网页文本转换为繁体。\\n\\n注意：内置的繁简转换表，只收录了简单的单字转换，启用本功能后，如有错误转换的情形，请利用脚本的自订字词取代规则来修正。\\n例如：「千里之外」，会错误转换成「千里之外」，你可以加入规则「千里之外=千里之外」来自行修正。">\n                <input type="checkbox" id="enable-cn2tw" name="enable-cn2tw"/>网页：转繁体\n            </label>\n            <label id="quietMode" class="right" title="隐藏其他，只保留正文，适用于全屏状态下">\n                <input class="key" type="button" id="quietModeKey"/>安静模式\n            </label>\n        </div>\n        <div class="form-row">\n            <label title="不影响 booklink.me 的启用">\n                <input type="checkbox" id="disable-auto-launch" name="disable-auto-launch"/>强制手动启用\n            </label>\n            <label title="booklink.me 点击的网站强制启用">\n                <input type="checkbox" id="booklink-enable" name="booklink-enable"/>booklink 自动启用\n            </label>\n            <label>\n                <input type="checkbox" id="debug" name="debug"/>调试模式\n            </label>\n            <a href="https://greasyfork.org/scripts/292-my-novel-reader/feedback" target="_blank">反馈地址</a>\n        </div>\n        <div class="form-row">\n            <label title="图片章节用夜间模式没法看，这个选项在启动时会自动切换到缺省皮肤">\n                <input type="checkbox" id="pic-nightmode-check" name="pic-nightmode-check"/>\n                夜间模式的图片章节检测\n            </label>\n            <label>\n                <input type="checkbox" id="copyCurTitle"/>\n                打开目录复制当前标题\n            </label>\n        </div>\n        <div class="form-row">\n            <label title="通过快捷键切换">\n                <input type="checkbox" id="hide-menu-list"/>隐藏左侧章节列表\n            </label>\n            <label>\n                <input type="checkbox" id="hide-footer-nav"/>隐藏底部导航栏\n            </label>\n            <label class="right" title="导出之后的所有章节">\n                <input type="button" id="saveAsTxt" value="存为 txt（测试）" />\n            </label>\n        </div>\n        <div class="form-row">\n            <label>\n                左侧导航栏切换快捷键：\n            </label>\n            <input class="key" type="button" id="setHideMenuListKey" />\n            <label title="通过快捷键切换或在 Greasemonkey 用户脚本命令处打开设置窗口">\n                <input type="checkbox" id="hide-preferences-button"/>隐藏设置按钮\n            </label>\n            <input class="key" type="button" id="openPreferencesKey"/>\n        </div>\n        <div class="form-row">\n            <label>\n                距离底部\n                <input type="textbox" id="remain-height" name="remain-height" size="5"/>\n                px 加载下一页\n            </label>\n            <label>\n                <input type="checkbox" id="add-nextpage-to-history"/>添加下一页到历史记录\n            </label>\n            <label>\n                <input type="checkbox" id="enable-dblclick-pause"/>双击暂停翻页\n            </label>\n        </div>\n        <div class="form-row">\n            <label>\n                <select id="skin">\n                </select>\n            </label>\n            <label>\n                字体\n                <input type="textbox" id="font-family" style="min-width:200px;"/>\n            </label>\n            <br/><br/>\n            <label>\n                字体大小\n                <input type="textbox" id="font-size" name="font-size" size="6"/>\n            </label>\n            <label>\n                行高\n                <input type="textbox" id="text_line_height" size="6"/>\n            </label>\n            <label>\n                行宽\n                <input type="textbox" id="content_width" size="6"/>\n            </label>\n        </div>\n        <div class="form-row">\n            <label title="把一大块未分段的内容文本按照句号分段">\n                <input type="checkbox" id="split_content"/>对一坨内容进行强制分段\n            </label>\n            <label>\n                <input type="checkbox" id="scroll_animate"/>章节滚动效果\n            </label>\n        </div>\n        <div class="form-row">\n            <div class="prefs_title">自定义样式</div>\n            <textarea id="extra_css" class="prefs_textarea" placeholder="自定义样式"></textarea>\n        </div>\n    </div>\n    <div id="setting_table2">\n        <div class="form-row" title="详见脚本代码的 Rule.specialSite">\n            <div class="prefs_title">自定义站点规则</div>\n            <textarea id="custom_siteinfo" class="prefs_textarea" placeholder="自定义站点规则" />\n        </div>\n        <div class="form-row" title="一行一个，每行的第一个 = 为分隔符。\\n保存后生效">\n            <div class="prefs_title">自定义替换规则</div>\n            <textarea id="custom_replace_rules" class="prefs_textarea" placeholder="b[āà]ng=棒" />\n        </div>\n    </div>\n</form>'
         .uiTrans().replace(/\\n/g, '\n'),
@@ -4778,11 +4828,11 @@ var App = {
         document.body.innerHTML = $.nano('<div id="container">\n    <div id="menu-bar" title="点击显示隐藏章节列表"></div>\n    <div id="menu">\n        <div id="header" title="打开目录">\n            <a href="{indexUrl}" target="_blank">{bookTitle}</a>\n        </div>\n        <div id="divider"></div>\n        <ul id="chapter-list" title="左键滚动，中键打开链接（无阅读模式）">\n        </ul>\n    </div>\n    <div id="mynovelreader-content"></div>\n    <div id="loading" style="display:none"></div>\n    <div id="preferencesBtn">\n        <img style="width:16px" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAABwklEQVRIibVVzWrCQBAeQk/bdk+bm0aWDQEPHtwVahdavLU9aw6KAQ+SQ86Sa19Aqu0T9NafSw8ttOgr1CewUB9CBL3Yy26x1qRp0A8GhsnO9yUzmxmAhKjX68cAMAeAufK3C875FQAsAWCp/O3CsqyhFlB+Oti2/cAYewrD8FDHarXahWEYUy1gGMbUdd1z/TwMw0PG2JNt2/ex5IyxR02CEJpIKbuEkJGOrRshZCSl7CKEJjrGGHuIFMjlcs9RZElNcWxGEAQHGONxWnKM8TgIgoPYMkkpL9MKqNx4xNX8LyOEvMeSq5uxMZlz3vN9v+D7foFz3os6V61Wz36QNhqNUyHENaV0CACLTUnFYvF6/WVUbJPIglI6FELctFqtMiT59Ha7TdcFVCxJ6XYs0Gw2T1SJBlsq0ZxSOhBC3Hied/QjSTUoqsn9lSb3o879avI61FXbzTUFACiXy7v70Tqdzj7G+COtwJ+jIpPJvKYl12ZZ1kucwJs+iBD6lFJ2TdOMHB2mab7/a1xXKpW9fD5/6zjO3erCcV33PMnCcRwnfuHEYXVlZrPZQWqiKJRKpe8Bt5Ol73leCQBmADBTfiJ8AebTYCRbI3BUAAAAAElFTkSuQmCC"/>\n    </div>\n    <div id="alert" style="display: none;">\n        <p id="App-notice"></p>\n    </div>\n</div>'.uiTrans(), parser);
     },
     clean: function() {
-        $('body > *:not("#container, .readerbtn, #reader_preferences, #uil_blocker,iframe[name=\'mynovelreader-iframe\']")').remove();
-        $('link[rel="stylesheet"]').remove();
+        $('body > *:not("#container, .readerbtn, .noRemove, #reader_preferences, #uil_blocker,iframe[name=\'mynovelreader-iframe\']")').remove();
+        $('link[rel="stylesheet"]:not(.noRemove)').remove();
         $('body, #container').removeAttr('style').removeAttr('class');
 
-        if (location.host.indexOf('qidian') > 0) {
+        if (unsafeWindow.jQuery && location.host.indexOf('qidian') > 0) {
             unsafeWindow.jQuery(document).off("selectstart").off("contextmenu");
         }
     },
@@ -5293,15 +5343,13 @@ var App = {
     isSaveing: false,
     saveAsTxt: function() {
         if (App.site.useiframe) {
-            UI.notice('暂不支持', 4000);
+            UI.notice('暂不支持', 3000);
             return;
         }
 
         if (App.isSaveing) {
-            UI.notice('正在保存，请稍后', 4000);
+            alert('正在保存，请稍后');
             return;
-        } else {
-            UI.notice('开始一章章获取内容，请耐心等待', 4000);
         }
 
         App.isSaveing = true;
@@ -5312,6 +5360,8 @@ var App = {
         var toTxt = function(parser) {
             var html = $.nano('{chapterTitle}\n\n{contentTxt}', parser);
             chapters.push(html);
+
+            UI.message.loading('已下载 ' + chapters.length + ' 章', 0);
         };
         var finish = function() {
             var allTxt = chapters.join('\n\n');
@@ -5368,9 +5418,9 @@ var BookLinkMe = {
 
         this.addUnreadButton();
 
-        if (location.pathname.indexOf("/book-") === 0) {
-            this.chapterPageAddTiebaLink();
-        }
+        // if (location.pathname.indexOf("/book-") === 0) {
+        //     this.chapterPageAddTiebaLink();
+        // }
     },
     addUnreadButton: function(){  // 添加一键打开所有未读链接
         var $parent = $('td[colspan="2"]:contains("未读"):first, td[colspan="2"]:contains("未讀"):first');

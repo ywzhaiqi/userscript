@@ -305,11 +305,11 @@ var App = {
         document.body.innerHTML = $.nano(<%= res.mainHtml %>.uiTrans(), parser);
     },
     clean: function() {
-        $('body > *:not("#container, .readerbtn, #reader_preferences, #uil_blocker,iframe[name=\'mynovelreader-iframe\']")').remove();
-        $('link[rel="stylesheet"]').remove();
+        $('body > *:not("#container, .readerbtn, .noRemove, #reader_preferences, #uil_blocker,iframe[name=\'mynovelreader-iframe\']")').remove();
+        $('link[rel="stylesheet"]:not(.noRemove)').remove();
         $('body, #container').removeAttr('style').removeAttr('class');
 
-        if (location.host.indexOf('qidian') > 0) {
+        if (unsafeWindow.jQuery && location.host.indexOf('qidian') > 0) {
             unsafeWindow.jQuery(document).off("selectstart").off("contextmenu");
         }
     },
@@ -820,15 +820,13 @@ var App = {
     isSaveing: false,
     saveAsTxt: function() {
         if (App.site.useiframe) {
-            UI.notice('暂不支持', 4000);
+            UI.notice('暂不支持', 3000);
             return;
         }
 
         if (App.isSaveing) {
-            UI.notice('正在保存，请稍后', 4000);
+            alert('正在保存，请稍后');
             return;
-        } else {
-            UI.notice('开始一章章获取内容，请耐心等待', 4000);
         }
 
         App.isSaveing = true;
@@ -839,6 +837,8 @@ var App = {
         var toTxt = function(parser) {
             var html = $.nano('{chapterTitle}\n\n{contentTxt}', parser);
             chapters.push(html);
+
+            UI.message.loading('已下载 ' + chapters.length + ' 章', 0);
         };
         var finish = function() {
             var allTxt = chapters.join('\n\n');
@@ -895,9 +895,9 @@ var BookLinkMe = {
 
         this.addUnreadButton();
 
-        if (location.pathname.indexOf("/book-") === 0) {
-            this.chapterPageAddTiebaLink();
-        }
+        // if (location.pathname.indexOf("/book-") === 0) {
+        //     this.chapterPageAddTiebaLink();
+        // }
     },
     addUnreadButton: function(){  // 添加一键打开所有未读链接
         var $parent = $('td[colspan="2"]:contains("未读"):first, td[colspan="2"]:contains("未讀"):first');

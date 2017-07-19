@@ -1,7 +1,7 @@
 
 var isChrome = !!window.chrome;
 var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
-var isWindows = navigator.userAgent.indexOf("Windows") != -1;
+var isWindows = (navigator.platform == "Win32") || (navigator.platform == "Windows");
 
 // 其它设置
 var config = {

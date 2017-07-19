@@ -86,6 +86,7 @@ article li {
     right: 10px;
     z-index: 1597;
 }
+
 #alert {
     position: fixed;
     z-index: 100;
@@ -104,6 +105,32 @@ article li {
     font-size: 13px;
     margin: 6px;
 }
+
+#message {
+    position: fixed;
+    z-index: 1010;
+    width: auto;
+    height: auto;
+    top: 10px;
+    left: 500px;
+
+    padding: 8px 16px;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    background: #fff;
+    display: inline-block;
+    pointer-events: all;
+
+    font-size: 12px;
+}
+#message .fa-spinner {
+    font-size: 13px;
+    margin-right: 4px;
+}
+#message p {
+    margin: 0;
+}
+
 img.blockImage {clear: both;float: none;display: block;margin-left: auto;margin-right: auto;}
 
 #menu-bar {
