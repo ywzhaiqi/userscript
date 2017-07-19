@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.5.6
+// @version        5.5.7
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -321,7 +321,7 @@
 // @include        *://www.remenxs.com/du_*/*/
 // @include        *://www.shuhai.com/read/*/*.html
 // @include        *://www.hbooker.com/chapter/book_chapter_detail/*
-// @include        *://www.mianhuatang.la/*/*/*.html
+// @include        *://www.mht.la/*/*/*.html
 // @include        *://www.paomov.com/*/*/*.html
 // @include        *://www.moyuanwenxue.com/xiaoshuo/*/*/*.htm
 // @include        *://www.ggdown.com/modules/article/reader.php?aid=*
@@ -2147,7 +2147,7 @@ Rule.specialSite = [
          },
     },
     {siteName: '棉花糖小说网',
-         url: '^https?://www\\.mianhuatang\\.la/\\d+/\\d+/\\d+\\.html',
+         url: '^https?://www\\.mht\\.la/\\d+/\\d+/\\d+\\.html',
          bookTitleSelector: '.nav > a:nth-of-type(3)',
          titleSelector: '.read_title h1',
          prevSelector: '.pagego a:nth-of-type(1)',
@@ -2159,7 +2159,8 @@ Rule.specialSite = [
              '下载本书最新的txt电子书请点击：',
              '本书手机阅读：',
              '发表书评：',
-             '为了方便下次阅读，你可以在点击下方的.*谢谢您的支持！！'
+             '为了方便下次阅读，你可以在点击下方的.*谢谢您的支持！！',
+             '手机用户可访问wap.mianhuatang.la观看小说，跟官网同步更新.*',
          ],
     },
     {siteName: '墨缘文学网',

@@ -1771,7 +1771,7 @@ Rule.specialSite = [
          },
     },
     {siteName: '棉花糖小说网',
-         url: '^https?://www\\.mianhuatang\\.la/\\d+/\\d+/\\d+\\.html',
+         url: '^https?://www\\.mht\\.la/\\d+/\\d+/\\d+\\.html',
          bookTitleSelector: '.nav > a:nth-of-type(3)',
          titleSelector: '.read_title h1',
          prevSelector: '.pagego a:nth-of-type(1)',
@@ -1783,7 +1783,8 @@ Rule.specialSite = [
              '下载本书最新的txt电子书请点击：',
              '本书手机阅读：',
              '发表书评：',
-             '为了方便下次阅读，你可以在点击下方的.*谢谢您的支持！！'
+             '为了方便下次阅读，你可以在点击下方的.*谢谢您的支持！！',
+             '手机用户可访问wap.mianhuatang.la观看小说，跟官网同步更新.*',
          ],
     },
     {siteName: '墨缘文学网',

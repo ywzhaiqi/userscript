@@ -321,7 +321,7 @@
 // @include        *://www.remenxs.com/du_*/*/
 // @include        *://www.shuhai.com/read/*/*.html
 // @include        *://www.hbooker.com/chapter/book_chapter_detail/*
-// @include        *://www.mianhuatang.la/*/*/*.html
+// @include        *://www.mht.la/*/*/*.html
 // @include        *://www.paomov.com/*/*/*.html
 // @include        *://www.moyuanwenxue.com/xiaoshuo/*/*/*.htm
 // @include        *://www.ggdown.com/modules/article/reader.php?aid=*
