@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.5.5
+// @version        5.5.6
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -316,6 +316,8 @@
 // @include        *://www.qu.la/book/*/*.html
 // @include        *://www.bxwx9.org/b/*/*/*.html
 // @include        *://www.miaobige.com/*/*/*.html
+// @include        *://www.52dsm.com/chapter/*/*.html
+// @include        *://www.banfusheng.com/chapter/*/*.html
 // @include        *://www.remenxs.com/du_*/*/
 // @include        *://www.shuhai.com/read/*/*.html
 // @include        *://www.hbooker.com/chapter/book_chapter_detail/*
@@ -570,17 +572,14 @@ Rule.specialSite = [
             // 下一页需要提前加 1
             unsafeWindow.uuid = parseInt(unsafeWindow.uuid) + 1 + '';
         },
-        getContent: function(fakeStub, callback) {  // this 指 parser
-            var done = function (data) {
-                unsafeWindow.uuid = data.nextuuid;  // 给下一页用
-
-                callback({
-                    html: getPageUrlHtml(data.preuuid, data.nextuuid) + data.Content
-                });
-            };
-            exportFunction(done, unsafeWindow, { defineAs: "gm_mnr_cs_callback" });
-
-            unsafeWindow.CS.page.read.main.getChapterContent(unsafeWindow.bid, unsafeWindow.uuid, unsafeWindow.gm_mnr_cs_callback);
+        getContent: function($doc, callback) {  // this 指 parser
+            function _getReadPageUrl(uuid) {
+                if (!uuid) {
+                    return 'javascript:void(0);';
+                }
+                var url = location.href.replace(/[?|#].*/gi, '');
+                return url.replace(/(\d)+\.html/, uuid + '.html');
+            }
 
             function getPageUrlHtml(preChapterUUID, nextChapterUUID) {
                 var preReadUrl = _getReadPageUrl(preChapterUUID),
@@ -590,13 +589,17 @@ Rule.specialSite = [
                         '<a id="rightFloatBar_nextChapterBtn" href="' + nextReadUrl + '">下一页</a>' + '\n';
             }
 
-            function _getReadPageUrl(uuid) {
-                if (!uuid) {
-                    return 'javascript:void(0);';
-                }
-                var url = location.href.replace(/[?|#].*/gi, '');
-                return url.replace(/(\d)+\.html/, uuid + '.html');
-            }
+            var done = function (data) {
+                unsafeWindow.uuid = data.nextuuid;  // 给下一页用
+
+                callback({
+                    html: getPageUrlHtml(data.preuuid, data.nextuuid) + data.Content
+                });
+            };
+            exportFunction(done, unsafeWindow, { defineAs: "gm_mnr_cs_callback" });
+
+            unsafeWindow.CS.page.read.main.getChapterContent(unsafeWindow.bid, unsafeWindow.uuid,
+                unsafeWindow.gm_mnr_cs_callback);
         },
     },
     {siteName: "纵横中文网",
@@ -1720,7 +1723,28 @@ Rule.specialSite = [
     },
     {siteName: "UU看书",
         url: "^https?://www\\.uukanshu\\.(?:com|net)/.*/\\d+/\\d+.html",
-        contentReplace: "[UＵ]*看书[（\\(].*?[）\\)]文字首发。"
+        contentReplace: [
+            /* 替换以下
+                ＵU看书 www.uukanｓhｕ.net
+                'UU看书 www.uｕkanshu.net '
+                'UU看书 www.uuｋanshu．net'
+                'ＵU看书 www.ｕuｋanｓhu.net'
+                'UU看书 www.uuｋanshu.net '
+                'ＵU看书www．uukansｈu.net '
+                'UU看书 www.uukanshu.net'
+                'ＵU看书 www.uukanshu.net'
+                'ＵU看书 www.ｕukanshu.net '
+                'UU看书 www.uukａnshu.net '
+                ‘UU看书 www.uukanshu．net ’
+                ‘UU看书 www.uukａnｓhu．net ’
+                ‘UU看书 www.uｕkansｈu．net ’
+                UU看书 www.ｕukaｎshu.net
+            */
+            /[ＵｕUu]+看书\s*www.[ＵｕUu]+[kｋ][aａ][nｎ][ｓs][hｈ][ＵｕUu].[nｎ][eｅ][tｔ]/g,
+            '[UＵ]*看书[（\\(].*?[）\\)]文字首发。',
+            '请记住本书首发域名：。笔趣阁手机版阅读网址：',
+            '\\(\\)',
+        ]
     },
     {siteName: "长风文学网",
         url: "^https?://www\\.cfwx\\.net/files/article/html/\\d+/\\d+/\\d+\\.html",
@@ -2012,7 +2036,7 @@ Rule.specialSite = [
     // }
 
 	{siteName:'妙笔阁',
-		url: /^https?:\/\/www\.miaobige\.com\/.*\.html/i,
+		url: /^https?:\/\/www\.miaobige\.com\/.*\.html|^https?:\/\/www.(?:52dsm|banfusheng).com\/chapter\/\d+\/\d+.html/i,
 		siteExample:'http://www.miaobige.com/book/5_1586/1006320.html',
         // 有的会提示防采集章节
         fInit: function () {
@@ -2020,28 +2044,80 @@ Rule.specialSite = [
                 .text('$(document).unbind("contextmenu selectstart")')
                 .appendTo(document.body);
         },
-        contentReplace: '妙笔阁，无弹窗，更新快，记住www.miaobige.com',
-        contentPatch: function(fakeStub){
-            var txt = fakeStub.find('#content'),
-                mNewLink;
 
-            if (0 === txt.text().trim().indexOf('防采集章节，')) {
-                mNewLink = txt.html().match(/http:\/\/www\.miaobige\.com\/book\/(\d)_(\d+)\/(\d+)\.html/i);
-                if (mNewLink) {
-                    txt .addClass(READER_AJAX)
-                        .attr({
-                            src: '/js/ajaxtxt.asp',
-                            charset: 'gbk'
-                        })
-                        .data('post', {
-                            sid: mNewLink[2],
-                            zid: mNewLink[3],
-                            cid: mNewLink[1]
-                        })
-                        .text('请等待加载…');
-                }
+        useiframe: true,
+        mutationSelector: '#content',
+        mutationChildCount: 1,
+        startLaunch: function($doc){
+            var $content = $doc.find('#content');
+
+            if ($content.text().match(/妙笔阁防盗模式：|小说阅读模式：/)) {
+                // 清空不完全的内容节点，通过 mutationSelector 等待内容 完全加载
+                $content.html('');
             }
-        }
+        },
+        contentReplace: '妙笔阁，无弹窗，更新快，记住www.miaobige.com',
+        // contentPatch: function($doc){
+        //     var $content = $doc.find('#content');
+        //     var txt = $content.text();
+
+        //     if (0 === txt.trim().indexOf('防采集章节，')) {
+        //         var mNewLink = $content.html().match(/http:\/\/www\.miaobige\.com\/book\/(\d)_(\d+)\/(\d+)\.html/i);
+        //         if (mNewLink) {
+        //             $content .addClass(READER_AJAX)
+        //                 .attr({
+        //                     src: '/js/ajaxtxt.asp',
+        //                     charset: 'gbk'
+        //                 })
+        //                 .data('post', {
+        //                     sid: mNewLink[2],
+        //                     zid: mNewLink[3],
+        //                     cid: mNewLink[1]
+        //                 })
+        //                 .text('请等待加载…');
+        //         }
+        //     }
+        // },
+        // http://www.miaobige.com/read/11180/5216676.html 章节内容缺失（下面方式过于复杂，无效）
+        // contentPatchAsync: function($doc, callback) {
+        //     var $content = $doc.find('#content');
+        //     var txt = $content.text();
+
+        //     if (txt.indexOf('妙笔阁防盗模式：') > -1) { 
+        //         // 很复杂。一串看不懂的 js 生成 $.post('/ajax/content/',{sid:11180,zid:15662893,cid:3},function(data){$('#content').html(data);});
+        //         var $script = $doc.find('script:contains(H=~[])');
+        //         if (!$script.length) {
+        //             console.error('查找 script 失败');
+        //             return
+        //         }
+
+        //         // 临时劫持
+        //         var $ = {
+        //             post: function(url, data, mCallback) {
+        //                 console.log('222222')
+        //                 $content.addClass(READER_AJAX)
+        //                     .attr({
+        //                         src: url,
+        //                         charset: 'UTF-8'
+        //                     })
+        //                     .data('post', data)
+        //                     .text('请等待加载…');
+
+        //                 callback()
+        //             }
+        //         };
+
+        //         console.log('will eval script')
+        //         debugger
+        //         eval($script.text());
+
+        //         // var funcStr = ''
+        //         // var scriptFn = $script.text().trim().replace(/\(\);$/, '');
+        //         // eval('funcStr = ' + scriptFn + '.toString()')
+        //     } else {
+        //         callback()
+        //     }
+        // }
 	},
 
     {siteName: '书海小说',
@@ -2355,6 +2431,8 @@ Rule.replace = {
     '原着': '原著',
     '□□部分': '高潮部分',
     '角□□面': '角色情面',
+
+    '牛1b': '牛b', '微1博': '微博', '内1衣': '内衣',
 };
 
 // 单字替换，可能会误替换，所以需要特殊处理
@@ -2434,6 +2512,7 @@ Rule.replaceAll = [
     '-优－优－小－说－更－新－最－快x',
     '亲，眼&快，大量小说免费看。',
     '手机看小说哪家强手机阅',
+    '手机最省流量无广告的站点。',
     '如果你喜欢本站一定要记住网址哦',
     '如果你喜欢本站〖一定要记住】网址哦',
     '如果你喜欢本站一定要记住】网址哦',
@@ -3580,6 +3659,19 @@ Parser.prototype = {
             }
         }
     },
+    applyAsyncPatch: function(callback) {
+        var contentPatch = this.info.contentPatchAsync;
+        if(contentPatch){
+            try {
+                contentPatch.call(this, this.$doc, callback.bind(this));
+                C.log("Apply Content Patch[Async] Success.");
+            } catch (e) {
+                C.log("Error: Content Patch[Async] Error!", e);
+            }
+        } else {
+            callback();
+        }
+    },
     getAll: function(callback){
         var self = this;
 
@@ -3587,6 +3679,14 @@ Parser.prototype = {
 
         this.applyPatch();
 
+        this.applyAsyncPatch(function() {
+            self.preProcessDoc(callback);
+        });
+
+        return this;
+    },
+    preProcessDoc: function(callback) {
+        var self = this;
         var endFn = function(data) {
             if (data) {
                 var div;
@@ -3647,8 +3747,6 @@ Parser.prototype = {
                 endFn();
             }
         }
-
-        return this;
     },
     parse: function() {
         C.group('开始获取链接');
@@ -4405,6 +4503,11 @@ var App = {
 
         App.loadCustomSetting();
         App.site = App.getCurSiteInfo();
+
+        if (App.site.startLaunch) {
+            App.site.startLaunch($(document));
+        }
+
         var autoLaunch = App.isAutoLaunch();
 
         if (autoLaunch === -1) {
@@ -5094,6 +5197,10 @@ var App = {
 
         if (body && body.firstChild) {
             doc = iframe.contentDocument;
+
+            if (App.site.startLaunch) {
+                App.site.startLaunch($(doc));
+            }
 
             var mutationSelector = App.site.mutationSelector;
             if (mutationSelector) {

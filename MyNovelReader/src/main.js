@@ -30,6 +30,11 @@ var App = {
 
         App.loadCustomSetting();
         App.site = App.getCurSiteInfo();
+
+        if (App.site.startLaunch) {
+            App.site.startLaunch($(document));
+        }
+
         var autoLaunch = App.isAutoLaunch();
 
         if (autoLaunch === -1) {
@@ -719,6 +724,10 @@ var App = {
 
         if (body && body.firstChild) {
             doc = iframe.contentDocument;
+
+            if (App.site.startLaunch) {
+                App.site.startLaunch($(doc));
+            }
 
             var mutationSelector = App.site.mutationSelector;
             if (mutationSelector) {

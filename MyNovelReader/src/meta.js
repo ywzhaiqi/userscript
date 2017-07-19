@@ -316,6 +316,8 @@
 // @include        *://www.qu.la/book/*/*.html
 // @include        *://www.bxwx9.org/b/*/*/*.html
 // @include        *://www.miaobige.com/*/*/*.html
+// @include        *://www.52dsm.com/chapter/*/*.html
+// @include        *://www.banfusheng.com/chapter/*/*.html
 // @include        *://www.remenxs.com/du_*/*/
 // @include        *://www.shuhai.com/read/*/*.html
 // @include        *://www.hbooker.com/chapter/book_chapter_detail/*

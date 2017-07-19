@@ -36,6 +36,19 @@ Parser.prototype = {
             }
         }
     },
+    applyAsyncPatch: function(callback) {
+        var contentPatch = this.info.contentPatchAsync;
+        if(contentPatch){
+            try {
+                contentPatch.call(this, this.$doc, callback.bind(this));
+                C.log("Apply Content Patch[Async] Success.");
+            } catch (e) {
+                C.log("Error: Content Patch[Async] Error!", e);
+            }
+        } else {
+            callback();
+        }
+    },
     getAll: function(callback){
         var self = this;
 
@@ -43,6 +56,14 @@ Parser.prototype = {
 
         this.applyPatch();
 
+        this.applyAsyncPatch(function() {
+            self.preProcessDoc(callback);
+        });
+
+        return this;
+    },
+    preProcessDoc: function(callback) {
+        var self = this;
         var endFn = function(data) {
             if (data) {
                 var div;
@@ -103,8 +124,6 @@ Parser.prototype = {
                 endFn();
             }
         }
-
-        return this;
     },
     parse: function() {
         C.group('开始获取链接');
