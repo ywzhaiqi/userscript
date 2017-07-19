@@ -1,6 +1,7 @@
 
 var isChrome = !!window.chrome;
 var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
+var isWindows = navigator.userAgent.indexOf("Windows") != -1;
 
 // 其它设置
 var config = {

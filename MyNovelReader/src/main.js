@@ -841,7 +841,12 @@ var App = {
             chapters.push(html);
         };
         var finish = function() {
-            saveAs(chapters.join('\n\n'), fileName);
+            var allTxt = chapters.join('\n\n');
+            if (isWindows) {
+                allTxt = allTxt.replace(/\n/g, '\r\n');
+            }
+
+            saveAs(allTxt, fileName);
             App.isSaveing = false;
         };
 

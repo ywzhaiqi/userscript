@@ -122,7 +122,6 @@
 // @include        *://www.vodtw.com/Html/Book/*/*/*.html
 // @include        *://www.fhxs.com/read/*/*/*.shtml
 // @include        *://www.snwx.com/book/*/*/*.html
-// @include        *://www.33yq.com/read/*/*/*.shtml
 
 // www.sodu.so
 // @include        *://www.jiaodu8.com/*/*/*/*.html
@@ -298,6 +297,7 @@
 // @include        *://www.1553.net/*/*
 // @include        *://www.269s.com/*/*/*
 // @include        *://www.33yq.com/read/*/*/*.shtml
+// @include        *://233yq.com/xiaoshuo/*.html
 // @include        *://www.50zw.co/book_*/*.html
 // @include        *://www.bqg5200.com/xiaoshuo/*/*/*.html
 // @include        *://www.50zw.la/book_*/*.html
@@ -325,7 +325,6 @@
 // @include        *://www.paomov.com/*/*/*.html
 // @include        *://www.moyuanwenxue.com/xiaoshuo/*/*/*.htm
 // @include        *://www.ggdown.com/modules/article/reader.php?aid=*
-// @include        *://233yq.com/xiaoshuo/*.html
 // @include        *://www.biquge.com.tw/*/*.html
 // @include        *://www.daizhuzai.com/*/*.html
 // @include        *://www.mywenxue.com/xiaoshuo/*/*/*.htm
@@ -359,6 +358,7 @@
 
 var isChrome = !!window.chrome;
 var isFirefox = navigator.userAgent.indexOf("Firefox") != -1;
+var isWindows = navigator.userAgent.indexOf("Windows") != -1;
 
 // 其它设置
 var config = {
@@ -5314,7 +5314,12 @@ var App = {
             chapters.push(html);
         };
         var finish = function() {
-            saveAs(chapters.join('\n\n'), fileName);
+            var allTxt = chapters.join('\n\n');
+            if (isWindows) {
+                allTxt = allTxt.replace(/\n/g, '\r\n');
+            }
+
+            saveAs(allTxt, fileName);
             App.isSaveing = false;
         };
 
