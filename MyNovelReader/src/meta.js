@@ -197,6 +197,10 @@
 // @include        *://www.5800.cc/*/*/*/*.html
 // @include        *://www.biquge.com/*/*.html
 // @include        *://www.biquge.la/book/*/*.html
+// @include        *://www.biquge.com.tw/*/*.html
+// @include        *://www.biquge.tw/*_*/*.html
+// @include        *://www.biqugezw.com/*/*.html
+// @include        *://www.biquzi.com/*_*/*.html
 // @include        *://www.qududu.com/book/*/*/*.html
 // @include        *://www.free97.cn/book/*/*/*.html
 // @include        *://www.122s.com/book/*/*.html
@@ -281,7 +285,6 @@
 // @include        *://www.qqxs.cc/xs/*/*/*.html
 // @include        *://www.69shu.com/txt/*/*
 // @include        *://www.e8zw.com/book/*/*/*.html
-// @include        *://www.biquge.tw/*_*/*.html
 // @include        *://www.8535.org/*/*/*.html*
 // @include        *://www.yfzww.com/books/*/*/*.htm
 // @include        *://www.lewen8.com/lw*/*.html
@@ -303,7 +306,6 @@
 // @include        *://www.50zw.la/book_*/*.html
 // @include        *://www.qu.la/book/*/*.html
 // @include        *://www.luoqiu.com/read/*/*.html
-// @include        *://www.biqugezw.com/*/*.html
 // @include        *://www.54tushu.com/book_library/chaptershow/theId/*.html
 // @include        *://www.snwx8.com/book/*/*/*.html
 // @include        *://read.qidian.com/chapter/*
@@ -325,7 +327,6 @@
 // @include        *://www.paomov.com/*/*/*.html
 // @include        *://www.moyuanwenxue.com/xiaoshuo/*/*/*.htm
 // @include        *://www.ggdown.com/modules/article/reader.php?aid=*
-// @include        *://www.biquge.com.tw/*/*.html
 // @include        *://www.daizhuzai.com/*/*.html
 // @include        *://www.mywenxue.com/xiaoshuo/*/*/*.htm
 // @include        *://www.yueduyue.com/*/*.html
