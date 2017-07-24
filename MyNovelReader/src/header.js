@@ -13,6 +13,7 @@ var config = {
     PRELOADER: true,                // 提前预读下一页
 
     xhr_time: 15 * 1000,
+    dumpContentMinLength: 3,        // 检测重复内容的最小行数
 };
 
 var READER_AJAX = "reader-ajax";   // 内容需要 ajax 的 className

@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.5.8
+// @version        5.5.9
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -371,6 +371,7 @@ var config = {
     PRELOADER: true,                // 提前预读下一页
 
     xhr_time: 15 * 1000,
+    dumpContentMinLength: 3,        // 检测重复内容的最小行数
 };
 
 var READER_AJAX = "reader-ajax";   // 内容需要 ajax 的 className
@@ -4259,8 +4260,12 @@ Parser.prototype = {
         text = text.replace(Rule.replaceBrs, '</p>\n<p>');
         text = text.replace(/<\/p><p>/g, "</p>\n<p>");
 
+        text = this.normalizeContent(text);
+
         // GM_setClipboard(text);
         
+        text = this.removeDump(text)
+
         // 规则替换
         if (info.contentReplace) {
             text = this.replaceText(text, info.contentReplace);
@@ -4376,6 +4381,45 @@ Parser.prototype = {
         C.groupEnd();
 
         return text;
+    },
+    normalizeContent: function(text) {
+        if (!text.startsWith('<p>'))
+            text = '<p>' + text;
+        if (!text.endsWith('</p>'))
+            text = text + '</p>';
+
+        // 修正
+        text = text.replace(/\n<\/p>/g, '</p>');
+
+        return text;
+    },
+    /**
+     * 移除内容中大块的重复。
+     * 例如：http://www.wangshuge.com/books/109/109265/28265316.html
+     *
+     * @param  {string} text 内容
+     * @return {string}      处理后的内容
+     */
+    removeDump: function(text) {
+        var newContent = text
+
+        var lines = text.split('\n');
+        var firstLine = lines[0];
+        // 有重复
+        if (firstLine.length > 10) {
+            // 因为 indexOf 只查找第一个
+            var dumpIndex = lines.slice(1).indexOf(firstLine) + 1;
+            if (dumpIndex >= config.dumpContentMinLength) {
+                var firstPart = lines.slice(0, dumpIndex).join('\n');
+                var restPart = lines.slice(dumpIndex).join('\n')
+                    .replace(/^<\/p>\n/, '');
+                if (restPart.startsWith(firstPart)) {
+                    newContent = restPart
+                }
+            }
+        }
+
+        return newContent;
     },
     replaceHtml: function(text, replaceRule) {  // replaceRule 给“自定义替换规则直接生效”用
         if (!replaceRule) {
