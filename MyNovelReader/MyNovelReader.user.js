@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.6.0
+// @version        5.6.1
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -5076,9 +5076,9 @@ var App = {
     toggle: function() {
         if (App.isEnabled) { // 退出
             GM_setValue("auto_enable", false);
-            L_setValue("mynoverlreader_disable_once", "true");
+            L_setValue("mynoverlreader_disable_once", true);
 
-            window.location = App.activeUrl;
+            location.href = App.activeUrl;
         } else {
             GM_setValue("auto_enable", true);
             L_removeValue("mynoverlreader_disable_once");

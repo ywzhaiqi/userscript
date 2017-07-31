@@ -332,9 +332,9 @@ var App = {
     toggle: function() {
         if (App.isEnabled) { // 退出
             GM_setValue("auto_enable", false);
-            L_setValue("mynoverlreader_disable_once", "true");
+            L_setValue("mynoverlreader_disable_once", true);
 
-            window.location = App.activeUrl;
+            location.href = App.activeUrl;
         } else {
             GM_setValue("auto_enable", true);
             L_removeValue("mynoverlreader_disable_once");
