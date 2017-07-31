@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.5.9
+// @version        5.6.0
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -179,6 +179,7 @@
 // @include        *://*.xiaoshuokan.com/haokan/*/*.html
 // @include        *://www.wobudu.com/*/*.html
 // @include        *://www.qb5.com/xiaoshuo/*/*/*.html
+// @include        *://www.x23us.com/html/*/*/*.html
 // @include        *://www.23us.com/html/*/*/*.html
 // @include        *://www.23us.cc/html/*/*/*.html
 // @include        *://www.23wx.com/html/*/*/*.html
@@ -1181,7 +1182,7 @@ Rule.specialSite = [
         }
     },
     {siteName: "顶点小说",
-        url: "^https?://www\\.(?:23us|23wx|xs222)\\.(?:com|cc)/html/\\d+/\\d+/\\d+\\.html$",
+        url: "^https?://www\\.(?:23us|x23us|23wx|xs222)\\.(?:com|cc)/html/\\d+/\\d+/\\d+\\.html$",
         titleReg: "(.*?)-\\S*\\s(.*?)-顶点小说",
         titlePos: 0,
         bookTitleSelector: '.crumbs > div > a:last',
@@ -1195,6 +1196,7 @@ Rule.specialSite = [
             'www.xstxt.org',
             'wenxuemi.com',
             '23us．com',
+            '顶点小说 Ｘ２３ＵＳ．com更新最快',
         ],
         contentPatch: function(fakeStub){
             var temp=fakeStub.find('title').text();

@@ -179,6 +179,7 @@
 // @include        *://*.xiaoshuokan.com/haokan/*/*.html
 // @include        *://www.wobudu.com/*/*.html
 // @include        *://www.qb5.com/xiaoshuo/*/*/*.html
+// @include        *://www.x23us.com/html/*/*/*.html
 // @include        *://www.23us.com/html/*/*/*.html
 // @include        *://www.23us.cc/html/*/*/*.html
 // @include        *://www.23wx.com/html/*/*/*.html
