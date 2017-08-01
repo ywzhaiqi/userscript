@@ -63,6 +63,7 @@
 // @include        *://www.shumilou.co/*/*.html
 // @include        *://www.shumilou.us/*/*.html
 // @include        *://www.shumilou.net/*/*/*.html
+// @include        *://www.shumilou.com/*/*.html
 // @include        *://www.wcxiaoshuo.com/wcxs-*-*/
 // @include        *://www.xiaoshuoz.com/wcxs-*-*/
 // @include        *://www.quledu.com/wcxs-*-*/

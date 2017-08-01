@@ -418,7 +418,7 @@ Rule.specialSite = [
         ]
     },
     {siteName: "书迷楼",
-        url: /^https?:\/\/www\.shumilou\.(?:co|us)\/.*html$/,
+        url: /^https?:\/\/www\.shumilou\.(?:co|us|com)\/.*html$/,
         titleReg: /(.*) (.*?) 书迷楼/,
         titlePos: 1,
         contentSelector: "#content",

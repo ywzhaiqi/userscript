@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.6.1
+// @version        5.6.2
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -63,6 +63,7 @@
 // @include        *://www.shumilou.co/*/*.html
 // @include        *://www.shumilou.us/*/*.html
 // @include        *://www.shumilou.net/*/*/*.html
+// @include        *://www.shumilou.com/*/*.html
 // @include        *://www.wcxiaoshuo.com/wcxs-*-*/
 // @include        *://www.xiaoshuoz.com/wcxs-*-*/
 // @include        *://www.quledu.com/wcxs-*-*/
@@ -797,7 +798,7 @@ Rule.specialSite = [
         ]
     },
     {siteName: "书迷楼",
-        url: /^https?:\/\/www\.shumilou\.(?:co|us)\/.*html$/,
+        url: /^https?:\/\/www\.shumilou\.(?:co|us|com)\/.*html$/,
         titleReg: /(.*) (.*?) 书迷楼/,
         titlePos: 1,
         contentSelector: "#content",
