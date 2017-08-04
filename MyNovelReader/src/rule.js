@@ -1906,6 +1906,15 @@ Rule.specialSite = [
         contentSelector: '#content, #content1',
         contentRemove: '.copy',
     },
+    {siteName: '2k小说阅读网',
+        url: 'https?://www.2kxs.com/xiaoshuo/\\d+/\\d+/\\d+.html',
+        exampleUrl: 'http://www.2kxs.com/xiaoshuo/106/106185/23622820.html',
+        contentSelector: '.Text',
+        contentRemove: 'a, font, strong',
+        contentReplace: [
+            '2k小说阅读网',
+        ]
+    },
 
     // 移动版
     {siteName: "掌阅手机网",
