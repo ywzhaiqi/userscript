@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.6.2
+// @version        5.6.3
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -60,10 +60,7 @@
 // @include        *://2.booklink.me/*
 
 // booklink.me
-// @include        *://www.shumilou.co/*/*.html
-// @include        *://www.shumilou.us/*/*.html
-// @include        *://www.shumilou.net/*/*/*.html
-// @include        *://www.shumilou.com/*/*.html
+// @include        *://www.shumil.com/*/*.html
 // @include        *://www.wcxiaoshuo.com/wcxs-*-*/
 // @include        *://www.xiaoshuoz.com/wcxs-*-*/
 // @include        *://www.quledu.com/wcxs-*-*/
@@ -340,6 +337,7 @@
 // @include        *://www.ymoxuan.com/book/*/*/*.html
 // @include        *://www.67shu.com/*/*/*.html
 // @include        *://www.bookxuan.com/*/*.html
+// @include        *://www.2kxs.com/xiaoshuo/*/*.html
 
 // 移动版
 // @include        *://wap.yc.ireader.com.cn/book/*/*/
@@ -630,14 +628,14 @@ Rule.specialSite = [
         url: /^https?:\/\/www\.jjwxc\.net\/onebook\.php\S*/,
         titleReg: /《(.*?)》.*[ˇ^](.*?)[ˇ^].*/,
         titlePos: 0,
-        // titleSelector: 'h2',
+        titleSelector: 'h2',
         // bookTitleSelector: 'h1 .bigtext',
         indexSelector: ".noveltitle > h1 > a",
         contentSelector: '.noveltext',
         contentHandle: false,
         contentRemove: 'font[color], hr',
         contentPatch: function(fakeStub){
-            fakeStub.find('h2').remove();
+            // fakeStub.find('h2').remove();
             fakeStub.find('#six_list, #sendKingTickets').parent().remove();
             fakeStub.find("div.noveltext").find("div:first, h1, div[style]:last").remove();
         }
@@ -646,7 +644,8 @@ Rule.specialSite = [
         url: '^http://m\\.jjwxc\\.net/book2/\\d+/\\d+',
         titleReg: /《(.*?)》.*[ˇ^](.*?)[ˇ^].*/,
         titlePos: 0,
-        contentSelector: 'div.grid-c > div > div.b.module > div:nth-child(2) > ul',
+        titleSelector: 'h2',
+        contentSelector: 'div.grid-c > div > .b.module > div:first',
     },
     {siteName: "潇湘书院",
         url: "^https?://www\\.xxsy\\.net/books/.*\\.html",
@@ -798,7 +797,7 @@ Rule.specialSite = [
         ]
     },
     {siteName: "书迷楼",
-        url: /^https?:\/\/www\.shumilou\.(?:co|us|com)\/.*html$/,
+        url: /^https?:\/\/www\.shumil\.(?:co|us|com)\/.*html$/,
         titleReg: /(.*) (.*?) 书迷楼/,
         titlePos: 1,
         contentSelector: "#content",
@@ -818,6 +817,7 @@ Rule.specialSite = [
             '-优－优－小－说－更－新－最－快-www.uuxs.cc-',
             '\\(本章免费\\)',
             '书迷楼www.shumilou.co',
+            '书迷楼 （）',
         ],
         fixImage: true,
         contentPatch: function(fakeStub){
@@ -1768,9 +1768,12 @@ Rule.specialSite = [
         contentReplace: [
             '[☆★◆〓『【◎◇].*?(?:yunlaige|云 来 阁|ｙｕｎｌａｉｇｅ).*?[☆◆★〓』】◎◇]',
             '《更新最快小说网站：雲来阁http://WWW.YunLaiGe.COM》',
-            '◢百度搜索雲来阁，最新最快的小说更新◣',
             '【當你閱讀到此章節，請您移步到雲來閣閱讀最新章節，或者，雲來閣】',
             '【看恐怖小说、玄幻小说、请大家登陆黑岩居http://www.heiyanju.com万本小说免费看】',
+            '【本书作者推荐：(?:百度搜索)?云来閣，免费观看本书最快的VIP章节】',
+            '搜索引擎搜索关键词\\s*云.来.阁，各种小说任你观看，破防盗章节',
+            '◢百度搜索雲来阁，最新最快的小说更新◣',
+            '\\(云来阁小说文学网www.yunlaige.com\\)',
             '如您已阅读到此章节，请移步到.*',
             '===百!?度搜索.*?新章节===',
             '【最新更新】',
@@ -1778,8 +1781,6 @@ Rule.specialSite = [
             '小说“小说章节',
             '纯文字在线阅读本站域名',
             '手机同步阅读请访问',
-            '\\(云来阁小说文学网www.yunlaige.com\\)',
-            '【本书作者推荐：(?:百度搜索)?云来閣，免费观看本书最快的VIP章节】',
             '±顶±点±小±说，ww',
             '■dingddian小说，ww∨23w→■m',
             'w∨23w',
@@ -2284,6 +2285,15 @@ Rule.specialSite = [
         contentSelector: '#content, #content1',
         contentRemove: '.copy',
     },
+    {siteName: '2k小说阅读网',
+        url: 'https?://www.2kxs.com/xiaoshuo/\\d+/\\d+/\\d+.html',
+        exampleUrl: 'http://www.2kxs.com/xiaoshuo/106/106185/23622820.html',
+        contentSelector: '.Text',
+        contentRemove: 'a, font, strong',
+        contentReplace: [
+            '2k小说阅读网',
+        ]
+    },
 
     // 移动版
     {siteName: "掌阅手机网",
@@ -2699,12 +2709,14 @@ Rule.replaceAll = [
     "看清爽的小说就到",
     "请用搜索引擎(?:搜索关键词)?.*?完美破防盗章节，各种小说任你观看",
     "完美破防盗章节，请用搜索引擎各种小说任你观看",
+    "破防盗章节，请用搜索引擎各种小说任你观看",
+    "搜索引擎各种小说任你观看，破防盗章节",
     "章节错误，点此举报\\(免注册\\)",
     "热门小说最新章节全文阅读.。 更新好快。",
     "【阅读本书最新章节，请搜索800】",
-    "破防盗章节，请用搜索引擎各种小说任你观看",
     "亲，百度搜索眼&amp;快，大量小说免费看。",
     "亲，眼&快，大量小说免费看。",
+    '下载免费阅读器!!',
 
     // 复杂规则的替换
     '(看小说到|爱玩爱看就来|就爱上|喜欢)?(\\s|<|>|&| |[+@＠=:;｀`%？》《〈︾-])?[乐樂](\\s|&lt;|&gt;|&amp;|&nbsp;|[+@＠=:;｀`%？》《〈︾-])?[文].*?[说說][网]?[|]?(.*(3w|[ｗωＷw]{1,3}|[Ｍm]).*[ｍＭm])?[}。\\s]?(乐文小说)?',
@@ -4041,9 +4053,10 @@ Parser.prototype = {
             C.log("TitleReg:", info.titleReg, matches);
         }
 
-        // 再次尝试获取章节标题
-        if (!chapterTitle) {
-            chapterTitle = this.getTitleFromInfo(info.titleSelector);
+        // 如果有 titleSelector 则覆盖
+        var tmpChapterTitle = this.getTitleFromInfo(info.titleSelector);
+        if (tmpChapterTitle) {
+            chapterTitle = tmpChapterTitle
         }
         if(!chapterTitle){
             chapterTitle = this.autoGetChapterTitle(this.doc);
@@ -4095,7 +4108,7 @@ Parser.prototype = {
     getTitleFromInfo: function(selectorOrArray) {
         var title = '';
         if (!selectorOrArray) {
-            return title;
+            return '';
         }
 
         var selector,
@@ -4108,7 +4121,13 @@ Parser.prototype = {
             selector = selectorOrArray;
         }
 
-        title = this.$doc.find(selector).remove().text().trim();
+        var $title = this.$doc.find(selector);
+        if (!$title.length) {
+            C.error('无法找到标题', selector, this.doc)
+            return '';
+        }
+
+        title = $title.remove().text().trim();
 
         if (replace) {
             title = title.replace(toRE(replace), '');
