@@ -189,9 +189,10 @@ Parser.prototype = {
             C.log("TitleReg:", info.titleReg, matches);
         }
 
-        // 再次尝试获取章节标题
-        if (!chapterTitle) {
-            chapterTitle = this.getTitleFromInfo(info.titleSelector);
+        // 如果有 titleSelector 则覆盖
+        var tmpChapterTitle = this.getTitleFromInfo(info.titleSelector);
+        if (tmpChapterTitle) {
+            chapterTitle = tmpChapterTitle
         }
         if(!chapterTitle){
             chapterTitle = this.autoGetChapterTitle(this.doc);
@@ -243,7 +244,7 @@ Parser.prototype = {
     getTitleFromInfo: function(selectorOrArray) {
         var title = '';
         if (!selectorOrArray) {
-            return title;
+            return '';
         }
 
         var selector,
@@ -256,7 +257,13 @@ Parser.prototype = {
             selector = selectorOrArray;
         }
 
-        title = this.$doc.find(selector).remove().text().trim();
+        var $title = this.$doc.find(selector);
+        if (!$title.length) {
+            C.error('无法找到标题', selector, this.doc)
+            return '';
+        }
+
+        title = $title.remove().text().trim();
 
         if (replace) {
             title = title.replace(toRE(replace), '');

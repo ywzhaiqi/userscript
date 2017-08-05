@@ -250,14 +250,14 @@ Rule.specialSite = [
         url: /^https?:\/\/www\.jjwxc\.net\/onebook\.php\S*/,
         titleReg: /《(.*?)》.*[ˇ^](.*?)[ˇ^].*/,
         titlePos: 0,
-        // titleSelector: 'h2',
+        titleSelector: 'h2',
         // bookTitleSelector: 'h1 .bigtext',
         indexSelector: ".noveltitle > h1 > a",
         contentSelector: '.noveltext',
         contentHandle: false,
         contentRemove: 'font[color], hr',
         contentPatch: function(fakeStub){
-            fakeStub.find('h2').remove();
+            // fakeStub.find('h2').remove();
             fakeStub.find('#six_list, #sendKingTickets').parent().remove();
             fakeStub.find("div.noveltext").find("div:first, h1, div[style]:last").remove();
         }
@@ -266,7 +266,8 @@ Rule.specialSite = [
         url: '^http://m\\.jjwxc\\.net/book2/\\d+/\\d+',
         titleReg: /《(.*?)》.*[ˇ^](.*?)[ˇ^].*/,
         titlePos: 0,
-        contentSelector: 'div.grid-c > div > div.b.module > div:nth-child(2) > ul',
+        titleSelector: 'h2',
+        contentSelector: 'div.grid-c > div > .b.module > div:first',
     },
     {siteName: "潇湘书院",
         url: "^https?://www\\.xxsy\\.net/books/.*\\.html",
