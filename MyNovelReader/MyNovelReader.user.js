@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.6.3
+// @version        5.6.4
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -338,6 +338,7 @@
 // @include        *://www.67shu.com/*/*/*.html
 // @include        *://www.bookxuan.com/*/*.html
 // @include        *://www.2kxs.com/xiaoshuo/*/*.html
+// @include        *://www.88dushu.com/xiaoshuo/*/*/*.html
 
 // 移动版
 // @include        *://wap.yc.ireader.com.cn/book/*/*/
