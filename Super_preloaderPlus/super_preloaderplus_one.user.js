@@ -41,11 +41,11 @@
 
 // 主要用于 chrome 原生下检查更新，也可用于手动检查更新
 var scriptInfo = {
-    version: '6.5.0',
-    updateTime: '2015/1/10',
-    homepageURL: 'https://greasyfork.org/scripts/293-super-preloaderplus-one',
-    downloadUrl: 'https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js',
-    metaUrl: 'https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js',
+    version: '6.5.1',
+    updateTime: '2017/8/11',
+    homepageURL: 'https://github.com/ywzhaiqi/userscript/tree/master/Super_preloaderPlus',
+    downloadUrl: 'https://github.com/ywzhaiqi/userscript/raw/master/Super_preloaderPlus/super_preloaderplus_one.user.js',
+    metaUrl: 'https://github.com/ywzhaiqi/userscript/raw/master/Super_preloaderPlus/super_preloaderplus_one.user.meta.js',
 };
 
 
