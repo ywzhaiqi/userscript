@@ -36,9 +36,11 @@
 // @exclude      http*://v.youku.com/*
 // @exclude      http*://www.iqiyi.com/*
 // @exclude      http*://www.duokan.com/reader/*
+// @exclude      http*://http://218.94.1.182:8080/*
+
 // ==/UserScript==
 
-
+	
 // 主要用于 chrome 原生下检查更新，也可用于手动检查更新
 var scriptInfo = {
     version: '6.5.1',
