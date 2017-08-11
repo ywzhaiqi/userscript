@@ -14,30 +14,30 @@
 // @grant        GM_registerMenuCommand
 
 // @include      http*
+// @exclude      http*://*cloud.vip.xunlei.com/*
+// @exclude      http*://app.yinxiang.com/*
+// @exclude      http*://cloud.feedly.com/*
+// @exclude      http*://ebank.spdb.com.cn/*
+// @exclude      http*://http://218.94.1.182:8080/*
 // @exclude      http*://mail.google.com/*
 // @exclude      http*://maps.google*
-// @exclude      http*://www.google.com/reader*
-// @exclude      http*://www.google.com/calendar*
-// @exclude      https://docs.google.com/*
-// @exclude      http*://app.yinxiang.com/*
-// @exclude      http*://www.dropbox.com/*
-// @exclude      http*://www.toodledo.com/*
-// @exclude      http*://cloud.feedly.com/*
-// @exclude      http*://weibo.com/*
+// @exclude      http*://openapi.qzone.qq.com/*
+// @exclude      http*://pan.baidu.com/*
+// @exclude      http*://v.youku.com/*
 // @exclude      http*://w.qq.com/*
 // @exclude      http*://web2.qq.com/*
-// @exclude      http*://openapi.qzone.qq.com/*
-// @exclude      http*://*cloud.vip.xunlei.com/*
-// @exclude      http*://www.wumii.com/*
-// @exclude      http*://pan.baidu.com/*
-// @exclude      http*://yun.baidu.com/*
+// @exclude      http*://weibo.com/*
 // @exclude      http*://www.cnbeta.com/*
-// @exclude      http*://www.youku.com/
-// @exclude      http*://v.youku.com/*
-// @exclude      http*://www.iqiyi.com/*
+// @exclude      http*://www.dropbox.com/*
 // @exclude      http*://www.duokan.com/reader/*
-// @exclude      http*://http://218.94.1.182:8080/*
-
+// @exclude      http*://www.google.com/calendar*
+// @exclude      http*://www.google.com/reader*
+// @exclude      http*://www.iqiyi.com/*
+// @exclude      http*://www.toodledo.com/*
+// @exclude      http*://www.wumii.com/*
+// @exclude      http*://www.youku.com/
+// @exclude      http*://yun.baidu.com/*
+// @exclude      https://docs.google.com/*
 // ==/UserScript==
 
 	
