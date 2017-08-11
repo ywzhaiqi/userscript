@@ -339,6 +339,7 @@
 // @include        *://www.bookxuan.com/*/*.html
 // @include        *://www.2kxs.com/xiaoshuo/*/*.html
 // @include        *://www.88dushu.com/xiaoshuo/*/*/*.html
+// @include        *://www.wutuxs.com/html/*/*/*.html
 
 // 移动版
 // @include        *://wap.yc.ireader.com.cn/book/*/*/

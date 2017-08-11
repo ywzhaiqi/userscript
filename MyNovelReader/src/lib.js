@@ -137,11 +137,26 @@ if (typeof String.prototype.startsWith != 'function') {
     };
 }
 
-if (typeof String.prototype.contains != 'function') {
-    String.prototype.contains = function(str) {
-        return this.indexOf(str) != -1;
+if (typeof String.prototype.endsWith != 'function') {
+    String.prototype.endsWith = function(str) {
+        return this.slice(-str.length) == str;
     };
 }
+
+if (!String.prototype.includes) {
+    String.prototype.includes = function(search, start) {
+        'use strict';
+        if (typeof start !== 'number') {
+            start = 0;
+        }
+        if (start + search.length > this.length) {
+            return false;
+        } else {
+            return this.indexOf(search, start) !== -1;
+        }
+    };
+}
+
 
 function saveAs(data, filename) {
     if(!filename) filename = 'console.json'

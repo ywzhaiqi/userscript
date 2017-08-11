@@ -411,7 +411,7 @@ Parser.prototype = {
 
         // 拼音字、屏蔽字修复
         if(contentHandle){
-            text = this.replaceHtml(text);
+            text = this.replaceHtml(text, Rule.replace);
         }
 
         /* Turn all double br's into p's */

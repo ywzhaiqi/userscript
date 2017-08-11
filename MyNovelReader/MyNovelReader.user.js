@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.6.4
+// @version        5.6.5
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -339,6 +339,7 @@
 // @include        *://www.bookxuan.com/*/*.html
 // @include        *://www.2kxs.com/xiaoshuo/*/*.html
 // @include        *://www.88dushu.com/xiaoshuo/*/*/*.html
+// @include        *://www.wutuxs.com/html/*/*/*.html
 
 // 移动版
 // @include        *://wap.yc.ireader.com.cn/book/*/*/
@@ -2718,6 +2719,9 @@ Rule.replaceAll = [
     "亲，百度搜索眼&amp;快，大量小说免费看。",
     "亲，眼&快，大量小说免费看。",
     '下载免费阅读器!!',
+    '笔趣阁&nbsp;.，最快更新.*最新章节！',
+    '请大家搜索（书迷楼）看最全！更新最快的小说',
+    '更新快无广告。',
 
     // 复杂规则的替换
     '(看小说到|爱玩爱看就来|就爱上|喜欢)?(\\s|<|>|&| |[+@＠=:;｀`%？》《〈︾-])?[乐樂](\\s|&lt;|&gt;|&amp;|&nbsp;|[+@＠=:;｀`%？》《〈︾-])?[文].*?[说說][网]?[|]?(.*(3w|[ｗωＷw]{1,3}|[Ｍm]).*[ｍＭm])?[}。\\s]?(乐文小说)?',
@@ -3266,11 +3270,26 @@ if (typeof String.prototype.startsWith != 'function') {
     };
 }
 
-if (typeof String.prototype.contains != 'function') {
-    String.prototype.contains = function(str) {
-        return this.indexOf(str) != -1;
+if (typeof String.prototype.endsWith != 'function') {
+    String.prototype.endsWith = function(str) {
+        return this.slice(-str.length) == str;
     };
 }
+
+if (!String.prototype.includes) {
+    String.prototype.includes = function(search, start) {
+        'use strict';
+        if (typeof start !== 'number') {
+            start = 0;
+        }
+        if (start + search.length > this.length) {
+            return false;
+        } else {
+            return this.indexOf(search, start) !== -1;
+        }
+    };
+}
+
 
 function saveAs(data, filename) {
     if(!filename) filename = 'console.json'
@@ -4276,7 +4295,7 @@ Parser.prototype = {
 
         // 拼音字、屏蔽字修复
         if(contentHandle){
-            text = this.replaceHtml(text);
+            text = this.replaceHtml(text, Rule.replace);
         }
 
         /* Turn all double br's into p's */
