@@ -15,10 +15,10 @@
 
 // @include      http*
 // @exclude      http*://*cloud.vip.xunlei.com/*
+// @exclude      http*://218.94.1.182:8080/*
 // @exclude      http*://app.yinxiang.com/*
 // @exclude      http*://cloud.feedly.com/*
 // @exclude      http*://ebank.spdb.com.cn/*
-// @exclude      http*://http://218.94.1.182:8080/*
 // @exclude      http*://mail.google.com/*
 // @exclude      http*://maps.google*
 // @exclude      http*://openapi.qzone.qq.com/*
