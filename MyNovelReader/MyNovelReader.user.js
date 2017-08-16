@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.6.5
+// @version        5.6.6
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -952,63 +952,58 @@ Rule.specialSite = [
         url: /^https?:\/\/\S+\.17k\.com\/chapter\/\S+\/\d+\.html$/,
         titleReg: /(.*?)-(.*?)-.*/,
         contentSelector: "#chapterContent",
-        contentRemove: ".qrcode, #authorSpenk, .like_box, #hotRecommend, .ct0416, .recent_read, div[style], #miniVoteBox",
+        contentRemove: ".chapter_update_time, .qrcode, #authorSpenk, .like_box, #hotRecommend, .ct0416, .recent_read, div[style], #miniVoteBox",
         contentReplace: [
             '本书首发来自17K小说网，第一时间看正版内容！'
         ],
-        nextUrl: function($doc) {
-            var bookId = unsafeWindow.bookId,
-                next_chapter = unsafeWindow.next_chapter;
-
-            if (next_chapter > 0) {
-                return '/chapter/' + bookId + '/' + next_chapter + '.html';
+        contentPatchAsync: function($doc, callback) {
+            if (unsafeWindow.console.clear) {
+                unsafeWindow.console.clear = null;
             }
-        },
-        prevUrl: function() {
-            var bookId = unsafeWindow.bookId,
-                last_chapter = unsafeWindow.last_chapter;
 
-            if (last_chapter > 0) {
-                return '/chapter/' + bookId + '/' + last_chapter + '.html';
-            }
-        },
-        contentPatch: function() {
+            function waitFor(condition, callback, timeout, timeoutFn) {timeout = timeout || 30 * 1000;timeoutFn = timeoutFn || function() {};var startTime = Date.now();var timeId = setInterval(function() {    if (condition()) {        callback();        clearInterval(timeId);    } else if ((Date.now() - startTime) > timeout) {        timeoutFn();        clearInterval(timeId);    }}, 500);}
+
+            var Q = unsafeWindow.Q
+
             // 计算上一章节下一章节
             function calPages() {
-                // 跳过第一页
-                if (!window.mStarted) {
-                    window.mStarted = true;
-                    return;
+                var json = Q.bookBigData.json
+                var bookId = Q.bookid;
+
+                for (var i=0, c; c = json.list[i]; i++) {
+                    if (c == Q.chapterid) {
+                        var prevChapter = (0 === i ? null : json.list[i - 1])
+                        var nextChapter = (i + 1 < json.list.length ? json.list[i + 1] : null)
+
+                        if (nextChapter) {
+                            var nextUrl = '/chapter/' + bookId + '/' + nextChapter + '.html';
+                            $doc.find('a:contains(下一章)')
+                                .attr('href', nextUrl);
+
+                            Q.chapterid = nextChapter;
+                        }
+                        if (prevChapter) {
+                            var prevUrl = '/chapter/' + bookId + '/' + prevChapter + '.html';
+                            $doc.find('a:contains(上一章)')
+                                .attr('href', prevUrl);
+                        }
+                        
+                        break;
+                    }
                 }
-
-                var ChapterData = unsafeWindow.ChapterData,
-                    chapterId = unsafeWindow.next_chapter;
-                var last_chapter_tag = 0;
-                var next_chapter_tag = 0;
-
-                $.each(ChapterData['volumes'], function(k,v) {
-                    $.each(v['chapters'], function(k1,v1){
-                        //下一章记录
-                        if (next_chapter_tag == 1) {
-                            next_chapter_tag = 0;
-                            unsafeWindow.next_chapter = v1['id'];
-                        }
-
-                        //当前章
-                        if (v1['id'] == chapterId) {
-                            last_chapter_tag = 1;
-                            next_chapter_tag = 1;
-                        }
-
-                        //上一章记录
-                        if (last_chapter_tag == 0) {
-                            unsafeWindow.last_chapter = v1['id'];
-                        }
-                    });
-                });
             }
 
-            calPages();
+            if (!Q.bookBigData.json) {
+                waitFor(function() {
+                    return !!Q.bookBigData.json;
+                }, function() {
+                    calPages();
+                    callback()
+                })
+            } else {
+                calPages();
+                callback()
+            }
         }
     },
     {siteName: "看下文学",
