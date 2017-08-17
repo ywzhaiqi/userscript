@@ -572,7 +572,7 @@ Rule.specialSite = [
         url: /^https?:\/\/\S+\.17k\.com\/chapter\/\S+\/\d+\.html$/,
         titleReg: /(.*?)-(.*?)-.*/,
         contentSelector: "#chapterContent",
-        contentRemove: ".chapter_update_time, .qrcode, #authorSpenk, .like_box, #hotRecommend, .ct0416, .recent_read, div[style], #miniVoteBox",
+        contentRemove: ".chapter_update_time, h1, .qrcode, #authorSpenk, .like_box, #hotRecommend, .ct0416, .recent_read, div[style], #miniVoteBox",
         contentReplace: [
             '本书首发来自17K小说网，第一时间看正版内容！'
         ],
@@ -2312,6 +2312,7 @@ Rule.replaceAll = [
     "纯文字在线阅读本站域名手机同步阅读请访问",
     "本文由　　首发",
     "樂文小说",
+    '最快更新无错小说阅读，请访问 请收藏本站阅读最新小说!',
     "最新章节全文阅读看书神器\\.yankuai\\.",
     "最新章节全文阅读（..首发）",
     "最新章节全文阅读【首发】",
@@ -2327,7 +2328,7 @@ Rule.replaceAll = [
     "请用搜索引擎(?:搜索关键词)?.*?完美破防盗章节，各种小说任你观看",
     "完美破防盗章节，请用搜索引擎各种小说任你观看",
     "破防盗章节，请用搜索引擎各种小说任你观看",
-    "搜索引擎各种小说任你观看，破防盗章节",
+    "(?:搜索引擎)?各种小说任你观看，破防盗章节",
     "章节错误，点此举报\\(免注册\\)",
     "热门小说最新章节全文阅读.。 更新好快。",
     "【阅读本书最新章节，请搜索800】",

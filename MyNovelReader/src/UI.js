@@ -331,9 +331,10 @@ var UI = {
         });
     },
     cleanPreview: function() {
-        // 恢复初始设置
-        UI.$content.removeAttr('style');
         UI.$content.find("h1").css("font-size", "");
+
+        // 恢复初始设置（有误操作）
+        // UI.$content.removeAttr('style');
     },
     preferencesClickHandler: function(target){
         var key;
