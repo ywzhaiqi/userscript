@@ -421,7 +421,7 @@ Parser.prototype = {
         text = this.normalizeContent(text);
 
         // GM_setClipboard(text);
-        
+
         text = this.removeDump(text)
 
         // 规则替换
@@ -469,7 +469,11 @@ Parser.prototype = {
         }
 
         // 给独立的文本加上 p
-        $div.contents().filter(function() {
+        var $contents = $div.contents();
+        if ($contents.length === 1) {   // 可能里面还包裹着一个 div
+            $contents = $contents.contents()
+        }
+        $contents.filter(function() {
             return this.nodeType == 3 &&
                 this.textContent != '\n' &&
                 (!this.nextElementSibling || this.nextElementSibling.nodeName != 'A') &&
@@ -541,13 +545,24 @@ Parser.prototype = {
         return text;
     },
     normalizeContent: function(text) {
-        if (!text.startsWith('<p>'))
-            text = '<p>' + text;
-        if (!text.endsWith('</p>'))
-            text = text + '</p>';
+        text = text.trim()
 
-        // 修正
+        if (text.startsWith('<')) return text;
+
+        // 修正 </p> 在另一行的情况
         text = text.replace(/\n<\/p>/g, '</p>');
+
+        var lines = text.split('\n')
+        var firstLine = lines[0];
+        var lastLine = lines[lines.length - 1];
+
+        // 修正 p 不完整的情况
+        if (!firstLine.includes('<p>') && firstLine.includes('</p>')) {
+            text = '<p>' + text;
+        }
+        if (lastLine.includes('<p>') && !lastLine.includes('</p>')) {
+            text = text + '</p>';
+        }
 
         return text;
     },

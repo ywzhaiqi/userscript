@@ -102,7 +102,6 @@
 // @include        *://www.xiangcunxiaoshuo.com/shu/*/*.html
 // @include        *://www.lwxs520.com/books/*/*/*.html
 // @include        *://www.zashu.net/books/*/*/*.html
-// @include        *://www.piaotian.net/html/*/*/*.html
 // @include        *://www.yunlaige.com/html/*/*/*.html
 // @include        *://www.cfwx.net/files/article/html/*/*/*.html
 // @include        *://www.qiuwu.net/html/*/*/*.html
@@ -310,6 +309,7 @@
 // @include        *://read.qidian.com/chapter/*
 // @include        *://www.23zw.me/olread/*/*/*.html
 // @include        *://www.piaotian.com/html/*/*/*.html
+// @include        *://www.piaotian.net/html/*/*/*.html
 // @include        *://www.dhzw.org/book/*/*/*.html
 // @include        *://www.biqiuge.com/book/*/*.html
 // @include        *://www.baquge.com/files/article/html/*/*/*.html

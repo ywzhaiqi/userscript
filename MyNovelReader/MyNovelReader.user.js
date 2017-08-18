@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        5.6.7
+// @version        5.6.8
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -102,7 +102,6 @@
 // @include        *://www.xiangcunxiaoshuo.com/shu/*/*.html
 // @include        *://www.lwxs520.com/books/*/*/*.html
 // @include        *://www.zashu.net/books/*/*/*.html
-// @include        *://www.piaotian.net/html/*/*/*.html
 // @include        *://www.yunlaige.com/html/*/*/*.html
 // @include        *://www.cfwx.net/files/article/html/*/*/*.html
 // @include        *://www.qiuwu.net/html/*/*/*.html
@@ -310,6 +309,7 @@
 // @include        *://read.qidian.com/chapter/*
 // @include        *://www.23zw.me/olread/*/*/*.html
 // @include        *://www.piaotian.com/html/*/*/*.html
+// @include        *://www.piaotian.net/html/*/*/*.html
 // @include        *://www.dhzw.org/book/*/*/*.html
 // @include        *://www.biqiuge.com/book/*/*.html
 // @include        *://www.baquge.com/files/article/html/*/*/*.html
@@ -4302,7 +4302,7 @@ Parser.prototype = {
         text = this.normalizeContent(text);
 
         // GM_setClipboard(text);
-        
+
         text = this.removeDump(text)
 
         // 规则替换
@@ -4350,7 +4350,11 @@ Parser.prototype = {
         }
 
         // 给独立的文本加上 p
-        $div.contents().filter(function() {
+        var $contents = $div.contents();
+        if ($contents.length === 1) {   // 可能里面还包裹着一个 div
+            $contents = $contents.contents()
+        }
+        $contents.filter(function() {
             return this.nodeType == 3 &&
                 this.textContent != '\n' &&
                 (!this.nextElementSibling || this.nextElementSibling.nodeName != 'A') &&
@@ -4422,13 +4426,24 @@ Parser.prototype = {
         return text;
     },
     normalizeContent: function(text) {
-        if (!text.startsWith('<p>'))
-            text = '<p>' + text;
-        if (!text.endsWith('</p>'))
-            text = text + '</p>';
+        text = text.trim()
 
-        // 修正
+        if (text.startsWith('<')) return text;
+
+        // 修正 </p> 在另一行的情况
         text = text.replace(/\n<\/p>/g, '</p>');
+
+        var lines = text.split('\n')
+        var firstLine = lines[0];
+        var lastLine = lines[lines.length - 1];
+
+        // 修正 p 不完整的情况
+        if (!firstLine.includes('<p>') && firstLine.includes('</p>')) {
+            text = '<p>' + text;
+        }
+        if (lastLine.includes('<p>') && !lastLine.includes('</p>')) {
+            text = text + '</p>';
+        }
 
         return text;
     },
