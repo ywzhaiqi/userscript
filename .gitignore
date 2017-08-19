@@ -1,7 +1,10 @@
 node_modules
 bower_components
-tmp/
 *.sublime-workspace
 *.cache
 
-test
+tmp/
+.test/
+searchEngineJumpCE/test/
+MyNovelReader/test/
+Super_preloaderPlus/test/testGoogleSearch.js
