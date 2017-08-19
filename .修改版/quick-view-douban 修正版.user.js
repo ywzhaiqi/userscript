@@ -2,13 +2,12 @@
 // @name           quick-view-douban 修正版
 // @namespace      http://vivyli.com
 // @modified       ywzhaiqi
-// @include        *
-// @version        2.3
-// @updateURL      https://userscripts.org/scripts/source/176991.meta.js
-// @downloadURL    https://userscripts.org/scripts/source/176991.user.js
+// @version        2.4
 // @description    see douban book movie music in every webpage by selecting text
+// @description    改为手动包含网址
 // @description    修正电影搜索，增加图片显示
 // @grant          GM_xmlhttpRequest
+// @include        http*
 // ==/UserScript==
 
 var apikey = '0c088077ba8a630f241981672f9f292d';
@@ -20,8 +19,23 @@ var isMovieClicked = false;
 var isMusicClicked = false;
 var q = null;
 var userAgent = 'known';
+var isRunning = false;
 
-startup();
+toggleRun();
+
+// GM_registerMenuCommand('启用禁用豆瓣速览', toggleRun, 'd');
+
+function toggleRun() {
+    if (isRunning) {
+        shutdown();
+    } else {
+        startup();
+    }
+
+    isRunning = !isRunning;
+
+    return isRunning;
+}
 
 function startup() {
     images();

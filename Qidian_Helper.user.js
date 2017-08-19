@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Qidian Helper
 // @namespace   https://github.com/ywzhaiqi
-// @version     0.1
+// @version     0.2
 // @description 起点中文网的一些简化
 // @include     http://www.qidian.com/Default.aspx
 // @include     http://read.qidian.com/BookReader/*.aspx
@@ -72,7 +72,7 @@ var indexPage = {
 
 var bookReaderPage = {
     clean: function() {  // 把原来需要点击几次下载 epub 改成直接链接形式
-        var bookId = location.pathname.match(/\d+/)[0];
+        var bookId = unsafeWindow.PAGE_DATA.BookId;
 
         $('a[onclick="ShowBook.ShowPoP.EBookDownloadNew(\'txt\');"]')
                 .removeAttr('onclick')

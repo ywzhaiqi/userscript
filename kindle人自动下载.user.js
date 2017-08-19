@@ -2,10 +2,9 @@
 // @name         kindle人自动下载
 // @namespace    https://github.com/ywzhaiqi
 // @author       ywzhaiqi
-// @version      0.2
+// @version      0.3
 // @description  kindleren 帖子增加 "下载" 按钮，点击后自动回复或购买，然后下载
-// @include      http://kindleren.com/forum.php?mod=viewthread&tid=*
-// @include      http://kandouren.com/forum.php?mod=viewthread&tid=*
+// @include      https://kindleren.com/forum.php?mod=viewthread&tid=*
 // @include      http://kandouren.com/thread-*-1-1.html
 // @grant        GM_xmlhttpRequest
 // @run-at       document-end
@@ -105,8 +104,8 @@ var ns = {
     addDownBtn: function() {
         $('<button>')
             .text('下载')
-            .css('cssText', 'position: fixed; right: 50%; top: 52%; margin-right: -365px; z-index: 200;')
-            .insertAfter('#side_reply')
+            .css('cssText', 'position: fixed; right: 3%; top: 35%; z-index: 200;')
+            .appendTo('body')
             .click(function() {
                 ns.autoBuy();
             });
