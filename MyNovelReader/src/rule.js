@@ -1433,6 +1433,7 @@ Rule.specialSite = [
             '-乐-文-小-说-www-lwxs520-com',
             '？乐？文？小说 wwＷ.lＷＸs520. ＣＯＭ',
             ';乐;文;小说 www.lw＋xs520.com',
+            '小说&nbsp;wＷw.Lwxs520.cＯm',
             'www.LＷＸＳ５２０.com',
             'www.lwxs520.com 首发哦亲',
             'www.lwxs520.com',
