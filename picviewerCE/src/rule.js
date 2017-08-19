@@ -375,6 +375,14 @@ Rule.MPIV = [
 		r: "^((?:(?:pp?cdn|s\\d\\.amazonaws\\.com/photos|gp\\d+\\.wac\\.edgecastcdn\\.net/806614/photos/photos)\\.500px|djlhggipcyllo\\.cloudfront)\\.(?:net|org)/\\d+/[\\da-f]{40}/)\\d+\\.",
 		s: "$12048.jpg"
 	},
+	{name: 'instagram',
+		d: 'instagram.com',
+		e: '.-cx-PRIVATE-Photo__clickShield',
+		s: function(m, node) {
+			var img = findNode('img', node.parentNode);
+			return img ? findFile(img, _.url).replace(/\/[sp]\d+x\d+\//, '/') : false;
+		}
+	},
 
 	// 常用站点
 	{name: '豆瓣',
