@@ -1,11 +1,4 @@
-// 主要用于 chrome 原生下检查更新，也可用于手动检查更新
-var scriptInfo = {
-    version: '<%= pkg.version %>',
-    updateTime: '<%= grunt.template.today("yyyy/m/d") %>',
-    homepageURL: 'https://greasyfork.org/scripts/293-super-preloaderplus-one',
-    downloadUrl: 'https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js',
-    metaUrl: 'https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.meta.js',
-};
+
 
 var setup = function(){
     var d = document;

@@ -12,7 +12,7 @@ module.exports = function(grunt) {
         concat: {
             dist: {
                 options: concatOptions,
-                src: ['src/meta.js', 'src/rule.js', 'src/setting.js', 'src/main.js'],
+                src: ['src/meta.js', 'src/rule.js', 'src/setting.js', 'src/main.js', 'src/utils.js'],
                 dest: '<%= pkg.name %>.user.js'
             },
         },
