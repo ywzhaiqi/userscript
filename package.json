@@ -20,11 +20,9 @@
     "url": "https://github.com/ywzhaiqi/userscript/issues"
   },
   "homepage": "https://github.com/ywzhaiqi/userscript#readme",
-  "dependencies": {
-
-  },
+  "dependencies": {},
   "devDependencies": {
-    "yargs": "^8.0.2",
+    "uglifyjs-webpack-plugin": "^1.0.0-beta.2",
     "userscript-css-loader": "git+https://github.com/ywzhaiqi/userscript-css-loader.git",
     "webpack": "^3.5.5"
   }
