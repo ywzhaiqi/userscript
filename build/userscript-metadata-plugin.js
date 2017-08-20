@@ -1,5 +1,6 @@
 /**
- * 置顶 UserScript 的 metadata
+ * 置顶 UserScript 的 metadata 部分，配合 uglifyjs-webpack-plugin 使用
+ * 参考：[uglifyjs-webpack-plugin/index.js](https://github.com/webpack-contrib/uglifyjs-webpack-plugin/blob/master/src/index.js)
  */
 const { RawSource } = require('webpack-sources');
 const ModuleFilenameHelpers = require('webpack/lib/ModuleFilenameHelpers');
@@ -10,7 +11,7 @@ const ModuleFilenameHelpers = require('webpack/lib/ModuleFilenameHelpers');
  * @param {string} code
  * @returns {string}
  */
-function moveUserscriptMark(code) {
+function moveMarkToTop(code) {
   const startStr = '// ==UserScript=='
   const endStr = '// ==/UserScript=='
 
@@ -33,7 +34,7 @@ class UserscriptMetadataPlugin {
   apply(compiler) {
     compiler.plugin('compilation', (compilation) => {
       compilation.plugin('optimize-chunk-assets', (chunks, callback) => {
-        // 筛选并修改
+        // 筛选出符合设置的文件修改
         chunks.reduce((acc, chunk) => acc.concat(chunk.files || []), [])
           .concat(compilation.additionalChunkAssets || [])
           .filter(ModuleFilenameHelpers.matchObject.bind(null, this.options))
@@ -50,10 +51,11 @@ class UserscriptMetadataPlugin {
     const asset = compilation.assets[file];
     let input = asset.source();
 
-    let code = moveUserscriptMark(input);
-    let outputSource = new RawSource(code);
+    compilation.assets[file] = new RawSource(this.handleFileCode(input));
+  }
 
-    compilation.assets[file] = outputSource
+  handleFileCode(input) {
+    return moveMarkToTop(input);
   }
 }
 
