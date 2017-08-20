@@ -1,6 +1,6 @@
 {
   "name": "ywzhaiqi-userscript",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "ywzhaiqi 的 userScript 脚本",
   "main": "",
   "directories": {
@@ -22,6 +22,9 @@
   "homepage": "https://github.com/ywzhaiqi/userscript#readme",
   "dependencies": {},
   "devDependencies": {
+    "awesome-typescript-loader": "^3.2.3",
+    "source-map-loader": "^0.2.1",
+    "typescript": "^2.4.2",
     "uglifyjs-webpack-plugin": "^1.0.0-beta.2",
     "userscript-css-loader": "git+https://github.com/ywzhaiqi/userscript-css-loader.git",
     "webpack": "^3.5.5"
