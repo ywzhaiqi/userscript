@@ -151,7 +151,7 @@
     卡饭论坛, http://bds.kafan.cn/cse/search?q=%s&s=15563968344970452529
 
 翻译
-    google翻译, https://translate.google.com.hk/?q=%s
+    google翻译, http://translate.google.cn/?q=%s
     百度翻译, http://fanyi.baidu.com/#auto/zh/%s
     有道翻译, http://fanyi.youdao.com/translate?i=%s
     bing 翻译, http://www.bing.com/translator/?&text=%s&from=&to=zh-chs

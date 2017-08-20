@@ -72,6 +72,21 @@ var rules = [
             where: 'beforeBegin',
         },
     },
+    {name: "glgoo网页搜索",
+        enabled: true,
+        url: /^https?:\/\/e\.glgoo\.com\/(?:webhp|search|#|$|\?)/i,
+        engineList: 'web',
+        style: '\
+            border-bottom: 1px solid #E5E5E5;\
+            border-top: 1px solid #E5E5E5;\
+            padding-left: 135px;\
+            ',
+        insertIntoDoc: {
+            keyword: '//input[@name="q"]',
+            target: 'css;#rcnt',
+            where: 'beforeBegin',
+        },
+    },
     {name: "baidu 网页搜索",
         // 新增了百度简洁搜索：http://www.baidu.com/s?wd=firefox&ie=utf-8&tn=baidulocal
         url: /^https?:\/\/www\.baidu\.com\/(?:s|baidu|)/,
