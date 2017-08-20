@@ -44,6 +44,10 @@ GM 脚本
 - *[smzdm.user.js](smzdm.user.js)，已失效*
 - [youku_调整显示列数.user.js](youku_调整显示列数.user.js)：把优酷从2列改成3列，适用于个人显示器。
 
+## 开发
+
+详见 [dev.md](doc/dev.md)
+
 一些脚本的链接
 -------------
 
