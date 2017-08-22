@@ -28,6 +28,7 @@
 // @exclude      http*://maps.google*
 // @exclude      http*://www.inoreader.com/*
 // @exclude      http*://www.iqiyi.com/*
+// @exclude      http*://mmbiz.qpic.cn/*
 // @exclude      http*://mail.qq.com/*
 // @exclude      http*://openapi.qzone.qq.com/*
 // @exclude      http*://w.qq.com/*
