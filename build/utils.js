@@ -1,7 +1,9 @@
 const fs = require('fs')
 const path = require('path')
 
-exports.getInput = function(input) {
+const rootPath = path.join(__dirname, '..')
+
+exports.getInput = function(input, configName='rollup.config.js') {
   let args = {
     file: '',
     dir: '',
@@ -21,8 +23,9 @@ exports.getInput = function(input) {
     args.dir = input
     args.file = 'index.js'
     // 判断是否存在配置
-    let configFile = path.join(args.dir, 'rollup.config.js')
+    let configFile = path.join(rootPath, 'src', args.dir, configName)
     if (fs.existsSync(configFile)) {
+      console.log('使用配置文件：', configFile)
       args.rollupConfig = require(configFile)
     }
   }

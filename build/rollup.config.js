@@ -1,12 +1,13 @@
 import path from 'path'
 import minimist from 'minimist'
 import stringPlugin from 'rollup-plugin-string'
-import typescript from 'rollup-plugin-typescript2'
+import typescript from 'rollup-plugin-typescript'
 const { getInput } = require('./utils')
 
 const command = minimist(process.argv.slice(2))
+const configName = 'rollup.config.js'
 
-const args = getInput(command.myinput)
+const args = getInput(command.myinput, configName)
 if (!args.file) {
   console.error('参数错误，文件不存在。Usage: build MyNovelReader 或 build booklinkme.js')
   process.exit(-1)
@@ -19,7 +20,7 @@ let config = {
   input: inputScript,
   output: {
     file: outputScript,
-    format: 'cjs'
+    format: 'iife'
   },
   plugins: [
     stringPlugin({
@@ -27,15 +28,14 @@ let config = {
       // exclude: ['**/index.html'],
     }),
     typescript({
-      cacheRoot: path.join(__dirname, '../.rts2_cache')
+      // rollup-plugin-typescript2 的
+      // cacheRoot: path.join(__dirname, '../.rts2_cache')
     }),
   ]
 };
 
 if (args.rollupConfig) {
   config = args.rollupConfig
-  config.input = inputScript
-  config.outfile.file = outputScript
 }
 
 export default config
