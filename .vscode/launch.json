@@ -9,6 +9,20 @@
       "request": "launch",
       "name": "Launch CurFile",
       "program": "${file}"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "rollup debug",
+      "program": "${workspaceRoot}/node_modules/rollup/bin/rollup",
+      "args": [
+        "-c",
+        "../build/rollup.config.js",
+        "--myinput",
+        "MyNovelReader"
+      ],
+      "cwd": "${workspaceRoot}/src",
+      "stopOnEntry": true
     }
   ]
 }
