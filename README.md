@@ -14,14 +14,16 @@ GM 脚本
 
 ### 文件夹
 
-- [小说阅读脚本](MyNovelReader)
-- [BaiduPanDownloadHelper](BaiduPanDownloadHelper)：批量导出百度盘的下载链接。
+- [MyNovelReader](MyNovelReader)：小说阅读脚本
+  - 从 6.0.0（2017-8-23）开始，改成 `import` 构建（可能旧浏览器不支持，待解决）。Opera 12 及旧版本浏览器用户暂时先用以前的版本。
+  - 旧版本 [My Novel Reader 5.6.9](https://greasyfork.org/zh-CN/scripts/292-my-novel-reader?version=213022)
+- ~~[BaiduPanDownloadHelper](BaiduPanDownloadHelper)：批量导出百度盘的下载链接。~~
 - [BaiduSearchNoJump](BaiduSearchNoJump)：百度搜索反跳转（修改版）。
 - [Mouseover Popup Image Viewer](Mouseover Popup Image Viewer)：在图片上鼠标悬停放大，这里是一些自写的规则。
 - [NextPage](NextPage)：Next Page By Sunwan 修改增强版。
-- *[Readability 中文增强版](Readability 中文增强版)：已弃用。*
+- ~~[Readability 中文增强版](Readability 中文增强版)：已弃用。~~
 - [Super_preloaderPlus](Super_preloaderPlus)：Super_preloader 修正增强版。
-- [verycdShowLink](verycdShowLink)：verycd页面无需登入也能显示 ed2k 链接。
+- ~~[verycdShowLink](verycdShowLink)：verycd页面无需登入也能显示 ed2k 链接。~~
 - [威锋电子书批量下载](威锋电子书批量下载)：批量导出 [iPad 电子书资源分享区 - 威锋论坛][] 附件的下载地址。
 - [.修改版](.修改版)
 	- [Blacklist_Blocker_Rule.user.js](.修改版/Blacklist_Blocker_Rule.user.js)，原作者写的只支持 Firefox。
@@ -37,20 +39,23 @@ GM 脚本
 ### 单文件
 
 - [booklinkme.user.js](booklinkme.user.js)：增强 [BookLink.Me:小说搜索引擎][]，一键打开所有未读链接
-- *[ceilme.user.js](ceilme.user.js)，已失效*：[ceil.me 杂志下载网站][] 直接下载，避免多次点击
+- ~~[ceilme.user.js](ceilme.user.js)，已失效：[ceil.me 杂志下载网站][] 直接下载，避免多次点击~~
 - [DoubanDownloadSearch.user.js](DoubanDownloadSearch.user.js)：增加豆瓣图书、电影的搜索链接。
 - [itpubnet.user.js](itpubnet.user.js)：ITPUB论坛（电子图书与IT文档资料）免登入下载
 - [noNoticetitleflashOnBBS.user.js](noNoticetitleflashOnBBS.user.js)：卡饭、若人、游侠等论坛去除标题闪烁提醒，其它论坛需自己添加。
 - [shooter.user.js](shooter.user.js)：在 shooter.cn 搜索页面按下载按钮直接下载。语言、发行着色。[shooter.cn 直接下载 - greasyfork.org][0]
 - [userscripts.user.js](userscripts.user.js)：在 userscripts、greasyfork、userscripts-mirror 脚本页面只显示中文脚本，支持 AutoPager 和其它翻页脚本。
-- *[smzdm.user.js](smzdm.user.js)，已失效*
+- ~~[smzdm.user.js](smzdm.user.js)，已失效~~
 - [youku_调整显示列数.user.js](youku_调整显示列数.user.js)：把优酷从2列改成3列，适用于个人显示器。
 
 ## 开发
 
-在 `src` 目录运行命令 `build test.js [-w]` 会在 `..` 目录生成 `test.user.js`
-
 详见 [dev.md](doc/dev.md)
+
+### 部分脚本的构建
+
+1. `cd src`
+2. `build MyNovelReader [-w]` 会在 `../dist/` 目录下生成 `MyNovelReader.user.js`
 
 一些脚本的链接
 -------------

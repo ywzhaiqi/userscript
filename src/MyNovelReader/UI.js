@@ -552,5 +552,8 @@ UI.skins["蓝色背景".uiTrans()] = "body { color: black; background-color: #E7
 UI.skins["棕黄背景".uiTrans()] = "body { color: black; background-color: #C2A886; }";
 UI.skins["经典皮肤".uiTrans()] = "body { color: black; background-color: #EAEAEE; } .title { background-color: #f0f0f0; }";
 
+UI.skins["起点牛皮纸（深色）".uiTrans()] = "body { color: black; background: url(\"http://qidian.gtimg.com/qd/images/read.qidian.com/theme/body_theme1_bg_2x.0.3.png\"); }";
+UI.skins["起点牛皮纸（浅色）".uiTrans()] = "body { color: black; background: url(\"http://qidian.gtimg.com/qd/images/read.qidian.com/theme/theme_1_bg_2x.0.3.png\"); }";
+
 export default UI
 

@@ -486,7 +486,7 @@ Parser.prototype = {
         }).wrap('<p>');
 
         // 删除无效的 p，排除对大块文本的判断
-        $div.find('p').filter(function() {
+        $div.find('p, h1').filter(function() {
             var $this = $(this);
             if ($this.find('img').size())  // 排除有图片的
                 return false;

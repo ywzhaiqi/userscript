@@ -38,7 +38,8 @@ var Rule = {
 
   contentSelectors: ["#pagecontent", "#contentbox", "#bmsy_content", "#bookpartinfo", "#htmlContent",
       "#text_area", "#chapter_content", "#chapterContent", "#partbody", "#BookContent",
-      "#article_content", "#BookTextRead", "#booktext", "#BookText", "#readtext", "#readcon", "#text_c", "#txt_td", "#TXT", "#txt", "#zjneirong",
+      "#article_content", "#BookTextRead", "#booktext", "#BookText", "#readtext", "#readcon",
+      "#TextContent", "#text_c", "#txt_td", "#TXT", "#txt", "#zjneirong",
       ".novel_content", ".readmain_inner", ".noveltext", ".booktext", ".yd_text2",
       "#contentTxt", "#oldtext", "#a_content", "#contents", "#content2", "#contentts", "#content1", "#content", ".content"
   ],
@@ -1913,6 +1914,22 @@ Rule.specialSite = [
       contentReplace: [
           '2k小说阅读网',
       ]
+  },
+  {siteName: "新笔趣阁",
+    url: "^http:\/\/www.biqu6.com\/[0-9_]+\/[0-9]+.html$",
+
+    titleReg: /(.*?)章节目录 [-_\\\/](.*?)[-_\/].*/,
+    titlePos: 0,
+    titleSelector: "#title h1",
+
+    indexSelector: "a:contains('章节目录')",
+    prevSelector: "a:contains('上一章')",
+    nextSelector: "a:contains('下一章')",
+
+    contentSelector: "#content",
+    contentReplace: [
+        /\*/g
+    ],
   },
 
   // 移动版
