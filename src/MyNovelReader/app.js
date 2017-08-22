@@ -312,7 +312,7 @@ var App = {
     },
     initDocument: function(parser) {
         document.title = parser.docTitle;
-        window.name = "MyNovelReader";
+
         document.body.innerHTML = $.nano(tpl_mainHtml.uiTrans(), parser);
     },
     clean: function() {
