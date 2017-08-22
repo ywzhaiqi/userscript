@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:test": "rollup -c ./build/rollup.config.js --myinput"
   },
   "repository": {
     "type": "git",
@@ -20,13 +20,21 @@
     "url": "https://github.com/ywzhaiqi/userscript/issues"
   },
   "homepage": "https://github.com/ywzhaiqi/userscript#readme",
-  "dependencies": {},
+  "dependencies": {
+    "@types/react": "^16.0.2",
+    "@types/react-dom": "^15.5.3",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1"
+  },
   "devDependencies": {
-    "awesome-typescript-loader": "^3.2.3",
-    "source-map-loader": "^0.2.1",
-    "typescript": "^2.4.2",
-    "uglifyjs-webpack-plugin": "^1.0.0-beta.2",
-    "userscript-css-loader": "git+https://github.com/ywzhaiqi/userscript-css-loader.git",
-    "webpack": "^3.5.5"
+    "@types/minimist": "^1.2.0",
+    "@types/rollup": "^0.41.1",
+    "minimist": "^1.2.0",
+    "rollup": "^0.48.2",
+    "rollup-plugin-commonjs": "^8.1.0",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-string": "^2.0.2",
+    "rollup-plugin-typescript2": "^0.5.0",
+    "typescript": "^2.4.2"
   }
 }

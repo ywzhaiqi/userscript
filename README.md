@@ -5,7 +5,9 @@ GM 脚本
 - [个人主页 - greasyfork.org][ywzhaiqi_greasyfork]
 - [个人主页 - userscripts.org][ywzhaiqi_userscripts]
 
-注：有些脚本属于个人使用版本。
+**注意：**
+- 部分脚本可能并不通用。
+- 新脚本采用 webpack + js 或 typescript 开发，可能引入了 react 全家桶。
 
 脚本一览（原创或修改版）
 ---------------
@@ -45,6 +47,8 @@ GM 脚本
 - [youku_调整显示列数.user.js](youku_调整显示列数.user.js)：把优酷从2列改成3列，适用于个人显示器。
 
 ## 开发
+
+在 `src` 目录运行命令 `build test.js [-w]` 会在 `..` 目录生成 `test.user.js`
 
 详见 [dev.md](doc/dev.md)
 

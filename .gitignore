@@ -3,7 +3,9 @@ bower_components
 *.sublime-workspace
 *.cache
 
+.rts2_cache/
 tmp/
+temp/
 .test/
 searchEngineJumpCE/test/
 MyNovelReader/test/
