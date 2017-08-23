@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.0.1
+// @version        6.0.2
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -21,12 +21,14 @@
 // @grant          GM_registerMenuCommand
 // @grant          GM_info
 // @grant          unsafeWindow
-// @connect        *
 // @homepageURL    https://greasyfork.org/scripts/292/
 // @require        https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js
 // @require        https://cdn.staticfile.org/underscore.js/1.7.0/underscore-min.js
 // @require        https://cdn.staticfile.org/keymaster/1.6.1/keymaster.min.js
 // @require        https://greasyfork.org/scripts/2672-meihua-cn2tw/code/Meihua_cn2tw.js?version=7375
+
+// @connect        *
+// @connect        *://*.qidian.com/
 
 // @include        *://read.qidian.com/*,*.aspx
 // @include        *://readbook.qidian.com/bookreader/*,*.html
@@ -35,6 +37,7 @@
 // @exclude        http://read.qidian.com/BookReader/vol,*,*.aspx
 // @include        *://wwwploy.qidian.com/BookReader/*,*.aspx
 // @include        *://free.qidian.com/Free/ReadChapter.aspx?*
+// @include        *://vipreader.qidian.com/chapter/*/*
 // @include        *://www.qdmm.com/BookReader/*,*.aspx
 // @include        *://www.qdwenxue.com/BookReader/*,*.aspx
 // @include        *://chuangshi.qq.com/read/bookreader/*.html*

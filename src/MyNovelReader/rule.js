@@ -84,7 +84,7 @@ Rule.specialSite = [
       }
   },
   {siteName: '起点新版-阅文',
-       url: '^https?://read\\.qidian\\.com/chapter/.*',
+       url: '^https?://(?:read|vipreader)\\.qidian\\.com/chapter/.*',
        bookTitleSelector: '#bookImg',
        titleSelector: 'h3.j_chapterName',
 

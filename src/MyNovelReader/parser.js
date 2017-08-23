@@ -780,6 +780,7 @@ Parser.prototype = {
         this.nextUrl = url || '';
         this.isTheEnd = !this.checkNextUrl(url);
         if(this.isTheEnd){
+            C.log('已到达最后一页')
             this.theEndColor = config.end_color;
         }
 
