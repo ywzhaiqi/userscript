@@ -6,8 +6,9 @@
       "strictNullChecks": true,   // enable strict null checks as a best practice
       "module": "es2015",            // specifiy module code generation
       "jsx": "react",             // use typescript to transpile jsx to js
-      "target": "es2015",            // specify ECMAScript target version
-      // "lib": [ "es2015", "dom" ],
+      "target": "es2016",            // specify ECMAScript target version
+      "lib": [ "es2015", "dom" ],
+      "moduleResolution": "node",
       "allowJs": true             // allow a partial TypeScript and JavaScript codebase
   },
   "include": [
