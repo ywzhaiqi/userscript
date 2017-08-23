@@ -152,6 +152,14 @@ Parser.prototype = {
         //     return true;
         // }
 
+        // 排除 qidian 需付费的页面
+        if (this.info.isVipChapter) {
+            if (this.info.isVipChapter(this.$doc)) {
+                this.isTheEnd = 'vip';
+                return false;
+            }
+        }
+
         if(this.info.contentSelector){
             $content = this.$doc.find(this.info.contentSelector);
         }
@@ -397,7 +405,7 @@ Parser.prototype = {
 
         this.hasContent();
 
-        if (this.$content.size() <= 0) {
+        if (!this.$content || this.$content.size() <= 0) {
             // callback(this);
             console.error('没有找到内容', this.$doc);
             return;
@@ -841,14 +849,21 @@ Parser.prototype = {
 
         switch(true){
             case url === '':
+                return false
+            case this.info.exclude && toRE(this.info.exclude).test(url):
+                return false
             case Rule.nextUrlIgnore.some(function(re) { return toRE(re).test(url) }):
+                return false
             case url === this.indexUrl:
+                return false
             case url === this.prevUrl:
+                return false
             case url === this.curPageUrl:
+                return false
             case Rule.nextUrlCompare.test(this.prevUrl) && !Rule.nextUrlCompare.test(url):
-                return false;
+                return false
             default:
-                return true;
+                return true
         }
     },
     getIncludeUrl: function() {

@@ -5,10 +5,11 @@ import tpl_mainHtml from './res/main.html'
 import Parser from './parser'
 import {
     C, L_getValue, L_setValue, L_removeValue, parseHTML,
-    toRE, $x, saveAs
+    toRE, $x
 } from './lib'
 import UI from './UI'
 import { isWindows } from './lib'
+import downloader from './downloader'
 
 var App = {
     isEnabled: false,
@@ -624,7 +625,7 @@ var App = {
                 var curTitle = App.parsers[curNum].docTitle;
                 document.title = curTitle;
 
-                // TODO: 起点无法添加整个网址，只能添加后半部分。
+                // 有域名的限制，起点过渡到 vip 章节无法生效
                 var url = activeUrl.replace('http://read.qidian.com', '');
                 try {
                     unsafeWindow.history.pushState(null, curTitle, url);
@@ -734,7 +735,7 @@ var App = {
         var body = iframe.contentDocument.body;
 
         if (body && body.firstChild) {
-            doc = iframe.contentDocument;
+            var doc = iframe.contentDocument;
 
             if (App.site.startLaunch) {
                 App.site.startLaunch($(doc));
@@ -795,8 +796,11 @@ var App = {
         } else {
             App.removeListener();
 
+            var msg = (parser.isTheEnd == 'vip') ?
+                'vip 章节，需付费。' :
+                '错误：没有找到下一页的内容。';
             App.$loading.html(
-                '<a href="' + App.curPageUrl + '">错误：没有找到下一页的内容。点击打开下一页链接。</a>'.uiTrans())
+                '<a href="' + App.curPageUrl + '">' + msg + '点此打开下一页。</a>'.uiTrans())
                 .show();
         }
 
@@ -836,66 +840,15 @@ var App = {
         }
 
         if (App.isSaveing) {
-            alert('正在保存，请稍后');
+            alert('正在保存中，请稍后');
             return;
         }
 
         App.isSaveing = true;
 
-        var chapters = [];
-        var fileName;
-
-        var toTxt = function(parser) {
-            var html = $.nano('{chapterTitle}\n\n{contentTxt}', parser);
-            chapters.push(html);
-
-            UI.message.loading('已下载 ' + chapters.length + ' 章', 0);
-        };
-        var finish = function() {
-            var allTxt = chapters.join('\n\n');
-            if (isWindows) {
-                allTxt = allTxt.replace(/\n/g, '\r\n');
-            }
-
-            saveAs(allTxt, fileName);
+        downloader(App.parsers, function() {
             App.isSaveing = false;
-        };
-
-        var getOnePage = function (parser, nextUrl) {
-            var isEnd = false;
-            if (parser) {
-                toTxt(parser);
-                nextUrl = parser.nextUrl;
-                isEnd = parser.isTheEnd;
-            }
-
-            if (!nextUrl || isEnd) {
-                console.log('全部获取完毕');
-                finish();
-                return;
-            }
-
-            if (App.site.useiframe) {
-                // App.iframeRequest(nextUrl);
-            } else {
-                console.log('[存为txt]正在获取：', nextUrl)
-                App.httpRequest(nextUrl, function(doc) {
-                    if (doc) {
-                        var par = new Parser(App.site, doc, nextUrl);
-                        par.getAll(getOnePage)
-                    } else {
-                        console.error('超时或连接出错');
-                        finish();
-                    }
-                });
-            }
-        };
-
-        App.parsers.forEach(toTxt);
-        // 保存后面的章节
-        var lastParser = App.parsers[App.parsers.length - 1];
-        fileName = lastParser.bookTitle + '.txt';
-        getOnePage(null, lastParser.nextUrl);
+        });
     }
 };
 

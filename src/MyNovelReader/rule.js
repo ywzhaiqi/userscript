@@ -85,6 +85,7 @@ Rule.specialSite = [
   },
   {siteName: '起点新版-阅文',
        url: '^https?://(?:read|vipreader)\\.qidian\\.com/chapter/.*',
+       exclude: ' /lastpage/',
        bookTitleSelector: '#bookImg',
        titleSelector: 'h3.j_chapterName',
 
@@ -101,6 +102,11 @@ Rule.specialSite = [
            '手机用户请到m.qidian.com阅读。',
            '起点中文网www.qidian.com欢迎广大书友光临阅读，最新、最快、最火的连载作品尽在起点原创！.*'
        ],
+       isVipChapter: function($doc) {
+           if ($doc.find('.vip-limit-wrap').length) {
+               return true;
+           }
+       }
   },
   // 特殊站点，需再次获取且跨域。添加 class="reader-ajax"，同时需要 src, charset
   {siteName: '起点新版',
