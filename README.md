@@ -17,6 +17,7 @@ GM 脚本
 - [MyNovelReader](MyNovelReader)：小说阅读脚本
   - 从 6.0.0（2017-8-23）开始，改成 `import` 构建（可能旧浏览器不支持，待解决）。Opera 12 及旧版本浏览器用户暂时先用以前的版本。
   - 旧版本 [My Novel Reader 5.6.9](https://greasyfork.org/zh-CN/scripts/292-my-novel-reader?version=213022)
+  - 支持起点 vip 阅读，如果无效，可能需要在 `Tampermonkey` 中设置 `@connect 模式:` 为 `宽松` 模式。
 - ~~[BaiduPanDownloadHelper](BaiduPanDownloadHelper)：批量导出百度盘的下载链接。~~
 - [BaiduSearchNoJump](BaiduSearchNoJump)：百度搜索反跳转（修改版）。
 - [Mouseover Popup Image Viewer](Mouseover Popup Image Viewer)：在图片上鼠标悬停放大，这里是一些自写的规则。
@@ -156,6 +157,7 @@ GM 脚本
     - [google cache comeback][88]
     - [userstyles.org css highlighter][89]
     - [uso-mirror][90]
+- [langren1353/GM_script: 我就是来分享脚本玩玩的](https://github.com/langren1353/GM_script)
 - [iMyon/gm_scripts][91]
 - [CL1024 - 草榴社区][92]，[greasyfork.org][93]
 - [cnbeta-comments][94]
