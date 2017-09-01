@@ -3166,15 +3166,15 @@ var SITEINFO=[
         }
     },
     {name: 'exhentai',
-        url: '^http://exhentai\\.org/s/.*$',
-        nextLink: '//img[@src="http://st.exhentai.net/img/n.png"]/..',
+        url: '^https://exhentai\\.org/s/.*$',
+        nextLink: '//img[@src="https://st.exhentai.net/img/n.png"]/..',
         pageElement: '//body/div[@class="sni"]',
-        exampleUrl: 'http://exhentai.org/s/0088446283/653117-4',
+        exampleUrl: 'https://exhentai.org/s/0088446283/653117-4',
         useiframe: true
     },
     {name: 'exhentai gallery',
-        url: /^http:\/\/exhentai\.org\/g\//i,
-        exampleUrl: 'http://exhentai.org/g/514954/d4fcb4973e/?p=1',
+        url: /^https:\/\/exhentai\.org\/g\//i,
+        exampleUrl: 'https://exhentai.org/g/514954/d4fcb4973e/?p=1',
         nextLink: '//table[@class="ptt"]//a[text()=">"]',
         autopager: {
             pageElement: '//div[@id="gdt"]',
@@ -3182,8 +3182,8 @@ var SITEINFO=[
         }
     },
     {name: 'exhentai frontpage',
-        url: /^http:\/\/exhentai\.org\/(\?[^\/]+)?$/i,
-        exampleUrl: 'http://exhentai.org/?page=2',
+        url: /^https:\/\/exhentai\.org\/(\?[^\/]+)?$/i,
+        exampleUrl: 'https://exhentai.org/?page=2',
         nextLink: '//table[@class="ptt"]//a[text()=">"]',
         autopager: {
             pageElement: '//table[@class="ptt"]/..',
@@ -3564,10 +3564,10 @@ var SITEINFO=[
         pageElement: '//div[@align="center"]/table[@width !="100%"]',
     },
     {name: 'Hachiya Makoto',
-        url: '^http://g\\.e-hentai\\.org/s/.*$',
-        nextLink: '//img[@src="http://ehgt.org/g/n.png"]/..',
+        url: '^https://g\\.e-hentai\\.org/s/.*$',
+        nextLink: '//img[@src="https://ehgt.org/g/n.png"]/..',
         pageElement: '//body/div[@class="sni"]',
-        exampleUrl: 'http://g.e-hentai.org/s/2221a78fe2/592744-3',
+        exampleUrl: 'https://g.e-hentai.org/s/2221a78fe2/592744-3',
         useiframe: true
     },
 
