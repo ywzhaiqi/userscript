@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name               Next Page ModY
 // @author             ywzhaiqi && Sunwan（原作者）
-// @version            1.3.4
+// @version            1.3.5
 // @namespace          https://github.com/ywzhaiqi
 // @description        使用左右方向键来翻页
 // @homepageURL        https://github.com/ywzhaiqi/userscript/tree/master/NextPage
@@ -19,7 +19,7 @@
  */
 
 
-(function() {
+(function(window) {
 
     var Config = {
         debug: false,
@@ -97,7 +97,15 @@
             url: /[^\/]+\/(?:bbs\/)?read/i,
             preLink: '//div[starts-with(@class,"pages")]/b[1]/preceding-sibling::a[1][not(@class)][@href] | //div[starts-with(@class,"pages")]/ul[1]/li[b]/preceding-sibling::li/a[1][not(@class)][@href]',
             nextLink: '//div[starts-with(@class,"pages")]/b[1]/following-sibling::a[1][not(@class)][@href] | //div[starts-with(@class,"pages")]/ul[1]/li[b]/following-sibling::li/a[1][not(@class)][@href]'
-        }
+        },
+
+        // （测试）antd 翻页
+        {name: 'antd 通用',
+            url: /.*/,
+            nextLink: 'css;li.ant-pagination-next > a',
+            preLink: 'css;li.ant-pagination-prev > a',
+            click: true,
+        },
     ];
 
 
@@ -670,12 +678,14 @@
             openLink(next.link, next.click);
         } else if (!direction && previous.found) {
             openLink(previous.link, previous.click)
+        } else {
+
         }
     }
 
     function onKeyDown(event) {
         // 不是左右方向建被按下或不到延迟时间则退出
-        if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey || 
+        if (event.ctrlKey || event.shiftKey || event.altKey || event.metaKey ||
             event.keyCode != 37 && event.keyCode != 39 || delay)
             return
 
@@ -832,7 +842,7 @@
         $('addkeydown').checked = Config.addkeydown;
         $('checkDomainPort').checked = Config.checkDomainPort;
         $('custom_next').value = Config.custom_next;
-        $('custom_previous').value = Config.custom_previous;    
+        $('custom_previous').value = Config.custom_previous;
     }
 
     if (Config.addkeydown) {
@@ -850,4 +860,4 @@
     }, false);
 
     GM_registerMenuCommand('Next Page 设置', setup);
-})();
+})(unsafeWindow);
