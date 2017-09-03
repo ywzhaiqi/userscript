@@ -84,14 +84,14 @@ let config = {
     userScriptCss({
       include: ['**/*.css'],
       exclude: [
-        'MyNovelReader/**/*.css',  // 特殊的
+        'src/MyNovelReader/**/*.css',  // 特殊的
       ],
       insert: true,
     }),
     stringPlugin({
       include: [
         '**/*.html',
-        'MyNovelReader/**/*.css',  // 特殊的
+        'src/MyNovelReader/**/*.css',  // 特殊的
       ],
     }),
     typescript({
