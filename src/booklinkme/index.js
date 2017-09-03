@@ -1,9 +1,8 @@
 import './meta'
-import style from './index.css'
-// import $ from 'zepto'
-import { isFirefox, GM_request, $x } from '../common/utils'
-
-GM_addStyle(style)
+import './index.css'
+import $ from 'zepto'
+import { isFirefox, $x } from '../common/utils'
+import { fixErrorBook } from './bookPage'
 
 const config = {
   clickedColor: "666666",
@@ -152,55 +151,13 @@ class MobilePage {
   }
 }
 
-class BookPage {
-  init() {
-    let newUrl;
-    switch (location.pathname) {
-      case '/book-1-1009272444.html':  // 维秘女模的经纪人：内容错误
-        // const newUrl = 'http://www.wangshuge.com/books/109/109265/';
-        newUrl = 'http://www.wutuxs.com/html/7/7221/'
-
-        this.insertToFirst(newUrl, '我的补充')
-        console.info('新增：我的补充 链接')
-        break;
-      case '/book-10-3146622.html':  // 重生在跑道上：内容只有乐文是正确的
-        newUrl = 'http://www.lwxs520.com/books/74/74985/index.html'
-
-        this.insertToFirst(newUrl, '乐文目录')
-        // this.getAndInsertFirst(newUrl)
-        console.info('新增：我的补充 链接')
-        break;
-    }
-  }
-
-  insertToFirst(newUrl, text) {
-    var firstLink = $x('//font[text()="补充链接"]/..')[0];
-    firstLink.insertAdjacentHTML('beforebegin', `
-        <a href="${newUrl}" target="_blank" style="margin-right: 3px;">
-            <font color="red">${text}</font>
-        </a>`)
-    return firstLink
-  }
-
-  async getAndInsertFirst(url) {
-    let html = await GM_request(url);
-    var doc = new DOMParser().parseFromString(html, 'text/html')
-
-    if (url.includes('www.lwxs520.com')) {
-      var chapters = $x('//div[@class="dccss"]/a', doc);
-      var lastChapter = chapters[chapters.length - 1];
-
-      this.insertToFirst(url, lastChapter.textContent)
-    }
-  }
-}
 
 function run() {
   switch (location.hostname) {
     case "booklink.me":
       new PcPage().init();
 
-      new BookPage().init()
+      fixErrorBook()
       break;
     case "m.booklink.me":
       new MobilePage().init();

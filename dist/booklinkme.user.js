@@ -1,10 +1,24 @@
-(function () {
+/* This script build by rollup. */
+(function ($) {
 'use strict';
+
+function __$styleInject( css ) {
+    if(!css) return ;
+
+    if(typeof(window) == 'undefined') return ;
+    let style = document.createElement('style');
+
+    style.innerHTML = css;
+    document.head.appendChild(style);
+    return css;
+}
+
+$ = $ && $.hasOwnProperty('default') ? $['default'] : $;
 
 // ==UserScript==
 // @id             booklinkme@ywzhaiqi@gmail.com
 // @name           My booklink.me 增强
-// @version        2.1
+// @version        2.2
 // @author         ywzhaiqi@gmail.com
 // @description    首页一键打开所有未读链接
 // @include        *://booklink.me/*
@@ -12,20 +26,22 @@
 // @grant          GM_openInTab
 // @grant          GM_xmlhttpRequest
 // @grant          GM_addStyle
+// @grant          GM_registerMenuCommand
 // @connect        www.lwxs520.com
 // @run-at         document-end
 // @noframes
 // @require https://greasyfork.org/scripts/32445-zepto-js-selector/code/Zeptojs%20+%20selector.js?version=212976
+// @require https://greasyfork.org/scripts/6158-gm-config-cn/code/GM_config%20CN.js?version=207250
 // ==/UserScript==
 
-var style = "\r\n  .mclicked {\r\n    color: #666666 !important;\r\n  }";
+__$styleInject("\r\n  .mclicked {\r\n    color: #666666 !important;\r\n  }");
 
 // 参考 https://github.com/madrobby/zepto/blob/master/src/detect.js
 
 const ua = navigator.userAgent;
 const platform = navigator.platform;
 
-const isFirefox = na.match(/Firefox\/([\d.]+)/);
+const isFirefox = ua.match(/Firefox\/([\d.]+)/);
 
 const isChrome = ua.match(/Chrome\/([\d.]+)/) || ua.match(/CriOS\/([\d.]+)/);
 
@@ -39,19 +55,6 @@ const isWindows = /Win\d{2}|Windows/.test(platform);
  * @param {object} [opt={}]
  * @returns {Promise<string>}
  */
-function GM_request(url, opt = {}) {
-    return new Promise((resolve, reject) => {
-        opt = Object.assign(opt, {
-            method: "GET",
-            url,
-            onload: function (response) {
-                resolve(response.responseText);
-            }
-        });
-
-        GM_xmlhttpRequest(opt);
-    });
-}
 
 /**
  * 根据 xpath 查找元素
@@ -78,8 +81,76 @@ function $x(aXPath, aContext) {
     return nodes;
 }
 
-// import $ from 'zepto'
-GM_addStyle(style);
+const config$1 = {
+  '重生在跑道上': '乐文目录'
+};
+
+// 动态生成
+function createField() {
+  const fields = {};
+  Object.keys(config$1).forEach(k => {
+    fields[k] = {
+      label: k,
+      type: 'text',
+      default: config$1[k],
+    };
+  });
+
+  return fields
+}
+
+function loadConfig() {
+  Object.keys(GM_config.fields).forEach(function(keyStr) {
+    var value = GM_config.get(keyStr);
+    if (value) {
+      config$1[keyStr] = value;
+    }
+  });
+}
+
+GM_config.init({
+  id: 'my-booklink-plus',
+  title: 'booklink.me 增强脚本',
+  skin: 1,
+  frameStyle: {
+    width: '400px',
+  },
+  fields: createField(),
+});
+
+GM_registerMenuCommand('booklink 增强', function() {
+  GM_config.open();
+});
+
+loadConfig();
+
+function insertToFirst(newUrl, text) {
+  var firstLink = $x('//font[text()="补充链接"]/..')[0];
+  firstLink.insertAdjacentHTML('beforebegin', `
+      <a href="${newUrl}" target="_blank" style="margin-right: 3px;">
+          <font color="red">${text}</font>
+      </a>`);
+  return firstLink
+}
+
+function fixErrorBook() {
+  let newUrl;
+  switch (location.pathname) {
+    case '/book-1-1009272444.html':  // 维秘女模的经纪人：内容错误
+      // const newUrl = 'http://www.wangshuge.com/books/109/109265/';
+      newUrl = 'http://www.wutuxs.com/html/7/7221/';
+
+      insertToFirst(newUrl, '我的补充');
+      console.info('新增：我的补充 链接');
+      break;
+    case '/book-10-3146622.html':  // 重生在跑道上：内容只有乐文是正确的
+      newUrl = 'http://www.lwxs520.com/books/74/74985/index.html';
+
+      insertToFirst(newUrl, config$1['重生在跑道上']);
+      console.info('新增：我的补充 链接');
+      break;
+  }
+}
 
 class PcPage {
   init() {
@@ -212,55 +283,13 @@ class MobilePage {
   }
 }
 
-class BookPage {
-  init() {
-    let newUrl;
-    switch (location.pathname) {
-      case '/book-1-1009272444.html':  // 维秘女模的经纪人：内容错误
-        // const newUrl = 'http://www.wangshuge.com/books/109/109265/';
-        newUrl = 'http://www.wutuxs.com/html/7/7221/';
-
-        this.insertToFirst(newUrl, '我的补充');
-        console.info('新增：我的补充 链接');
-        break;
-      case '/book-10-3146622.html':  // 重生在跑道上：内容只有乐文是正确的
-        newUrl = 'http://www.lwxs520.com/books/74/74985/index.html';
-
-        this.insertToFirst(newUrl, '乐文目录');
-        // this.getAndInsertFirst(newUrl)
-        console.info('新增：我的补充 链接');
-        break;
-    }
-  }
-
-  insertToFirst(newUrl, text) {
-    var firstLink = $x('//font[text()="补充链接"]/..')[0];
-    firstLink.insertAdjacentHTML('beforebegin', `
-        <a href="${newUrl}" target="_blank" style="margin-right: 3px;">
-            <font color="red">${text}</font>
-        </a>`);
-    return firstLink
-  }
-
-  async getAndInsertFirst(url) {
-    let html = await GM_request(url);
-    var doc = new DOMParser().parseFromString(html, 'text/html');
-
-    if (url.includes('www.lwxs520.com')) {
-      var chapters = $x('//div[@class="dccss"]/a', doc);
-      var lastChapter = chapters[chapters.length - 1];
-
-      this.insertToFirst(url, lastChapter.textContent);
-    }
-  }
-}
 
 function run() {
   switch (location.hostname) {
     case "booklink.me":
       new PcPage().init();
 
-      new BookPage().init();
+      fixErrorBook();
       break;
     case "m.booklink.me":
       new MobilePage().init();
@@ -270,4 +299,4 @@ function run() {
 
 run();
 
-}());
+}(Zepto));
