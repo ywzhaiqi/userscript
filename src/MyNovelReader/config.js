@@ -11,6 +11,7 @@ const config = {
   PRELOADER: true,                // 提前预读下一页
 
   xhr_time: 15 * 1000,
+  download_delay: 100,  // 毫秒。0 毫秒下载起点 vip 限时免费章节会被封
   dumpContentMinLength: 3,        // 检测重复内容的最小行数
 };
 

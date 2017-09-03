@@ -490,51 +490,6 @@ var UI = {
     }
 };
 
-UI.message = (function() {
-
-    function notice(html, duration, noticeType, onClose) {
-        if (typeof duration === 'undefined')
-            duration = 2000;
-
-        var closeMessage = function() {
-            UI.$messageDiv.remove();
-            UI.$messageDiv = null;
-
-            if (typeof onClose === 'function') {
-                onClose();
-            }
-        };
-
-        if (!UI.$messageDiv) {
-            var iconHtml = ''
-            if (noticeType === 'loading') {
-                iconHtml = '<i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>'
-            }
-
-            UI.$messageDiv = $('<div id="message" class="noRemove">' + iconHtml + '<span id="content"></span></div>')
-                .appendTo('body');
-            UI.$messageDivContent = UI.$messageDiv.find('#content');
-
-            if (duration == 0) {
-                UI.$messageDiv.on('click', closeMessage);
-            }
-        }
-
-        UI.$messageDivContent.html(html)
-
-        if (duration > 0) {
-            clearTimeout(UI._messageTimeId);
-            UI._messageTimeId = setTimeout(closeMessage, duration)
-        }
-    }
-
-    return {
-        loading: function(html, duration, onClose) {
-            notice(html, duration, 'loading', onClose)
-        }
-    }
-})()
-
 UI.skins["缺省皮肤".uiTrans()] = "";
 UI.skins["暗色皮肤".uiTrans()] = "body { color: #666; background-color: rgba(0;0;0;.1); }\
                 .title { color: #222; }";

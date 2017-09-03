@@ -1,5 +1,6 @@
+import config from './config'
 import Parser from './parser'
-import UI from './ui'
+import { loading } from './components/message'
 import App from './app'
 import {saveAs, isWindows} from './utils'
 import getNumFromChapterTitle from './utils/getNumFromChapterTitle'
@@ -44,7 +45,7 @@ function toTxt(parser) {
   var msg = '已下载 ' + chapters.length + ' 章，' +
       (parser.chapterTitle || '')
 
-  UI.message.loading(msg, 0);
+  loading(msg, 0);
 };
 
 function finish(parser) {
@@ -75,22 +76,27 @@ function getOnePage(parser, nextUrl, endFn) {
 
   if (App.site.useiframe) {
       // App.iframeRequest(nextUrl);
-  } else {
-      console.log('[存为txt]正在获取：', nextUrl)
-      App.httpRequest(nextUrl, function(doc) {
-          if (doc) {
-              var par = new Parser(App.site, doc, nextUrl);
-              par.getAll(getOnePage)
-          } else {
-              console.error('超时或连接出错');
-              finish();
-              endFn()
-          }
-      });
+      return;
   }
+
+  setTimeout(function() {
+    console.log('[存为txt]正在获取：', nextUrl)
+    App.httpRequest(nextUrl, function(doc) {
+        if (doc) {
+            var par = new Parser(App.site, doc, nextUrl);
+            par.getAll(getOnePage)
+        } else {
+            console.error('超时或连接出错');
+            finish();
+            endFn()
+        }
+    });
+  }, config.download_delay)
 };
 
 function run(cachedParsers=[], endFn) {
+  console.log(`[存为txt]每章下载延时 ${config.download_delay} 毫秒`)
+
   cachedParsers.forEach(toTxt);
 
   var lastParser = cachedParsers[cachedParsers.length - 1];

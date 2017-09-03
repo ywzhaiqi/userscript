@@ -4,7 +4,7 @@ import cnNum2ArabNum from './cnNum2ArabNum'
 function getNumFromChapterTitle(title) {
   if (!title) return;
 
-  let m = title.match(/第(\d+)章/)
+  var m = title.match(/第(\d+)章/)
   if (m) {
     return parseInt(m[1], 10)
   }

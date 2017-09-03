@@ -128,12 +128,6 @@ export function $x(aXPath, aContext) {
     return nodes;
 }
 
-Function.prototype.getMStr = function() {  // 多行String
-    var lines = new String(this);
-    lines = lines.substring(lines.indexOf("/*") + 3, lines.lastIndexOf("*/"));
-    return lines;
-};
-
 if (typeof String.prototype.startsWith != 'function') {
     String.prototype.startsWith = function(str) {
         return this.slice(0, str.length) == str;
