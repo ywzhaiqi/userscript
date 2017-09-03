@@ -10,3 +10,5 @@ temp/
 searchEngineJumpCE/test/
 MyNovelReader/test/
 Super_preloaderPlus/test/testGoogleSearch.js
+src/common/test.ts
+private/

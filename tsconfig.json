@@ -1,15 +1,16 @@
 {
   "compilerOptions": {
-      "outDir": "../dist",        // path to output directory
-      "rootDir": ".",
-    //   "sourceMap": true,          // allow sourcemap support
+      "outDir": "dist",        // path to output directory
+      "rootDir": "src",
+      "sourceMap": false,          // allow sourcemap support
       "strictNullChecks": true,   // enable strict null checks as a best practice
-      "module": "es2015",            // specifiy module code generation
+      "module": "es6",            // specifiy module code generation
       "jsx": "react",             // use typescript to transpile jsx to js
       "target": "es2016",            // specify ECMAScript target version
       "lib": [ "es2015", "dom" ],
       "moduleResolution": "node",
-      "allowJs": true             // allow a partial TypeScript and JavaScript codebase
+      "allowJs": true,             // allow a partial TypeScript and JavaScript codebase
+      "allowSyntheticDefaultImports": true
   },
   "include": [
     "./**/*.ts",
