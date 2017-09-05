@@ -7,11 +7,14 @@ import typescript from 'rollup-plugin-typescript'
 import vue from 'rollup-plugin-vue2'
 import userScriptCss from 'rollup-plugin-userscript-css'
 
-const command = minimist(process.argv.slice(2))
-const configName = 'rollup.config.js'
-const rootDir = path.join(__dirname, '.')
-
+// config
 const indexFiles = ['index.js', 'index.user.js', 'index.ts', 'index.user.ts']
+const OUT_DIR = 'scripts'
+// TODO: 还没生效
+const configName = 'rollup.config.js'
+
+const command = minimist(process.argv.slice(2))
+const rootDir = path.join(__dirname, '.')
 
 function getInput(input) {
   let args = {
@@ -63,7 +66,7 @@ if (!args.file) {
 }
 
 let inputScript = path.join('.', args.dir, args.file)
-let outputScript = path.join(rootDir, 'dist', args.outfile)
+let outputScript = path.join(rootDir, OUT_DIR, args.outfile)
 
 let config = {
   input: inputScript,
