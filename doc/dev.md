@@ -1,6 +1,16 @@
 GM 脚本开发相关
 =============
 
+## 部分脚本的构建
+
+Linux 下
+
+```bash
+yarn build src/MyNovelReader/ -- -w
+```
+
+运行会以 watch 方式在 `scripts/` 目录下生成 `MyNovelReader.user.js`
+
 ## 辅助库
 
 快速搭建设置界面
@@ -30,11 +40,19 @@ DOM 库
 
 可惜：错误信息不够详细
 
-### Greasemonkey 下调试
+### Greasemonkey 下调试（建立硬链接）
 
-建立硬链接
-```shell
-mklink MyNovelReader.user.js XXX\dist\MyNovelReader.user.js /H
+先切换到 Greasemonkey 脚本目录
+
+#### Windows 下
+
+```cmd
+mklink MyNovelReader.user.js XXX\scripts\MyNovelReader.user.js /H
+```
+#### Linux 下
+
+```bash
+ln XXX/scripts/MyNovelReader.user.js MyNovelReader.user.js
 ```
 
 ### 引入 webpack（已弃）
@@ -45,9 +63,3 @@ mklink MyNovelReader.user.js XXX\dist\MyNovelReader.user.js /H
 
 - [freund17/webpack-userscript](https://github.com/freund17/webpack-userscript): Template for a Tempermonkey/Greasemonkey userscript using webpack
 - [userscript-css-loader](https://github.com/dorian-marchal/userscript-css-loader): Simple webpack loader module for using CSS in userscripts
-
-### 关于运行路径放置的问题
-
-`build` 命令有2种放法：根目录、src 目录。（需要有自动补全）
-- 根目录：`npm run build src/test.js`，可是 windows cmd 不支持
-- src 目录：`build test.js`

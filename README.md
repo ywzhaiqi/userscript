@@ -53,10 +53,6 @@ GM 脚本
 
 详见 [dev.md](doc/dev.md)
 
-### 部分脚本的构建
-
-1. `cd src`
-2. `build MyNovelReader [-w]` 会在 `../dist/` 目录下生成 `MyNovelReader.user.js`
 
 一些脚本的链接
 -------------
