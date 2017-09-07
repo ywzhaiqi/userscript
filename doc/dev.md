@@ -47,6 +47,8 @@ DOM 库
 #### Windows 下
 
 ```cmd
+mklink MyNovelReader.user.js XXX\scripts\MyNovelReader.user.js
+# 或
 mklink MyNovelReader.user.js XXX\scripts\MyNovelReader.user.js /H
 ```
 #### Linux 下
