@@ -1,9 +1,12 @@
 import Setting from './Setting'
+import config from './config'
 import Parser from './parser'
 import Rule from './rule'
 import { toggleConsole, L_setValue, isChrome } from './lib'
 import Res from './res'
 import App from './app'
+
+const SAVE_MESSAGE_NAME = 'userscript-MyNovelReader-Setting-Saved'
 
 var UI = {
     tpl_footer_nav: '\
@@ -42,6 +45,15 @@ var UI = {
         // UI.toggleQuietMode();  // 初始化安静模式
         UI.hideMenuList(Setting.menu_list_hiddden);  // 初始化章节列表是否隐藏
         UI.hidePreferencesButton(Setting.hide_preferences_button);  // 初始化设置按钮是否隐藏
+
+        // TODO: Greasemonkey 无效，unsafeWindow 也不行
+        if (config.setting_load_by_message) {
+            window.addEventListener('message', e => {
+                if (e.data === SAVE_MESSAGE_NAME) {
+                    location.reload()
+                }
+            })
+        }
     },
     refreshMainStyle: function(){
         var mainCss = Res.CSS_MAIN
@@ -468,6 +480,11 @@ var UI = {
         UI.refreshMainStyle();
 
         UI.hide();
+
+        // 发送给其它窗口
+        if (config.setting_load_by_message) {
+            window.postMessage(SAVE_MESSAGE_NAME, '*')
+        }
     },
     openHelp: function() {
 
