@@ -25,6 +25,9 @@ function getInput(input) {
     watch: false,
   }
 
+  // fix PowserShell yarn 下传入最后会多一个" '.\\src\\MyNovelReader"'
+  input = input.replace(/"$/, '')
+
   if (!input || !fs.existsSync(input)) {
     return args
   }
@@ -35,6 +38,7 @@ function getInput(input) {
   } else if (stats.isDirectory()) {
     args.dir = input
     args.file = 'index.js'
+    
     for (let f of indexFiles) {
       if (fs.existsSync(path.join(args.dir, f))) {
         args.file = f
@@ -61,7 +65,7 @@ function getInput(input) {
 
 const args = getInput(command.myinput)
 if (!args.file) {
-  console.error('参数错误，文件不存在。Usage: npm run build src/MyNovelReader（win：src\MyNovelReader）')
+  console.error('参数错误，文件不存在。Usage: npm run build src/MyNovelReader（win：src\\MyNovelReader）')
   process.exit(-1)
 }
 
