@@ -4,6 +4,20 @@ import Rule, { CHAR_ALIAS } from './rule'
 import { C, toRE, toReStr, wildcardToRegExpStr, getUrlHost } from './lib'
 import { READER_AJAX } from './consts'
 
+function getElemFontSize(_heading) {
+    var fontSize = 0;
+    var _heading_style = window.getComputedStyle(_heading, null);
+    if (_heading_style) {
+        // firefox57 2017年9月10日 会错误
+        try {
+            var str = _heading_style.getPropertyValue("font-size") || 0;
+            fontSize = parseInt(str, 10)
+        } catch(e) { }
+    }
+
+    return fontSize
+}
+
 function Parser(){
     this.init.apply(this, arguments);
 }
@@ -351,14 +365,7 @@ Parser.prototype = {
 
             C.log("跟页面标题比较后得分：" + score);
 
-            var _font_size_text = "",
-                _font_size_add_score = 0,
-                _heading_style = window.getComputedStyle(_heading, null);
-            if(_heading_style){
-                _font_size_text = _heading_style.getPropertyValue("font-size") || 0;
-                _font_size_add_score = parseInt(_font_size_text, 10) * 1.5;
-            }
-
+            var _font_size_add_score = getElemFontSize(_heading) * 1.5;
             score +=  _font_size_add_score;
 
             C.log("计算大小后得分：" + score);
