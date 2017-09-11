@@ -9,7 +9,7 @@ export var CHAR_ALIAS = {
 
 // ===== 自动尝试的规则 =====
 var Rule = {
-  titleRegExp: /第?\s*[一二两三四五六七八九十○零百千万亿0-9１２３４５６７８９０]{1,6}\s*[章回卷节折篇幕集]/i,
+  titleRegExp: /第?\s*[一二两三四五六七八九十○零百千万亿0-9１２３４５６７８９０]{1,6}\s*[章回卷节折篇幕集话話]/i,
   titleReplace: /^章节目录|^文章正文|^正文|全文免费阅读|最新章节|\(文\)/,
 
   // nextRegExp: /[上前下后][一]?[页张个篇章节步]/,
@@ -43,8 +43,15 @@ var Rule = {
       "#contentTxt", "#oldtext", "#a_content", "#contents", "#content2", "#contentts", "#content1", "#content", ".content"
   ],
 
-  // (测试)尝试查找书名。顶部章节导航的最后一个链接可能是书名。
-  bookTitleSelector: ".h1title > .shuming > a[title], .chapter_nav > div:first > a:last",
+  // 尝试查找书名。顶部章节导航的最后一个链接可能是书名。
+  bookTitleSelector: [
+    '.h1title > .shuming > a[title]',
+    '.chapter_nav > div:first > a:last',
+    '#header > .readNav > span > a:last',
+    'div[align="center"] > .border_b > a:last',
+    '#sitebar > a:last',
+    '.con_top > a:last',
+  ],
 
   contentRemove: "script, iframe",          // 内容移除选择器
   removeLineRegExp: /<p>[　\s。;，！\.∷〖]*<\/p>/g,  // 移除只有一个字符的行

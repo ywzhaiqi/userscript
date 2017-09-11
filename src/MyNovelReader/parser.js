@@ -3,6 +3,7 @@ import config from './config'
 import Rule, { CHAR_ALIAS } from './rule'
 import { C, toRE, toReStr, wildcardToRegExpStr, getUrlHost } from './lib'
 import { READER_AJAX } from './consts'
+import autoGetBookTitle from './parser/autoGetBookTitle'
 
 function getElemFontSize(_heading) {
     var fontSize = 0;
@@ -216,11 +217,12 @@ Parser.prototype = {
             C.log("TitleReg:", info.titleReg, matches);
         }
 
-        // 如果有 titleSelector 则覆盖
-        var tmpChapterTitle = this.getTitleFromInfo(info.titleSelector);
+        // 如果有 titleSelector 则覆盖从 titleReg 中获取的
+        var tmpChapterTitle = this.getTitleFromRule(info.titleSelector);
         if (tmpChapterTitle) {
             chapterTitle = tmpChapterTitle
         }
+
         if(!chapterTitle){
             chapterTitle = this.autoGetChapterTitle(this.doc);
         }
@@ -228,11 +230,12 @@ Parser.prototype = {
             chapterTitle = chapterTitle.replace(toRE(info.chapterTitleReplace), '')
         }
 
-        if (!bookTitle) {
-            bookTitle = this.getTitleFromInfo(info.bookTitleSelector);
+        // get bookTitle
+        if (!bookTitle && info.bookTitleSelector) {
+            bookTitle = this.getTitleFromRule(info.bookTitleSelector);
         }
         if (!bookTitle) {
-            bookTitle = this.$doc.find(Rule.bookTitleSelector).text();
+            bookTitle = autoGetBookTitle(this.$doc);
         }
         if (info.bookTitleReplace) {
             bookTitle = bookTitle.replace(toRE(info.bookTitleReplace), '')
@@ -268,7 +271,7 @@ Parser.prototype = {
         C.log("Chapter Title: " + this.chapterTitle);
         C.log("Document Title: " + this.docTitle);
     },
-    getTitleFromInfo: function(selectorOrArray) {
+    getTitleFromRule: function(selectorOrArray) {
         var title = '';
         if (!selectorOrArray) {
             return '';
@@ -308,7 +311,7 @@ Parser.prototype = {
             // _negative_regexp = /[上前下后][一]?[页张个篇章节步]/,
             _title_remove_regexp = /最新章节|书书网/,
             $doc = $(document),
-            _document_title = document.title ? document.title : $doc.find("title").text(),
+            _document_title = document.title || $doc.find("title").text(),
             _search_document_title = ' ' + _document_title.replace(/\s+/gi, ' ') + ' '
         ;
 

@@ -7,7 +7,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.0.7
+// @version        6.0.8
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -663,7 +663,7 @@ var CHAR_ALIAS = {
 
 // ===== 自动尝试的规则 =====
 var Rule = {
-  titleRegExp: /第?\s*[一二两三四五六七八九十○零百千万亿0-9１２３４５６７８９０]{1,6}\s*[章回卷节折篇幕集]/i,
+  titleRegExp: /第?\s*[一二两三四五六七八九十○零百千万亿0-9１２３４５６７８９０]{1,6}\s*[章回卷节折篇幕集话話]/i,
   titleReplace: /^章节目录|^文章正文|^正文|全文免费阅读|最新章节|\(文\)/,
 
   // nextRegExp: /[上前下后][一]?[页张个篇章节步]/,
@@ -697,8 +697,15 @@ var Rule = {
       "#contentTxt", "#oldtext", "#a_content", "#contents", "#content2", "#contentts", "#content1", "#content", ".content"
   ],
 
-  // (测试)尝试查找书名。顶部章节导航的最后一个链接可能是书名。
-  bookTitleSelector: ".h1title > .shuming > a[title], .chapter_nav > div:first > a:last",
+  // 尝试查找书名。顶部章节导航的最后一个链接可能是书名。
+  bookTitleSelector: [
+    '.h1title > .shuming > a[title]',
+    '.chapter_nav > div:first > a:last',
+    '#header > .readNav > span > a:last',
+    'div[align="center"] > .border_b > a:last',
+    '#sitebar > a:last',
+    '.con_top > a:last',
+  ],
 
   contentRemove: "script, iframe",          // 内容移除选择器
   removeLineRegExp: /<p>[　\s。;，！\.∷〖]*<\/p>/g,  // 移除只有一个字符的行
@@ -3112,6 +3119,25 @@ Rule.parseCustomReplaceRules = function(str) {
 // 内容需要 ajax 的 className
 const READER_AJAX = "reader-ajax";
 
+const autoBookTitleSelector = Rule.bookTitleSelector;
+
+function autoGetBookTitle($doc) {
+    let bookTitle = '';
+    // 依次获取
+    for (let s of autoBookTitleSelector) {
+        let $node = $doc.find(s);
+        if ($node.length === 1) {
+            bookTitle = $node.text();
+            break
+        }
+    }
+
+    // 排除一些无效的？
+    C.log('autoGetBookTitle', bookTitle);
+
+    return bookTitle
+}
+
 function getElemFontSize(_heading) {
     var fontSize = 0;
     var _heading_style = window.getComputedStyle(_heading, null);
@@ -3324,11 +3350,12 @@ Parser.prototype = {
             C.log("TitleReg:", info.titleReg, matches);
         }
 
-        // 如果有 titleSelector 则覆盖
-        var tmpChapterTitle = this.getTitleFromInfo(info.titleSelector);
+        // 如果有 titleSelector 则覆盖从 titleReg 中获取的
+        var tmpChapterTitle = this.getTitleFromRule(info.titleSelector);
         if (tmpChapterTitle) {
             chapterTitle = tmpChapterTitle;
         }
+
         if(!chapterTitle){
             chapterTitle = this.autoGetChapterTitle(this.doc);
         }
@@ -3336,11 +3363,12 @@ Parser.prototype = {
             chapterTitle = chapterTitle.replace(toRE(info.chapterTitleReplace), '');
         }
 
-        if (!bookTitle) {
-            bookTitle = this.getTitleFromInfo(info.bookTitleSelector);
+        // get bookTitle
+        if (!bookTitle && info.bookTitleSelector) {
+            bookTitle = this.getTitleFromRule(info.bookTitleSelector);
         }
         if (!bookTitle) {
-            bookTitle = this.$doc.find(Rule.bookTitleSelector).text();
+            bookTitle = autoGetBookTitle(this.$doc);
         }
         if (info.bookTitleReplace) {
             bookTitle = bookTitle.replace(toRE(info.bookTitleReplace), '');
@@ -3376,7 +3404,7 @@ Parser.prototype = {
         C.log("Chapter Title: " + this.chapterTitle);
         C.log("Document Title: " + this.docTitle);
     },
-    getTitleFromInfo: function(selectorOrArray) {
+    getTitleFromRule: function(selectorOrArray) {
         var title = '';
         if (!selectorOrArray) {
             return '';
@@ -3416,7 +3444,7 @@ Parser.prototype = {
             // _negative_regexp = /[上前下后][一]?[页张个篇章节步]/,
             _title_remove_regexp = /最新章节|书书网/,
             $doc = $(document),
-            _document_title = document.title ? document.title : $doc.find("title").text(),
+            _document_title = document.title || $doc.find("title").text(),
             _search_document_title = ' ' + _document_title.replace(/\s+/gi, ' ') + ' ';
 
         var _headings = $doc.find(_main_selector);
@@ -4056,7 +4084,7 @@ var tpl_preferencesCSS = ".body {\r\n     color:#333;\r\n     margin: 0 auto;\r\
 var Res = {
   CSS_MAIN: tpl_mainCss
       .replace('{fontawesomeWoff}', fontawesomeWoff),
-  CSS_FONT_AWESOME: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css',
+  CSS_FONT_AWESOME: 'https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css',
 
   preferencesHTML: tpl_preferencesHTML
       .uiTrans().replace(/\\n/g, '\n'),
@@ -6006,7 +6034,6 @@ var BookLinkMe = {
   }
 };
 
-// 采用 Object.defineProperty(String.prototype 方式，需要直接导入而且要放在一开始
 toggleConsole(Setting.debug);
 
 if (location.host.indexOf('booklink.me') > -1) {
