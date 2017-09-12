@@ -33,7 +33,7 @@ function getInput(input) {
   }
 
   let stats = fs.lstatSync(input)
-  if (stats.isFile() && input.endsWith('.js')) {
+  if (stats.isFile() && input.match(/\.jsx?$/)) {
     args.file = input
   } else if (stats.isDirectory()) {
     args.dir = input
@@ -57,7 +57,10 @@ function getInput(input) {
   if (args.file) {
     args.outfile = args.dir ?
       (path.basename(args.dir) + '.user.js') :
-      args.file.replace(/\.[jt]s$/, '.user.js').replace('.user.user.js', '.user.js')
+      args.file
+        .replace(/src[\/\\]/, '')
+        .replace(/\.[jt]sx?$/, '.user.js')
+        .replace('.user.user.js', '.user.js')
   }
 
   return args
@@ -65,8 +68,11 @@ function getInput(input) {
 
 const args = getInput(command.myinput)
 if (!args.file) {
-  console.error('参数错误，文件不存在。Usage: npm run build src/MyNovelReader（win：src\\MyNovelReader）')
-  process.exit(-1)
+  console.error(`参数错误，文件不存在。
+Usage:
+  npm run build src/MyNovelReader [-w]
+             或 src\\MyNovelReader`)
+  process.exit()
 }
 
 let inputScript = path.join('.', args.dir, args.file)
@@ -104,10 +110,10 @@ let config = {
     typescript({
       // https://github.com/ezolenko/rollup-plugin-typescript2
       // cacheRoot: path.join(rootDir, '.rts2_cache'),
-      // include: [
-      //   "*.ts+(|x)", "**/*.ts+(|x)",
-      //   // "*.js+(|x)", "**/*.js+(|x)",
-      // ]
+      include: [
+        "*.ts+(|x)", "**/*.ts+(|x)",
+        "*.js+(|x)", "**/*.js+(|x)",
+      ]
     }),
   ]
 };
