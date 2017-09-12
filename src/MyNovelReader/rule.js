@@ -49,8 +49,12 @@ var Rule = {
     '.chapter_nav > div:first > a:last',
     '#header > .readNav > span > a:last',
     'div[align="center"] > .border_b > a:last',
+    '.ydselect > .weizhi > a:last',
     '#sitebar > a:last',
     '.con_top > a:last',
+  ],
+  bookTitleReplace: [
+      '全文阅读$',
   ],
 
   contentRemove: "script, iframe",          // 内容移除选择器
@@ -589,7 +593,7 @@ Rule.specialSite = [
       url: /^https?:\/\/\S+\.17k\.com\/chapter\/\S+\/\d+\.html$/,
       titleReg: /(.*?)-(.*?)-.*/,
       contentSelector: "#chapterContent",
-      contentRemove: ".chapter_update_time, h1, .qrcode, #authorSpenk, .like_box, #hotRecommend, .ct0416, .recent_read, div[style], #miniVoteBox",
+      contentRemove: ".chapter_update_time, h1, .qrcode, #authorSpenk, .like_box, #hotRecommend, .ct0416, .recent_read, #miniVoteBox",
       contentReplace: [
           '本书首发来自17K小说网，第一时间看正版内容！'
       ],
@@ -1952,6 +1956,10 @@ Rule.specialSite = [
       contentReplace: [
           '.*最新章节.*http://www.niepo.net/.*'
       ],
+  },
+  {siteName: '全本小说网',
+    url: 'http://www.ybdu.com/xiaoshuo/\\d+/\\d+/\\d+.html',
+    contentRemove: '.infos, .chapter_Turnpage',
   },
 
   // 移动版

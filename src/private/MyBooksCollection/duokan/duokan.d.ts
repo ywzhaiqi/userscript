@@ -8,6 +8,6 @@ interface Window {
 }
 
 interface JQueryStatic {
-  getBSON(url: string, success?: Function, fail?: Function): any
-  getBSONP(url: string, success?: Function, fail?: Function): any
+  getBSON(url: string, success?: Function, fail?: Function): Promise<any>
+  getBSONP(url: string, success?: Function, fail?: Function): Promise<any>
 }

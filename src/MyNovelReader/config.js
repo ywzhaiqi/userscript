@@ -13,12 +13,6 @@ const config = {
   xhr_time: 15 * 1000,
   download_delay: 100,  // 毫秒。0 毫秒下载起点 vip 限时免费章节会被封
   dumpContentMinLength: 3,        // 检测重复内容的最小行数
-
-  // 实验性的（TODO）
-  // TODO: Greasemonkey 无效，unsafeWindow 也不行
-  setting_load_by_message: false,
 };
-
-export const fontawesomeWoff = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.woff'
 
 export default config;

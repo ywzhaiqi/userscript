@@ -236,6 +236,7 @@ Parser.prototype = {
         }
         if (!bookTitle) {
             bookTitle = autoGetBookTitle(this.$doc);
+            bookTitle = this.replaceText(bookTitle, Rule.bookTitleReplace);
         }
         if (info.bookTitleReplace) {
             bookTitle = bookTitle.replace(toRE(info.bookTitleReplace), '')
