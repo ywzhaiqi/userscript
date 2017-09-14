@@ -7,7 +7,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.0.9
+// @version        6.1.0
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -352,6 +352,7 @@
 // @include        *://www.biqu6.com/*/*.html
 // @include        *://www.niepo.net/html/*/*/*.html
 // @include        *://www.booktxt.net/*/*.html
+// @include        *://www.aszw.org/book/*/*/*.html
 
 // 移动版
 // @include        *://wap.yc.ireader.com.cn/book/*/*/
@@ -699,6 +700,7 @@ var Rule = {
     '#header > .readNav > span > a:last',
     'div[align="center"] > .border_b > a:last',
     '.ydselect > .weizhi > a:last',
+    '.bdsub > .bdsite > a:last',
     '#sitebar > a:last',
     '.con_top > a:last',
   ],
@@ -2062,6 +2064,7 @@ Rule.specialSite = [
           '◢百度搜索雲来阁，最新最快的小说更新◣',
           '\\(云来阁小说文学网www.yunlaige.com\\)',
           '如您已阅读到此章节，请移步到.*',
+          '《想看本书最新章节的书友们，百度搜索一下.*',
           '===百!?度搜索.*?新章节===',
           '【最新更新】',
           '值得您收藏。。',
