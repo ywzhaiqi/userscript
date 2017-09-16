@@ -7,7 +7,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.1.0
+// @version        6.1.1
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -87,6 +87,7 @@
 // @include        *://www.zhuzhudao.cc/txt/*/*/
 // @include        *://www.dahaomen.net/txt/*/*/
 // @include        *://www.tadu.com/book/*/*/
+// @exclude        *://www.tadu.com/book/*/toc/
 // @include        *://www.aishoucang.com/*/*.html
 // @include        *://www.wanshuba.com/Html/*/*/*.html
 // @include        *://www.zhuishu.net/files/article/html/*/*/*.html
@@ -730,6 +731,8 @@ Rule.specialSite = [
       prevSelector: "a:contains('翻上页')",                      // 上一页链接 jQuery 选择器 (不填则尝试自动搜索)
       nextSelector: "a:contains('翻下页')",                     // 下一页链接 jQuery 选择器  (不填则尝试自动搜索)
 
+      // nDelay: 500,  // 延迟0.5秒加载下一页
+
       // 获取内容
       contentSelector: "#BookText",                             // 内容 jQuery 选择器 (不填则尝试自动搜索)
       useiframe: false,                                          // (可选)下一页加载是否使用 iframe
@@ -1025,6 +1028,7 @@ Rule.specialSite = [
           /书网∷更新快∷无弹窗∷纯文字∷.t！。/g,
           /一秒记住，本站为您提供热门小说免费阅读。/g,
           /\(更新速度最快记住即可找到\)|芒果直播网|.mgzhibo .|去 读 读|看小说就到/g,
+          '火然\\?\\?\\? \\?文&nbsp;&nbsp;ｗ\\?ｗｗ.ｒａｎｗｅｎａ.com',
       ]
   },
   {siteName: "燃文小说网",
@@ -1338,7 +1342,8 @@ Rule.specialSite = [
   },
   {siteName: "塔读文学",
       url: "^https?://www\\.tadu\\.com/book/\\d+/\\d+/",
-      bookTitleSelector: '.title em:first',
+      bookTitleSelector: '.book-name_ a:first',
+      nDelay: 2000,  // 延迟2秒加载下一页
       contentSelector: "#partContent",
       contentPatch: function(fakeStub){
           var m = fakeStub.find("body").html().match(/\.html\(unescape\("(.*)"\)/);
@@ -3044,7 +3049,7 @@ Rule.replaceAll = [
     '更新快无广告。',
     '【鳳.{1,2}凰.{1,2}小说网 更新快 无弹窗 请搜索f.h.xiao.shuo.c.o.m】',
     '【可换源APP看书软件：书掌柜APP或直接访问官方网站shuzh.net】',
-    '[●★]手机下载APP看书神器.*',
+    '[●★▲]手机下载APP看书神器.*',
     "m.?手机最省流量的站点。",
     '底部字链推广位',
     'us最快',
@@ -3471,7 +3476,7 @@ Parser.prototype = {
             var _heading = this,
                 _heading_text = _heading.textContent.trim();
 
-            if (_heading_text in possibleTitles) {
+            if (!_heading_text || _heading_text in possibleTitles) {
                 return;
             }
 
@@ -4961,11 +4966,13 @@ var App = {
                 .append($("<img>").attr("src", "data:image/gif;base64,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"))
                 .append("<a href='" + nextUrl + "' title='点击打开下一页链接'>正在载入下一页".uiTrans() + (useiframe ? "(iframe)" : "") + "...</a>");
 
-            if (useiframe) {
-                App.iframeRequest(nextUrl);
-            } else {
-                App.httpRequest(nextUrl, App.httpRequestDone);
-            }
+            setTimeout(function() {
+                if (useiframe) {
+                    App.iframeRequest(nextUrl);
+                } else {
+                    App.httpRequest(nextUrl, App.httpRequestDone);
+                }
+            }, App.site.nDelay || 0);
         } else {
             // App.$loading.html("<a href='" + App.curPageUrl  + "'>无法使用阅读模式，请手动点击下一页</a>").show();
         }
@@ -6019,7 +6026,6 @@ var BookLinkMe = {
   }
 };
 
-// 采用 Object.defineProperty(String.prototype 方式，需要直接导入而且要放在一开始
 toggleConsole(Setting.debug);
 
 if (location.host.indexOf('booklink.me') > -1) {

@@ -333,7 +333,7 @@ Parser.prototype = {
             var _heading = this,
                 _heading_text = _heading.textContent.trim();
 
-            if (_heading_text in possibleTitles) {
+            if (!_heading_text || _heading_text in possibleTitles) {
                 return;
             }
 

@@ -80,6 +80,8 @@ Rule.specialSite = [
       prevSelector: "a:contains('翻上页')",                      // 上一页链接 jQuery 选择器 (不填则尝试自动搜索)
       nextSelector: "a:contains('翻下页')",                     // 下一页链接 jQuery 选择器  (不填则尝试自动搜索)
 
+      // nDelay: 500,  // 延迟0.5秒加载下一页
+
       // 获取内容
       contentSelector: "#BookText",                             // 内容 jQuery 选择器 (不填则尝试自动搜索)
       useiframe: false,                                          // (可选)下一页加载是否使用 iframe
@@ -375,6 +377,7 @@ Rule.specialSite = [
           /书网∷更新快∷无弹窗∷纯文字∷.t！。/g,
           /一秒记住，本站为您提供热门小说免费阅读。/g,
           /\(更新速度最快记住即可找到\)|芒果直播网|.mgzhibo .|去 读 读|看小说就到/g,
+          '火然\\?\\?\\? \\?文&nbsp;&nbsp;ｗ\\?ｗｗ.ｒａｎｗｅｎａ.com',
       ]
   },
   {siteName: "燃文小说网",
@@ -688,7 +691,8 @@ Rule.specialSite = [
   },
   {siteName: "塔读文学",
       url: "^https?://www\\.tadu\\.com/book/\\d+/\\d+/",
-      bookTitleSelector: '.title em:first',
+      bookTitleSelector: '.book-name_ a:first',
+      nDelay: 2000,  // 延迟2秒加载下一页
       contentSelector: "#partContent",
       contentPatch: function(fakeStub){
           var m = fakeStub.find("body").html().match(/\.html\(unescape\("(.*)"\)/);
@@ -2394,7 +2398,7 @@ Rule.replaceAll = [
     '更新快无广告。',
     '【鳳.{1,2}凰.{1,2}小说网 更新快 无弹窗 请搜索f.h.xiao.shuo.c.o.m】',
     '【可换源APP看书软件：书掌柜APP或直接访问官方网站shuzh.net】',
-    '[●★]手机下载APP看书神器.*',
+    '[●★▲]手机下载APP看书神器.*',
     "m.?手机最省流量的站点。",
     '底部字链推广位',
     'us最快',
