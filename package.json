@@ -20,17 +20,9 @@
     "url": "https://github.com/ywzhaiqi/userscript/issues"
   },
   "homepage": "https://github.com/ywzhaiqi/userscript#readme",
-  "dependencies": {
-    "@types/jquery": "^3.2.12",
-    "@types/react": "^16.0.2",
-    "@types/react-dom": "^15.5.3",
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1",
-    "rollup-plugin-typescript": "git+https://github.com/ywzhaiqi/rollup-plugin-typescript.git",
-    "rollup-plugin-userscript-css": "^1.2.0",
-    "rollup-plugin-vue2": "^0.8.0"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "@types/jquery": "^3.2.12",
     "@types/minimist": "^1.2.0",
     "@types/rollup": "^0.41.1",
     "minimist": "^1.2.0",
@@ -38,7 +30,10 @@
     "rollup-plugin-commonjs": "^8.1.0",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-string": "^2.0.2",
+    "rollup-plugin-typescript": "git+https://github.com/ywzhaiqi/rollup-plugin-typescript.git",
     "rollup-plugin-typescript2": "^0.5.0",
+    "rollup-plugin-userscript-css": "^1.2.0",
+    "rollup-plugin-vue2": "^0.8.0",
     "typescript": "^2.4.2"
   }
 }

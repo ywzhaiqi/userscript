@@ -112,7 +112,8 @@ let config = {
       // cacheRoot: path.join(rootDir, '.rts2_cache'),
       include: [
         "*.ts+(|x)", "**/*.ts+(|x)",
-        "*.js+(|x)", "**/*.js+(|x)",
+        // "*.js+(|x)", "**/*.js+(|x)",
+        "*.jsx", "**/*.jsx",
       ]
     }),
   ]
