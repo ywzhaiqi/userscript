@@ -15,7 +15,7 @@ function saveAs(data, filename) {
   document.body.appendChild(tmpLink);
 
   tmpLink.click();
-  document.body.removeChild(saveas);
+  document.body.removeChild(tmpLink);
   window.URL.revokeObjectURL(blobUrl);
 }
 
