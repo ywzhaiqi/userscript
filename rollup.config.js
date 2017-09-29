@@ -1,10 +1,12 @@
 import path from 'path'
 import fs from 'fs'
 import minimist from 'minimist'
+import resolve from 'rollup-plugin-node-resolve'
+import commonjs from 'rollup-plugin-commonjs';
 import stringPlugin from 'rollup-plugin-string'
-// import typescript from 'rollup-plugin-typescript2'
 import typescript from 'rollup-plugin-typescript'
 import vue from 'rollup-plugin-vue2'
+import less from 'rollup-plugin-less'
 import userScriptCss from 'rollup-plugin-userscript-css'
 
 // config
@@ -38,7 +40,7 @@ function getInput(input) {
   } else if (stats.isDirectory()) {
     args.dir = input
     args.file = 'index.js'
-    
+
     for (let f of indexFiles) {
       if (fs.existsSync(path.join(args.dir, f))) {
         args.file = f
@@ -86,13 +88,23 @@ let config = {
     globals: {
       'jquery': 'jQuery',
       'zepto': 'Zepto',
-      'react': 'React',
-      'react-dom': 'ReactDOM',
+      // 'underscore': 'underscore',
+      // 'react': 'React',
+      // 'react-dom': 'ReactDOM',
+      'vue': 'Vue',
     }
   },
   banner: '/* This script build by rollup. */',
   plugins: [
+    resolve(),
+    commonjs(),
     vue(),
+    less({
+      insert: true,
+      include: ['**/*.less'],
+      styleClass: 'noRemove',
+    }),
+
     // 为了支持 vue 的样式
     userScriptCss({
       include: ['**/*.css'],
