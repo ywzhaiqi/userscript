@@ -703,7 +703,7 @@ Parser.prototype = {
         }
 
         var hasMark = false,
-            lines = []
+            lines = [],
             charCotainer = [];
 
         text.split('').forEach(function(c) {

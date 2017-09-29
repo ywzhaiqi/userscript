@@ -10,7 +10,7 @@ function getNumFromChapterTitle(title) {
   }
 
   // 第二十二章
-  m = title.match(/(?:第|^)([一二两三四五六七八九十○零百千万亿]+){1,6}章/)
+  m = title.match(/(?:第|^)([一二两三四五六七八九十○零百千万亿\d]+){1,6}章/)
   if (m) {
     return cnNum2ArabNum(m[1])
   }
