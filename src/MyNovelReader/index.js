@@ -1,6 +1,5 @@
 
 import './meta'
-// 采用 Object.defineProperty(String.prototype 方式，需要直接导入而且要放在一开始
 import './lang'
 
 import Setting from './Setting'
