@@ -20,7 +20,7 @@ function __$styleInject( css ) {
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.1.3
+// @version        6.1.4
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -123,6 +123,7 @@ function __$styleInject( css ) {
 // @include        *://www.50zw.com/book_*/*.html
 // @include        *://www.xiangcunxiaoshuo.com/shu/*/*.html
 // @include        *://www.lwxs520.com/books/*/*/*.html
+// @include        *://m.lwxs520.com/books/*/*/*.html
 // @include        *://www.zashu.net/books/*/*/*.html
 // @include        *://www.yunlaige.com/html/*/*/*.html
 // @include        *://www.cfwx.net/files/article/html/*/*/*.html
@@ -216,6 +217,7 @@ function __$styleInject( css ) {
 // @include        *://www.uutxt.org/book/*/*/*.html
 // @include        *://www.5800.cc/*/*/*/*.html
 // @include        *://www.biquge.com/*/*.html
+// @include        *://www.biqudu.com/*/*.html
 // @include        *://www.biquge.la/book/*/*.html
 // @include        *://www.biquge.com.tw/*/*.html
 // @include        *://www.biquge.tw/*_*/*.html
@@ -372,6 +374,7 @@ function __$styleInject( css ) {
 // @include        *://www.heihei66.com/*/*/*.html
 // @include        *://www.111bz.net/*/*.html
 // @include        *://www.biquge5200.com/*/*.html
+// @include        *://www.biqukan.com/*_*/*.html
 
 // 移动版
 // @include        *://wap.yc.ireader.com.cn/book/*/*/
@@ -402,7 +405,7 @@ const config = {
   PRELOADER: true,                // 提前预读下一页
 
   xhr_time: 15 * 1000,
-  download_delay: 100,  // 毫秒。0 毫秒下载起点 vip 限时免费章节会被封
+  download_delay: 0,  // 毫秒。0 毫秒下载起点 vip 限时免费章节会被封
   dumpContentMinLength: 3,        // 检测重复内容的最小行数
 };
 
@@ -1448,6 +1451,10 @@ const sites = [
           'wenxuemi.com',
           '23us．com',
           '顶点小说 Ｘ２３ＵＳ．com更新最快',
+          'www．23us．cc更新最快',
+          '免费小说门户',
+          '\\|顶\\|点\\|小\\|說\\|網更新最快',
+          '\\\\\\|顶\\\\\\|点\\\\\\|小\\\\\\|说\\\\\\|2\\|3\\|u\\|s\\|.\\|c\\|c\\|',
       ],
       contentPatch: function(fakeStub){
           var temp=fakeStub.find('title').text();
@@ -2048,7 +2055,7 @@ const sites = [
       ]
   },
   {siteName: "乐文小说网",
-      url: /^https?:\/\/www\.lwxs520\.com\/books\/\d+\/\d+\/\d+.html/,
+      url: /^https?:\/\/(www|m)\.lwxs520\.com\/books\/\d+\/\d+\/\d+.html/,
       siteExample: 'http://www.lwxs520.com/books/2/2329/473426.html',
       bookTitleSelector: 'h2',
       chapterTitleReplace: 'WwW.lwxs520.Com|乐文小说网',
@@ -2458,6 +2465,14 @@ const sites = [
       url: /^https?:\/\/www\.biquge\.com\.tw\/\d+_\d+\/\d+.html/,
       siteExample: 'http://www.biquge.com.tw/17_17768/8280656.html',
       contentSelector: "#content"
+  },
+  {siteName: "笔趣看",
+    url: /^https?:\/\/www\.biqukan\.com\/\d+_\d+\/\d+.html/,
+    bookTitleSelector: '.path .p > a:last',
+    contentReplace: [
+      'http://www.biqukan.com/.*',
+      '请记住本书首发域名：www.biqukan.com.*',
+    ]
   },
   {siteName: '大主宰小说网',
       url: 'www\\.daizhuzai\\.com/\\d+/\\d+\\.html',
@@ -2996,6 +3011,7 @@ const replaceAll = [
   'm.?手机最省流量.无广告的站点。',
   '底部字链推广位',
   'us最快',
+  'APPapp',
 
   // 复杂规则的替换
   '(看小说到|爱玩爱看就来|就爱上|喜欢)?(\\s|<|>|&| |[+@＠=:;｀`%？》《〈︾-])?[乐樂](\\s|&lt;|&gt;|&amp;|&nbsp;|[+@＠=:;｀`%？》《〈︾-])?[文].*?[说說][网]?[|]?(.*(3w|[ｗωＷw]{1,3}|[Ｍm]).*[ｍＭm])?[}。\\s]?(乐文小说)?',
@@ -3113,10 +3129,6 @@ function extendRule(replaceRule) {
 
 // test()
 
-// Unicode/2000-2FFF：http://zh.wikibooks.org/wiki/Unicode/2000-2FFF
-// Unicode/F000-FFFF：https://zh.wikibooks.org/wiki/Unicode/F000-FFFF
-
-// replace 中的简写
 var CHAR_ALIAS = {
   '\\P': '[\\u2000-\\u2FFF\\u3004-\\u303F\\uFE00-\\uFF60\\uFFC0-\\uFFFF]',  // 小说中添加的特殊符号
 };
@@ -4391,10 +4403,11 @@ function run(cachedParsers=[], endFn) {
 
   cachedParsers.forEach(toTxt);
 
-  var lastParser = cachedParsers[cachedParsers.length - 1];
-  fileName.setBookTitle(lastParser.bookTitle);
-  fileName.setStart(lastParser.chapterTitle);
+  var firstParser = cachedParsers[0];
+  fileName.setBookTitle(firstParser.bookTitle);
+  fileName.setStart(firstParser.chapterTitle);
 
+  var lastParser = cachedParsers[cachedParsers.length - 1];
   getOnePage(null, lastParser.nextUrl, endFn);
 }
 

@@ -99,10 +99,11 @@ function run(cachedParsers=[], endFn) {
 
   cachedParsers.forEach(toTxt);
 
-  var lastParser = cachedParsers[cachedParsers.length - 1];
-  fileName.setBookTitle(lastParser.bookTitle);
-  fileName.setStart(lastParser.chapterTitle)
+  var firstParser = cachedParsers[0]
+  fileName.setBookTitle(firstParser.bookTitle);
+  fileName.setStart(firstParser.chapterTitle)
 
+  var lastParser = cachedParsers[cachedParsers.length - 1];
   getOnePage(null, lastParser.nextUrl, endFn);
 }
 

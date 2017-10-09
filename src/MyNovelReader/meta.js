@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.1.3
+// @version        6.1.4
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -106,6 +106,7 @@
 // @include        *://www.50zw.com/book_*/*.html
 // @include        *://www.xiangcunxiaoshuo.com/shu/*/*.html
 // @include        *://www.lwxs520.com/books/*/*/*.html
+// @include        *://m.lwxs520.com/books/*/*/*.html
 // @include        *://www.zashu.net/books/*/*/*.html
 // @include        *://www.yunlaige.com/html/*/*/*.html
 // @include        *://www.cfwx.net/files/article/html/*/*/*.html
@@ -199,6 +200,7 @@
 // @include        *://www.uutxt.org/book/*/*/*.html
 // @include        *://www.5800.cc/*/*/*/*.html
 // @include        *://www.biquge.com/*/*.html
+// @include        *://www.biqudu.com/*/*.html
 // @include        *://www.biquge.la/book/*/*.html
 // @include        *://www.biquge.com.tw/*/*.html
 // @include        *://www.biquge.tw/*_*/*.html
@@ -355,6 +357,7 @@
 // @include        *://www.heihei66.com/*/*/*.html
 // @include        *://www.111bz.net/*/*.html
 // @include        *://www.biquge5200.com/*/*.html
+// @include        *://www.biqukan.com/*_*/*.html
 
 // 移动版
 // @include        *://wap.yc.ireader.com.cn/book/*/*/

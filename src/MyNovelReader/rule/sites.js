@@ -779,6 +779,10 @@ const sites = [
           'wenxuemi.com',
           '23us．com',
           '顶点小说 Ｘ２３ＵＳ．com更新最快',
+          'www．23us．cc更新最快',
+          '免费小说门户',
+          '\\|顶\\|点\\|小\\|說\\|網更新最快',
+          '\\\\\\|顶\\\\\\|点\\\\\\|小\\\\\\|说\\\\\\|2\\|3\\|u\\|s\\|.\\|c\\|c\\|',
       ],
       contentPatch: function(fakeStub){
           var temp=fakeStub.find('title').text();
@@ -1379,7 +1383,7 @@ const sites = [
       ]
   },
   {siteName: "乐文小说网",
-      url: /^https?:\/\/www\.lwxs520\.com\/books\/\d+\/\d+\/\d+.html/,
+      url: /^https?:\/\/(www|m)\.lwxs520\.com\/books\/\d+\/\d+\/\d+.html/,
       siteExample: 'http://www.lwxs520.com/books/2/2329/473426.html',
       bookTitleSelector: 'h2',
       chapterTitleReplace: 'WwW.lwxs520.Com|乐文小说网',
@@ -1789,6 +1793,14 @@ const sites = [
       url: /^https?:\/\/www\.biquge\.com\.tw\/\d+_\d+\/\d+.html/,
       siteExample: 'http://www.biquge.com.tw/17_17768/8280656.html',
       contentSelector: "#content"
+  },
+  {siteName: "笔趣看",
+    url: /^https?:\/\/www\.biqukan\.com\/\d+_\d+\/\d+.html/,
+    bookTitleSelector: '.path .p > a:last',
+    contentReplace: [
+      'http://www.biqukan.com/.*',
+      '请记住本书首发域名：www.biqukan.com.*',
+    ]
   },
   {siteName: '大主宰小说网',
       url: 'www\\.daizhuzai\\.com/\\d+/\\d+\\.html',
