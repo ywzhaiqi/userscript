@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.1.4
+// @version        6.1.5
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -22,6 +22,7 @@
 // @grant          GM_info
 // @grant          unsafeWindow
 // @homepageURL    https://greasyfork.org/scripts/292/
+// @require        https://cdn.staticfile.org/vue/2.2.6/vue.min.js
 // @require        https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js
 // @require        https://cdn.staticfile.org/underscore.js/1.7.0/underscore-min.js
 // @require        https://cdn.staticfile.org/keymaster/1.6.1/keymaster.min.js
@@ -205,6 +206,7 @@
 // @include        *://www.biquge.com.tw/*/*.html
 // @include        *://www.biquge.tw/*_*/*.html
 // @include        *://www.biqugezw.com/*/*.html
+// @include        *://www.bequgezw.com/*/*/*.html
 // @include        *://www.biquzi.com/*_*/*.html
 // @include        *://www.qududu.com/book/*/*/*.html
 // @include        *://www.free97.cn/book/*/*/*.html
@@ -358,6 +360,9 @@
 // @include        *://www.111bz.net/*/*.html
 // @include        *://www.biquge5200.com/*/*.html
 // @include        *://www.biqukan.com/*_*/*.html
+// @include        *://www.4xiaoshuo.com/*/*/*.html
+// @include        *://www.woquge.com/*/*.html
+// @include        *://www.lianzaishu.com/*/*.html
 
 // 移动版
 // @include        *://wap.yc.ireader.com.cn/book/*/*/

@@ -41,7 +41,7 @@ var Rule = {
 
   contentSelectors: ["#pagecontent", "#contentbox", "#bmsy_content", "#bookpartinfo", "#htmlContent",
       "#text_area", "#chapter_content", "#chapterContent", "#partbody", "#BookContent", "#read-content",
-      "#article_content", "#BookTextRead", "#booktext", "#BookText", "#readtext", "#readcon",
+      "#article_content", "#BookTextRead", "#booktext", "#book_text", "#BookText", "#readtext", "#readcon",
       "#TextContent", "#text_c", "#txt_td", "#TXT", "#txt", "#zjneirong",
       ".novel_content", ".readmain_inner", ".noveltext", ".booktext", ".yd_text2",
       "#contentTxt", "#oldtext", "#a_content", "#contents", "#content2", "#contentts", "#content1", "#content", ".content"
@@ -57,6 +57,7 @@ var Rule = {
     '.bdsub > .bdsite > a:last',
     '#sitebar > a:last',
     '.con_top > a:last',
+    '.breadCrumb > a:last',
   ],
   bookTitleReplace: [
       '全文阅读$',

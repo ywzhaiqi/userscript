@@ -5,6 +5,7 @@ import Rule from './rule'
 import { toggleConsole, L_setValue, isChrome } from './lib'
 import Res from './res'
 import App from './app'
+import bus from './app/bus'
 
 const SAVE_MESSAGE_NAME = 'userscript-MyNovelReader-Setting-Saved'
 
@@ -392,6 +393,10 @@ var UI = {
             case 'saveAsTxt':
                 UI.preferencesCloseHandler();
                 App.saveAsTxt();
+                break;
+            case 'speech':
+                UI.preferencesCloseHandler();
+                bus.$emit('show-speech')
                 break;
             default:
                 break;

@@ -10,6 +10,7 @@ import {
 import UI from './UI'
 import { isWindows } from './lib'
 import downloader from './downloader'
+import { runVue } from './app/index'
 
 var App = {
     isEnabled: false,
@@ -20,6 +21,9 @@ var App = {
     requestUrl: null,
     iframe: null,
     remove: [],
+    // 滚动激活相关
+    curFocusElement: null,
+    curFocusIndex: 1,
 
     init: function() {
         if (["mynovelreader-iframe", "superpreloader-iframe"].indexOf(window.name) != -1) { // 用于加载下一页的 iframe
@@ -205,6 +209,8 @@ var App = {
         App.prepDocument();
         App.initDocument(parser);
 
+        runVue();
+
         // cache vars
         App.$doc = $(document);
         App.$menuBar = App.$doc.find("#menu-bar");
@@ -303,7 +309,7 @@ var App = {
             .removeAttr('style')
             .removeAttr('bgcolor');
 
-        $('style').filter(function() {
+        $('style:not(.noRemove)').filter(function() {
             var $style = $(this);
             if($style.text().indexOf('#cVim-link-container') != -1) {  // chrome 的 cVim 扩展
                 return false;
@@ -603,6 +609,7 @@ var App = {
                 return this;
         });
         // Get the id of the current element
+        App.curFocusIndex = cur.length - 1
         cur = cur[cur.length - 1];
         var id = cur ? cur.id : "";
 
