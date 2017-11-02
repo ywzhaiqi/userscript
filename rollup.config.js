@@ -7,7 +7,7 @@ import stringPlugin from 'rollup-plugin-string'
 import typescript from 'rollup-plugin-typescript'
 import vue from 'rollup-plugin-vue2'
 import less from 'rollup-plugin-less'
-import userScriptCss from 'rollup-plugin-userscript-css'
+// import userScriptCss from 'rollup-plugin-userscript-css'
 
 // config
 const indexFiles = ['index.js', 'index.user.js', 'index.ts', 'index.user.ts']
@@ -101,18 +101,21 @@ let config = {
     vue(),
     less({
       insert: true,
-      include: ['**/*.less'],
-      styleClass: 'noRemove',
-    }),
-
-    // 为了支持 vue 的样式
-    userScriptCss({
-      include: ['**/*.css'],
+      include: ['**/*.less', '**/*.css'],
       exclude: [
         'src/MyNovelReader/**/*.css',  // 特殊的
       ],
-      insert: true,
+      styleClass: 'noRemove',
     }),
+
+    // // 为了支持 vue 的样式
+    // userScriptCss({
+    //   include: ['**/*.css'],
+    //   exclude: [
+    //     'src/MyNovelReader/**/*.css',  // 特殊的
+    //   ],
+    //   insert: true,
+    // }),
     stringPlugin({
       include: [
         '**/*.html',
