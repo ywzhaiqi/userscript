@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import bus from './bus'
+import bus, { SHOW_SPEECH } from './bus'
 import Speech from './components/Speech.vue'
 
 export default {
@@ -23,10 +23,10 @@ export default {
     Speech,
   },
   created() {
-    bus.$on('show-speech', this.showSpeech)
+    bus.$on(SHOW_SPEECH, this.showSpeech)
   },
   beforeDestory() {
-    bus.$off('show-speech', this.hideSpeech)
+    bus.$off(SHOW_SPEECH, this.hideSpeech)
   },
   methods: {
     showSpeech() {
@@ -46,7 +46,5 @@ export default {
   background-color: white;
   top: 10px;
   right: 35px;
-
-
 }
 </style>

@@ -22,7 +22,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.1.5
+// @version        6.1.6
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -3137,6 +3137,10 @@ function extendRule(replaceRule) {
 
 // test()
 
+// Unicode/2000-2FFF：http://zh.wikibooks.org/wiki/Unicode/2000-2FFF
+// Unicode/F000-FFFF：https://zh.wikibooks.org/wiki/Unicode/F000-FFFF
+
+// replace 中的简写
 var CHAR_ALIAS = {
   '\\P': '[\\u2000-\\u2FFF\\u3004-\\u303F\\uFE00-\\uFF60\\uFFC0-\\uFFFF]',  // 小说中添加的特殊符号
 };
@@ -4188,7 +4192,7 @@ Parser.prototype = {
     },
 };
 
-var tpl_mainCss = "@font-face {\r\n    font-family: 'FontAwesome';\r\n    src: url('https://cdn.bootcss.com/font-awesome/4.7.0/fonts/fontawesome-webfont.eot?v=4.7.0');\r\n    src: url('https://cdn.bootcss.com/font-awesome/4.7.0/fonts/fontawesome-webfont.eot?#iefix&v=4.7.0') format('embedded-opentype'), url('https://cdn.bootcss.com/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2?v=4.7.0') format('woff2'), url('https://cdn.bootcss.com/font-awesome/4.7.0/fonts/fontawesome-webfont.woff?v=4.7.0') format('woff'), url('https://cdn.bootcss.com/font-awesome/4.7.0/fonts/fontawesome-webfont.ttf?v=4.7.0') format('truetype'), url('https://cdn.bootcss.com/font-awesome/4.7.0/fonts/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular') format('svg');\r\n    font-weight: normal;\r\n    font-style: normal;\r\n  }\r\n\r\nbody > a { display:none !important; }\r\n.hidden {\r\n    display: none;\r\n}\r\n.quiet-mode {\r\n    display: none;\r\n}\r\nbody {\r\n    background: #F3F2EE;\r\n    color: #1F0909;\r\n    padding: 0px;\r\n    margin: 0px;\r\n    font-family: \"Microsoft YaHei UI\", 微软雅黑, 新宋体, 宋体, arial;\r\n}\r\na { color: #065488; }\r\na:link { text-decoration: none; }\r\n\r\n#mynovelreader-content {\r\n    width: {content_width};\r\n    font-size: {font_size};\r\n    font-family: {font_family};\r\n    line-height: {text_line_height};\r\n    margin-left:auto;\r\n    margin-right:auto;\r\n    padding-bottom: 15px;\r\n}\r\n#mynovelreader-content img{\r\n    max-width: 100%;\r\n}\r\n\r\narticle {\r\n    margin-top: 55px;\r\n    word-wrap: break-word;\r\n}\r\n\r\narticle h1 {\r\n    clear: both;\r\n    line-height: 50px;\r\n    font-size: {title_font_size};\r\n    font-weight: normal;\r\n    margin: 25px -20px;\r\n    padding: 0 20px 10px;\r\n    border-bottom: 1px solid rgba(0,0,0,.25);\r\n    font-weight: normal;\r\n    text-transform: none;\r\n}\r\n\r\narticle li {\r\n    list-style: none;\r\n}\r\n\r\n.chapter-footer-nav {\r\n    text-align:center;\r\n    font-size:0.9em;\r\n    margin:-10px 0px 30px 0px;\r\n}\r\n#loading {\r\n    color: white;\r\n    text-align: center;\r\n    font: 12px \"微软雅黑\", \"宋体\", \"Times New Roman\", \"Verdana\";\r\n    margin-top: 20px;\r\n    margin-left: auto;\r\n    margin-right: auto;\r\n    width: 376px;\r\n    height: 32px;\r\n    line-height: 32px;\r\n    border-radius: 20px;\r\n    border: 1px solid #666;\r\n    background-color: #333;\r\n}\r\n#loading img {\r\n    vertical-align: middle;\r\n}\r\n#loading a {\r\n    color: white;\r\n}\r\n#preferencesBtn{\r\n    position: fixed;\r\n    top: 10px;\r\n    right: 10px;\r\n    z-index: 1597;\r\n}\r\n\r\n#alert {\r\n    position: fixed;\r\n    z-index: 100;\r\n    float: auto;\r\n    width: auto;\r\n    height: auto;\r\n    top: 10px;\r\n    left: 500px;\r\n    background: rgba(215, 240, 253, 0.65);\r\n    color: #2d7091;\r\n    border: 1px solid rgba(45,112,145,0.3);\r\n    border-radius: 4px;\r\n}\r\n#alert p {\r\n    font-size: 15px;\r\n    margin: 6px;\r\n}\r\n\r\n#message {\r\n    position: fixed;\r\n    z-index: 1010;\r\n    width: auto;\r\n    height: auto;\r\n    top: 10px;\r\n    left: 500px;\r\n\r\n    padding: 8px 16px;\r\n    border-radius: 4px;\r\n    box-shadow: 0 2px 8px rgba(0,0,0,.2);\r\n    background: #fff;\r\n    display: inline-block;\r\n    pointer-events: all;\r\n\r\n    font-size: 12px;\r\n}\r\n#message .fa-spinner {\r\n    font-size: 13px;\r\n    margin-right: 4px;\r\n}\r\n#message p {\r\n    margin: 0;\r\n}\r\n\r\nimg.blockImage {clear: both;float: none;display: block;margin-left: auto;margin-right: auto;}\r\n\r\n#menu-bar {\r\n    border: solid rgba(0, 100, 255, .9);\r\n    border-width: 3px 2px 3px 0px;\r\n    position: fixed;\r\n    left: 0px;\r\n    top: 40%;\r\n    height: 100px;\r\n    width: 2px;\r\n    z-index: 199;\r\n    {menu-bar-hidden}\r\n}\r\n#menu-bar {\r\n    top: 0px;\r\n    height: 100%;\r\n    width: 1px;\r\n    background: transparent;\r\n    border: none;\r\n}\r\n#menu {\r\n    position: fixed;\r\n    top: 0;\r\n    bottom: 0;\r\n    left: 0;\r\n    z-index: 100;\r\n    width: 270px;\r\n    max-width: 100%;\r\n    background: #333;\r\n    overflow-y: auto;\r\n}\r\n#menu:after {\r\n    content: \"\";\r\n    display: block;\r\n    position: absolute;\r\n    top: 46px;\r\n    bottom: 0;\r\n    right: 0;\r\n    width: 1px;\r\n    background: rgba(0,0,0,0.6);\r\n    box-shadow: 0 0 5px 2px rgba(0,0,0,0.6);\r\n}\r\n#header{\r\n    color: #777;\r\n    margin-top: 0;\r\n    border-top: 1px solid rgba(0,0,0,0.3);\r\n    background: #404040;\r\n    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);\r\n    text-shadow: 0 1px 0 rgba(0,0,0,0.5);\r\n    padding: 10px 12px;\r\n    text-transform: uppercase;\r\n    font-weight: bold;\r\n    font-size: 20px;\r\n}\r\n#header a {\r\n    color: #777777;\r\n}\r\n#divider {\r\n    position: relative;\r\n    z-index: 300;\r\n    border-top: 1px solid rgba(255,255,255,0.01);\r\n    border-bottom: 1px solid rgba(0,0,0,0.3);\r\n    margin: 0;\r\n    height: 4px;\r\n    background: rgba(0,0,0,0.2);\r\n    box-shadow: 0 1px 0 rgba(255,255,255,0.05), inset 0 1px 3px rgba(0,0,0,0.3);\r\n}\r\n#chapter-list {\r\n    position: relative;\r\n    bottom: 0;\r\n    left: 0;\r\n    right: 0;\r\n    z-index: 200;\r\n    margin: 0;\r\n    padding: 0;\r\n    cursor: pointer;\r\n    list-style: none;\r\n    overflow-y: auto;\r\n}\r\n.chapter {\r\n    list-style: none;\r\n}\r\n.chapter:last-child {\r\n    border-bottom: 1px solid rgba(0,0,0,0.3);\r\n    box-shadow: 0 1px 0 rgba(255,255,255,0.05);\r\n}\r\n.chapter div {\r\n    color: #ccc;\r\n    font-size: 15px;\r\n    padding: 8px 20px;\r\n    border-top: 1px solid rgba(0,0,0,0.3);\r\n    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);\r\n    text-shadow: 0 1px 0 rgba(0,0,0,0.5);\r\n    display: block;\r\n    text-decoration: none;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    white-space: nowrap;\r\n    cursor: pointer;\r\n}\r\n.chapter div:before {\r\n    content: \"\\f105\";\r\n    width: 20px;\r\n    margin-left: -10px;\r\n    float: left;\r\n    font-family: \"FontAwesome\" !important;\r\n    text-align: center;\r\n}\r\n.chapter div:hover {\r\n    background: #404040;\r\n    color: #fff;\r\n    outline: 0;\r\n}\r\n.chapter.active div {\r\n    background: #1a1a1a;\r\n    color: #fff;\r\n    font-size: 16px;\r\n    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);\r\n}\r\n::-webkit-scrollbar {\r\n    height: 9px !important;\r\n    width: 9px !important;\r\n}\r\n::-webkit-scrollbar-thumb {\r\n    background-color: #7D7D7D !important;\r\n    border-radius: 3px !important;\r\n}\r\n::-webkit-scrollbar-track-piece {\r\n    background-color: rgba(0,0,0,.25) !important;\r\n}\r\n\r\n#speech-dialog {\r\n    position: fixed;\r\n    top: 10px;\r\n    right: 30px;\r\n    width: 160px;\r\n    z-index: 100;\r\n}";
+var tpl_mainCss = "@font-face {\r\n    font-family: 'FontAwesome';\r\n    src: url('https://cdn.bootcss.com/font-awesome/4.7.0/fonts/fontawesome-webfont.eot?v=4.7.0');\r\n    src: url('https://cdn.bootcss.com/font-awesome/4.7.0/fonts/fontawesome-webfont.eot?#iefix&v=4.7.0') format('embedded-opentype'), url('https://cdn.bootcss.com/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2?v=4.7.0') format('woff2'), url('https://cdn.bootcss.com/font-awesome/4.7.0/fonts/fontawesome-webfont.woff?v=4.7.0') format('woff'), url('https://cdn.bootcss.com/font-awesome/4.7.0/fonts/fontawesome-webfont.ttf?v=4.7.0') format('truetype'), url('https://cdn.bootcss.com/font-awesome/4.7.0/fonts/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular') format('svg');\r\n    font-weight: normal;\r\n    font-style: normal;\r\n  }\r\n\r\nbody > a { display:none !important; }\r\n.hidden {\r\n    display: none;\r\n}\r\n.quiet-mode {\r\n    display: none;\r\n}\r\nbody {\r\n    background: #F3F2EE;\r\n    color: #1F0909;\r\n    padding: 0px;\r\n    margin: 0px;\r\n    font-family: \"Microsoft YaHei UI\", 微软雅黑, 新宋体, 宋体, arial;\r\n}\r\na { color: #065488; }\r\na:link { text-decoration: none; }\r\n\r\n#mynovelreader-content {\r\n    width: {content_width};\r\n    font-size: {font_size};\r\n    font-family: {font_family};\r\n    line-height: {text_line_height};\r\n    margin-left:auto;\r\n    margin-right:auto;\r\n    padding-bottom: 15px;\r\n}\r\n#mynovelreader-content img{\r\n    max-width: 100%;\r\n}\r\n\r\narticle {\r\n    margin-top: 55px;\r\n    word-wrap: break-word;\r\n}\r\n\r\narticle h1 {\r\n    clear: both;\r\n    line-height: 50px;\r\n    font-size: {title_font_size};\r\n    font-weight: normal;\r\n    margin: 25px -20px;\r\n    padding: 0 20px 10px;\r\n    border-bottom: 1px solid rgba(0,0,0,.25);\r\n    font-weight: normal;\r\n    text-transform: none;\r\n}\r\n\r\narticle li {\r\n    list-style: none;\r\n}\r\n\r\n.chapter-footer-nav {\r\n    text-align:center;\r\n    font-size:0.9em;\r\n    margin:-10px 0px 30px 0px;\r\n}\r\n#loading {\r\n    color: white;\r\n    text-align: center;\r\n    font: 12px \"微软雅黑\", \"宋体\", \"Times New Roman\", \"Verdana\";\r\n    margin-top: 20px;\r\n    margin-left: auto;\r\n    margin-right: auto;\r\n    width: 376px;\r\n    height: 32px;\r\n    line-height: 32px;\r\n    border-radius: 20px;\r\n    border: 1px solid #666;\r\n    background-color: #333;\r\n}\r\n#loading img {\r\n    vertical-align: middle;\r\n}\r\n#loading a {\r\n    color: white;\r\n}\r\n#preferencesBtn{\r\n    position: fixed;\r\n    top: 10px;\r\n    right: 10px;\r\n    z-index: 1597;\r\n}\r\n\r\n#alert {\r\n    position: fixed;\r\n    z-index: 100;\r\n    float: auto;\r\n    width: auto;\r\n    height: auto;\r\n    top: 10px;\r\n    left: 500px;\r\n    background: rgba(215, 240, 253, 0.65);\r\n    color: #2d7091;\r\n    border: 1px solid rgba(45,112,145,0.3);\r\n    border-radius: 4px;\r\n}\r\n#alert p {\r\n    font-size: 15px;\r\n    margin: 6px;\r\n}\r\n\r\n#message {\r\n    position: fixed;\r\n    z-index: 1010;\r\n    width: auto;\r\n    height: auto;\r\n    top: 10px;\r\n    left: 500px;\r\n\r\n    padding: 8px 16px;\r\n    border-radius: 4px;\r\n    box-shadow: 0 2px 8px rgba(0,0,0,.2);\r\n    background: #fff;\r\n    display: inline-block;\r\n    pointer-events: all;\r\n\r\n    font-size: 12px;\r\n}\r\n#message .fa-spinner {\r\n    font-size: 13px;\r\n    margin-right: 4px;\r\n}\r\n#message p {\r\n    margin: 0;\r\n}\r\n\r\nimg.blockImage {clear: both;float: none;display: block;margin-left: auto;margin-right: auto;}\r\n\r\n#menu-bar {\r\n    border: solid rgba(0, 100, 255, .9);\r\n    border-width: 3px 2px 3px 0px;\r\n    position: fixed;\r\n    left: 0px;\r\n    top: 40%;\r\n    height: 100px;\r\n    width: 2px;\r\n    z-index: 199;\r\n    {menu-bar-hidden}\r\n}\r\n#menu-bar {\r\n    top: 0px;\r\n    height: 100%;\r\n    width: 1px;\r\n    background: transparent;\r\n    border: none;\r\n}\r\n#menu {\r\n    position: fixed;\r\n    top: 0;\r\n    bottom: 0;\r\n    left: 0;\r\n    z-index: 100;\r\n    width: 270px;\r\n    max-width: 100%;\r\n    background: #333;\r\n    overflow-y: auto;\r\n}\r\n#menu:after {\r\n    content: \"\";\r\n    display: block;\r\n    position: absolute;\r\n    top: 46px;\r\n    bottom: 0;\r\n    right: 0;\r\n    width: 1px;\r\n    background: rgba(0,0,0,0.6);\r\n    box-shadow: 0 0 5px 2px rgba(0,0,0,0.6);\r\n}\r\n#header{\r\n    color: #777;\r\n    margin-top: 0;\r\n    border-top: 1px solid rgba(0,0,0,0.3);\r\n    background: #404040;\r\n    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);\r\n    text-shadow: 0 1px 0 rgba(0,0,0,0.5);\r\n    padding: 10px 12px;\r\n    text-transform: uppercase;\r\n    font-weight: bold;\r\n    font-size: 20px;\r\n}\r\n#header a {\r\n    color: #777777;\r\n}\r\n#divider {\r\n    position: relative;\r\n    z-index: 300;\r\n    border-top: 1px solid rgba(255,255,255,0.01);\r\n    border-bottom: 1px solid rgba(0,0,0,0.3);\r\n    margin: 0;\r\n    height: 4px;\r\n    background: rgba(0,0,0,0.2);\r\n    box-shadow: 0 1px 0 rgba(255,255,255,0.05), inset 0 1px 3px rgba(0,0,0,0.3);\r\n}\r\n#chapter-list {\r\n    position: relative;\r\n    bottom: 0;\r\n    left: 0;\r\n    right: 0;\r\n    z-index: 200;\r\n    margin: 0;\r\n    padding: 0;\r\n    cursor: pointer;\r\n    list-style: none;\r\n    overflow-y: auto;\r\n}\r\n.chapter {\r\n    list-style: none;\r\n}\r\n.chapter:last-child {\r\n    border-bottom: 1px solid rgba(0,0,0,0.3);\r\n    box-shadow: 0 1px 0 rgba(255,255,255,0.05);\r\n}\r\n.chapter div {\r\n    color: #ccc;\r\n    font-size: 15px;\r\n    padding: 8px 20px;\r\n    border-top: 1px solid rgba(0,0,0,0.3);\r\n    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);\r\n    text-shadow: 0 1px 0 rgba(0,0,0,0.5);\r\n    display: block;\r\n    text-decoration: none;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    white-space: nowrap;\r\n    cursor: pointer;\r\n}\r\n.chapter div:before {\r\n    content: \"\\f105\";\r\n    width: 20px;\r\n    margin-left: -10px;\r\n    float: left;\r\n    font-family: \"FontAwesome\" !important;\r\n    text-align: center;\r\n}\r\n.chapter div:hover {\r\n    background: #404040;\r\n    color: #fff;\r\n    outline: 0;\r\n}\r\n.chapter.active div {\r\n    background: #1a1a1a;\r\n    color: #fff;\r\n    font-size: 16px;\r\n    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);\r\n}\r\n::-webkit-scrollbar {\r\n    height: 9px !important;\r\n    width: 9px !important;\r\n}\r\n::-webkit-scrollbar-thumb {\r\n    background-color: #7D7D7D !important;\r\n    border-radius: 3px !important;\r\n}\r\n::-webkit-scrollbar-track-piece {\r\n    background-color: rgba(0,0,0,.25) !important;\r\n}\r\n";
 
 var tpl_preferencesHTML = "<form id=\"preferences\" name=\"preferences\">\n    <div id=\"setting_table1\">\n        <span id=\"top-buttons\">\n            <input title=\"部分选项需要刷新页面才能生效\" id=\"save_button\" value=\"√ 确认\" type=\"button\">\n            <input title=\"取消本次设定，所有选项还原\" id=\"close_button\" value=\"X 取消\" type=\"button\">\n        </span>\n        <div class=\"form-row\">\n            <label>\n                界面语言<select id=\"lang\">\n                </select>\n            </label>\n            <label title=\"将小说网页文本转换为繁体。\\n\\n注意：内置的繁简转换表，只收录了简单的单字转换，启用本功能后，如有错误转换的情形，请利用脚本的自订字词取代规则来修正。\\n例如：「千里之外」，会错误转换成「千里之外」，你可以加入规则「千里之外=千里之外」来自行修正。\">\n                <input type=\"checkbox\" id=\"enable-cn2tw\" name=\"enable-cn2tw\"/>网页：转繁体\n            </label>\n            <label id=\"quietMode\" class=\"right\" title=\"隐藏其他，只保留正文，适用于全屏状态下\">\n                <input class=\"key\" type=\"button\" id=\"quietModeKey\"/>安静模式\n            </label>\n        </div>\n        <div class=\"form-row\">\n            <label title=\"不影响 booklink.me 的启用\">\n                <input type=\"checkbox\" id=\"disable-auto-launch\" name=\"disable-auto-launch\"/>强制手动启用\n            </label>\n            <label title=\"booklink.me 点击的网站强制启用\">\n                <input type=\"checkbox\" id=\"booklink-enable\" name=\"booklink-enable\"/>booklink 自动启用\n            </label>\n            <label>\n                <input type=\"checkbox\" id=\"debug\" name=\"debug\"/>调试模式\n            </label>\n            <a href=\"https://greasyfork.org/scripts/292-my-novel-reader/feedback\" target=\"_blank\">反馈地址</a>\n        </div>\n        <div class=\"form-row\">\n            <label title=\"图片章节用夜间模式没法看，这个选项在启动时会自动切换到缺省皮肤\">\n                <input type=\"checkbox\" id=\"pic-nightmode-check\" name=\"pic-nightmode-check\"/>\n                夜间模式的图片章节检测\n            </label>\n            <label>\n                <input type=\"checkbox\" id=\"copyCurTitle\"/>\n                打开目录复制当前标题\n            </label>\n        </div>\n        <div class=\"form-row\">\n            <label title=\"通过快捷键切换\">\n                <input type=\"checkbox\" id=\"hide-menu-list\"/>隐藏左侧章节列表\n            </label>\n            <label>\n                <input type=\"checkbox\" id=\"hide-footer-nav\"/>隐藏底部导航栏\n            </label>\n            <label class=\"right\" title=\"导出之后的所有章节\">\n                <input type=\"button\" id=\"saveAsTxt\" value=\"存为 txt（测试）\" />\n                <input type=\"button\" id=\"speech\" value=\"朗读\" />\n            </label>\n        </div>\n        <div class=\"form-row\">\n            <label>\n                左侧导航栏切换快捷键：\n            </label>\n            <input class=\"key\" type=\"button\" id=\"setHideMenuListKey\" />\n            <label title=\"通过快捷键切换或在 Greasemonkey 用户脚本命令处打开设置窗口\">\n                <input type=\"checkbox\" id=\"hide-preferences-button\"/>隐藏设置按钮\n            </label>\n            <input class=\"key\" type=\"button\" id=\"openPreferencesKey\"/>\n        </div>\n        <div class=\"form-row\">\n            <label>\n                距离底部\n                <input type=\"textbox\" id=\"remain-height\" name=\"remain-height\" size=\"5\"/>\n                px 加载下一页\n            </label>\n            <label>\n                <input type=\"checkbox\" id=\"add-nextpage-to-history\"/>添加下一页到历史记录\n            </label>\n            <label>\n                <input type=\"checkbox\" id=\"enable-dblclick-pause\"/>双击暂停翻页\n            </label>\n        </div>\n        <div class=\"form-row\">\n            <label>\n                <select id=\"skin\">\n                </select>\n            </label>\n            <label>\n                字体\n                <input type=\"textbox\" id=\"font-family\" style=\"min-width:200px;\"/>\n            </label>\n            <br/><br/>\n            <label>\n                字体大小\n                <input type=\"textbox\" id=\"font-size\" name=\"font-size\" size=\"6\"/>\n            </label>\n            <label>\n                行高\n                <input type=\"textbox\" id=\"text_line_height\" size=\"6\"/>\n            </label>\n            <label>\n                行宽\n                <input type=\"textbox\" id=\"content_width\" size=\"6\"/>\n            </label>\n        </div>\n        <div class=\"form-row\">\n            <label title=\"把一大块未分段的内容文本按照句号分段\">\n                <input type=\"checkbox\" id=\"split_content\"/>对一坨内容进行强制分段\n            </label>\n            <label>\n                <input type=\"checkbox\" id=\"scroll_animate\"/>章节滚动效果\n            </label>\n        </div>\n        <div class=\"form-row\">\n            <div class=\"prefs_title\">自定义样式</div>\n            <textarea id=\"extra_css\" class=\"prefs_textarea\" placeholder=\"自定义样式\"></textarea>\n        </div>\n    </div>\n    <div id=\"setting_table2\">\n        <div class=\"form-row\" title=\"详见脚本代码的 Rule.specialSite\">\n            <div class=\"prefs_title\">自定义站点规则</div>\n            <textarea id=\"custom_siteinfo\" class=\"prefs_textarea\" placeholder=\"自定义站点规则\" />\n        </div>\n        <div class=\"form-row\" title=\"一行一个，每行的第一个 = 为分隔符。\\n保存后生效\">\n            <div class=\"prefs_title\">自定义替换规则</div>\n            <textarea id=\"custom_replace_rules\" class=\"prefs_textarea\" placeholder=\"b[āà]ng=棒\" />\n        </div>\n    </div>\n</form>";
 
@@ -4430,7 +4434,12 @@ __$styleInject(".speech {\n  position: fixed;\n  z-index: 100;\n  background-col
 
 const bus = new Vue();
 
-__$styleInject(".speech .close-btn {\n  position: absolute;\n  top: 2px;\n  right: 4px;\n}\n");
+// 显示 语音朗读 对话框
+const SHOW_SPEECH = 'show-speech';
+
+const APPEND_NEXT_PAGE = 'appended_next_page';
+
+__$styleInject(".speech .close-btn {\n  position: absolute;\n  top: 2px;\n  right: 4px;\n}\n.speech .loader {\n  text-align: center;\n}\n.speech .auto-stop-input {\n  width: 30px;\n}\n");
 
 __$styleInject("/*.v-spinner\n{\n    margin: 100px auto;\n    text-align: center;\n}\n*/\n@-webkit-keyframes v-pulseStretchDelay {\n  0%,\n  80% {\n    -webkit-transform: scale(1);\n    transform: scale(1);\n    -webkit-opacity: 1;\n    opacity: 1;\n  }\n  45% {\n    -webkit-transform: scale(0.1);\n    transform: scale(0.1);\n    -webkit-opacity: 0.7;\n    opacity: 0.7;\n  }\n}\n@keyframes v-pulseStretchDelay {\n  0%,\n  80% {\n    -webkit-transform: scale(1);\n    transform: scale(1);\n    -webkit-opacity: 1;\n    opacity: 1;\n  }\n  45% {\n    -webkit-transform: scale(0.1);\n    transform: scale(0.1);\n    -webkit-opacity: 0.7;\n    opacity: 0.7;\n  }\n}\n");
 
@@ -4489,83 +4498,199 @@ staticRenderFns: [],
   }
 };
 
-function getToSpeekText(startIndex) {
-  // 这是 jQuery 对象
-  let text = App.scrollItems
-    .toArray()
-    .filter((elem, i) => {
-      return i >= startIndex
-    })
-    .map(elem => elem.textContent)
-    .join('\n');
-
-  return text
-}
+const STATE = {
+  playing: 1,
+  pausing: 2,
+  stoping: 0,
+};
 
 var Speech = {
-render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"speech"},[(_vm.isSpeeking)?_c('button',{on:{"click":_vm.stop}},[_vm._v("停止朗读")]):_c('div',[_c('button',{on:{"click":_vm.start}},[_vm._v("开始朗读")]),_vm._v(" "),_c('button',{staticClass:"close-btn",on:{"click":_vm.closeSpeech}},[_vm._v("X")])]),_vm._v(" "),(_vm.isSpeeking)?_c('pulse-loader'):_c('div',[_c('div',[_c('label',{attrs:{"for":"speech-dialog-rate"}},[_vm._v("语速")]),_vm._v(" "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.rate),expression:"rate"}],attrs:{"type":"range","min":"0.5","max":"2","value":"1","step":"0.1","id":"speech-dialog-rate"},domProps:{"value":(_vm.rate)},on:{"__r":function($event){_vm.rate=$event.target.value;}}}),_vm._v(" "),_c('span',{staticClass:"rate-value"},[_vm._v(_vm._s(_vm.rate))])]),_vm._v(" "),_c('div',[_c('label',{attrs:{"for":"speech-dialog-pitch"}},[_vm._v("音高")]),_vm._v(" "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.pitch),expression:"pitch"}],attrs:{"type":"range","min":"0","max":"2","value":"1","step":"0.1","id":"speech-dialog-pitch"},domProps:{"value":(_vm.pitch)},on:{"__r":function($event){_vm.pitch=$event.target.value;}}}),_vm._v(" "),_c('span',{staticClass:"pitch-value"},[_vm._v(_vm._s(_vm.pitch))])]),_vm._v(" "),_c('div',[_c('select',{directives:[{name:"model",rawName:"v-model",value:(_vm.selectedVoice),expression:"selectedVoice"}],staticClass:"voices",on:{"change":function($event){var $$selectedVal = Array.prototype.filter.call($event.target.options,function(o){return o.selected}).map(function(o){var val = "_value" in o ? o._value : o.value;return val}); _vm.selectedVoice=$event.target.multiple ? $$selectedVal : $$selectedVal[0];}}},_vm._l((_vm.voiceList),function(voice,index){return _c('option',{key:index,domProps:{"value":index}},[_vm._v("\n          "+_vm._s(voice.name)+" "+_vm._s(voice.lang)+"\n        ")])}))])])],1)},
+render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"speech"},[(_vm.playState == _vm.STATE.playing)?_c('span',[_c('button',{on:{"click":_vm.pause}},[_vm._v("暂停朗读")]),_vm._v(" "),_c('button',{on:{"click":_vm.stop}},[_vm._v("停止朗读")])]):_c('span',[(_vm.playState == _vm.STATE.stoping)?_c('button',{on:{"click":_vm.start}},[_vm._v("开始朗读")]):_vm._e(),_vm._v(" "),(_vm.playState == _vm.STATE.pausing)?_c('button',{on:{"click":_vm.resume}},[_vm._v("继续朗读")]):_vm._e(),_vm._v(" "),(_vm.elapsedTime)?_c('span',[_vm._v("已朗读 "+_vm._s(_vm.elapsedTime / 1000)+" 秒")]):_vm._e(),_vm._v(" "),_c('button',{staticClass:"close-btn",on:{"click":_vm.closeSpeech}},[_vm._v("X")])]),_vm._v(" "),(_vm.playState == _vm.STATE.playing)?_c('div',{staticClass:"loader"},[_c('pulse-loader')],1):_c('div',[_c('div',[_c('label',[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.autoStop),expression:"autoStop"}],attrs:{"type":"radio","value":"time"},domProps:{"checked":_vm._q(_vm.autoStop,"time")},on:{"__c":function($event){_vm.autoStop="time";}}}),_vm._v("\n        定时朗读：\n        "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.autoStopTime),expression:"autoStopTime"}],staticClass:"auto-stop-input",attrs:{"type":"text"},domProps:{"value":(_vm.autoStopTime)},on:{"input":function($event){if($event.target.composing){ return; }_vm.autoStopTime=$event.target.value;}}}),_vm._v(" "),_c('select',{directives:[{name:"model",rawName:"v-model",value:(_vm.autoStopTimeUnit),expression:"autoStopTimeUnit"}],on:{"change":function($event){var $$selectedVal = Array.prototype.filter.call($event.target.options,function(o){return o.selected}).map(function(o){var val = "_value" in o ? o._value : o.value;return val}); _vm.autoStopTimeUnit=$event.target.multiple ? $$selectedVal : $$selectedVal[0];}}},[_c('option',{attrs:{"value":"minute"}},[_vm._v("分钟")]),_vm._v(" "),_c('option',{attrs:{"value":"hour"}},[_vm._v("小时")])]),_vm._v("\n        后停止\n      ")]),_c('br'),_vm._v(" "),_c('label',[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.autoStop),expression:"autoStop"}],attrs:{"type":"radio","value":"chapter"},domProps:{"checked":_vm._q(_vm.autoStop,"chapter")},on:{"__c":function($event){_vm.autoStop="chapter";}}}),_vm._v("\n        定章朗读：\n        "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.autoStopChapter),expression:"autoStopChapter"}],staticClass:"auto-stop-input",attrs:{"type":"text"},domProps:{"value":(_vm.autoStopChapter)},on:{"input":function($event){if($event.target.composing){ return; }_vm.autoStopChapter=$event.target.value;}}}),_vm._v("章后停止\n      ")]),_c('br'),_vm._v(" "),_c('label',[_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.autoStop),expression:"autoStop"}],attrs:{"type":"radio","value":""},domProps:{"checked":_vm._q(_vm.autoStop,"")},on:{"__c":function($event){_vm.autoStop="";}}}),_vm._v("一直朗读")])]),_vm._v(" "),_c('div',[_c('label',{attrs:{"for":"speech-dialog-rate"}},[_vm._v("语速")]),_vm._v(" "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.rate),expression:"rate"}],attrs:{"type":"range","min":"0.5","max":"2","value":"1","step":"0.1","id":"speech-dialog-rate"},domProps:{"value":(_vm.rate)},on:{"__r":function($event){_vm.rate=$event.target.value;}}}),_vm._v(" "),_c('span',{staticClass:"rate-value"},[_vm._v(_vm._s(_vm.rate))])]),_vm._v(" "),_c('div',[_c('label',{attrs:{"for":"speech-dialog-pitch"}},[_vm._v("音高")]),_vm._v(" "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(_vm.pitch),expression:"pitch"}],attrs:{"type":"range","min":"0","max":"2","value":"1","step":"0.1","id":"speech-dialog-pitch"},domProps:{"value":(_vm.pitch)},on:{"__r":function($event){_vm.pitch=$event.target.value;}}}),_vm._v(" "),_c('span',{staticClass:"pitch-value"},[_vm._v(_vm._s(_vm.pitch))])]),_vm._v(" "),_c('div',[_c('select',{directives:[{name:"model",rawName:"v-model",value:(_vm.selectedVoice),expression:"selectedVoice"}],staticClass:"voices",on:{"change":function($event){var $$selectedVal = Array.prototype.filter.call($event.target.options,function(o){return o.selected}).map(function(o){var val = "_value" in o ? o._value : o.value;return val}); _vm.selectedVoice=$event.target.multiple ? $$selectedVal : $$selectedVal[0];}}},_vm._l((_vm.voiceList),function(voice,index){return _c('option',{key:index,domProps:{"value":index}},[_vm._v("\n          "+_vm._s(voice.name)+" "+_vm._s(voice.lang)+"\n        ")])}))])])])},
 staticRenderFns: [],
   name: 'speech',
   data() {
     return {
       text: '',
-      isSpeeking: false,
-      selectedVoice: 0,
+      // 播放状态
+      STATE,
+      playState: STATE.stoping,  // 监控朗读的状态
+      isPlaying: false,  // 按钮的状态
+      elapsedTime: 0,
+
       voiceList: [],
-      // speech
+      selectedVoice: 0,
       rate: 1,
       pitch: 1,
 
-      synth: window.speechSynthesis,
-      speech: new window.SpeechSynthesisUtterance(),
+      autoStop: '',
+      autoStopTime: 2,  // 2 小时
+      autoStopTimeUnit: 'hour',
+      autoStopChapter: 5,  // 5章
+
+      synth: speechSynthesis,
+      utterance: new SpeechSynthesisUtterance(),
     }
   },
   components: {
     PulseLoader
   },
   mounted() {
+    // 载入语音列表
     this.voiceList = this.synth.getVoices();
     this.synth.onvoiceschanged = () => {
       this.voiceList = this.synth.getVoices();
     };
+
+    this.loadSetting();
+  },
+  beforeDestory() {
+    clearTimeout(this.autoStopTimeId);
   },
   methods: {
     closeSpeech() {
       this.$emit('closeSpeech');
+      this.saveSetting();
+    },
+    loadSetting() {
+      this.rate = GM_getValue('speech.rate', 1);
+      this.pitch = GM_getValue('speech.pitch', 1);
+      this.selectedVoice = GM_getValue('speech.selectedVoice', 0);
+
+      this.autoStop = GM_getValue('speech.autoStop', '');
+      this.autoStopTime = GM_getValue('speech.autoStopTime', 2);
+      this.autoStopTimeUnit = GM_getValue('speech.autoStopTimeUnit', 'hour');
+      this.autoStopChapter = GM_getValue('speech.autoStopChapter', 5);
+    },
+    saveSetting() {
+      GM_setValue('speech.rate', this.rate);
+      GM_setValue('speech.pitch', this.pitch);
+      GM_setValue('speech.selectedVoice', this.selectedVoice);
+
+      GM_setValue('speech.autoStop', this.autoStop);
+      GM_setValue('speech.autoStopTime', this.autoStopTime);
+      GM_setValue('speech.autoStopTimeUnit', this.autoStopTimeUnit);
+      GM_setValue('speech.autoStopChapter', this.autoStopChapter);
     },
     start() {
+      this.isPlaying = true;
+
       // 获取当前所在的章节
-      let speekIndex = App.curFocusIndex;
-      let toSpeekText = getToSpeekText(speekIndex);
+      this.speakIndex = App.curFocusIndex;
+      this.startSpeakIndex = App.curFocusIndex;
+      let toSpeekText = this.getToSpeekText();
 
-      this.speech = new SpeechSynthesisUtterance();
-      this.listenForSpeechEvents(() => {  // 继续阅读下一章
-        speekIndex += 1;
-        let nextText = getToSpeekText(speekIndex);
-        if (nextText) {
-          this.speech.text = nextText;
-          this.synth.speak(this.speech);
-        }
-      });
+      bus.$off(APPEND_NEXT_PAGE, this.waitForNext);
+      bus.$on(APPEND_NEXT_PAGE, this.waitForNext);
 
-      this.speech.text = toSpeekText;
-      this.speech.voice = this.voiceList[this.selectedVoice];
-      this.speech.pitch = this.pitch;
-      this.speech.rate = this.rate;
-      this.synth.speak(this.speech);
+      this.speak(toSpeekText, this.checkNext);
+
+      if (this.autoStop == 'time') {
+        clearTimeout(this.autoStopTimeId);
+        this.autoStopTimeId = setTimeout(this.stop, this.getAutoStopMillisecond());
+      }
+    },
+    getAutoStopMillisecond() {
+      if (this.autoStopTimeUnit == 'minute') {
+        return this.autoStopTime * 60 * 1000
+      } else {
+        return this.autoStopTime * 3600 * 1000
+      }
+    },
+    checkNext() {
+      this.speakIndex += 1;
+      this.checkAgin();
+    },
+    checkAgin() {
+      let speakedChapters = this.speakIndex - this.startSpeakIndex;
+      if (this.autoStop == 'chapter' && speakedChapters >= this.autoStopChapter) {
+        this.stop();
+        return
+      }
+
+      // 是否有新章节
+      let nextText = this.getToSpeekText();
+      if (nextText) {
+        this.speak(nextText, this.checkNext);
+        this.isFindingNext = false;
+
+        this.scrollToNext();
+      } else {
+        this.isFindingNext = true;
+        // 加载下一章
+        App.scrollForce();
+      }
+    },
+    waitForNext() {
+      if (this.isFindingNext && this.isPlaying) {
+        this.checkAgin();
+      }
+    },
+    scrollToNext() {
+      let elem = App.scrollItems.get(this.speakIndex);
+      if (elem) {
+        App.scrollToArticle(elem);
+      }
+    },
+    getToSpeekText() {
+      let startIndex = this.speakIndex;
+
+      // 这是 jQuery 对象
+      let text = App.scrollItems
+        .toArray()
+        .filter((elem, i) => {
+          return i == startIndex
+        })
+        .map(elem => elem.textContent)
+        .join('\n');
+
+      // // 设置到最后一章
+      // this.speakIndex = oldApp.scrollItems.length - 1
+
+      return text
+    },
+    speak(text, endFn) {
+      this.utterance = new SpeechSynthesisUtterance(text);
+      this.utterance.voice = this.voiceList[this.selectedVoice];
+      this.utterance.pitch = this.pitch;
+      this.utterance.rate = this.rate;
+
+      this.listenForSpeechEvents(endFn);
+
+      this.synth.speak(this.utterance);
     },
     listenForSpeechEvents (endFn) {
-      this.speech.onstart = () => {
-        this.isSpeeking = true;
+      this.utterance.onstart = () => {
+        this.playState = STATE.playing;
       };
-      this.speech.onend = () => {
-        this.isSpeeking = false;
+      this.utterance.onpause = (event) => {
+        this.playState = STATE.pausing;
+        this.elapsedTime = event.elapsedTime;
+      };
+      this.utterance.onresume = (e) => {
+        this.playState = STATE.playing;
+      };
+      this.utterance.onend = (event) => {
+        this.playState = STATE.stoping;
+        this.elapsedTime = event.elapsedTime;
+
         if (endFn) {
           endFn();
         }
       };
     },
+    pause() {
+      this.isPlaying = false;
+
+      this.synth.pause();
+    },
+    resume() {
+      this.isPlaying = true;
+
+      this.synth.resume();
+    },
     stop() {
+      this.isPlaying = false;
+
       this.synth.cancel();
     }
   }
@@ -4583,10 +4708,10 @@ staticRenderFns: [],
     Speech,
   },
   created() {
-    bus.$on('show-speech', this.showSpeech);
+    bus.$on(SHOW_SPEECH, this.showSpeech);
   },
   beforeDestory() {
-    bus.$off('show-speech', this.hideSpeech);
+    bus.$off(SHOW_SPEECH, this.hideSpeech);
   },
   methods: {
     showSpeech() {
@@ -5014,6 +5139,8 @@ var App = {
 
         App.oArticles.push(chapter[0].outerHTML);
         App.parsers.push(parser);
+
+        bus.$emit(APPEND_NEXT_PAGE);
     },
     resetCache: function() {  // 更新缓存变量
         App.menuItems = App.$chapterList.find("div");
@@ -5179,11 +5306,7 @@ var App = {
     },
     scroll: function() {
         if (!App.paused && !App.working && App.getRemain() < Setting.remain_height) {
-            if (App.tmpDoc) {
-                App.loaded(App.tmpDoc);
-            } else {
-                App.doRequest();
-            }
+            App.scrollForce();
         }
 
         if (App.isTheEnd) {
@@ -5191,6 +5314,13 @@ var App = {
         }
 
         App.updateCurFocusElement();
+    },
+    scrollForce: function() {
+        if (App.tmpDoc) {
+            App.loaded(App.tmpDoc);
+        } else {
+            App.doRequest();
+        }
     },
     updateCurFocusElement: function() { // 滚动激活章节列表
         // Get container scroll position
@@ -5841,7 +5971,7 @@ var UI = {
                 break;
             case 'speech':
                 UI.preferencesCloseHandler();
-                bus.$emit('show-speech');
+                bus.$emit(SHOW_SPEECH);
                 break;
             default:
                 break;

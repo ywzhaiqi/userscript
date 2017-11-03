@@ -11,6 +11,7 @@ import UI from './UI'
 import { isWindows } from './lib'
 import downloader from './downloader'
 import { runVue } from './app/index'
+import bus, { APPEND_NEXT_PAGE } from './app/bus'
 
 var App = {
     isEnabled: false,
@@ -421,6 +422,8 @@ var App = {
 
         App.oArticles.push(chapter[0].outerHTML);
         App.parsers.push(parser);
+
+        bus.$emit(APPEND_NEXT_PAGE)
     },
     resetCache: function() {  // 更新缓存变量
         App.menuItems = App.$chapterList.find("div");
@@ -586,11 +589,7 @@ var App = {
     },
     scroll: function() {
         if (!App.paused && !App.working && App.getRemain() < Setting.remain_height) {
-            if (App.tmpDoc) {
-                App.loaded(App.tmpDoc);
-            } else {
-                App.doRequest();
-            }
+            App.scrollForce()
         }
 
         if (App.isTheEnd) {
@@ -598,6 +597,13 @@ var App = {
         }
 
         App.updateCurFocusElement();
+    },
+    scrollForce: function() {
+        if (App.tmpDoc) {
+            App.loaded(App.tmpDoc);
+        } else {
+            App.doRequest();
+        }
     },
     updateCurFocusElement: function() { // 滚动激活章节列表
         // Get container scroll position
