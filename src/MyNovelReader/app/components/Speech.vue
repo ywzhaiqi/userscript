@@ -145,6 +145,9 @@ export default {
         clearTimeout(this.autoStopTimeId)
         this.autoStopTimeId = setTimeout(this.stop, this.getAutoStopMillisecond())
       }
+
+      // 保存设置
+      this.saveSetting()
     },
     getAutoStopMillisecond() {
       if (this.autoStopTimeUnit == 'minute') {
@@ -154,6 +157,8 @@ export default {
       }
     },
     checkNext() {
+      if (!this.isPlaying) return
+
       this.speakIndex += 1;
       this.checkAgin()
     },
@@ -167,8 +172,8 @@ export default {
       // 是否有新章节
       let nextText = this.getToSpeekText()
       if (nextText) {
-        this.speak(nextText, this.checkNext)
         this.isFindingNext = false
+        this.speak(nextText, this.checkNext)
 
         this.scrollToNext()
       } else {
@@ -197,6 +202,7 @@ export default {
         .filter((elem, i) => {
           return i == startIndex
         })
+        // .map(elem => elem.textContent.slice(0, 10))  // debug
         .map(elem => elem.textContent)
         .join('\n')
 

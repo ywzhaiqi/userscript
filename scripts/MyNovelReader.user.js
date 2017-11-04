@@ -22,7 +22,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.1.6
+// @version        6.1.7
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -3137,10 +3137,6 @@ function extendRule(replaceRule) {
 
 // test()
 
-// Unicode/2000-2FFF：http://zh.wikibooks.org/wiki/Unicode/2000-2FFF
-// Unicode/F000-FFFF：https://zh.wikibooks.org/wiki/Unicode/F000-FFFF
-
-// replace 中的简写
 var CHAR_ALIAS = {
   '\\P': '[\\u2000-\\u2FFF\\u3004-\\u303F\\uFE00-\\uFF60\\uFFC0-\\uFFFF]',  // 小说中添加的特殊符号
 };
@@ -4588,6 +4584,9 @@ staticRenderFns: [],
         clearTimeout(this.autoStopTimeId);
         this.autoStopTimeId = setTimeout(this.stop, this.getAutoStopMillisecond());
       }
+
+      // 保存设置
+      this.saveSetting();
     },
     getAutoStopMillisecond() {
       if (this.autoStopTimeUnit == 'minute') {
@@ -4597,6 +4596,8 @@ staticRenderFns: [],
       }
     },
     checkNext() {
+      if (!this.isPlaying) return
+
       this.speakIndex += 1;
       this.checkAgin();
     },
@@ -4610,8 +4611,8 @@ staticRenderFns: [],
       // 是否有新章节
       let nextText = this.getToSpeekText();
       if (nextText) {
-        this.speak(nextText, this.checkNext);
         this.isFindingNext = false;
+        this.speak(nextText, this.checkNext);
 
         this.scrollToNext();
       } else {
@@ -4640,6 +4641,7 @@ staticRenderFns: [],
         .filter((elem, i) => {
           return i == startIndex
         })
+        // .map(elem => elem.textContent.slice(0, 10))  // debug
         .map(elem => elem.textContent)
         .join('\n');
 
