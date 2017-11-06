@@ -7,7 +7,7 @@
     <span v-else>
       <button @click="start" v-if="playState == STATE.stoping">开始朗读</button>
       <button @click="resume" v-if="playState == STATE.pausing">继续朗读</button>
-      <span v-if="elapsedTime">已朗读 {{ elapsedTime / 1000 }} 秒</span>
+      <span v-if="elapsedTime">已朗读 {{ formatMillisencod(elapsedTime) }}</span>
       <button class="close-btn" @click="closeSpeech">X</button>
     </span>
 
@@ -56,6 +56,7 @@
 import PulseLoader from '../../../common/components/spinner/PulseLoader.vue'
 import oldApp from '../../app.js'
 import bus, { APPEND_NEXT_PAGE } from '../bus.js'
+import { locations, formatMillisencod } from '../../utils'
 
 const STATE = {
   playing: 1,
@@ -104,6 +105,7 @@ export default {
     clearTimeout(this.autoStopTimeId)
   },
   methods: {
+    formatMillisencod,
     closeSpeech() {
       this.$emit('closeSpeech')
       this.saveSetting()
@@ -134,7 +136,7 @@ export default {
       // 获取当前所在的章节
       this.speakIndex = oldApp.curFocusIndex
       this.startSpeakIndex = oldApp.curFocusIndex
-      let toSpeekText = this.getToSpeekText()
+      let toSpeekText = this.getToSpeekText(true)
 
       bus.$off(APPEND_NEXT_PAGE, this.waitForNext)
       bus.$on(APPEND_NEXT_PAGE, this.waitForNext)
@@ -193,7 +195,7 @@ export default {
         oldApp.scrollToArticle(elem)
       }
     },
-    getToSpeekText() {
+    getToSpeekText(fromSelection=false) {
       let startIndex = this.speakIndex
 
       // 这是 jQuery 对象
@@ -206,10 +208,40 @@ export default {
         .map(elem => elem.textContent)
         .join('\n')
 
-      // // 设置到最后一章
-      // this.speakIndex = oldApp.scrollItems.length - 1
+      if (fromSelection) {
+        let newText = this.getSelectionAfterText(text)
+        if (newText) {
+          return newText
+        }
+      }
 
       return text
+    },
+    getSelectionAfterText(text) {
+      const selObj = getSelection()
+      const selStr = selObj.toString()
+      let afterText;
+
+      if (!selStr) return
+
+      let indexes = locations(selStr, text)
+      if (indexes.length == 0) {
+        return
+      } else if (indexes.length == 1) {
+        afterText = text.substring(indexes[0])
+      } else {  // 多个
+        indexes = locations(selObj.anchorNode.data, text)
+        if (indexes.length == 0) return
+        else if (indexes.length == 1) {
+          let start = indexes[0] + selObj.anchorOffset
+          afterText = text.substring(start)
+        } else {
+          console.error('getSelectionAfterText() 无法判断唯一')
+        }
+      }
+
+      selObj.removeAllRanges()
+      return afterText
     },
     speak(text, endFn) {
       this.utterance = new SpeechSynthesisUtterance(text);

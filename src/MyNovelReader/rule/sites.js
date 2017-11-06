@@ -1871,7 +1871,6 @@ const sites = [
       contentReplace: [
           { '&amp;quot;': '"', },
           'getreadset;',
-          // '&lt;div class=&quot;divimage&quot;&gt;&lt;img src=&quot;',
           '&lt;div class="divimage"&gt;&lt;img src="',
       ],
       contentPatch: function($doc) {
@@ -1960,6 +1959,11 @@ const sites = [
       titlePos: 0,
       titleSelector: "h4",
       contentSelector: "div.text",
+      isVipChapter: function ($doc) {
+          if ($doc.find('.vipzj').length) {
+              return true;
+          }
+      }
   },
 
 ];
