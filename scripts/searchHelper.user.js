@@ -7,14 +7,15 @@
 // @include      http://kindleren.com/search.php?mod=forum&mq=*
 // @include      http://shuzi.taobao.com/item/search---50094067.htm?q=*
 // @include      http://www.xiaopian.com/?q=*
+// @include      https://www.jiumodiary.com/?q=*
 // @grant        GM_addStyle
 // @require      http://cdn.staticfile.org/jquery/2.1.1/jquery.min.js
 // @run-at       document-start
 // @noframes
 // ==/UserScript==
 
-if (typeof String.prototype.contains != 'function') {
-    String.prototype.contains = function(str) {
+if (typeof String.prototype.includes != 'function') {
+    String.prototype.includes = function(str) {
         return this.indexOf(str) != -1;
     };
 }
@@ -53,6 +54,9 @@ var ns = {
     },
     xiaopian: function() {
         goSearch('q', 'input[name="keyboard"]', 'input[name="Submit"]')
+    },
+    jiumodiary() {
+      goSearch('q', '#SearchWord', '#SearchButton')
     }
 };
 
@@ -60,7 +64,7 @@ function run() {  // 自动运行符合 host 的函数
     var host = location.host;
 
     Object.keys(ns).some(function(key) {
-        if (host.contains(key)) {
+        if (host.includes(key)) {
             ns[key]();
             return true;
         }

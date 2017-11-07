@@ -10,3 +10,4 @@ temp/
 */searchEngineJumpCE/test/
 */Super_preloaderPlus/test/testGoogleSearch.js
 src/common/test.ts
+rollup.build.css
