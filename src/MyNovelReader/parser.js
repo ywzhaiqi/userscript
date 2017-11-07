@@ -442,11 +442,7 @@ Parser.prototype = {
         text = text.replace(Rule.replaceBrs, '</p>\n<p>');
         text = text.replace(/<\/p><p>/g, "</p>\n<p>");
 
-        text = this.normalizeContent(text);
-
         // GM_setClipboard(text);
-
-        text = this.removeDump(text)
 
         // 规则替换
         if (info.contentReplace) {
@@ -563,44 +559,30 @@ Parser.prototype = {
         // 删除空白的、单个字符的 p
         text = text.replace(Rule.removeLineRegExp, "");
 
+        text = this.removeDump(text)
+
         C.timeEnd('内容处理');
         C.groupEnd();
 
         return text;
     },
-    normalizeContent: function(text) {
-        text = text.trim()
+    normalizeContent: function(html) {
+        html = html.replace(/<\/p><p>/g, '</p>\n<p>')
 
-        if (text.startsWith('<')) return text;
-
-        // 修正 </p> 在另一行的情况
-        text = text.replace(/\n<\/p>/g, '</p>');
-
-        var lines = text.split('\n')
-        var firstLine = lines[0];
-        var lastLine = lines[lines.length - 1];
-
-        // 修正 p 不完整的情况
-        if (!firstLine.includes('<p>') && firstLine.includes('</p>')) {
-            text = '<p>' + text;
-        }
-        if (lastLine.includes('<p>') && !lastLine.includes('</p>')) {
-            text = text + '</p>';
-        }
-
-        return text;
+        return html;
     },
     /**
      * 移除内容中大块的重复。
      * 例如：http://www.wangshuge.com/books/109/109265/28265316.html
      *
-     * @param  {string} text 内容
+     * @param  {string} html 内容
      * @return {string}      处理后的内容
      */
-    removeDump: function(text) {
-        var newContent = text
+    removeDump: function(html) {
+        html = this.normalizeContent(html)
+        var newContent = html
 
-        var lines = text.split('\n');
+        var lines = html.split('\n');
         var firstLine = lines[0];
         // 有重复
         if (firstLine.length > 10) {

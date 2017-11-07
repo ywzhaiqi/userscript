@@ -1,4 +1,4 @@
-import { $x, isFirefox } from './lib'
+import { $x, isFirefox, parseHTML } from './lib'
 
 var BookLinkMe = {
   clickedColor: "666666",

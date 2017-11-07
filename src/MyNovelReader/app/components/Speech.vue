@@ -8,6 +8,7 @@
       <button @click="start" v-if="playState == STATE.stoping">开始朗读</button>
       <button @click="resume" v-if="playState == STATE.pausing">继续朗读</button>
       <span v-if="elapsedTime">已朗读 {{ formatMillisencod(elapsedTime) }}</span>
+      <span v-else class="tips">Tips:可从选择文本处开始朗读</span>
       <button class="close-btn" @click="closeSpeech">X</button>
     </span>
 
@@ -108,7 +109,6 @@ export default {
     formatMillisencod,
     closeSpeech() {
       this.$emit('closeSpeech')
-      this.saveSetting()
     },
     loadSetting() {
       this.rate = GM_getValue('speech.rate', 1)
@@ -140,6 +140,9 @@ export default {
 
       bus.$off(APPEND_NEXT_PAGE, this.waitForNext)
       bus.$on(APPEND_NEXT_PAGE, this.waitForNext)
+
+      // fix 可能的问题：点击开始朗读无效，需要 cancel 才有效
+      speechSynthesis.cancel()
 
       this.speak(toSpeekText, this.checkNext)
 
@@ -266,7 +269,8 @@ export default {
       }
       this.utterance.onend = (event) => {
         this.playState = STATE.stoping
-        this.elapsedTime = event.elapsedTime
+        // this.elapsedTime = event.elapsedTime
+        this.elapsedTime = null
 
         if (endFn) {
           endFn()
@@ -296,8 +300,8 @@ export default {
 .speech {
   .close-btn {
     position: absolute;
-    top: 2px;
-    right: 4px;
+    top: 0;
+    right: 0;
   }
 
   .loader {
@@ -306,6 +310,10 @@ export default {
 
   .auto-stop-input {
     width: 30px;
+  }
+
+  .tips {
+    font-size: 0.8em;
   }
 }
 </style>
