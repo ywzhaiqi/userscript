@@ -1,13 +1,10 @@
 // ==UserScript==
 // @id             verycd@ywzhaiqi@gmail.com
 // @name           verycd补全下载链接
-// @version        1.5.3
+// @version        1.5.4
 // @author         ywzhaiqi@gmail.com
 // @namespace      https://github.com/ywzhaiqi
 // @description    在 verycd 页面直接显示下载链接，可通过多个站点获取，防止失效。
-// downloadURL     http://userscripts.org/scripts/source/158764.user.js
-// updateURL       http://userscripts.org/scripts/source/158764.meta.js
-
 // @homepageURL    https://greasyfork.org/scripts/301/
 // @include        http://www.verycd.com/topics/*
 // @require        http://code.jquery.com/jquery-1.9.1.min.js
@@ -56,7 +53,7 @@ function getDoc(url, callback, data){
             if(responseDetail.status == 200){
                 // For Firefox, Chrome 30+ Supported
                 doc = new DOMParser().parseFromString(responseDetail.responseText, 'text/html');
-                
+
                 if(doc == undefined){
                     doc = document.implementation.createHTMLDocument("");
                     doc.querySelector('html').innerHTML = responseText;
@@ -229,40 +226,7 @@ var VERYCD = {
 
 // 其他站点的配置
 VERYCD.sites = [
-    {   
-        name: 'ed2kers',
-        id: 'site_ed2kers',
-        BASE_URL: 'http://www.ed2kers.com',
-        url: "http://www.ed2kers.com/index.php/search/index?c=0&keyword=" + VERYCD.title.replace(/'/g, " "),
-        search_selector: ".techdes a:contains('" + VERYCD.title.replace(/&/g, "&amp;") + "')"
-    },
     {
-        name: "SimpleCD（默认）",
-        id: 'site_simplecd',
-        BASE_URL: "http://simplecd.me",
-        url: "http://simplecd.me/search/entry/?query=" + VERYCD.title.replace(/\/|-|&/g, " "),
-        search_selector: ".entry-list a:contains('" + VERYCD.title + "')",
-        pageProcessor: function(doc, site){
-            var data = [];
-            var ids = [];
-            $(doc).find('.emulemain input[name="selectemule"]').each(function(i, el){
-                var rid = $(this).attr('value');
-                ids[i] = "rid=" + rid;
-            });
-
-            var url = site.BASE_URL + '/download/?mode=copy&' + ids.join('&');
-            xbug("Get SimpleCD: " + url);
-            getDoc(url, function(doc){
-                $('td:contains("ed2k://")', doc).each(function(i, el){
-                    var url = $.trim($(this).text());
-                    data[i] = ed2kLink(url);
-                });
-
-                VERYCD.display_content(data);
-            });
-        }
-    },
-    {   
         name: '逛大街',
         id: 'site_gdajie',
         BASE_URL: '',
@@ -291,6 +255,40 @@ VERYCD.sites = [
             });
         }
     },
+    {
+        name: 'ed2kers',
+        id: 'site_ed2kers',
+        BASE_URL: 'http://www.ed2kers.net',
+        url: "http://www.ed2kers.net/index.php/search/index?c=0&keyword=" + VERYCD.title.replace(/'/g, " "),
+        search_selector: ".techdes a:contains('" + VERYCD.title.replace(/&/g, "&amp;") + "')"
+    },
+    // {
+    //     name: "SimpleCD（默认）",
+    //     id: 'site_simplecd',
+    //     BASE_URL: "http://simplecd.me",
+    //     url: "http://simplecd.me/search/entry/?query=" + VERYCD.title.replace(/\/|-|&/g, " "),
+    //     search_selector: ".entry-list a:contains('" + VERYCD.title + "')",
+    //     pageProcessor: function(doc, site){
+    //         var data = [];
+    //         var ids = [];
+    //         $(doc).find('.emulemain input[name="selectemule"]').each(function(i, el){
+    //             var rid = $(this).attr('value');
+    //             ids[i] = "rid=" + rid;
+    //         });
+
+    //         var url = site.BASE_URL + '/download/?mode=copy&' + ids.join('&');
+    //         xbug("Get SimpleCD: " + url);
+    //         getDoc(url, function(doc){
+    //             $('td:contains("ed2k://")', doc).each(function(i, el){
+    //                 var url = $.trim($(this).text());
+    //                 data[i] = ed2kLink(url);
+    //             });
+
+    //             VERYCD.display_content(data);
+    //         });
+    //     }
+    // },
+
 
     // {   name: 'VeryCD Fetch', host: 'verycdfetch.duapp.com',  //2013-2-10 测试失效
     //     url: location.href.replace('www.verycd.com', 'verycdfetch.duapp.com'),
