@@ -1,11 +1,6 @@
 <template>
   <div id="app">
-    <speech
-      class="speech"
-      v-if="speechDialogVisible"
-      v-on:closeSpeech="hideSpeech"
-    >
-    </speech>
+    <speech class="speech" v-if="speechDialogVisible" v-on:closeSpeech="hideSpeech" />
   </div>
 </template>
 

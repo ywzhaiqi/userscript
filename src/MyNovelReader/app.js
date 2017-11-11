@@ -11,7 +11,7 @@ import UI from './UI'
 import { isWindows } from './lib'
 import downloader from './downloader'
 import { runVue } from './app/index'
-import bus, { APPEND_NEXT_PAGE } from './app/bus'
+import bus, { APPEND_NEXT_PAGE, SHOW_SPEECH } from './app/bus'
 
 var App = {
     isEnabled: false,
@@ -542,6 +542,11 @@ var App = {
             UI.preferencesShow();
             return false;
         });
+
+        key(Setting.openSpeechKey, function() {
+            bus.$emit(SHOW_SPEECH)
+            return false;
+        })
     },
     copyCurTitle: function() {
         if (Setting.copyCurTitle) {

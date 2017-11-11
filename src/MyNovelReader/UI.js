@@ -330,6 +330,7 @@ var UI = {
         $form.find("#quietModeKey").get(0).value = Setting.quietModeKey;
         $form.find("#openPreferencesKey").get(0).value = Setting.openPreferencesKey;
         $form.find("#setHideMenuListKey").get(0).value = Setting.hideMenuListKey;
+        $form.find("#setOpenSpeechKey").get(0).value = Setting.openSpeechKey;
 
         // 点击事件
         $form.on('click', 'input:checkbox, input:button', function(event){
@@ -387,6 +388,13 @@ var UI = {
                 key = prompt('请输入切换左侧章节列表的快捷键：'.uiTrans(), Setting.hideMenuListKey);
                 if (key) {
                     Setting.hideMenuListKey = key;
+                    $(target).val(key);
+                }
+                break;
+            case 'setOpenSpeechKey':
+                key = prompt('请输入打开朗读的快捷键：'.uiTrans(), Setting.openSpeechKey);
+                if (key) {
+                    Setting.openSpeechKey = key;
                     $(target).val(key);
                 }
                 break;

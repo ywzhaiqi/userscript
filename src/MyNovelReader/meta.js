@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.1.9
+// @version        6.2.0
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -108,6 +108,7 @@
 // @include        *://www.xiangcunxiaoshuo.com/shu/*/*.html
 // @include        *://www.lwxs520.com/books/*/*/*.html
 // @include        *://m.lwxs520.com/books/*/*/*.html
+// @include        *://www.lwxiaoshuo.com/*/*/*.html
 // @include        *://www.zashu.net/books/*/*/*.html
 // @include        *://www.yunlaige.com/html/*/*/*.html
 // @include        *://www.cfwx.net/files/article/html/*/*/*.html

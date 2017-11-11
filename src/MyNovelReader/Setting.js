@@ -223,6 +223,14 @@ var Setting = {
         GM_setValue("hide_menulist_key", key);
     },
 
+    // 打开朗读快捷键
+    get openSpeechKey() {
+        return GM_getValue('openSpeechKey') || 'a';
+    },
+    set openSpeechKey(key) {
+        GM_setValue('openSpeechKey', key)
+    },
+
     get picNightModeCheck() {
         return getBooleanConfig('picNightModeCheck', true);
     },
