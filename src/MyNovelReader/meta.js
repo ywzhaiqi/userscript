@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.2.0
+// @version        6.2.1
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -364,10 +364,20 @@
 // @include        *://www.4xiaoshuo.com/*/*/*.html
 // @include        *://www.woquge.com/*/*.html
 // @include        *://www.lianzaishu.com/*/*.html
+// @include        *://www.lucifer-club.com/chapter-*-*.html
+// @include        *://www.011bz.com/*/*.html
 
 // 移动版
 // @include        *://wap.yc.ireader.com.cn/book/*/*/
 // @include        *://m.jjwxc.net/book2/*/*
+// @include        *://m.jjwxc.com/book2/*/*
+// @include        *://wap.jjwxc.net/book2/*/*
+// @include        *://wap.jjwxc.com/book2/*/*
+// @include        *://wap.jjwxc.com/vip/*/*?ctime=*
+// @include        *://wap.jjwxc.com/vip/*/*
+// @include        *://wap.jjwxc.net/vip/*/*
+// @include        *://m.jjwxc.net/vip/*/*
+// @include        *://m.jjwxc.com/vip/*/*
 
 // @exclude        */List.htm
 // @exclude        */List.html

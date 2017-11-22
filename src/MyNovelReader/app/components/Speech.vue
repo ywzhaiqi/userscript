@@ -291,6 +291,8 @@ export default {
       this.isPlaying = false
 
       this.synth.cancel()
+
+      clearTimeout(this.autoStopTimeId)
     }
   }
 }

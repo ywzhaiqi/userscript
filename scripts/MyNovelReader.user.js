@@ -22,7 +22,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.2.0
+// @version        6.2.1
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -383,10 +383,20 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @include        *://www.4xiaoshuo.com/*/*/*.html
 // @include        *://www.woquge.com/*/*.html
 // @include        *://www.lianzaishu.com/*/*.html
+// @include        *://www.lucifer-club.com/chapter-*-*.html
+// @include        *://www.011bz.com/*/*.html
 
 // 移动版
 // @include        *://wap.yc.ireader.com.cn/book/*/*/
 // @include        *://m.jjwxc.net/book2/*/*
+// @include        *://m.jjwxc.com/book2/*/*
+// @include        *://wap.jjwxc.net/book2/*/*
+// @include        *://wap.jjwxc.com/book2/*/*
+// @include        *://wap.jjwxc.com/vip/*/*?ctime=*
+// @include        *://wap.jjwxc.com/vip/*/*
+// @include        *://wap.jjwxc.net/vip/*/*
+// @include        *://m.jjwxc.net/vip/*/*
+// @include        *://m.jjwxc.com/vip/*/*
 
 // @exclude        */List.htm
 // @exclude        */List.html
@@ -696,6 +706,7 @@ const sites = [
       nextSelector: "a:contains('翻下页')",                     // 下一页链接 jQuery 选择器  (不填则尝试自动搜索)
 
       // nDelay: 500,  // 延迟0.5秒加载下一页
+      // style: '',  // 站点样式
 
       // 获取内容
       contentSelector: "#BookText",                             // 内容 jQuery 选择器 (不填则尝试自动搜索)
@@ -905,7 +916,7 @@ const sites = [
       ]
   },
   {siteName: '晋江文学城_手机版',
-      url: '^http://m\\.jjwxc\\.net/book2/\\d+/\\d+',
+      url: '^https?://(?:wap|m)\\.jjwxc\\.(?:net|com)/(?:book2|vip)/\\d+/\\d+',
       titleReg: /《(.*?)》.*[ˇ^](.*?)[ˇ^].*/,
       titlePos: 0,
       titleSelector: 'h2',
@@ -2608,6 +2619,20 @@ const sites = [
         '&lt;body&gt;', '&lt;/body&gt;',
         '&lt;div&gt;',
     ]
+  },
+  {siteName: "露西弗俱乐部",
+    exampleUrl: 'https://www.lucifer-club.com/chapter-83716-1.html',
+    url: /^https:\/\/www\.lucifer\-club\.com\/.*\.html/,
+    bookTitleSelector: "#luf_local > a:nth-child(3)",
+
+    indexSelector: '.luf_news_title > a:contains("目录")',
+
+    contentSelector: "#luf_news_contents",
+    contentHandle: false,
+    contentRemove: "> form, #luf_local, .luf_top_ad, .luf_news_title, .luf_page_control, .luf_comment",
+    contentReplace: [
+        '保护版权 尊重作者 @ 露西弗俱乐部 www.lucifer-club.com',
+    ],
   },
 
   // 这网站为了防抓取，内容顺序都是不对的，只好采用 iframe 方式
@@ -4744,7 +4769,7 @@ staticRenderFns: [],
     pause() {
       this.isPlaying = false;
 
-      speechSynthesis.pause();
+      this.synth.pause();
     },
     resume() {
       this.isPlaying = true;
@@ -4755,6 +4780,8 @@ staticRenderFns: [],
       this.isPlaying = false;
 
       this.synth.cancel();
+
+      clearTimeout(this.autoStopTimeId);
     }
   }
 };

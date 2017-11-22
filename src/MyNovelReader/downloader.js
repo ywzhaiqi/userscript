@@ -70,7 +70,9 @@ function getOnePage(parser, nextUrl, endFn) {
   if (!nextUrl || isEnd) {
       console.log('全部获取完毕');
       finish(parser);
-      endFn()
+      if (typeof endFn == 'functiton') {
+        endFn()
+      }
       return;
   }
 
