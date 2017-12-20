@@ -33,29 +33,43 @@ const sites = [
       }
   },
   {siteName: '起点新版-阅文',
-       url: '^https?://(?:read|vipreader)\\.qidian\\.com/chapter/.*',
-       exclude: ' /lastpage/',
-       bookTitleSelector: '#bookImg',
-       titleSelector: 'h3.j_chapterName',
+    url: '^https?://(?:read|vipreader)\\.qidian\\.com/chapter/.*',
+    exclude: ' /lastpage/',
+    bookTitleSelector: '#bookImg',
+    titleSelector: 'h3.j_chapterName',
 
-       prevSelector: '#j_chapterPrev',
-       nextSelector: '#j_chapterNext',
-       indexSelector: function(obj) {
-           var url = obj.find(".chapter-control a:contains('目录')").attr('href');
-           return url;
-       },
+    prevSelector: '#j_chapterPrev',
+    nextSelector: '#j_chapterNext',
+    indexSelector: function(obj) {
+        var url = obj.find(".chapter-control a:contains('目录')").attr('href');
+        return url;
+    },
 
-       contentSelector: '.read-content.j_readContent',
-       contentRemove: '',
-       contentReplace: [
-           '手机用户请到m.qidian.com阅读。',
-           '起点中文网www.qidian.com欢迎广大书友光临阅读，最新、最快、最火的连载作品尽在起点原创！.*'
-       ],
-       isVipChapter: function($doc) {
-           if ($doc.find('.vip-limit-wrap').length) {
-               return true;
-           }
-       }
+    contentSelector: '.read-content.j_readContent',
+    contentRemove: '',
+    contentReplace: [
+        '手机用户请到m.qidian.com阅读。',
+        '起点中文网www.qidian.com欢迎广大书友光临阅读，最新、最快、最火的连载作品尽在起点原创！.*'
+    ],
+    isVipChapter: function($doc) {
+        if ($doc.find('.vip-limit-wrap').length) {
+            return true;
+        }
+    },
+    contentPatch: function($doc) {
+        // 滚屏的方式无法获取下一页
+        if ($doc.find('#j_chapterPrev').length === 0) {
+            var $node = $doc.find('div[id^="chapter-"]');
+            // 加上一页链接
+            $('<div id="j_chapterPrev">')
+                .attr('href', $node.attr('data-purl'))
+                .appendTo($doc.find('body'));
+            // 加下一页链接
+            $('<div id="j_chapterNext">')
+                .attr('href', $node.attr('data-nurl'))
+                .appendTo($doc.find('body'));
+        }
+    }
   },
   // 特殊站点，需再次获取且跨域。添加 class="reader-ajax"，同时需要 src, charset
   {siteName: '起点新版',
@@ -1381,6 +1395,7 @@ const sites = [
           '喜欢网就上。',
           '无弹窗小说，.*',
           '本书最快更新网站请：.*',
+          'V<!--\\?',
       ]
   },
   {siteName: "乐文小说网",
@@ -1835,19 +1850,21 @@ const sites = [
       contentRemove: "strong, a",
       contentReplace: [
           { 'ＺＨＡＮ': '战' },
-          { 'SI议': '思议' },
-          { '意SI': '意思' },
+          { 'SI': '思' },
           { 'ｓｉ　ｗａｎｇ': '死亡' },
-          { 'ＤＩＮＧ好': '定好' },
-          { '夺舍ＳＨＩ': '夺舍式' },
-          { '招ＳＨＩ': '招式' },
-          { '制ＳＨＩ': '制式' },
-          { '正ＳＨＩ': '正式' },
-          { '菜ＳＨＩ': '菜式' },
-          { 'LU上': '路上' },
-          { '条LU': '条路' },
-          { '马LU': '马路' },
-          '更多请登录墨缘文学网.*欢迎您的来访 &gt;&gt;&gt;',
+          { 'ＤＩＮＧ': '订' },
+          { 'ＳＨＩ　': '式' },
+          { 'LU': '路' },
+          { 'ｊｉｎ　ｒｕ': '进入' },
+          { 'ｂａｏ　ｚｈａ': '爆炸' },
+          { 'ＤＡＯ': '刀' },
+          { 'Ｄａｎ': '弹' },
+          { 'Ke': '客' },
+          { 'ＧＯＵ': '购' },
+          { 'ｋｕｏ　ｓａｎ': '扩散' },
+          { 'Ｂu': '步' },
+          { 'ＳＨＯＵ　　ＱＩＡＮＧ': '手枪' },
+          '更多请登录墨缘文学网.*欢迎您的来访 >>>',
           '更多请登录墨缘文学网.*欢迎您的来访\\[ .* \\]',
           '\\( http.*墨缘文学网 \\)',
       ],

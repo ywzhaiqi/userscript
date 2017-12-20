@@ -1,4 +1,5 @@
 import { $x, isFirefox, parseHTML } from './lib'
+import { delay } from './utils'
 
 var BookLinkMe = {
   clickedColor: "666666",
@@ -15,28 +16,30 @@ var BookLinkMe = {
       var $parent = $('td[colspan="2"]:contains("未读"):first, td[colspan="2"]:contains("未讀"):first');
       if(!$parent.length) return;
 
-      var openAllUnreadLinks = function(event){
+      var openAllUnreadLinks = async function(event){
           event.preventDefault();
 
           var links = $x('./ancestor::table[@width="100%"]/descendant::a[img[@alt="未读"]]', event.target);
-          links.forEach(function(link){
-              // 忽略没有盗版的
-              var chapterLink = link.parentNode.nextSibling.nextSibling.querySelector('a');
-              if (chapterLink.querySelector('font[color*="800000"]')) {
-                  return;
-              }
+          for (let link of links) {
+            // 忽略没有盗版的
+            let chapterLink = link.parentNode.nextSibling.nextSibling.querySelector('a');
+            if (chapterLink.querySelector('font[color*="800000"]')) {
+               continue;
+            }
 
-              if(isFirefox)
-                  link.click();
-              else
-                  GM_openInTab(link.href);
+            await delay(200)
 
-              // 设置点击后的样式
-              // 未读左边的 1x 链接
-              link.parentNode.previousSibling.querySelector('font')
-                  .setAttribute('color', BookLinkMe.clickedColor);
-              chapterLink.classList.add('mclicked');
-          });
+            if(isFirefox)
+                link.click();
+            else
+                GM_openInTab(link.href);
+
+            // 设置点击后的样式
+            // 未读左边的 1x 链接
+            link.parentNode.previousSibling.querySelector('font')
+                .setAttribute('color', BookLinkMe.clickedColor);
+            chapterLink.classList.add('mclicked');
+          }
       };
 
 
