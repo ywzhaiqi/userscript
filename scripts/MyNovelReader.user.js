@@ -22,7 +22,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.2.2
+// @version        6.2.3
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -385,6 +385,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @include        *://www.lianzaishu.com/*/*.html
 // @include        *://www.lucifer-club.com/chapter-*-*.html
 // @include        *://www.011bz.com/*/*.html
+// @include        *://www.quanben.io/*/*/*.html
 
 // 移动版
 // @include        *://wap.yc.ireader.com.cn/book/*/*/
@@ -1797,6 +1798,16 @@ const sites = [
       url: "^https?://www\\.bookabc\\.net/.*\\.html",
       useiframe: true
   },
+  // ================== 采用 iframe 并存在 mutationSelector 的 ====================
+  {siteName: '全本小说网',
+    exampleUrl: 'http://www.quanben.io/n/wuxianwanxiangtongminglu/1.html',
+    url: '^https?://www\\.quanben\\.io/.*?/.*?/\\d+\\.html',
+    bookTitleSelector: '.name',
+    useiframe: true,
+    mutationSelector: "#content",  // 内容生成监视器
+        // mutationChildCount: 5,
+        mutationChildText: '请到 quanben.io阅读完整章节内容',
+  },
 
   // ============== 内容需要2次获取的 =========================
   {siteName: "手打吧",
@@ -3188,6 +3199,10 @@ function extendRule(replaceRule) {
 
 // test()
 
+// Unicode/2000-2FFF：http://zh.wikibooks.org/wiki/Unicode/2000-2FFF
+// Unicode/F000-FFFF：https://zh.wikibooks.org/wiki/Unicode/F000-FFFF
+
+// replace 中的简写
 var CHAR_ALIAS = {
   '\\P': '[\\u2000-\\u2FFF\\u3004-\\u303F\\uFE00-\\uFF60\\uFFC0-\\uFFFF]',  // 小说中添加的特殊符号
 };
@@ -4991,9 +5006,15 @@ var App = {
             var mutationSelector = App.site.mutationSelector;
             var target = $doc.find(mutationSelector)[0];
             if (target) {
-                var childCount = App.site.mutationChildCount;
-                if (childCount === undefined || target.children.length <= childCount) {
-                    shouldAdd = true;
+                if (App.site.mutationChildText) {
+                    if (target.textContent.indexOf(App.site.mutationChildText) > -1) {
+                        shouldAdd = true;
+                    }
+                } else {
+                    var childCount = App.site.mutationChildCount;
+                    if (childCount === undefined || target.children.length <= childCount) {
+                        shouldAdd = true;
+                    }
                 }
             }
         }

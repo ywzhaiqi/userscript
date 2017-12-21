@@ -1107,6 +1107,16 @@ const sites = [
       url: "^https?://www\\.bookabc\\.net/.*\\.html",
       useiframe: true
   },
+  // ================== 采用 iframe 并存在 mutationSelector 的 ====================
+  {siteName: '全本小说网',
+    exampleUrl: 'http://www.quanben.io/n/wuxianwanxiangtongminglu/1.html',
+    url: '^https?://www\\.quanben\\.io/.*?/.*?/\\d+\\.html',
+    bookTitleSelector: '.name',
+    useiframe: true,
+    mutationSelector: "#content",  // 内容生成监视器
+        // mutationChildCount: 5,
+        mutationChildText: '请到 quanben.io阅读完整章节内容',
+  },
 
   // ============== 内容需要2次获取的 =========================
   {siteName: "手打吧",

@@ -141,9 +141,15 @@ var App = {
             var mutationSelector = App.site.mutationSelector;
             var target = $doc.find(mutationSelector)[0];
             if (target) {
-                var childCount = App.site.mutationChildCount;
-                if (childCount === undefined || target.children.length <= childCount) {
-                    shouldAdd = true;
+                if (App.site.mutationChildText) {
+                    if (target.textContent.indexOf(App.site.mutationChildText) > -1) {
+                        shouldAdd = true;
+                    }
+                } else {
+                    var childCount = App.site.mutationChildCount;
+                    if (childCount === undefined || target.children.length <= childCount) {
+                        shouldAdd = true;
+                    }
                 }
             }
         }
