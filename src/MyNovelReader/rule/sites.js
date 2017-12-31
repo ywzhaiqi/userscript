@@ -46,6 +46,7 @@ const sites = [
     },
 
     contentSelector: '.read-content.j_readContent',
+    contentHandle: false,
     contentRemove: '',
     contentReplace: [
         '手机用户请到m.qidian.com阅读。',
@@ -1970,6 +1971,13 @@ const sites = [
     contentReplace: [
         '保护版权 尊重作者 @ 露西弗俱乐部 www.lucifer-club.com',
     ],
+  },
+  {siteName: '新笔趣阁5200',
+    exampleUrl: 'http://www.b5200.org/78_78809/151096665.html',
+    url: '^http://www\\.b5200\\.org/.*?/\\d+\\.html',
+    contentReplace: [
+      '网首发',
+    ]
   },
 
   // 这网站为了防抓取，内容顺序都是不对的，只好采用 iframe 方式

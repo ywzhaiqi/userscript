@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.2.3
+// @version        6.2.4
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -367,6 +367,7 @@
 // @include        *://www.lucifer-club.com/chapter-*-*.html
 // @include        *://www.011bz.com/*/*.html
 // @include        *://www.quanben.io/*/*/*.html
+// @include        *://www.b5200.org/*/*.html
 
 // 移动版
 // @include        *://wap.yc.ireader.com.cn/book/*/*/

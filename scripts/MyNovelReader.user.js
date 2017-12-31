@@ -22,7 +22,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.2.3
+// @version        6.2.4
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -386,6 +386,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @include        *://www.lucifer-club.com/chapter-*-*.html
 // @include        *://www.011bz.com/*/*.html
 // @include        *://www.quanben.io/*/*/*.html
+// @include        *://www.b5200.org/*/*.html
 
 // 移动版
 // @include        *://wap.yc.ireader.com.cn/book/*/*/
@@ -737,6 +738,7 @@ const sites = [
     },
 
     contentSelector: '.read-content.j_readContent',
+    contentHandle: false,
     contentRemove: '',
     contentReplace: [
         '手机用户请到m.qidian.com阅读。',
@@ -2662,6 +2664,13 @@ const sites = [
         '保护版权 尊重作者 @ 露西弗俱乐部 www.lucifer-club.com',
     ],
   },
+  {siteName: '新笔趣阁5200',
+    exampleUrl: 'http://www.b5200.org/78_78809/151096665.html',
+    url: '^http://www\\.b5200\\.org/.*?/\\d+\\.html',
+    contentReplace: [
+      '网首发',
+    ]
+  },
 
   // 这网站为了防抓取，内容顺序都是不对的，只好采用 iframe 方式
   {siteName: '和图书',
@@ -3133,6 +3142,7 @@ const replaceAll = [
   '追小说哪里快去眼快',
   '\\[书库\\].\\[774\\]\\[buy\\].kuai',
   'www.938xs.com',
+  '小說，.biquge5200.',
 
   /'ads_wz_txt;',|百度搜索|无弹窗小说网|更新快无弹窗纯文字|高品质更新|小说章节更新最快|\(百度搜.\)|全文字手打|“”&nbsp;看|无.弹.窗.小.说.网|追书网|〖∷∷无弹窗∷纯文字∷ 〗/g,
 ];
@@ -3177,7 +3187,7 @@ var replaceFix = {
   // ===其他修正===
   "弥俩":"你俩",
   "妳":"你",
-  "圞|垩|卝|龘":"",
+  // "圞|垩|卝|龘":"",
   "大6":"大陆",
 };
 
@@ -3199,10 +3209,6 @@ function extendRule(replaceRule) {
 
 // test()
 
-// Unicode/2000-2FFF：http://zh.wikibooks.org/wiki/Unicode/2000-2FFF
-// Unicode/F000-FFFF：https://zh.wikibooks.org/wiki/Unicode/F000-FFFF
-
-// replace 中的简写
 var CHAR_ALIAS = {
   '\\P': '[\\u2000-\\u2FFF\\u3004-\\u303F\\uFE00-\\uFF60\\uFFC0-\\uFFFF]',  // 小说中添加的特殊符号
 };
