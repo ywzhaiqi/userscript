@@ -1757,7 +1757,7 @@ const sites = [
   {siteName: "欢乐书客",
        url: "^https?://www\\.hbooker\\.com/chapter/book_chapter_detail/\\d+",
        bookTitleSelector: ".breakcrumb > a:last",
-       titleSelector: ".book-read-box .read-hd h3",
+       titleSelector: "#J_BookCnt h3",
        useiframe: true,
        timeout: 500,
        contentSelector: ".book-read-box .read-bd",
@@ -1770,6 +1770,9 @@ const sites = [
        prevUrl: function ($doc){
           return $doc.find('#J_BtnPagePrev').attr('data-href');
        },
+       contentPatch: function($doc) {
+          $doc.find('#J_BookCnt h3 i').remove()
+       }
   },
   {siteName: '棉花糖小说网',
        url: '^https?://www\\.mht\\.la/\\d+/\\d+/\\d+\\.html',
@@ -1974,9 +1977,10 @@ const sites = [
   },
   {siteName: '新笔趣阁5200',
     exampleUrl: 'http://www.b5200.org/78_78809/151096665.html',
-    url: '^http://www\\.b5200\\.org/.*?/\\d+\\.html',
+    url: '^http://www\\.b5200\\.(?:org|net)/.*?/\\d+\\.html',
     contentReplace: [
       '网首发',
+      '≈bp;≈bp;≈bp;≈bp;',
     ]
   },
 

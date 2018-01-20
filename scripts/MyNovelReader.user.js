@@ -22,7 +22,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.2.4
+// @version        6.2.5
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -387,6 +387,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @include        *://www.011bz.com/*/*.html
 // @include        *://www.quanben.io/*/*/*.html
 // @include        *://www.b5200.org/*/*.html
+// @include        *://www.b5200.net/*/*.html
 
 // 移动版
 // @include        *://wap.yc.ireader.com.cn/book/*/*/
@@ -2449,7 +2450,7 @@ const sites = [
   {siteName: "欢乐书客",
        url: "^https?://www\\.hbooker\\.com/chapter/book_chapter_detail/\\d+",
        bookTitleSelector: ".breakcrumb > a:last",
-       titleSelector: ".book-read-box .read-hd h3",
+       titleSelector: "#J_BookCnt h3",
        useiframe: true,
        timeout: 500,
        contentSelector: ".book-read-box .read-bd",
@@ -2462,6 +2463,9 @@ const sites = [
        prevUrl: function ($doc){
           return $doc.find('#J_BtnPagePrev').attr('data-href');
        },
+       contentPatch: function($doc) {
+          $doc.find('#J_BookCnt h3 i').remove();
+       }
   },
   {siteName: '棉花糖小说网',
        url: '^https?://www\\.mht\\.la/\\d+/\\d+/\\d+\\.html',
@@ -2666,9 +2670,10 @@ const sites = [
   },
   {siteName: '新笔趣阁5200',
     exampleUrl: 'http://www.b5200.org/78_78809/151096665.html',
-    url: '^http://www\\.b5200\\.org/.*?/\\d+\\.html',
+    url: '^http://www\\.b5200\\.(?:org|net)/.*?/\\d+\\.html',
     contentReplace: [
       '网首发',
+      '≈bp;≈bp;≈bp;≈bp;',
     ]
   },
 
