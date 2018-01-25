@@ -22,7 +22,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.2.5
+// @version        6.2.6
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -388,6 +388,9 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @include        *://www.quanben.io/*/*/*.html
 // @include        *://www.b5200.org/*/*.html
 // @include        *://www.b5200.net/*/*.html
+// @include        *://www.cangqionglongqi.com/*/*.html
+// @include        *://www.daocaorenshuwu.com/book/*/*.html
+// @include        https://xhhread.com/read/read*.jhtml?chapterid=*
 
 // 移动版
 // @include        *://wap.yc.ireader.com.cn/book/*/*/
@@ -1517,6 +1520,7 @@ const sites = [
           '\\.n√et',
           '中文网',
           '更新最快',
+          '&amp;aaaa',
       ]
   },
   {siteName: '笔下阁',
@@ -2676,6 +2680,49 @@ const sites = [
       '≈bp;≈bp;≈bp;≈bp;',
     ]
   },
+  {siteName: '稻草人书屋',
+    exampleUrl: 'http://www.daocaorenshuwu.com/book/xianhu/418206.html',
+    url: '^http://www\\.daocaorenshuwu\\.com/book/.*/\\d+.html',
+    bookTitleSelector: '.container .t10 span a:last()',
+    contentSelector: '#cont-body',
+    contentReplace: [
+        '内容来自[dＤ]ao[cＣ]ao[Ｒr]enshuwu.com',
+        'www.daocaorenshuwu.com',
+        '稻草人书屋',
+    ],
+    contentPatch: function($doc) {
+        // 干扰符 class 是随机的
+        var styleText = $doc.find('#cont-body style').text();
+        var m = styleText.match(/(.*?)\{\s*display:\s*none;?\s*\}/);
+        if (m) {
+            var selector = m[1];
+            $doc.find(selector).remove();
+        }
+    }
+  },
+  {siteName: '小红花阅读网',
+    exampleUrl: 'https://xhhread.com/read/reading.jhtml?chapterid=8aada6395a597779015a93a372c90a55',
+    url: '^https?://xhhread\\.com/read/read\\w+\\.jhtml\\?chapterid=.*',
+    bookTitleSelector: '.H_book',
+    titleSelector: '.reading-title',
+    contentPatch: function($doc) {
+        // 修正上下页链接
+        var rules = {
+            '.H_readpreforwap': 'https://xhhread.com/read/readpreforwap.jhtml?chapterid=',
+            '.H_content': 'https://xhhread.com/read/contents.jhtml?storyid=',
+            '.H_readnextforwap': 'https://xhhread.com/read/readnextforwap.jhtml?chapterid=',
+        };
+
+        Object.keys(rules).forEach(function(selector) {
+            var $link = $doc.find(selector);
+            var chapterId = $link.attr('p');
+            if (chapterId) {
+                var url = rules[selector];
+                $link.attr('href', url + chapterId);
+            }
+        });
+    }
+  },
 
   // 这网站为了防抓取，内容顺序都是不对的，只好采用 iframe 方式
   {siteName: '和图书',
@@ -3220,7 +3267,7 @@ var CHAR_ALIAS = {
 
 // ===== 自动尝试的规则 =====
 var Rule = {
-  titleRegExp: /第?\s*[一二两三四五六七八九十○零百千万亿0-9１２３４５６７８９０]{1,6}\s*[章回卷节折篇幕集话話]/i,
+  titleRegExp: /第?\s*[一二两三四五六七八九十○零百千万亿0-9１２３４５６７８９０〇]{1,6}\s*[章回卷节折篇幕集话話]/i,
   titleReplace: /^章节目录|^文章正文|^正文|全文免费阅读|最新章节|\(文\)/,
 
   // nextRegExp: /[上前下后][一]?[页张个篇章节步]/,
