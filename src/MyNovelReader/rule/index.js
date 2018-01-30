@@ -42,7 +42,7 @@ var Rule = {
   contentSelectors: ["#pagecontent", "#contentbox", "#bmsy_content", "#bookpartinfo", "#htmlContent",
       "#text_area", "#chapter_content", "#chapterContent", "#partbody", "#BookContent", "#read-content",
       "#article_content", "#BookTextRead", "#booktext", "#book_text", "#BookText", "#readtext", "#readcon",
-      "#TextContent", "#text_c", "#txt_td", "#TXT", "#txt", "#zjneirong",
+      "#TextContent", "#txtContent" , "#text_c", "#txt_td", "#TXT", "#txt", "#zjneirong",
       ".novel_content", ".readmain_inner", ".noveltext", ".booktext", ".yd_text2",
       "#contentTxt", "#oldtext", "#a_content", "#contents", "#content2", "#contentts", "#content1", "#content", ".content"
   ],

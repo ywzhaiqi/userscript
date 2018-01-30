@@ -1978,7 +1978,7 @@ const sites = [
   },
   {siteName: '新笔趣阁5200',
     exampleUrl: 'http://www.b5200.org/78_78809/151096665.html',
-    url: '^http://www\\.b5200\\.(?:org|net)/.*?/\\d+\\.html',
+    url: '^https?://www\\.b5200\\.(?:org|net)/.*?/\\d+\\.html',
     contentReplace: [
       '网首发',
       '≈bp;≈bp;≈bp;≈bp;',
@@ -2026,6 +2026,12 @@ const sites = [
             }
         });
     }
+  },
+  {siteName: '梧州中文台',
+    exampleUrl: 'http://www.gxwztv.com/2/2121/1610090.html',
+    url: '^https?://www\\.gxwztv\\.com/\\d+/\\d+/\\d+\\.html',
+    bookTitleSelector: '.breadcrumb .active a',
+    contentSelector: '#txtContent',
   },
 
   // 这网站为了防抓取，内容顺序都是不对的，只好采用 iframe 方式
