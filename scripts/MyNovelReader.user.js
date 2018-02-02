@@ -22,7 +22,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.2.7
+// @version        6.2.8
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -2471,7 +2471,12 @@ const sites = [
        },
        contentPatch: function($doc) {
           $doc.find('#J_BookCnt h3 i').remove();
-       }
+       },
+       isVipChapter: function($doc) {
+          if ($doc.find('#realBookImage').length) {
+              return true;
+          }
+      }
   },
   {siteName: '棉花糖小说网',
        url: '^https?://www\\.mht\\.la/\\d+/\\d+/\\d+\\.html',

@@ -1773,7 +1773,12 @@ const sites = [
        },
        contentPatch: function($doc) {
           $doc.find('#J_BookCnt h3 i').remove()
-       }
+       },
+       isVipChapter: function($doc) {
+          if ($doc.find('#realBookImage').length) {
+              return true;
+          }
+      }
   },
   {siteName: '棉花糖小说网',
        url: '^https?://www\\.mht\\.la/\\d+/\\d+/\\d+\\.html',
