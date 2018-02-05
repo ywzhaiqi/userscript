@@ -95,6 +95,23 @@ const sites = [
           fakeStub.find('script[src$=".txt"]').addClass('reader-ajax');
       },
   },
+  {
+    siteName: '英文小说网',
+    url: '^https?://novel\\.tingroom\\.com/.*/\\d+/\\d+\\.html',
+
+    bookTitleSelector: '.gundong1  a:nth-child(3)',
+    titleSelector: '#tt_text p:nth-child(2)',
+
+    indexSelector: ".book_showtitle",
+    prevSelector: "#zhang_top",
+    nextSelector: "#zhang_down",
+
+    contentSelector: "#tt_text",
+    contentRemove: "#tt_text tbody tr",
+    contentReplace: [
+        '欢迎访问英文小说网http://novel.tingroom.com'
+    ],
+  },
   {siteName: "起点中文、起点女生、起点文学",
       url: "^https?://(www|read|readbook|wwwploy|cga|big5ploy)\\.(qidian|qdmm|qdwenxue)\\.com/BookReader/.*",
       // titleReg: "小说:(.*?)(?:独家首发)/(.*?)/.*",

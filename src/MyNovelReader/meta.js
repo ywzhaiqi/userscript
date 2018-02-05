@@ -374,6 +374,8 @@
 // @include        https://xhhread.com/read/read*.jhtml?chapterid=*
 // @include        *://www.shubao4.com/read/*/*.html
 // @include        *://www.gxwztv.com/*/*/*.html
+// @include        *://novel.tingroom.com/*/*/*.html
+
 
 // 移动版
 // @include        *://wap.yc.ireader.com.cn/book/*/*/
