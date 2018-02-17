@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.2.8
+// @version        6.2.9
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -206,9 +206,14 @@
 // @include        *://www.biquge.la/book/*/*.html
 // @include        *://www.biquge.com.tw/*/*.html
 // @include        *://www.biquge.tw/*_*/*.html
+// @include        *://www.biquge.tv/*/*.html
+// @include        *://www.biquge5200.com/*/*.html
 // @include        *://www.biqugezw.com/*/*.html
 // @include        *://www.bequgezw.com/*/*/*.html
 // @include        *://www.biquzi.com/*_*/*.html
+// @include        *://www.biquge.cc/html/*/*/*.html
+// @include        *://www.biqubao.com/book/*/*.html
+// @include        *://www.biquwu.cc/biquge/*/*.html
 // @include        *://www.qududu.com/book/*/*/*.html
 // @include        *://www.free97.cn/book/*/*/*.html
 // @include        *://www.122s.com/book/*/*.html
@@ -359,7 +364,6 @@
 // @include        *://www.lewenxiaoshuo.com/books/*/*.html
 // @include        *://www.heihei66.com/*/*/*.html
 // @include        *://www.111bz.net/*/*.html
-// @include        *://www.biquge5200.com/*/*.html
 // @include        *://www.biqukan.com/*_*/*.html
 // @include        *://www.4xiaoshuo.com/*/*/*.html
 // @include        *://www.woquge.com/*/*.html
@@ -375,7 +379,10 @@
 // @include        *://www.shubao4.com/read/*/*.html
 // @include        *://www.gxwztv.com/*/*/*.html
 // @include        *://novel.tingroom.com/*/*/*.html
-
+// @include        *://www.xxbiquge.com/*/*.html
+// @include        *://www.liewen.cc/b/*/*/*.html
+// @include        *://www.pbtxt.com/*/*.html
+// @include        *://www.dingdiann.com/*/*.html
 
 // 移动版
 // @include        *://wap.yc.ireader.com.cn/book/*/*/

@@ -22,7 +22,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.2.8
+// @version        6.2.9
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -225,9 +225,14 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @include        *://www.biquge.la/book/*/*.html
 // @include        *://www.biquge.com.tw/*/*.html
 // @include        *://www.biquge.tw/*_*/*.html
+// @include        *://www.biquge.tv/*/*.html
+// @include        *://www.biquge5200.com/*/*.html
 // @include        *://www.biqugezw.com/*/*.html
 // @include        *://www.bequgezw.com/*/*/*.html
 // @include        *://www.biquzi.com/*_*/*.html
+// @include        *://www.biquge.cc/html/*/*/*.html
+// @include        *://www.biqubao.com/book/*/*.html
+// @include        *://www.biquwu.cc/biquge/*/*.html
 // @include        *://www.qududu.com/book/*/*/*.html
 // @include        *://www.free97.cn/book/*/*/*.html
 // @include        *://www.122s.com/book/*/*.html
@@ -378,7 +383,6 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @include        *://www.lewenxiaoshuo.com/books/*/*.html
 // @include        *://www.heihei66.com/*/*/*.html
 // @include        *://www.111bz.net/*/*.html
-// @include        *://www.biquge5200.com/*/*.html
 // @include        *://www.biqukan.com/*_*/*.html
 // @include        *://www.4xiaoshuo.com/*/*/*.html
 // @include        *://www.woquge.com/*/*.html
@@ -393,6 +397,11 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @include        https://xhhread.com/read/read*.jhtml?chapterid=*
 // @include        *://www.shubao4.com/read/*/*.html
 // @include        *://www.gxwztv.com/*/*/*.html
+// @include        *://novel.tingroom.com/*/*/*.html
+// @include        *://www.xxbiquge.com/*/*.html
+// @include        *://www.liewen.cc/b/*/*/*.html
+// @include        *://www.pbtxt.com/*/*.html
+// @include        *://www.dingdiann.com/*/*.html
 
 // 移动版
 // @include        *://wap.yc.ireader.com.cn/book/*/*/
@@ -1523,6 +1532,7 @@ const sites = [
           '中文网',
           '更新最快',
           '&amp;aaaa',
+          '更多精彩小说请访问',
       ]
   },
   {siteName: '笔下阁',
@@ -2735,6 +2745,22 @@ const sites = [
     url: '^https?://www\\.gxwztv\\.com/\\d+/\\d+/\\d+\\.html',
     bookTitleSelector: '.breadcrumb .active a',
     contentSelector: '#txtContent',
+  },
+  {siteName: '英文小说网',
+    url: '^https?://novel\\.tingroom\\.com/.*/\\d+/\\d+\\.html',
+
+    bookTitleSelector: '.gundong1  a:nth-child(3)',
+    titleSelector: '#tt_text p:nth-child(2)',
+
+    indexSelector: ".book_showtitle",
+    prevSelector: "#zhang_top",
+    nextSelector: "#zhang_down",
+
+    contentSelector: "#tt_text",
+    contentRemove: "#tt_text tbody tr",
+    contentReplace: [
+        '欢迎访问英文小说网http://novel.tingroom.com'
+    ],
   },
 
   // 这网站为了防抓取，内容顺序都是不对的，只好采用 iframe 方式
@@ -6326,6 +6352,7 @@ UI.skins["经典皮肤".uiTrans()] = "body { color: black; background-color: #EA
 
 UI.skins["起点牛皮纸（深色）".uiTrans()] = "body { color: black; background: url(\"http://qidian.gtimg.com/qd/images/read.qidian.com/theme/body_theme1_bg_2x.0.3.png\"); }";
 UI.skins["起点牛皮纸（浅色）".uiTrans()] = "body { color: black; background: url(\"http://qidian.gtimg.com/qd/images/read.qidian.com/theme/theme_1_bg_2x.0.3.png\"); }";
+UI.skins["起点黑色".uiTrans()] = "body, #menu, #header { color: #666; background: #111 url(\"https://qidian.gtimg.com/qd/images/read.qidian.com/theme/theme_6_bg.45ad3.png\") repeat; }";
 
 var getBooleanConfig = function(configName, defaultValue) {
     var config$$1 = GM_getValue(configName);
