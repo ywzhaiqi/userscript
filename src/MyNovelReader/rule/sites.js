@@ -248,15 +248,13 @@ const sites = [
       contentSelector: 'div.grid-c > div > .b.module > div:first',
   },
   {siteName: "潇湘书院",
-      url: "^https?://www\\.xxsy\\.net/books/.*\\.html",
-      titleReg: "(.*?) (.*)",
-      contentSelector: "#zjcontentdiv",
-      nextSelector: "a[title='阅读下一章节']",
+      url: "^https?://www\\.xxsy\\.net/chapter/.*\\.html",
+      titleReg: "(.*?)_(.*)_全文阅读",
+      nextSelector: ".chapter-next",
+      indexSelector: '.bread > a:last()',
+      contentSelector: "#auto-chapter",
       contentHandle: false,
       contentReplace: "本书由潇湘书院首发，请勿转载！",
-      contentPatch: function(fakeStub){
-          fakeStub.find("title").text(fakeStub.find('meta[name="keywords"]').attr("content"));
-      }
   },
   {siteName: "逐浪",
       url: /^https?:\/\/book\.zhulang\.com\/.*\.html/,

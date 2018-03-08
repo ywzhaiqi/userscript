@@ -22,7 +22,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.2.9
+// @version        6.3.0
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -67,7 +67,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @include        *://www.jjwxc.net/onebook.php?novelid=*
 // @include        *://my.jjwxc.net/onebook_vip.php?novelid=*&chapterid=*
 // @include        *://book.zongheng.com/chapter/*/*.html
-// @include        *://www.xxsy.net/books/*/*.html
+// @include        *://www.xxsy.net/chapter/*.html
 // @include        *://book.zhulang.com/*/*.html
 // @include        *://www.17k.com/chapter/*/*.html
 // @include        *://mm.17k.com/chapter/*/*.html
@@ -955,15 +955,13 @@ const sites = [
       contentSelector: 'div.grid-c > div > .b.module > div:first',
   },
   {siteName: "潇湘书院",
-      url: "^https?://www\\.xxsy\\.net/books/.*\\.html",
-      titleReg: "(.*?) (.*)",
-      contentSelector: "#zjcontentdiv",
-      nextSelector: "a[title='阅读下一章节']",
+      url: "^https?://www\\.xxsy\\.net/chapter/.*\\.html",
+      titleReg: "(.*?)_(.*)_全文阅读",
+      nextSelector: ".chapter-next",
+      indexSelector: '.bread > a:last()',
+      contentSelector: "#auto-chapter",
       contentHandle: false,
       contentReplace: "本书由潇湘书院首发，请勿转载！",
-      contentPatch: function(fakeStub){
-          fakeStub.find("title").text(fakeStub.find('meta[name="keywords"]').attr("content"));
-      }
   },
   {siteName: "逐浪",
       url: /^https?:\/\/book\.zhulang\.com\/.*\.html/,
@@ -6334,7 +6332,7 @@ var UI = {
 };
 
 UI.skins["缺省皮肤".uiTrans()] = "";
-UI.skins["暗色皮肤".uiTrans()] = "body { color: #666; background-color: rgba(0;0;0;.1); }\
+UI.skins["暗色皮肤".uiTrans()] = "body { color: #666; background-color: rgba(0,0,0,.1); }\
                 .title { color: #222; }";
 UI.skins["白底黑字".uiTrans()] = "body { color: black; background-color: white;}\
                 .title { font-weight: bold; border-bottom: 0.1em solid; margin-bottom: 1.857em; padding-bottom: 0.857em;}";
@@ -6352,7 +6350,8 @@ UI.skins["经典皮肤".uiTrans()] = "body { color: black; background-color: #EA
 
 UI.skins["起点牛皮纸（深色）".uiTrans()] = "body { color: black; background: url(\"http://qidian.gtimg.com/qd/images/read.qidian.com/theme/body_theme1_bg_2x.0.3.png\"); }";
 UI.skins["起点牛皮纸（浅色）".uiTrans()] = "body { color: black; background: url(\"http://qidian.gtimg.com/qd/images/read.qidian.com/theme/theme_1_bg_2x.0.3.png\"); }";
-UI.skins["起点黑色".uiTrans()] = "body, #menu, #header { color: #666; background: #111 url(\"https://qidian.gtimg.com/qd/images/read.qidian.com/theme/theme_6_bg.45ad3.png\") repeat; }";
+UI.skins["起点黑色".uiTrans()] = "body, #menu, #header { color: #666; background: #111 url(\"https://qidian.gtimg.com/qd/images/read.qidian.com/theme/theme_6_bg.45ad3.png\") repeat; } #preferencesBtn { background: white; }";
+UI.skins["绿色亮字".uiTrans()] = "body, #menu, #header, .chapter.active div { color: rgb(187,215,188); background-color: rgb(18,44,20); }";
 
 var getBooleanConfig = function(configName, defaultValue) {
     var config$$1 = GM_getValue(configName);

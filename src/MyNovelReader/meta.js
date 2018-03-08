@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.2.9
+// @version        6.3.0
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -48,7 +48,7 @@
 // @include        *://www.jjwxc.net/onebook.php?novelid=*
 // @include        *://my.jjwxc.net/onebook_vip.php?novelid=*&chapterid=*
 // @include        *://book.zongheng.com/chapter/*/*.html
-// @include        *://www.xxsy.net/books/*/*.html
+// @include        *://www.xxsy.net/chapter/*.html
 // @include        *://book.zhulang.com/*/*.html
 // @include        *://www.17k.com/chapter/*/*.html
 // @include        *://mm.17k.com/chapter/*/*.html
