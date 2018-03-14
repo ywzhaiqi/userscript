@@ -22,7 +22,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.3.0
+// @version        6.3.1
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -179,7 +179,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @include        *://www.shuangde.cc/*/*.html
 // @include        *://www.shenmaxiaoshuo.com/ml-*-*/
 // @include        *://www.86kankan.com/read/*/*.html
-// @include        *://www.fkzww.com/*/*/*.html
+// @include        *://www.fkzww.com/*/*/*.shtml
 // @include        *://www.151kan.com/*/*/*/*.html
 // @include        *://www.bookabc.net/*/*/*.html
 // @include        *://www.xshuotxt.com/*/*/*/*.html
@@ -747,10 +747,11 @@ const sites = [
 
     prevSelector: '#j_chapterPrev',
     nextSelector: '#j_chapterNext',
-    indexSelector: function(obj) {
-        var url = obj.find(".chapter-control a:contains('目录')").attr('href');
-        return url;
-    },
+    indexSelector: '.chapter-control a:contains("目录"), #my_index',
+    // indexSelector: function(obj) {
+    //     var url = obj.find(".chapter-control a:contains('目录')").attr('href');
+    //     return url;
+    // },
 
     contentSelector: '.read-content.j_readContent',
     contentHandle: false,
@@ -775,6 +776,11 @@ const sites = [
             // 加下一页链接
             $('<div id="j_chapterNext">')
                 .attr('href', $node.attr('data-nurl'))
+                .appendTo($doc.find('body'));
+            // 目录
+            var indexUrl = $('#bookImg').attr('href') + '#Catalog';
+            $('<div id="my_index">目录</div>')
+                .attr('href', indexUrl)
                 .appendTo($doc.find('body'));
         }
     }
@@ -2033,13 +2039,6 @@ const sites = [
           fakeStub.find('#title a').remove();
       }
   },
-  {siteName: "疯狂中文网",
-      url: "^https?://www\\.fkzww\\.com/",
-      contentRemove: ".bottem, a[href='http://www.fkzww.com']",
-      contentReplace: [
-          /收藏【.*?疯狂中文网\)/ig,
-      ]
-  },
   {siteName: "吾读小说网",
       url: "^https?://www\\.5du5\\.com/book/.*\\.html",
       contentReplace: '\\(吾读小说网 <a.*无弹窗全文阅读\\)'
@@ -2760,6 +2759,18 @@ const sites = [
         '欢迎访问英文小说网http://novel.tingroom.com'
     ],
   },
+  {siteName: '无敌龙书屋',
+    url: '^http://www\\.fkzww\\.com/Html/Book/\\d+/\\d+/\\d+\\.shtml',
+    bookTitleSelector: '#SelectInfo > a:eq(1)',
+    contentSelector: "#BookTextt",
+    useiframe: true,
+    contentReplace: [
+        '无敌龙中文网欢迎您来，欢迎您再来，记住我们http://www.wudiun.com，<a target="_blank" href="http://www.wudiun.com/User/Regters.aspx">注册会员</a>',
+    ],
+    // contentPatch: function($doc) {
+
+    // }
+  },
 
   // 这网站为了防抓取，内容顺序都是不对的，只好采用 iframe 方式
   {siteName: '和图书',
@@ -3332,7 +3343,7 @@ var Rule = {
 
   contentSelectors: ["#pagecontent", "#contentbox", "#bmsy_content", "#bookpartinfo", "#htmlContent",
       "#text_area", "#chapter_content", "#chapterContent", "#partbody", "#BookContent", "#read-content",
-      "#article_content", "#BookTextRead", "#booktext", "#book_text", "#BookText", "#readtext", "#readcon",
+      "#article_content", "#BookTextRead", "#booktext", "#book_text", "#BookText", "#BookTextt", "#readtext", "#readcon",
       "#TextContent", "#txtContent" , "#text_c", "#txt_td", "#TXT", "#txt", "#zjneirong",
       ".novel_content", ".readmain_inner", ".noveltext", ".booktext", ".yd_text2",
       "#contentTxt", "#oldtext", "#a_content", "#contents", "#content2", "#contentts", "#content1", "#content", ".content"
