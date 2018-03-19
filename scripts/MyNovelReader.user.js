@@ -22,7 +22,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.3.1
+// @version        6.3.2
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -356,6 +356,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @include        *://www.remenxs.com/du_*/*/
 // @include        *://www.shuhai.com/read/*/*.html
 // @include        *://www.hbooker.com/chapter/book_chapter_detail/*
+// @include        *://www.hbooker.com/chapter/*
 // @include        *://www.mht.la/*/*/*.html
 // @include        *://www.paomov.com/*/*/*.html
 // @include        *://www.moyuanwenxue.com/xiaoshuo/*/*/*.htm
@@ -402,6 +403,8 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @include        *://www.liewen.cc/b/*/*/*.html
 // @include        *://www.pbtxt.com/*/*.html
 // @include        *://www.dingdiann.com/*/*.html
+// @include        *://www.23us.la/html/*/*/*.html
+// @include        *://www.shuyaya.cc/read/*/*.html
 
 // 移动版
 // @include        *://wap.yc.ireader.com.cn/book/*/*/
@@ -2063,6 +2066,7 @@ const sites = [
               UU看书 www.ｕukaｎshu.net
           */
           /[ＵｕUu]+看书\s*www.[ＵｕUu]+[kｋ][aａ][nｎ][ｓs][hｈ][ＵｕUu].[nｎ][eｅ][tｔ]/g,
+          /[ＵｕUu]+看书\s*www.[ＵｕUu]+[kｋ][aａ][nｎ][ｓs][hｈ][ＵｕUu].[cｃ][oｏ][mｍ]/g,
           '[UＵ]*看书[（\\(].*?[）\\)]文字首发。',
           '请记住本书首发域名：。笔趣阁手机版阅读网址：',
           '\\(\\)',
@@ -2461,7 +2465,8 @@ const sites = [
      contentSelector: '.read .txt',
   },
   {siteName: "欢乐书客",
-       url: "^https?://www\\.hbooker\\.com/chapter/book_chapter_detail/\\d+",
+//       url: "^https?://www\\.hbooker\\.com/chapter/book_chapter_detail/\\d+",
+       url: "^https?://www\\.hbooker\\.com/chapter/\\d+",
        bookTitleSelector: ".breakcrumb > a:last",
        titleSelector: "#J_BookCnt h3",
        useiframe: true,
@@ -2836,6 +2841,7 @@ const replace = {
   // "？(,|，)": "？",
   //"”(,|，|。)": "”",
   "@{3,}": "",
+  "reads;": "",
 
   // === 段末的多余的r ===
   "\\\\r<br>": "<br>",
