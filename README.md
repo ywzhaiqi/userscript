@@ -5,22 +5,27 @@ GM 脚本
 - [个人主页 - greasyfork.org][ywzhaiqi_greasyfork]
 - [个人主页 - userscripts.org][ywzhaiqi_userscripts]
 
-注：有些脚本属于个人使用版本。
+**注意：**
+- 部分脚本可能并不通用。
+- 新脚本采用 webpack + js 或 typescript 开发，可能引入了 react 全家桶。
 
 脚本一览（原创或修改版）
 ---------------
 
 ### 文件夹
 
-- [小说阅读脚本](MyNovelReader)
-- [BaiduPanDownloadHelper](BaiduPanDownloadHelper)：批量导出百度盘的下载链接。
-- [BaiduSearchNoJump](BaiduSearchNoJump)：百度搜索反跳转（修改版）。
-- [Mouseover Popup Image Viewer](Mouseover Popup Image Viewer)：在图片上鼠标悬停放大，这里是一些自写的规则。
-- [NextPage](NextPage)：Next Page By Sunwan 修改增强版。
-- *[Readability 中文增强版](Readability 中文增强版)：已弃用。*
-- [Super_preloaderPlus](Super_preloaderPlus)：Super_preloader 修正增强版。
-- [verycdShowLink](verycdShowLink)：verycd页面无需登入也能显示 ed2k 链接。
-- [威锋电子书批量下载](威锋电子书批量下载)：批量导出 [iPad 电子书资源分享区 - 威锋论坛][] 附件的下载地址。
+- [MyNovelReader](scripts/MyNovelReader.user.js)：小说阅读脚本
+  - 从 6.0.0（2017-8-23）开始，改成 `import` 构建（可能旧浏览器不支持，待解决）。Opera 12 及旧版本浏览器用户暂时先用以前的版本。
+  - 旧版本 [My Novel Reader 5.6.9](https://greasyfork.org/zh-CN/scripts/292-my-novel-reader?version=213022)
+  - 支持起点 vip 阅读，如果无效，可能需要在 `Tampermonkey` 中设置 `@connect 模式:` 为 `宽松` 模式。
+- ~~[BaiduPanDownloadHelper](scripts/BaiduPanDownloadHelper)：批量导出百度盘的下载链接。~~
+- ~~[BaiduSearchNoJump](scripts/BaiduSearchNoJump)：百度搜索反跳转（修改版）。~~
+- [Mouseover Popup Image Viewer](scripts/Mouseover Popup Image Viewer)：在图片上鼠标悬停放大，这里是一些自写的规则。
+- [NextPage](scripts/NextPage)：Next Page By Sunwan 修改增强版。
+- ~~[Readability 中文增强版](scripts/Readability 中文增强版)：已弃用。~~
+- [Super_preloaderPlus](scripts/Super_preloaderPlus)：Super_preloader 修正增强版。
+- ~~[verycdShowLink](scripts/verycdShowLink)：verycd页面无需登入也能显示 ed2k 链接。~~
+- [威锋电子书批量下载](scripts/威锋电子书批量下载)：批量导出 [iPad 电子书资源分享区 - 威锋论坛][] 附件的下载地址。
 - [.修改版](.修改版)
 	- [Blacklist_Blocker_Rule.user.js](.修改版/Blacklist_Blocker_Rule.user.js)，原作者写的只支持 Firefox。
 	- [Google Images direct link.user.js](.修改版/Google Images direct link.user.js)
@@ -34,15 +39,20 @@ GM 脚本
 
 ### 单文件
 
-- [booklinkme.user.js](booklinkme.user.js)：增强 [BookLink.Me:小说搜索引擎][]，一键打开所有未读链接
-- *[ceilme.user.js](ceilme.user.js)，已失效*：[ceil.me 杂志下载网站][] 直接下载，避免多次点击
-- [DoubanDownloadSearch.user.js](DoubanDownloadSearch.user.js)：增加豆瓣图书、电影的搜索链接。
-- [itpubnet.user.js](itpubnet.user.js)：ITPUB论坛（电子图书与IT文档资料）免登入下载
-- [noNoticetitleflashOnBBS.user.js](noNoticetitleflashOnBBS.user.js)：卡饭、若人、游侠等论坛去除标题闪烁提醒，其它论坛需自己添加。
-- [shooter.user.js](shooter.user.js)：在 shooter.cn 搜索页面按下载按钮直接下载。语言、发行着色。[shooter.cn 直接下载 - greasyfork.org][0]
-- [userscripts.user.js](userscripts.user.js)：在 userscripts、greasyfork、userscripts-mirror 脚本页面只显示中文脚本，支持 AutoPager 和其它翻页脚本。
-- *[smzdm.user.js](smzdm.user.js)，已失效*
-- [youku_调整显示列数.user.js](youku_调整显示列数.user.js)：把优酷从2列改成3列，适用于个人显示器。
+- [booklinkme.user.js](scripts/booklinkme.user.js)：增强 [BookLink.Me:小说搜索引擎][]，一键打开所有未读链接
+- ~~[ceilme.user.js](scripts/ceilme.user.js)，已失效：[ceil.me 杂志下载网站][] 直接下载，避免多次点击~~
+- [DoubanDownloadSearch.user.js](scripts/DoubanDownloadSearch.user.js)：增加豆瓣图书、电影的搜索链接。
+- [itpubnet.user.js](scripts/itpubnet.user.js)：ITPUB论坛（电子图书与IT文档资料）免登入下载
+- [noNoticetitleflashOnBBS.user.js](scripts/noNoticetitleflashOnBBS.user.js)：卡饭、若人、游侠等论坛去除标题闪烁提醒，其它论坛需自己添加。
+- [shooter.user.js](scripts/shooter.user.js)：在 shooter.cn 搜索页面按下载按钮直接下载。语言、发行着色。[shooter.cn 直接下载 - greasyfork.org][0]
+- [userscripts.user.js](scripts/userscripts.user.js)：在 userscripts、greasyfork、userscripts-mirror 脚本页面只显示中文脚本，支持 AutoPager 和其它翻页脚本。
+- ~~[smzdm.user.js](scripts/smzdm.user.js)，已失效~~
+- [youku_调整显示列数.user.js](scripts/youku_调整显示列数.user.js)：把优酷从2列改成3列，适用于个人显示器。
+
+## 开发
+
+详见 [dev.md](doc/dev.md)
+
 
 一些脚本的链接
 -------------
@@ -143,6 +153,7 @@ GM 脚本
     - [google cache comeback][88]
     - [userstyles.org css highlighter][89]
     - [uso-mirror][90]
+- [langren1353/GM_script: 我就是来分享脚本玩玩的](https://github.com/langren1353/GM_script)
 - [iMyon/gm_scripts][91]
 - [CL1024 - 草榴社区][92]，[greasyfork.org][93]
 - [cnbeta-comments][94]
@@ -157,27 +168,6 @@ GM 脚本
 ### 其它
 
 - 计算输入了多少字 http://gavinsharp.com/scripts/TextAreaCharCount.user.js
-
-Greasemonkey 和 Scriptish
--------------------------
-
-- Scriptish 缺点
-    - 修改 `@include` 后需要刷新2次才会成功，可能有些页面需要再次刷新才能生效。
-    - 输出到控制台的信息中文可能不正常。
-    - 安装脚本时没有进度条，如果 require 数量较多，需要等待安装窗口的出现。
-    - 不支持 GM_info、@grant。
-    - **严重bug**，存在于 0.1.11 版本，同一个作者的2个中文文件名脚本，会被安装在同一个目录，同一时间只能安装一个脚本。最新 nightly 版（0.1.13pre）已修复。
-
-### 设置及转换
-
-- Scriptish 取消勾选 `要求用户脚本使用 HTTPS 更新`，该选项可能会让脚本更新失败
-- [How To: Manually transfer user scripts from Greasemonkey to Scriptish · scriptish/scriptish Wiki]( https://github.com/scriptish/scriptish/wiki/How-To%3A--Manually-transfer-user-scripts-from-Greasemonkey-to-Scriptish)
-
-#### 复制用户脚本清单和批量安装 GM 脚本
-
-设置 about:config 中的 chrome.enabled 为 true 后，在代码片段速记器中选择环境 “浏览器” 运行。
-
-详见 [批量导出用户脚本和批量安装 GM 脚本代码 - 卡饭论坛][103]
 
 
 [ywzhaiqi_github]: https://github.com/ywzhaiqi/userscript
@@ -292,4 +282,3 @@ Greasemonkey 和 Scriptish
 [100]: http://userscripts.org/scripts/show/131503
 [101]: http://userscripts.org/scripts/show/49911
 [102]: https://github.com/legnaleurc/nopicads
-[103]: http://bbs.kafan.cn/thread-1747445-1-1.html

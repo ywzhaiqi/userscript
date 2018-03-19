@@ -1,0 +1,28 @@
+{
+  // Use IntelliSense to learn about possible Node.js debug attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch CurFile",
+      "program": "${file}"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "rollup debug",
+      "program": "${workspaceRoot}/node_modules/rollup/bin/rollup",
+      "args": [
+        "-c",
+        "../build/rollup.config.js",
+        "--myinput",
+        "MyNovelReader"
+      ],
+      "cwd": "${workspaceRoot}/src",
+      "stopOnEntry": true
+    }
+  ]
+}

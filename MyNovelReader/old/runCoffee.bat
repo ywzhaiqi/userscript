@@ -1,1 +1,0 @@
-coffee -w -c -o "D:\MyData\Firefox\test\gm_scripts\My_Novel_Reader" MyNovelReader3.user.coffee

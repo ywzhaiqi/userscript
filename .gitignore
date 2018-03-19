@@ -1,7 +1,13 @@
 node_modules
 bower_components
-tmp/
 *.sublime-workspace
 *.cache
 
-test
+.rts2_cache/
+tmp/
+temp/
+.test/
+*/searchEngineJumpCE/test/
+*/Super_preloaderPlus/test/testGoogleSearch.js
+src/common/test.ts
+rollup.build.css

@@ -1,0 +1,41 @@
+{
+  "name": "ywzhaiqi-userscript",
+  "version": "2.0.0",
+  "description": "ywzhaiqi 的 userScript 脚本",
+  "main": "",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "rollup -c rollup.config.js --myinput",
+    "buildw": "rollup -c rollup.config.js -w --myinput"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ywzhaiqi/userscript.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ywzhaiqi/userscript/issues"
+  },
+  "homepage": "https://github.com/ywzhaiqi/userscript#readme",
+  "dependencies": {
+    "rollup-plugin-less": "git+https://github.com/ywzhaiqi/rollup-plugin-less.git",
+    "rollup-plugin-typescript": "git+https://github.com/ywzhaiqi/rollup-plugin-typescript.git"
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.2.12",
+    "@types/minimist": "^1.2.0",
+    "@types/rollup": "^0.41.1",
+    "minimist": "^1.2.0",
+    "rollup": "^0.48.2",
+    "rollup-plugin-commonjs": "^8.1.0",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-string": "^2.0.2",
+    "rollup-plugin-userscript-css": "^1.2.0",
+    "rollup-plugin-vue2": "^0.8.0",
+    "typescript": "^2.4.2"
+  }
+}
