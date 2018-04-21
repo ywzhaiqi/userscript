@@ -54,7 +54,9 @@ function finish(parser) {
       allTxt = allTxt.replace(/\n/g, '\r\n');
   }
 
-  fileName.setEnd(parser.chapterTitle)
+  if (parser) {
+    fileName.setEnd(parser.chapterTitle)
+  }
 
   saveAs(allTxt, fileName.toString());
 };

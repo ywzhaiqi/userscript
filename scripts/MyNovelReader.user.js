@@ -22,7 +22,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.3.1
+// @version        6.3.2
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -355,7 +355,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @include        *://www.banfusheng.com/chapter/*/*.html
 // @include        *://www.remenxs.com/du_*/*/
 // @include        *://www.shuhai.com/read/*/*.html
-// @include        *://www.hbooker.com/chapter/book_chapter_detail/*
+// @include        *://www.hbooker.com/chapter/*
 // @include        *://www.mht.la/*/*/*.html
 // @include        *://www.paomov.com/*/*/*.html
 // @include        *://www.moyuanwenxue.com/xiaoshuo/*/*/*.htm
@@ -402,6 +402,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @include        *://www.liewen.cc/b/*/*/*.html
 // @include        *://www.pbtxt.com/*/*.html
 // @include        *://www.dingdiann.com/*/*.html
+// @include        *://www.uctxt.com/book/*/*/*.html
 
 // 移动版
 // @include        *://wap.yc.ireader.com.cn/book/*/*/
@@ -2461,7 +2462,7 @@ const sites = [
      contentSelector: '.read .txt',
   },
   {siteName: "欢乐书客",
-       url: "^https?://www\\.hbooker\\.com/chapter/book_chapter_detail/\\d+",
+       url: "^https?://www\\.hbooker\\.com/chapter/\\d+",
        bookTitleSelector: ".breakcrumb > a:last",
        titleSelector: "#J_BookCnt h3",
        useiframe: true,
@@ -4587,7 +4588,9 @@ function finish(parser) {
       allTxt = allTxt.replace(/\n/g, '\r\n');
   }
 
-  fileName.setEnd(parser.chapterTitle);
+  if (parser) {
+    fileName.setEnd(parser.chapterTitle);
+  }
 
   saveAs(allTxt, fileName.toString());
 }

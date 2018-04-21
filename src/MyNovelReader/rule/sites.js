@@ -1754,7 +1754,7 @@ const sites = [
      contentSelector: '.read .txt',
   },
   {siteName: "欢乐书客",
-       url: "^https?://www\\.hbooker\\.com/chapter/book_chapter_detail/\\d+",
+       url: "^https?://www\\.hbooker\\.com/chapter/\\d+",
        bookTitleSelector: ".breakcrumb > a:last",
        titleSelector: "#J_BookCnt h3",
        useiframe: true,
