@@ -22,7 +22,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.3.2
+// @version        6.3.3
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -403,6 +403,10 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @include        *://www.pbtxt.com/*/*.html
 // @include        *://www.dingdiann.com/*/*.html
 // @include        *://www.uctxt.com/book/*/*/*.html
+// @include        *://www.mytxt.cc/read/*/*.html
+// @include        *://yd.baidu.com/view/*?cn=*
+// @include        *://www.88dus.com/xiaoshuo/*/*/*.html
+// @include        *://m.yushuwu.com/novel/*/*.html
 
 // 移动版
 // @include        *://wap.yc.ireader.com.cn/book/*/*/
@@ -2114,6 +2118,7 @@ const sites = [
           '无弹窗小说，.*',
           '本书最快更新网站请：.*',
           'V<!--\\?',
+          '【云来阁】小说网站，让你体验更新最新最快的章节小说，所有小说秒更新。',
       ]
   },
   {siteName: "乐文小说网",
@@ -2327,6 +2332,28 @@ const sites = [
         var bookTitle = fakeStub.find('meta[name="keywords"]').attr('content');
         fakeStub.find('body').append('<div id="m-book-title">' + bookTitle + '</div>');
       }
+  },
+  {siteName: "我文阁小说网",
+      url: "^https?://www\\.mytxt\\.cc/read/\\d+/\\d+\\.html",
+      titleReg: '(.*?)_(.*?)_',
+      contentSelector: 'div[class^="detail_con_"]',
+      contentRemove: 'p[style="font-size:11.3px;"]',
+  },
+  {siteName: "百度阅读",
+      url: "^https://yd\\.baidu\\.com/view/.*?\\?cn=.*",
+      titleSelector: '.catHead > p',
+      bookTitleSelector: '.catHead > h1',
+      contentSelector: ".r_c",
+      contentPatch: function($doc) {
+        // 移除书名中不需要的
+        var $bookTitle = $doc.find('.catHead > h1');
+        $bookTitle.find('a').remove();
+        $bookTitle.text($bookTitle.text().replace('> ', ''));
+      }
+  },
+  {siteName: '御宅屋',
+    url: '^https?://m\\.yushuwu\\.com/novel/\\d+/\\d+\\.html',
+    contentSelector: '#nr',
   },
 
   // ===== 特殊的获取下一页链接
