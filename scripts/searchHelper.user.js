@@ -2,12 +2,13 @@
 // @name         Search Hepler
 // @namespace    https://github.com/ywzhaiqi
 // @author       ywzhaiqi
-// @version      0.2
+// @version      0.3
 // @description  让一些特殊的搜索支持搜索串
 // @include      http://kindleren.com/search.php?mod=forum&mq=*
 // @include      http://shuzi.taobao.com/item/search---50094067.htm?q=*
 // @include      http://www.xiaopian.com/?q=*
 // @include      https://www.jiumodiary.com/?q=*
+// @include      http://www.yiwulib.cn:8088/websearch.asp?q=*
 // @grant        GM_addStyle
 // @require      http://cdn.staticfile.org/jquery/2.1.1/jquery.min.js
 // @run-at       document-start
@@ -57,6 +58,9 @@ var ns = {
     },
     jiumodiary() {
       goSearch('q', '#SearchWord', '#SearchButton')
+    },
+    yiwulib() {
+      goSearch('q', 'input[name="taah"]', 'input[name="submit"]')
     }
 };
 
