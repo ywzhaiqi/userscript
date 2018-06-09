@@ -22,7 +22,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.3.3
+// @version        6.3.4
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -407,6 +407,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @include        *://yd.baidu.com/view/*?cn=*
 // @include        *://www.88dus.com/xiaoshuo/*/*/*.html
 // @include        *://m.yushuwu.com/novel/*/*.html
+// @include        *://www.sbkk88.com/*/*/*.html
 
 // 移动版
 // @include        *://wap.yc.ireader.com.cn/book/*/*/
@@ -2354,6 +2355,15 @@ const sites = [
   {siteName: '御宅屋',
     url: '^https?://m\\.yushuwu\\.com/novel/\\d+/\\d+\\.html',
     contentSelector: '#nr',
+  },
+  {siteName: '随便看看吧',
+    url: '^https?://www\\.sbkk88\\.com/.*?/.*?/.*?\\.html',
+    bookTitleSelector: '.f_place1 > a:last()',
+    nextSelector: 'a.nextPage',
+    prevSelector: 'a.prevPage',
+
+    contentSelector: '#f_article',
+    contentRemove: '.mingzhuPage',
   },
 
   // ===== 特殊的获取下一页链接

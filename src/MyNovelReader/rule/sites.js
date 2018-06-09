@@ -1643,6 +1643,15 @@ const sites = [
     url: '^https?://m\\.yushuwu\\.com/novel/\\d+/\\d+\\.html',
     contentSelector: '#nr',
   },
+  {siteName: '随便看看吧',
+    url: '^https?://www\\.sbkk88\\.com/.*?/.*?/.*?\\.html',
+    bookTitleSelector: '.f_place1 > a:last()',
+    nextSelector: 'a.nextPage',
+    prevSelector: 'a.prevPage',
+
+    contentSelector: '#f_article',
+    contentRemove: '.mingzhuPage',
+  },
 
   // ===== 特殊的获取下一页链接
   {siteName: "看书啦",
