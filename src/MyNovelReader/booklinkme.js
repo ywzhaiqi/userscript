@@ -29,10 +29,7 @@ var BookLinkMe = {
 
             await delay(200)
 
-            if(isFirefox)
-                link.click();
-            else
-                GM_openInTab(link.href);
+            GM_openInTab(link.href);
 
             // 设置点击后的样式
             // 未读左边的 1x 链接
