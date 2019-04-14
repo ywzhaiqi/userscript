@@ -25,11 +25,11 @@
             <option value="hour">小时</option>
           </select>
           后停止
-        </label></br>
+        </label><br>
         <label><input type="radio" v-model="autoStop" value="chapter" />
           定章朗读：
           <input type="text" v-model="autoStopChapter" class="auto-stop-input" />章后停止
-        </label></br>
+        </label><br>
         <label><input type="radio" v-model="autoStop" value="" />一直朗读</label>
       </div>
       <div>

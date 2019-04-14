@@ -2,7 +2,7 @@
 (function (Vue) {
 'use strict';
 
-function __$styleInject( css ) {
+function __$styleInject ( css ) {
     if(!css) return ;
 
     if(typeof(window) == 'undefined') return ;
@@ -22,7 +22,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.3.4
+// @version        6.3.5
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -342,8 +342,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @include        *://www.snwx8.com/book/*/*/*.html
 // @include        *://read.qidian.com/chapter/*
 // @include        *://www.23zw.me/olread/*/*/*.html
-// @include        *://www.piaotian.com/html/*/*/*.html
-// @include        *://www.piaotian.net/html/*/*/*.html
+// @include        *://www.ptwxz.com/html/*/*/*.html
 // @include        *://www.dhzw.org/book/*/*/*.html
 // @include        *://www.biqiuge.com/book/*/*.html
 // @include        *://www.baquge.com/files/article/html/*/*/*.html
@@ -408,6 +407,10 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @include        *://www.88dus.com/xiaoshuo/*/*/*.html
 // @include        *://m.yushuwu.com/novel/*/*.html
 // @include        *://www.sbkk88.com/*/*/*.html
+// @include        *://www.ciweimao.com/chapter/*
+// @include        *://www.xinshubao.net/*/*/*.html
+// @include        *://www.okdd.net/html/*/*/*.shtml
+// @include        *://www.aixs.org/xs/*/*/*.html
 
 // 移动版
 // @include        *://wap.yc.ireader.com.cn/book/*/*/
@@ -1837,6 +1840,17 @@ const sites = [
         // mutationChildCount: 5,
         mutationChildText: '请到 quanben.io阅读完整章节内容',
   },
+  {siteName: '刺猬猫',
+    exampleUrl: 'https://www.ciweimao.com/chapter/102930784',
+    url: '^https?://www\\.ciweimao\\.com/chapter/\\d+',
+    bookTitleSelector: '.breadcrumb > a:last()',
+    useiframe: true,
+    mutationSelector: "#J_BookRead",  // 内容生成监视器
+        mutationChildCount: 1,
+    contentSelector: '#J_BookRead',
+    contentRemove: 'i.J_Num',
+  },
+  
 
   // ============== 内容需要2次获取的 =========================
   {siteName: "手打吧",
@@ -1905,7 +1919,7 @@ const sites = [
       contentSelector: "#showcontent",
   },
   {siteName: "飘天文学",
-      url: "^https?://www\\.piaotian\\.(net|com)/html/\\d+/\\d+/\\d+\\.html",
+      url: "^https?://www\\.ptwxz\\.(net|com)/html/\\d+/\\d+/\\d+\\.html",
       // titleReg: "(.*)最新章节,(.*),飘天文学",
       bookTitleSelector: '#content > h1 > a',
       contentSelector: "#content",

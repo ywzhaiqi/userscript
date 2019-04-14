@@ -1124,6 +1124,17 @@ const sites = [
         // mutationChildCount: 5,
         mutationChildText: '请到 quanben.io阅读完整章节内容',
   },
+  {siteName: '刺猬猫',
+    exampleUrl: 'https://www.ciweimao.com/chapter/102930784',
+    url: '^https?://www\\.ciweimao\\.com/chapter/\\d+',
+    bookTitleSelector: '.breadcrumb > a:last()',
+    useiframe: true,
+    mutationSelector: "#J_BookRead",  // 内容生成监视器
+        mutationChildCount: 1,
+    contentSelector: '#J_BookRead',
+    contentRemove: 'i.J_Num',
+  },
+  
 
   // ============== 内容需要2次获取的 =========================
   {siteName: "手打吧",
@@ -1192,7 +1203,7 @@ const sites = [
       contentSelector: "#showcontent",
   },
   {siteName: "飘天文学",
-      url: "^https?://www\\.piaotian\\.(net|com)/html/\\d+/\\d+/\\d+\\.html",
+      url: "^https?://www\\.ptwxz\\.(net|com)/html/\\d+/\\d+/\\d+\\.html",
       // titleReg: "(.*)最新章节,(.*),飘天文学",
       bookTitleSelector: '#content > h1 > a',
       contentSelector: "#content",
