@@ -24,7 +24,8 @@ a { color: #065488; }
 a:link { text-decoration: none; }
 
 #mynovelreader-content {
-    width: {content_width};
+    width: auto;
+    max-width: {content_width};
     font-size: {font_size};
     font-family: {font_family};
     line-height: {text_line_height};

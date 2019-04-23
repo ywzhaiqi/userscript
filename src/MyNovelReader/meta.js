@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.3.5
+// @version        6.3.6
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -65,7 +65,7 @@
 // @include        *://2.booklink.me/*
 
 // booklink.me
-// @include        *://www.shumil.com/*/*.html
+// @include        *://www.shumil.co/*/*.html
 // @include        *://www.wcxiaoshuo.com/wcxs-*-*/
 // @include        *://www.xiaoshuoz.com/wcxs-*-*/
 // @include        *://www.quledu.com/wcxs-*-*/
