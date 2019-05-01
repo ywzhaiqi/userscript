@@ -227,6 +227,7 @@ Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 // @include        *://www.biquge.tw/*_*/*.html
 // @include        *://www.biquge.tv/*/*.html
 // @include        *://www.biquge5200.com/*/*.html
+// @include        *://www.biquge5200.cc/*/*.html
 // @include        *://www.biqugezw.com/*/*.html
 // @include        *://www.bequgezw.com/*/*/*.html
 // @include        *://www.biquzi.com/*_*/*.html
