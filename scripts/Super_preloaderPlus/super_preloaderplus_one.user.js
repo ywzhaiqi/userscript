@@ -194,7 +194,7 @@ var SITEINFO=[
                 iloaded:false,                                                                                      //是否在iframe完全load之后操作..否则在DOM完成后操作.
                 itimeout:0,                                                                                             //延时多少毫秒后,在操作..
                 newIframe: false,  // 下一页使用新的 iframe，能解决按钮无法点击的问题
-            pageElement: '//div[@id="ires"]',                                          //主体内容 xpath 或 CSS选择器 或函数返回值(~~必须~~)
+            pageElement: '//div[@id="rso"]',                                          //主体内容 xpath 或 CSS选择器 或函数返回值(~~必须~~)
             // pageElement:'css;div#ires',
             //pageElement:function(doc,win){return doc.getElementById('ires')},
             //filter:'//li[@class="g"]',                                                                        //(此项功能未完成)xpath 或 CSS选择器从匹配到的节点里面过滤掉符合的节点.
