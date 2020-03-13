@@ -29,7 +29,7 @@
     "@types/jquery": "^3.2.12",
     "@types/minimist": "^1.2.0",
     "@types/rollup": "^0.41.1",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.2",
     "rollup": "^0.48.2",
     "rollup-plugin-commonjs": "^8.1.0",
     "rollup-plugin-node-resolve": "^3.0.0",
