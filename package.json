@@ -21,21 +21,19 @@
     "url": "https://github.com/ywzhaiqi/userscript/issues"
   },
   "homepage": "https://github.com/ywzhaiqi/userscript#readme",
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "@rollup/plugin-commonjs": "^14.0.0",
     "@rollup/plugin-node-resolve": "^8.4.0",
     "@rollup/plugin-typescript": "^5.0.2",
-    "rollup": "^2.23.1",
-    "tslib": "^2.0.1",
-    "typescript": "^3.9.7"
-  },
-  "devDependencies": {
     "@types/jquery": "^3.2.12",
     "@types/minimist": "^1.2.0",
-    "@vue/compiler-sfc": "^3.0.0-rc.5",
     "@ywzhaiqi/rollup-plugin-less": "^0.1.1",
     "minimist": "^1.2.0",
+    "rollup": "^2.23.1",
     "rollup-plugin-string": "^3.0.0",
-    "rollup-plugin-vue2": "^0.8.1"
+    "rollup-plugin-vue2": "^0.8.1",
+    "tslib": "^2.0.1",
+    "typescript": "^3.9.7"
   }
 }
