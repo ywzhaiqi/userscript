@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-      "outDir": "dist",        // path to output directory
       "rootDir": "src",
       "sourceMap": false,          // allow sourcemap support
       "strictNullChecks": true,   // enable strict null checks as a best practice
@@ -10,7 +9,11 @@
       "lib": [ "es2015", "dom" ],
       "moduleResolution": "node",
       "allowJs": true,             // allow a partial TypeScript and JavaScript codebase
-      "allowSyntheticDefaultImports": true
+      "allowSyntheticDefaultImports": true,
+      "baseUrl": "./",
+      "paths": {
+        "@/*": ["./src/*"]
+      }
   },
   "include": [
     "./**/*.ts",

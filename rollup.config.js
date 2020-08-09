@@ -1,13 +1,13 @@
 import path from 'path'
 import fs from 'fs'
 import minimist from 'minimist'
-import resolve from 'rollup-plugin-node-resolve'
-import commonjs from 'rollup-plugin-commonjs';
-import stringPlugin from 'rollup-plugin-string'
-import typescript from 'rollup-plugin-typescript'
+import typescript from '@rollup/plugin-typescript'
+import resolve from '@rollup/plugin-node-resolve'
+import commonjs from '@rollup/plugin-commonjs'
+import { string } from 'rollup-plugin-string'
 import vue from 'rollup-plugin-vue2'
-import less from 'rollup-plugin-less'
-// import userScriptCss from 'rollup-plugin-userscript-css'
+import less from '@ywzhaiqi/rollup-plugin-less'
+import myFixMetadata from './rollup-plugin-fix-userscript-metadata'
 
 // config
 const indexFiles = ['index.js', 'index.user.js', 'index.ts', 'index.user.ts']
@@ -22,13 +22,16 @@ function getInput(input) {
   let args = {
     file: '',
     dir: '',
+    outdir: '',
     outfile: '',
     rollupConfig: '',
     watch: false,
   }
 
   // fix PowserShell yarn 下传入最后会多一个" '.\\src\\MyNovelReader"'
-  input = input.replace(/"$/, '')
+  if (typeof input == 'string') {
+    input = input.replace(/"$/, '')
+  }
 
   if (!input || !fs.existsSync(input)) {
     return args
@@ -56,6 +59,10 @@ function getInput(input) {
     }
   }
 
+  if (args.dir) {
+    args.outdir = path.dirname(args.dir.replace(/src[\/\\]/, ''))
+  }
+
   if (args.file) {
     args.outfile = args.dir ?
       (path.basename(args.dir) + '.user.js') :
@@ -78,24 +85,31 @@ Usage:
 }
 
 let inputScript = path.join('.', args.dir, args.file)
-let outputScript = path.join(rootDir, OUT_DIR, args.outfile)
+let outputScript = path.join(rootDir, OUT_DIR, args.outdir, args.outfile)
 
 let config = {
   input: inputScript,
   output: {
     file: outputScript,
     format: 'iife',
+    banner: '/* This script build by rollup. */',
     globals: {
       'jquery': 'jQuery',
       'zepto': 'Zepto',
+      'dayjs': 'dayjs',
       // 'underscore': 'underscore',
       // 'react': 'React',
       // 'react-dom': 'ReactDOM',
       'vue': 'Vue',
-    }
+      'md5': 'md5',
+      'ajax-hook': 'ah',  // ajax-hook
+    },
+
   },
-  banner: '/* This script build by rollup. */',
+  external: ['jquery', 'zepto', 'vue', 'dayjs', 'ajax-hook', 'md5'],
+  
   plugins: [
+    myFixMetadata(),
     resolve(),
     commonjs(),
     vue(),
@@ -108,29 +122,13 @@ let config = {
       styleClass: 'noRemove',
     }),
 
-    // // 为了支持 vue 的样式
-    // userScriptCss({
-    //   include: ['**/*.css'],
-    //   exclude: [
-    //     'src/MyNovelReader/**/*.css',  // 特殊的
-    //   ],
-    //   insert: true,
-    // }),
-    stringPlugin({
+    string({
       include: [
         '**/*.html',
         'src/MyNovelReader/**/*.css',  // 特殊的
       ],
     }),
-    typescript({
-      // https://github.com/ezolenko/rollup-plugin-typescript2
-      // cacheRoot: path.join(rootDir, '.rts2_cache'),
-      include: [
-        "*.ts+(|x)", "**/*.ts+(|x)",
-        // "*.js+(|x)", "**/*.js+(|x)",
-        "*.jsx", "**/*.jsx",
-      ]
-    }),
+    typescript(),
   ]
 };
 
