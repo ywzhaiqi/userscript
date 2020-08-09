@@ -8,7 +8,7 @@
       <button @click="start" v-if="playState == STATE.stoping">开始朗读</button>
       <button @click="resume" v-if="playState == STATE.pausing">继续朗读</button>
       <span v-if="elapsedTime">已朗读 {{ formatMillisencod(elapsedTime) }}</span>
-      <span v-else class="tips">Tips:可从选择文本处开始朗读</span>
+      <span v-else class="tips">Tips: 可从选择文本处开始朗读</span>
       <button class="close-btn" @click="closeSpeech">X</button>
     </span>
 
@@ -34,12 +34,12 @@
       </div>
       <div>
           <label for="speech-dialog-rate">语速</label>
-          <input type="range" min="0.5" max="2" value="1" step="0.1" id="speech-dialog-rate" v-model="rate" />
+          <input type="range" min="0.5" max="3" step="0.1" id="speech-dialog-rate" v-model="rate" />
           <span class="rate-value">{{rate}}</span>
       </div>
       <div>
           <label for="speech-dialog-pitch">音高</label>
-          <input type="range" min="0" max="2" value="1" step="0.1" id="speech-dialog-pitch" v-model="pitch" />
+          <input type="range" min="0" max="2" step="0.1" id="speech-dialog-pitch" v-model="pitch" />
           <span class="pitch-value">{{pitch}}</span>
       </div>
       <div>
@@ -86,7 +86,7 @@ export default {
       autoStopTimeUnit: 'hour',
       autoStopChapter: 5,  // 5章
 
-      synth: speechSynthesis,
+      synth: window.speechSynthesis,
       utterance: new SpeechSynthesisUtterance(),
     }
   },
@@ -142,7 +142,7 @@ export default {
       bus.$on(APPEND_NEXT_PAGE, this.waitForNext)
 
       // fix 可能的问题：点击开始朗读无效，需要 cancel 才有效
-      speechSynthesis.cancel()
+      window.speechSynthesis.cancel()
 
       this.speak(toSpeekText, this.checkNext)
 

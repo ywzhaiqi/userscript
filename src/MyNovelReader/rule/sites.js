@@ -984,6 +984,18 @@ const sites = [
           '为了方便下次阅读，你可以点击下方的.*'
       ]
   },
+  {siteName: "落霞小说",
+      url: '^https://www\\.luoxia\\.com/hch/\\d+\\.htm',
+      bookTitleSelector: '#bcrumb a[rel="category tag"]',
+      contentSelector: "#nr1",
+      contentReplace: [
+          '-落[-~\\*]霞-小-说w ww ^ lu ox i a^ c o m. 🍌',
+          '🌽 落~霞~小~说~w w w - l u ox i a - co m',
+          '🍋 落*霞*小*说ww w_L uo x ia_c o m _',
+          '🌵 落+霞-小+說 L U ox i a - c o m +',
+          '🐕 落·霞*小·说· L u ox i a · c om',
+      ]
+  },
 
   // === 内容补丁
   {siteName: "给力文学小说阅读网",
@@ -1038,6 +1050,7 @@ const sites = [
       mutationSelector: "#main",
       mutationChildCount: 0,
   },
+  // 2页合并一章
   {siteName: "读零零（有问题，只显示一半内容）",
       url: "https?://www\\.du00\\.(?:com|cc)/read/\\d+/\\d+/[\\d_]+\\.html",
       titleReg: "(.*?)(?:第\\d+段)?,(.*) - 读零零小说网",
@@ -1059,6 +1072,15 @@ const sites = [
           "www\\.DU00\\.com",
       ],
       checkSection: true
+  },
+  {siteName: '卡夜阁',
+    url: 'https://www\\.kayege\\.com/book/\\d+/\\d+(?:_\\d+)?\\.html',
+    bookTitleSelector: '.box-head h2',
+    contentSelector: '#read',
+    checkSection: true,
+    contentReplace: [
+        '--&gt;&gt;\\(第1/2页\\)，请点击下一页继续阅读。',
+    ]
   },
   {siteName: "78小说网",
       url: "^https?://www\\.78xs\\.com/article/\\d+/\\d+/\\d+.shtml$",
@@ -1134,7 +1156,35 @@ const sites = [
     contentSelector: '#J_BookRead',
     contentRemove: 'i.J_Num',
   },
-  
+  {siteName: '斋书苑 | 次元猫',
+    exampleUrl: 'https://www.zhaishuyuan.com/chapter/30754/19407713',
+    // 或 https://www.ciymao.com/chapter/13140060/18070236.html
+    url: '^https?://www\\.(?:zhaishuyuan|ciymao)\\.com/chapter/\\d+/\\d+',
+    useiframe: true,
+    startFilter: function() {
+        unsafeWindow.getDecode();
+    }
+
+  },
+  // 未完成
+//   {siteName: '长佩文学网',
+//     exampleUrl: 'https://www.gongzicp.com/read-246381.html',
+//     url: '^https?://www\\.gongzicp\\.com/read-\\d+\\.html',
+//     bookTitleSelector: '.cp-read-novel',
+//     useiframe: true,
+//     mutationSelector: "#cpReadContent",  // 内容生成监视器
+//         mutationChildCount: 0,
+//     contentSelector: '#cpReadContent',
+//   },
+    // {siteName: '阿拉法小说网',
+    //     exampleUrl: 'https://www.alfagame.net/chapter_www.html?1#mybookid=80&bookid=902&chapterid=856587',
+    //     url: '^https://www\\.alfagame\\.net/chapter_www\\.html\\?1#mybookid=\\d+&bookid=\\d+&chapterid=\\d+',
+    //     bookTitleSelector: '.chapter-nav > p > a:last()',
+    //     useiframe: true,
+    //     mutationSelector: "#txt",  // 内容生成监视器
+    //         mutationChildCount: 0,
+    //     contentSelector: '#txt',
+    // },
 
   // ============== 内容需要2次获取的 =========================
   {siteName: "手打吧",

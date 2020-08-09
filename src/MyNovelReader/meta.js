@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.3.6
+// @version        6.3.8
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -316,8 +316,10 @@
 // @include        *://233yq.com/xiaoshuo/*.html
 // @include        *://www.50zw.co/book_*/*.html
 // @include        *://www.bqg5200.com/xiaoshuo/*/*/*.html
+// @include        *://www.biquge5200.cc/*/*.html
 // @include        *://www.50zw.la/book_*/*.html
 // @include        *://www.qu.la/book/*/*.html
+// @include        *://m.qu.la/book/*/*.html
 // @include        *://www.luoqiu.com/read/*/*.html
 // @include        *://www.54tushu.com/book_library/chaptershow/theId/*.html
 // @include        *://www.snwx8.com/book/*/*/*.html
@@ -328,7 +330,6 @@
 // @include        *://www.biqiuge.com/book/*/*.html
 // @include        *://www.baquge.com/files/article/html/*/*/*.html
 // @include        *://www.baquge.tw/files/article/html/*/*/*.html
-// @include        *://www.qu.la/book/*/*.html
 // @include        *://www.bxwx9.org/b/*/*/*.html
 // @include        *://www.miaobige.com/*/*/*.html
 // @include        *://www.52dsm.com/chapter/*/*.html
@@ -392,6 +393,29 @@
 // @include        *://www.xinshubao.net/*/*/*.html
 // @include        *://www.okdd.net/html/*/*/*.shtml
 // @include        *://www.aixs.org/xs/*/*/*.html
+// @include        *://www.kayege.com/book/*/*.html
+// @include        *://m.zwduxs.com/*_*/*.html
+// @include        *://www.23us.la/html/*/*/*.html
+// @include        *://www.shuyaya.cc/read/*/*.html
+// @include        *://www.58xs.tw/html/*/*/*.html
+// @include        *://www.xbiquge.cc/book/*/*.html
+// @include        *://www.pengchang-cn.com/*/*/*.html
+// @include        *://www.555zw.com/book/*/*/*.html
+// @include        *://www.69shu.la/69shu/*/*/*.html
+// @include        *://www.biqux.com/*/*.html
+// @include        *://houweidong.com/*.html
+// @include        *://book.janpn.com/book/*/*/*.html
+// @include        *://www.xs52.com/xiaoshuo/*/*/*.html
+// @include        *://www.88106.com/book/*/*/*.html
+// @include        *://www.luoxia.com/hch/*.htm
+// @include        *://www.lianzaishu.com/*/*.html
+// @include        *://www.juhezw.com/read/*/*.html
+// @include        *://www.ranwen.la/files/article/*/*/*.html
+// @include        *://www.zhaishuyuan.com/chapter/*/*
+// @include        *://www.ciymao.com/chapter/*/*.html
+// 未完成
+// @include        *://www.gongzicp.com/read-*.html
+// @include        *://www.alfagame.net/chapter_www.html?1*
 
 // 移动版
 // @include        *://wap.yc.ireader.com.cn/book/*/*/

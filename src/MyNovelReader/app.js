@@ -135,7 +135,8 @@ var App = {
         var shouldAdd = false;
         var $doc = $(doc);
 
-        if ($doc.find(App.site.contentSelector).size()) {
+        var contentSize = $doc.find(App.site.contentSelector).size();
+        if (contentSize && !App.site.mutationSelector) {
             shouldAdd = false;
         } else {
             var mutationSelector = App.site.mutationSelector;
@@ -552,7 +553,18 @@ var App = {
         key(Setting.openSpeechKey, function() {
             bus.$emit(SHOW_SPEECH)
             return false;
-        })
+        });
+
+        // PageUp
+        key(',', function() {
+            let { scrollX, scrollY, innerHeight } = window
+            window.scrollTo(scrollX, scrollY - innerHeight * .9)
+        });
+        // PageDown
+        key('.', function() {
+            let { scrollX, scrollY, innerHeight } = window
+            window.scrollTo(scrollX, scrollY + innerHeight * .9)
+        });
     },
     copyCurTitle: function() {
         if (Setting.copyCurTitle) {
@@ -761,7 +773,11 @@ var App = {
         var body = iframe.contentDocument.body;
 
         if (body && body.firstChild) {
+            var win = iframe.contentWindow
             var doc = iframe.contentDocument;
+
+            // 滚动最后
+            win.scrollTo(0, doc.body.scrollHeight)
 
             if (App.site.startLaunch) {
                 App.site.startLaunch($(doc));
