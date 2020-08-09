@@ -996,6 +996,11 @@ const sites = [
           '🐕 落·霞*小·说· L u ox i a · c om',
       ]
   },
+  {siteName: "联合阅读",
+    url: "https?://xrzww\\.com/module/novel/read.php*",
+    titleSelector: "#content h2",
+    contentSelector: "#content #contentInner",
+  },
 
   // === 内容补丁
   {siteName: "给力文学小说阅读网",
@@ -1166,16 +1171,19 @@ const sites = [
     }
 
   },
+  // 上下页链接难搞
+  {siteName: '长佩文学网',
+    exampleUrl: 'https://www.gongzicp.com/read-246381.html',
+    url: '^https?://www\\.gongzicp\\.com/read-\\d+\\.html',
+    bookTitleSelector: '.cp-read-novel',
+    useiframe: true,
+        timeout: 500,
+    contentSelector: '#cpReadContent',
+    contentReplace: [
+        '来源长佩文学网（https://www.gongzicp.com）',
+    ]
+  },
   // 未完成
-//   {siteName: '长佩文学网',
-//     exampleUrl: 'https://www.gongzicp.com/read-246381.html',
-//     url: '^https?://www\\.gongzicp\\.com/read-\\d+\\.html',
-//     bookTitleSelector: '.cp-read-novel',
-//     useiframe: true,
-//     mutationSelector: "#cpReadContent",  // 内容生成监视器
-//         mutationChildCount: 0,
-//     contentSelector: '#cpReadContent',
-//   },
     // {siteName: '阿拉法小说网',
     //     exampleUrl: 'https://www.alfagame.net/chapter_www.html?1#mybookid=80&bookid=902&chapterid=856587',
     //     url: '^https://www\\.alfagame\\.net/chapter_www\\.html\\?1#mybookid=\\d+&bookid=\\d+&chapterid=\\d+',
@@ -1713,6 +1721,11 @@ const sites = [
     contentSelector: '#f_article',
     contentRemove: '.mingzhuPage',
   },
+  {siteName: '新笔趣阁',
+    url: '^https?://www\\.3xs\\.cc/\\w+/\\w+\\.html',
+    bookTitleSelector: '.info a',
+    contentSelector: '.box_box',
+  },
 
   // ===== 特殊的获取下一页链接
   {siteName: "看书啦",
@@ -2156,6 +2169,13 @@ const sites = [
     // contentPatch: function($doc) {
 
     // }
+  },
+  {siteName: '笔趣阁 nuanyuehanxing',
+    url: '^https?://www\\.nuanyuehanxing\\.com/\\w+/\\d+/\\d+\\.html',
+    bookTitleSelector: '.bookname',
+    timeout: 500,
+    useiframe: true,
+    contentRemove: 'a',
   },
 
   // 这网站为了防抓取，内容顺序都是不对的，只好采用 iframe 方式

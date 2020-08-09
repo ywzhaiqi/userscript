@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.3.8
+// @version        6.3.9
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -413,8 +413,11 @@
 // @include        *://www.ranwen.la/files/article/*/*/*.html
 // @include        *://www.zhaishuyuan.com/chapter/*/*
 // @include        *://www.ciymao.com/chapter/*/*.html
+// @include        *://www.3xs.cc/*/*.html
+// @include        *://www.nuanyuehanxing.com/*/*/*.html
+// @include        *://xrzww.com/module/novel/read.php*
+// include        *://www.gongzicp.com/read-*.html
 // 未完成
-// @include        *://www.gongzicp.com/read-*.html
 // @include        *://www.alfagame.net/chapter_www.html?1*
 
 // 移动版
@@ -1738,6 +1741,11 @@
             '🐕 落·霞*小·说· L u ox i a · c om',
         ]
     },
+    {siteName: "联合阅读",
+      url: "https?://xrzww\\.com/module/novel/read.php*",
+      titleSelector: "#content h2",
+      contentSelector: "#content #contentInner",
+    },
 
     // === 内容补丁
     {siteName: "给力文学小说阅读网",
@@ -1908,16 +1916,19 @@
       }
 
     },
+    // 上下页链接难搞
+    {siteName: '长佩文学网',
+      exampleUrl: 'https://www.gongzicp.com/read-246381.html',
+      url: '^https?://www\\.gongzicp\\.com/read-\\d+\\.html',
+      bookTitleSelector: '.cp-read-novel',
+      useiframe: true,
+          timeout: 500,
+      contentSelector: '#cpReadContent',
+      contentReplace: [
+          '来源长佩文学网（https://www.gongzicp.com）',
+      ]
+    },
     // 未完成
-  //   {siteName: '长佩文学网',
-  //     exampleUrl: 'https://www.gongzicp.com/read-246381.html',
-  //     url: '^https?://www\\.gongzicp\\.com/read-\\d+\\.html',
-  //     bookTitleSelector: '.cp-read-novel',
-  //     useiframe: true,
-  //     mutationSelector: "#cpReadContent",  // 内容生成监视器
-  //         mutationChildCount: 0,
-  //     contentSelector: '#cpReadContent',
-  //   },
       // {siteName: '阿拉法小说网',
       //     exampleUrl: 'https://www.alfagame.net/chapter_www.html?1#mybookid=80&bookid=902&chapterid=856587',
       //     url: '^https://www\\.alfagame\\.net/chapter_www\\.html\\?1#mybookid=\\d+&bookid=\\d+&chapterid=\\d+',
@@ -2455,6 +2466,11 @@
       contentSelector: '#f_article',
       contentRemove: '.mingzhuPage',
     },
+    {siteName: '新笔趣阁',
+      url: '^https?://www\\.3xs\\.cc/\\w+/\\w+\\.html',
+      bookTitleSelector: '.info a',
+      contentSelector: '.box_box',
+    },
 
     // ===== 特殊的获取下一页链接
     {siteName: "看书啦",
@@ -2898,6 +2914,13 @@
       // contentPatch: function($doc) {
 
       // }
+    },
+    {siteName: '笔趣阁 nuanyuehanxing',
+      url: '^https?://www\\.nuanyuehanxing\\.com/\\w+/\\d+/\\d+\\.html',
+      bookTitleSelector: '.bookname',
+      timeout: 500,
+      useiframe: true,
+      contentRemove: 'a',
     },
 
     // 这网站为了防抓取，内容顺序都是不对的，只好采用 iframe 方式
@@ -5225,6 +5248,7 @@
               var mutationSelector = App$1.site.mutationSelector;
               var target = $doc.find(mutationSelector)[0];
               if (target) {
+                  C.log(`target.children.length = ${target.children.length}`, target);
                   if (App$1.site.mutationChildText) {
                       if (target.textContent.indexOf(App$1.site.mutationChildText) > -1) {
                           shouldAdd = true;

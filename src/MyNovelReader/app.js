@@ -142,6 +142,7 @@ var App = {
             var mutationSelector = App.site.mutationSelector;
             var target = $doc.find(mutationSelector)[0];
             if (target) {
+                C.log(`target.children.length = ${target.children.length}`, target)
                 if (App.site.mutationChildText) {
                     if (target.textContent.indexOf(App.site.mutationChildText) > -1) {
                         shouldAdd = true;
