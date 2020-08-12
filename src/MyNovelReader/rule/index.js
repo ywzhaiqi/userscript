@@ -58,6 +58,7 @@ var Rule = {
     '#sitebar > a:last',
     '.con_top > a:last',
     '.breadCrumb > a:last',
+    '.bookNav > a:last'
   ],
   bookTitleReplace: [
       '全文阅读$',

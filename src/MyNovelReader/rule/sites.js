@@ -999,8 +999,34 @@ const sites = [
   {siteName: "联合阅读",
     url: "https?://xrzww\\.com/module/novel/read.php*",
     titleSelector: "#content h2",
+    bookTitleSelector: '.title-wrap .percent',
     contentSelector: "#content #contentInner",
   },
+  {siteName: '完本神站',
+    url: '^https?://www\\.wanbentxt\\.com/\\d+/.*?\\.html',
+    bookTitleSelector: '.search > a > span',
+    contentSelector: ".readerCon",
+    checkSection: true,
+    contentReplace: [
+        '--&gt;&gt;本章未完，点击下一页继续阅读',
+        '提示：浏览器搜索（书名）.*?可以快速找到你在本站看的书！',
+    ]
+  },
+  {siteName: '九桃小说网',
+    url: '^https?://www\\.9txs\\.com/book/\\d+/\\d+\\.html',
+    bookTitleSelector: '#bookname',
+    contentReplace: [
+        '您可以在百度里搜索“.*?九桃小说\\(9txs.com\\)”查找最新章节！',
+    ]
+  },
+  {siteName: '闪舞小说网',
+    url: '^https://www\\.35xs\\.co/book/\\d+/\\d+\\.html',
+    bookTitleSelector: '.bookNav > a:last',
+    contentReplace: [
+        'www\\.35xs\\.co',,
+    ]
+  },
+  
 
   // === 内容补丁
   {siteName: "给力文学小说阅读网",

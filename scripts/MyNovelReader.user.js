@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.3.9
+// @version        6.4.0
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -416,6 +416,9 @@
 // @include        *://www.3xs.cc/*/*.html
 // @include        *://www.nuanyuehanxing.com/*/*/*.html
 // @include        *://xrzww.com/module/novel/read.php*
+// @include        *://www.wanbentxt.com/*/*.html
+// @include        *://www.9txs.com/book/*/*.html
+// @include        *://www.35xs.co/book/*/*.html
 // include        *://www.gongzicp.com/read-*.html
 // 未完成
 // @include        *://www.alfagame.net/chapter_www.html?1*
@@ -1744,8 +1747,34 @@
     {siteName: "联合阅读",
       url: "https?://xrzww\\.com/module/novel/read.php*",
       titleSelector: "#content h2",
+      bookTitleSelector: '.title-wrap .percent',
       contentSelector: "#content #contentInner",
     },
+    {siteName: '完本神站',
+      url: '^https?://www\\.wanbentxt\\.com/\\d+/.*?\\.html',
+      bookTitleSelector: '.search > a > span',
+      contentSelector: ".readerCon",
+      checkSection: true,
+      contentReplace: [
+          '--&gt;&gt;本章未完，点击下一页继续阅读',
+          '提示：浏览器搜索（书名）.*?可以快速找到你在本站看的书！',
+      ]
+    },
+    {siteName: '九桃小说网',
+      url: '^https?://www\\.9txs\\.com/book/\\d+/\\d+\\.html',
+      bookTitleSelector: '#bookname',
+      contentReplace: [
+          '您可以在百度里搜索“.*?九桃小说\\(9txs.com\\)”查找最新章节！',
+      ]
+    },
+    {siteName: '闪舞小说网',
+      url: '^https://www\\.35xs\\.co/book/\\d+/\\d+\\.html',
+      bookTitleSelector: '.bookNav > a:last',
+      contentReplace: [
+          'www\\.35xs\\.co',,
+      ]
+    },
+    
 
     // === 内容补丁
     {siteName: "给力文学小说阅读网",
@@ -3514,6 +3543,7 @@
       '#sitebar > a:last',
       '.con_top > a:last',
       '.breadCrumb > a:last',
+      '.bookNav > a:last'
     ],
     bookTitleReplace: [
         '全文阅读$',

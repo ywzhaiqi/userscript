@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.3.9
+// @version        6.4.0
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -416,6 +416,9 @@
 // @include        *://www.3xs.cc/*/*.html
 // @include        *://www.nuanyuehanxing.com/*/*/*.html
 // @include        *://xrzww.com/module/novel/read.php*
+// @include        *://www.wanbentxt.com/*/*.html
+// @include        *://www.9txs.com/book/*/*.html
+// @include        *://www.35xs.co/book/*/*.html
 // include        *://www.gongzicp.com/read-*.html
 // 未完成
 // @include        *://www.alfagame.net/chapter_www.html?1*
