@@ -1023,7 +1023,10 @@ const sites = [
     url: '^https://www\\.35xs\\.co/book/\\d+/\\d+\\.html',
     bookTitleSelector: '.bookNav > a:last',
     contentReplace: [
-        'www\\.35xs\\.co',,
+        '小说网..org，最快更新.*?最新章节！',
+        '闪舞小说网',
+        'www\\.35xss\\.com',
+        'www\\.35xs\\.co',
     ]
   },
   
