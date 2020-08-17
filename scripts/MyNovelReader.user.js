@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.4.1
+// @version        6.4.2
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -6158,12 +6158,6 @@
 
           if (this._isQuietMode) {
               $(selector).addClass("quiet-mode");
-
-              if (!isChrome) {  // firefox 下隐藏滚动条
-                  this.$_quietStyle = $('<style>')
-                      .text('scrollbar {visibility:collapse !important; } body {overflow: hidden !important; overflow-x: hidden !important;}')
-                      .appendTo('head');
-              }
           } else {
               $(selector).removeClass("quiet-mode");
           }

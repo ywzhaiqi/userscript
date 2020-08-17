@@ -137,12 +137,6 @@ var UI = {
 
         if (this._isQuietMode) {
             $(selector).addClass("quiet-mode");
-
-            if (!isChrome) {  // firefox 下隐藏滚动条
-                this.$_quietStyle = $('<style>')
-                    .text('scrollbar {visibility:collapse !important; } body {overflow: hidden !important; overflow-x: hidden !important;}')
-                    .appendTo('head');
-            }
         } else {
             $(selector).removeClass("quiet-mode");
         }
