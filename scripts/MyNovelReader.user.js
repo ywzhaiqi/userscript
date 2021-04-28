@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.4.2
+// @version        6.4.3
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -27,6 +27,8 @@
 // @require        https://cdn.staticfile.org/underscore.js/1.7.0/underscore-min.js
 // @require        https://cdn.staticfile.org/keymaster/1.6.1/keymaster.min.js
 // @require        https://greasyfork.org/scripts/2672-meihua-cn2tw/code/Meihua_cn2tw.js?version=7375
+// 晋江文学城防盗字体对照表
+// @require        https://greasyfork.org/scripts/425673-%E6%99%8B%E6%B1%9F%E6%96%87%E5%AD%A6%E5%9F%8E%E9%98%B2%E7%9B%97%E5%AD%97%E4%BD%93%E5%AF%B9%E7%85%A7%E8%A1%A8/code/%E6%99%8B%E6%B1%9F%E6%96%87%E5%AD%A6%E5%9F%8E%E9%98%B2%E7%9B%97%E5%AD%97%E4%BD%93%E5%AF%B9%E7%85%A7%E8%A1%A8.js
 
 // @connect        *
 // @connect        *://*.qidian.com/
@@ -984,12 +986,16 @@
         contentSelector: '.noveltext',
         contentHandle: false,
         contentRemove: 'font[color], hr',
-        contentPatch: function (fakeStub) {
+        contentPatch: function ($doc) {
             // 移除 h2 的标题
-            fakeStub.find('div:has(>h2)').remove();
+            $doc.find('div:has(>h2)').remove();
+            $doc.find('#six_list, #sendKingTickets').parent().remove();
+            $doc.find("div.noveltext").find("div:first, h1").remove();
 
-            fakeStub.find('#six_list, #sendKingTickets').parent().remove();
-            fakeStub.find("div.noveltext").find("div:first, h1").remove();
+            // 移除VIP章节方块
+            var $node = $doc.find('.noveltext');
+            var fontName = $node.attr("class").split(/\s+/)[1];
+            $node.html(replaceJjwxcCharacter(fontName, $node.html()));
         },
         contentReplace: [
             '@无限好文，尽在晋江文学城'
