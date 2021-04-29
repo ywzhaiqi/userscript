@@ -994,8 +994,10 @@
 
             // 移除VIP章节方块
             var $node = $doc.find('.noveltext');
-            var fontName = $node.attr("class").split(/\s+/)[1];
-            $node.html(replaceJjwxcCharacter(fontName, $node.html()));
+            if ($node.attr("class").split(/\s+/).length === 2) {
+                var fontName = $node.attr("class").split(/\s+/)[1];
+                $node.html(replaceJjwxcCharacter(fontName, $node.html()));
+            }
         },
         contentReplace: [
             '@无限好文，尽在晋江文学城'
