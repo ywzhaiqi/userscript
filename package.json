@@ -29,7 +29,7 @@
     "@types/jquery": "^3.2.12",
     "@types/minimist": "^1.2.0",
     "@ywzhaiqi/rollup-plugin-less": "^0.1.1",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.6",
     "rollup": "^2.23.1",
     "rollup-plugin-string": "^3.0.0",
     "rollup-plugin-vue2": "^0.8.1",
