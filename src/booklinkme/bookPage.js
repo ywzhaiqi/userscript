@@ -24,20 +24,12 @@ function insertToFirst(newUrl, text) {
 }
 
 export function fixErrorBook() {
-  let newUrl;
-  switch (location.pathname) {
-    case '/book-1-1009272444.html':  // 维秘女模的经纪人：内容错误
-      // const newUrl = 'http://www.wangshuge.com/books/109/109265/';
-      newUrl = 'http://www.wutuxs.com/html/7/7221/'
-
-      insertToFirst(newUrl, '我的补充')
-      console.info('新增：我的补充 链接')
-      break;
-    case '/book-10-3146622.html':  // 重生在跑道上：内容只有乐文是正确的
-      newUrl = 'http://www.lwxs520.com/books/74/74985/index.html'
-
-      insertToFirst(newUrl, config['重生在跑道上'])
-      console.info('新增：我的补充 链接')
-      break;
-  }
+  const thisPageBookName = $('h1').text().trim()
+  const txt = config.newsites
+  txt.split('\n').forEach(line => {
+    const [bookName, newUrl, newName] = line.split(/,|，/g)
+    if (bookName == thisPageBookName) {
+      insertToFirst(newUrl, newName || '我的补充')
+    }
+  })
 }

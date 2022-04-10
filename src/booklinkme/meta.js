@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             booklinkme@ywzhaiqi@gmail.com
 // @name           My booklink.me 增强
-// @version        2.2
+// @version        2.3
 // @author         ywzhaiqi@gmail.com
 // @description    首页一键打开所有未读链接
 // @include        *://booklink.me/*

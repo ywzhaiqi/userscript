@@ -1,20 +1,6 @@
 
 const config = {
-  '重生在跑道上': '乐文目录'
-}
-
-// 动态生成
-function createField() {
-  const fields = {}
-  Object.keys(config).forEach(k => {
-    fields[k] = {
-      label: k,
-      type: 'text',
-      default: config[k],
-    }
-  })
-
-  return fields
+  newsites: '红楼如此多骄,https://www.xuanshu.com/book/86811/,选书网'
 }
 
 function loadConfig() {
@@ -31,9 +17,15 @@ GM_config.init({
   title: 'booklink.me 增强脚本',
   skin: 1,
   frameStyle: {
-    width: '400px',
+    width: '652px',
   },
-  fields: createField(),
+  fields: {
+    newsites: {
+      label: '新增站点',
+      type: 'textarea',
+      placeholder: config.newsites
+    }
+  }
 })
 
 GM_registerMenuCommand('booklink 增强', function() {
