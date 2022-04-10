@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.4.2
+// @version        6.4.3
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -1937,7 +1937,10 @@
       mutationSelector: "#J_BookRead",  // 内容生成监视器
           mutationChildCount: 1,
       contentSelector: '#J_BookRead',
-      contentRemove: 'i.J_Num',
+      contentRemove: 'i.J_Num, .chapter span',
+      contentPatch: function($doc) {
+          $doc.find('.chapter span').remove();
+      }
     },
     {siteName: '斋书苑 | 次元猫',
       exampleUrl: 'https://www.zhaishuyuan.com/chapter/30754/19407713',

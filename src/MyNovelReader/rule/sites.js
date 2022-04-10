@@ -1188,7 +1188,7 @@ const sites = [
     mutationSelector: "#J_BookRead",  // 内容生成监视器
         mutationChildCount: 1,
     contentSelector: '#J_BookRead',
-    contentRemove: 'i.J_Num',
+    contentRemove: 'i.J_Num, .chapter span',
   },
   {siteName: '斋书苑 | 次元猫',
     exampleUrl: 'https://www.zhaishuyuan.com/chapter/30754/19407713',
