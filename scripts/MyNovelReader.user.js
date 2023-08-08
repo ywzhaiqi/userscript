@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.5.0
+// @version        6.5.1
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -789,6 +789,12 @@
       titleReg: '(.*?) _《(.*?)》小说在线阅读',
       titlePos: 1,
       contentSelector: '.content',
+      cleanSelector: '#app',
+      isVipChapter: function($doc) {
+          if ($doc.find('div:contains(这是VIP章节 需要订阅后才能阅读)').length) {
+              return true;
+          }
+      },
     },
     {siteName: '起点新版-阅文',
       url: '^https?://(?:read|vipreader)\\.qidian\\.com/chapter/.*',
@@ -5485,8 +5491,8 @@
           $('link[rel="stylesheet"]:not(.noRemove)').remove();
           $('body, #container').removeAttr('style').removeAttr('class');
 
-          if (unsafeWindow.jQuery && location.host.indexOf('qidian') > 0) {
-              unsafeWindow.jQuery(document).off("selectstart").off("contextmenu");
+          if (App$1.site.cleanSelector) {
+              $(App$1.site.cleanSelector).remove();
           }
       },
       cleanAgain: function() {

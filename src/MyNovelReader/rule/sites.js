@@ -37,6 +37,12 @@ const sites = [
     titleReg: '(.*?) _《(.*?)》小说在线阅读',
     titlePos: 1,
     contentSelector: '.content',
+    cleanSelector: '#app',
+    isVipChapter: function($doc) {
+        if ($doc.find('div:contains(这是VIP章节 需要订阅后才能阅读)').length) {
+            return true;
+        }
+    },
   },
   {siteName: '起点新版-阅文',
     url: '^https?://(?:read|vipreader)\\.qidian\\.com/chapter/.*',

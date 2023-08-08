@@ -336,8 +336,8 @@ var App = {
         $('link[rel="stylesheet"]:not(.noRemove)').remove();
         $('body, #container').removeAttr('style').removeAttr('class');
 
-        if (unsafeWindow.jQuery && location.host.indexOf('qidian') > 0) {
-            unsafeWindow.jQuery(document).off("selectstart").off("contextmenu");
+        if (App.site.cleanSelector) {
+            $(App.site.cleanSelector).remove()
         }
     },
     cleanAgain: function() {
