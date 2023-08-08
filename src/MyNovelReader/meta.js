@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.4.3
+// @version        6.5.0
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -28,9 +28,9 @@
 // @require        https://cdn.staticfile.org/keymaster/1.6.1/keymaster.min.js
 // @require        https://greasyfork.org/scripts/2672-meihua-cn2tw/code/Meihua_cn2tw.js?version=7375
 
-// @connect        *
-// @connect        *://*.qidian.com/
+// @connect        www.qidian.com
 
+// @include        https://www.qidian.com/chapter/*
 // @include        *://read.qidian.com/*,*.aspx
 // @include        *://readbook.qidian.com/bookreader/*,*.html
 // @include        *://read.qidian.com/BookReaderOld/*,*.aspx
@@ -446,5 +446,8 @@
 // @exclude        */Default.html
 // @exclude        */Default.shtml
 
-// @run-at         document-end
+// @run-at         document-start
 // ==/UserScript==
+
+// fix 起点 console 定时清理。Tampermonkey 无效，ScriptCat 有效
+console.clear = () => {}

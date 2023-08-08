@@ -32,6 +32,12 @@ const sites = [
               '<a href=\'List.shtm\'>回目录</a>');
       }
   },
+  {siteName: '起点(2023-08)',
+    url: '^https://www\\.qidian\\.com/chapter/\\d+/\\d+/',
+    titleReg: '(.*?) _《(.*?)》小说在线阅读',
+    titlePos: 1,
+    contentSelector: '.content',
+  },
   {siteName: '起点新版-阅文',
     url: '^https?://(?:read|vipreader)\\.qidian\\.com/chapter/.*',
     exclude: ' /lastpage/',

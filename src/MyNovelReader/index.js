@@ -9,8 +9,10 @@ import BookLinkMe from './booklinkme'
 
 toggleConsole(Setting.debug);
 
-if (location.host.indexOf('booklink.me') > -1) {
-  BookLinkMe.init();
-} else {
-  App.init();
-}
+document.addEventListener('DOMContentLoaded', () => {
+  if (location.host.indexOf('booklink.me') > -1) {
+    BookLinkMe.init();
+  } else {
+    App.init();
+  }
+})

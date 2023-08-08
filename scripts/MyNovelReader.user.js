@@ -3,7 +3,7 @@
 // @name           My Novel Reader
 // @name:zh-CN     小说阅读脚本
 // @name:zh-TW     小說閱讀腳本
-// @version        6.4.3
+// @version        6.5.0
 // @namespace      https://github.com/ywzhaiqi
 // @author         ywzhaiqi
 // @contributor    Roger Au, shyangs, JixunMoe、akiba9527 及其他网友
@@ -28,9 +28,9 @@
 // @require        https://cdn.staticfile.org/keymaster/1.6.1/keymaster.min.js
 // @require        https://greasyfork.org/scripts/2672-meihua-cn2tw/code/Meihua_cn2tw.js?version=7375
 
-// @connect        *
-// @connect        *://*.qidian.com/
+// @connect        www.qidian.com
 
+// @include        https://www.qidian.com/chapter/*
 // @include        *://read.qidian.com/*,*.aspx
 // @include        *://readbook.qidian.com/bookreader/*,*.html
 // @include        *://read.qidian.com/BookReaderOld/*,*.aspx
@@ -446,7 +446,7 @@
 // @exclude        */Default.html
 // @exclude        */Default.shtml
 
-// @run-at         document-end
+// @run-at         document-start
 // ==/UserScript==
 
 /* This script build by rollup. */
@@ -469,6 +469,9 @@
   }
 
   Vue = Vue && Object.prototype.hasOwnProperty.call(Vue, 'default') ? Vue['default'] : Vue;
+
+  // fix 起点 console 定时清理。Tampermonkey 无效，ScriptCat 有效
+  console.clear = () => {};
 
   // 其它设置
   const config = {
@@ -780,6 +783,12 @@
             $next.html($next.html().replace(/<script>ShowLinkMenu.*?(<a.*?a>).*?(<a.*?a>).*?script>/,'$1$2') +
                 '<a href=\'List.shtm\'>回目录</a>');
         }
+    },
+    {siteName: '起点(2023-08)',
+      url: '^https://www\\.qidian\\.com/chapter/\\d+/\\d+/',
+      titleReg: '(.*?) _《(.*?)》小说在线阅读',
+      titlePos: 1,
+      contentSelector: '.content',
     },
     {siteName: '起点新版-阅文',
       url: '^https?://(?:read|vipreader)\\.qidian\\.com/chapter/.*',
@@ -1938,9 +1947,6 @@
           mutationChildCount: 1,
       contentSelector: '#J_BookRead',
       contentRemove: 'i.J_Num, .chapter span',
-      contentPatch: function($doc) {
-          $doc.find('.chapter span').remove();
-      }
     },
     {siteName: '斋书苑 | 次元猫',
       exampleUrl: 'https://www.zhaishuyuan.com/chapter/30754/19407713',
@@ -6914,10 +6920,12 @@
 
   toggleConsole(Setting.debug);
 
-  if (location.host.indexOf('booklink.me') > -1) {
-    BookLinkMe.init();
-  } else {
-    App$1.init();
-  }
+  document.addEventListener('DOMContentLoaded', () => {
+    if (location.host.indexOf('booklink.me') > -1) {
+      BookLinkMe.init();
+    } else {
+      App$1.init();
+    }
+  });
 
 }(Vue));
